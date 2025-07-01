@@ -43,28 +43,20 @@ const Index = () => {
           </p>
         </div>
 
-        {/* Main Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-          {/* Character Stats */}
-          <div className="lg:col-span-2">
-            <CharacterStats character={character} />
-          </div>
+        {/* Character Stats */}
+        <div className="mb-12">
+          <CharacterStats character={character} />
+        </div>
 
-          {/* Quest Timer */}
-          <div>
-            <QuestTimer />
-          </div>
+        {/* Quest Tracker */}
+        <div className="mb-12">
+          <QuestTracker />
         </div>
 
         {/* Quest Categories */}
         <div className="mb-12">
           <h2 className="text-3xl font-bold text-center text-amber-400 mb-8">🗺️ Quest Categories</h2>
           <QuestCategories />
-        </div>
-
-        {/* Quest Tracker */}
-        <div className="mb-12">
-          <QuestTracker />
         </div>
 
         {/* Narrative Journal */}
@@ -100,6 +92,11 @@ const Index = () => {
         {/* Soundtrack */}
         <div className="mb-12">
           <Soundtrack />
+        </div>
+
+        {/* Quest Timer - moved to bottom */}
+        <div className="mb-12">
+          <QuestTimer />
         </div>
       </div>
 
