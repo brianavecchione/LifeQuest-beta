@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +8,7 @@ import Home from "./pages/Home";
 import Quests from "./pages/Quests";
 import Achievements from "./pages/Achievements";
 import Inventory from "./pages/Inventory";
+import Parties from "./pages/Parties";
 import Soundtrack from "./pages/Soundtrack";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
@@ -27,6 +27,7 @@ const App = () => (
           <Route path="/quests" element={<Quests />} />
           <Route path="/achievements" element={<Achievements />} />
           <Route path="/inventory" element={<Inventory />} />
+          <Route path="/parties" element={<Parties />} />
           <Route path="/soundtrack" element={<Soundtrack />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Target, Trophy, Sword, Music, Settings } from 'lucide-react';
+import { Home, Target, Trophy, Sword, Music, Settings, Users } from 'lucide-react';
 
 const Navigation = () => {
   const location = useLocation();
@@ -11,6 +11,7 @@ const Navigation = () => {
     { path: '/quests', label: 'Quests', icon: Target },
     { path: '/achievements', label: 'Achievements', icon: Trophy },
     { path: '/inventory', label: 'Inventory', icon: Sword },
+    { path: '/parties', label: 'Parties', icon: Users },
     { path: '/soundtrack', label: 'Atmosphere', icon: Music },
     { path: '/settings', label: 'Settings', icon: Settings },
   ];
