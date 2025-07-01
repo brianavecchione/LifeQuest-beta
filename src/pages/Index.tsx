@@ -8,6 +8,10 @@ import Minigames from '@/components/Minigames';
 import BadgeSystem from '@/components/BadgeSystem';
 import Soundtrack from '@/components/Soundtrack';
 import AISidekick from '@/components/AISidekick';
+import NarrativeJournal from '@/components/NarrativeJournal';
+import AchievementsSection from '@/components/AchievementsSection';
+import InventorySystem from '@/components/InventorySystem';
+import CustomizationPanel from '@/components/CustomizationPanel';
 
 const Index = () => {
   const character = {
@@ -63,6 +67,21 @@ const Index = () => {
           <QuestTracker />
         </div>
 
+        {/* Narrative Journal */}
+        <div className="mb-12">
+          <NarrativeJournal />
+        </div>
+
+        {/* Achievements and Streaks */}
+        <div className="mb-12">
+          <AchievementsSection />
+        </div>
+
+        {/* Inventory & Gear */}
+        <div className="mb-12">
+          <InventorySystem />
+        </div>
+
         {/* Minigames */}
         <div className="mb-12">
           <Minigames />
@@ -71,6 +90,11 @@ const Index = () => {
         {/* Badge System */}
         <div className="mb-12">
           <BadgeSystem />
+        </div>
+
+        {/* Customization Panel */}
+        <div className="mb-12">
+          <CustomizationPanel />
         </div>
 
         {/* Soundtrack */}
