@@ -94,7 +94,7 @@ const PartyDashboard = () => {
                 <div className="flex items-center gap-2">
                   <span className="text-white font-medium">{member.name}</span>
                   {member.isLeader && (
-                    <Crown className="w-4 h-4 text-yellow-400" title="Party Leader" />
+                    <Crown className="w-4 h-4 text-yellow-400" />
                   )}
                 </div>
                 <div className="flex items-center gap-2 mt-1">

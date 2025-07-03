@@ -11,6 +11,7 @@ import Inventory from "./pages/Inventory";
 import Parties from "./pages/Parties";
 import Soundtrack from "./pages/Soundtrack";
 import Settings from "./pages/Settings";
+import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/parties" element={<Parties />} />
           <Route path="/soundtrack" element={<Soundtrack />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/login" element={<Login />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
