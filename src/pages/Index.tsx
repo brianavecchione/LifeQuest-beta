@@ -36,7 +36,7 @@ const Index = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent mb-4">
-            ⚔️ Quest Master Dashboard ⚔️
+            ⚔️ LifeQuest Dashboard ⚔️
           </h1>
           <p className="text-xl text-slate-300">
             Embark on your daily adventures and level up your life!

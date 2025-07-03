@@ -40,7 +40,7 @@ const Login = () => {
           <div className="flex items-center justify-center gap-2 mb-4">
             <span className="text-4xl">⚔️</span>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
-              Quest Master
+              LifeQuest
             </h1>
           </div>
           <h2 className="text-2xl font-bold text-white mb-2">
@@ -175,7 +175,7 @@ const Login = () => {
             {/* Sign Up Link */}
             <div className="text-center pt-4">
               <p className="text-slate-400 text-sm">
-                New to Quest Master?{' '}
+                New to LifeQuest?{' '}
                 <Link 
                   to="/signup" 
                   className="text-amber-400 hover:text-amber-300 transition-colors font-medium"

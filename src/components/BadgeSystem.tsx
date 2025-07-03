@@ -47,7 +47,7 @@ const BadgeSystem = () => {
       progress: '67/100'
     },
     {
-      name: 'Quest Master',
+      name: 'LifeQuest Master',
       rarity: 'Legendary',
       icon: '👑',
       description: 'Complete 1000 total quests',

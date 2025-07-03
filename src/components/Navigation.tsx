@@ -51,7 +51,7 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-4">
             <span className="text-2xl">⚔️</span>
-            <h1 className="text-xl font-bold text-amber-400">Quest Master</h1>
+            <h1 className="text-xl font-bold text-amber-400">LifeQuest</h1>
             
             {/* User Stats */}
             <div className="hidden lg:flex items-center gap-4 ml-8">
