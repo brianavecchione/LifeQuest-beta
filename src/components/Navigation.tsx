@@ -1,13 +1,18 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Target, Trophy, Sword, Music, Settings, Users, LogOut } from 'lucide-react';
+import { Home, Target, Trophy, Sword, Music, Settings, Users, LogOut, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Navigation = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  
+  // Mock user data - in real app this would come from context/state
+  const [userGold] = useState(1250);
+  const [userLevel] = useState(12);
+  const [userXp] = useState(3420);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -44,9 +49,23 @@ const Navigation = () => {
     <nav className="bg-slate-800/90 backdrop-blur-sm border-b border-slate-700 sticky top-0 z-40">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             <span className="text-2xl">⚔️</span>
             <h1 className="text-xl font-bold text-amber-400">Quest Master</h1>
+            
+            {/* User Stats */}
+            <div className="hidden lg:flex items-center gap-4 ml-8">
+              <div className="flex items-center gap-2 bg-slate-700/50 px-3 py-1 rounded-lg border border-amber-500/30">
+                <Coins className="w-4 h-4 text-yellow-400" />
+                <span className="text-yellow-400 font-bold">{userGold.toLocaleString()}</span>
+                <span className="text-slate-400 text-sm">Gold</span>
+              </div>
+              <div className="flex items-center gap-2 bg-slate-700/50 px-3 py-1 rounded-lg border border-blue-500/30">
+                <span className="text-blue-400 font-bold">Lv.{userLevel}</span>
+                <span className="text-slate-400 text-sm">•</span>
+                <span className="text-blue-400 font-bold">{userXp} XP</span>
+              </div>
+            </div>
           </div>
           
           <div className="flex items-center gap-1">

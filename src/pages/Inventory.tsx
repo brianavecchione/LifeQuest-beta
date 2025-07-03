@@ -1,7 +1,9 @@
 
 import React from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import InventorySystem from '@/components/InventorySystem';
 import Minigames from '@/components/Minigames';
+import GoldShop from '@/pages/GoldShop';
 
 const Inventory = () => {
   return (
@@ -24,15 +26,32 @@ const Inventory = () => {
           </p>
         </div>
 
-        {/* Inventory & Gear */}
-        <div className="mb-12">
-          <InventorySystem />
-        </div>
+        {/* Inventory Tabs */}
+        <Tabs defaultValue="inventory" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 bg-slate-800 border-slate-700 mb-8">
+            <TabsTrigger value="inventory" className="data-[state=active]:bg-amber-600">
+              Inventory & Gear
+            </TabsTrigger>
+            <TabsTrigger value="gold-shop" className="data-[state=active]:bg-yellow-600">
+              Gold Shop
+            </TabsTrigger>
+            <TabsTrigger value="minigames" className="data-[state=active]:bg-purple-600">
+              Minigames
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Minigames */}
-        <div className="mb-12">
-          <Minigames />
-        </div>
+          <TabsContent value="inventory">
+            <InventorySystem />
+          </TabsContent>
+
+          <TabsContent value="gold-shop">
+            <GoldShop />
+          </TabsContent>
+
+          <TabsContent value="minigames">
+            <Minigames />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
