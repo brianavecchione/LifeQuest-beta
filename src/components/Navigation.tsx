@@ -1,10 +1,34 @@
 
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Home, Target, Trophy, Sword, Music, Settings, Users } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Home, Target, Trophy, Sword, Music, Settings, Users, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Navigation = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    
+    // Clear any stored authentication data
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userSession');
+    sessionStorage.clear();
+    
+    // Optional: API call to invalidate token on server
+    try {
+      // await fetch('/api/logout', { method: 'POST' });
+    } catch (error) {
+      console.error('Logout API call failed:', error);
+    }
+    
+    // Add a small delay for smooth UX
+    setTimeout(() => {
+      navigate('/login');
+    }, 300);
+  };
   
   const navItems = [
     { path: '/', label: 'Today', icon: Home },
@@ -45,6 +69,24 @@ const Navigation = () => {
                 </Link>
               );
             })}
+            
+            {/* Log Out Button */}
+            <div className="ml-4 pl-4 border-l border-slate-700">
+              <Button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                  isLoggingOut 
+                    ? 'bg-slate-600 text-slate-400 opacity-50' 
+                    : 'bg-red-600 hover:bg-red-700 text-white hover:scale-105'
+                }`}
+              >
+                <LogOut className={`w-4 h-4 ${isLoggingOut ? 'animate-spin' : ''}`} />
+                <span className="hidden md:inline">
+                  {isLoggingOut ? 'Logging Out...' : 'Log Out'}
+                </span>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
