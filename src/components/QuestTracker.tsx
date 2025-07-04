@@ -1,9 +1,17 @@
 
-import React, { useState, useEffect } from 'react';
-import { Trophy, Star, Flag, Crown, Plus, Target, CheckCircle2, Calendar } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Trophy, Star, Flag, Crown, Plus, Target, CheckCircle2, Calendar, Play, Coins } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import QuickDailySetup from './QuickDailySetup';
+import { 
+  PomodoroSetupModal, 
+  ActiveTimer, 
+  TimerCompleteModal, 
+  BreakTimerModal, 
+  ActiveBreakTimer 
+} from './PomodoroTimer';
+import { useToast } from '@/hooks/use-toast';
 
 interface Quest {
   id: string;
@@ -15,6 +23,8 @@ interface Quest {
 }
 
 const QuestTracker = () => {
+  const { toast } = useToast();
+  
   const [quests, setQuests] = useState<Quest[]>([
     {
       id: '1',
@@ -69,6 +79,25 @@ const QuestTracker = () => {
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
   const [todaysFocus, setTodaysFocus] = useState<string[]>([]);
   const [showAddMoreQuests, setShowAddMoreQuests] = useState(false);
+
+  // Pomodoro Timer States
+  const [isPomodoroModalOpen, setIsPomodoroModalOpen] = useState(false);
+  const [selectedQuest, setSelectedQuest] = useState<Quest | null>(null);
+  const [activeTimer, setActiveTimer] = useState<{
+    questId: string;
+    timeRemaining: number;
+    totalTime: number;
+    isRunning: boolean;
+  } | null>(null);
+  const [isTimerCompleteModalOpen, setIsTimerCompleteModalOpen] = useState(false);
+  const [completedTimerQuest, setCompletedTimerQuest] = useState<Quest | null>(null);
+  const [isBreakModalOpen, setIsBreakModalOpen] = useState(false);
+  const [activeBreakTimer, setActiveBreakTimer] = useState<{
+    timeRemaining: number;
+    isRunning: boolean;
+  } | null>(null);
+  const [pomodoroCount, setPomodoroCount] = useState(0);
+  const [goldEarned, setGoldEarned] = useState(0);
 
   // Check if all focused quests are completed
   useEffect(() => {
@@ -138,6 +167,157 @@ const QuestTracker = () => {
     setTodaysFocus(selectedQuestIds);
   };
 
+  // Pomodoro Timer Functions
+  const handleBeginQuest = (quest: Quest) => {
+    setSelectedQuest(quest);
+    setIsPomodoroModalOpen(true);
+  };
+
+  const handleTimerStart = useCallback((questId: string, duration: number) => {
+    const totalSeconds = duration * 60;
+    setActiveTimer({
+      questId,
+      timeRemaining: totalSeconds,
+      totalTime: totalSeconds,
+      isRunning: true
+    });
+    setIsPomodoroModalOpen(false);
+  }, []);
+
+  const handleTimerPause = useCallback(() => {
+    setActiveTimer(prev => prev ? { ...prev, isRunning: false } : null);
+  }, []);
+
+  const handleTimerResume = useCallback(() => {
+    setActiveTimer(prev => prev ? { ...prev, isRunning: true } : null);
+  }, []);
+
+  const handleTimerCancel = useCallback(() => {
+    setActiveTimer(null);
+    toast({
+      title: "Timer Cancelled",
+      description: "Your focus session has been cancelled.",
+    });
+  }, [toast]);
+
+  const handleTimerComplete = useCallback(() => {
+    if (activeTimer) {
+      const quest = quests.find(q => q.id === activeTimer.questId);
+      if (quest) {
+        setCompletedTimerQuest(quest);
+        setIsTimerCompleteModalOpen(true);
+        setPomodoroCount(prev => prev + 1);
+        
+        // Play notification sound (if available)
+        try {
+          const audio = new Audio('/notification.mp3');
+          audio.volume = 0.5;
+          audio.play().catch(() => {
+            // Fallback if audio fails
+            console.log('Timer complete notification');
+          });
+        } catch (error) {
+          console.log('Audio notification not available');
+        }
+      }
+    }
+    setActiveTimer(null);
+  }, [activeTimer, quests]);
+
+  const calculateRewards = (quest: Quest) => {
+    const bonusXp = Math.floor(quest.xp * 0.5); // 50% bonus
+    const bonusGold = Math.floor(quest.xp / 10) + 25; // Base gold calculation
+    return { bonusXp, bonusGold };
+  };
+
+  const handleQuestComplete = useCallback(() => {
+    if (completedTimerQuest) {
+      const { bonusXp, bonusGold } = calculateRewards(completedTimerQuest);
+      
+      // Update quest status
+      setQuests(prev => prev.map(quest => 
+        quest.id === completedTimerQuest.id 
+          ? { ...quest, status: 'Completed' as const }
+          : quest
+      ));
+
+      // Add rewards
+      setGoldEarned(prev => prev + bonusGold);
+
+      toast({
+        title: "Quest Complete! 🎉",
+        description: `Earned ${completedTimerQuest.xp + bonusXp} XP and ${bonusGold} Gold!`,
+      });
+
+      setIsTimerCompleteModalOpen(false);
+      setCompletedTimerQuest(null);
+      setIsBreakModalOpen(true); // Offer break
+    }
+  }, [completedTimerQuest, toast]);
+
+  const handleBreakAccept = useCallback(() => {
+    setActiveBreakTimer({
+      timeRemaining: 300, // 5 minutes
+      isRunning: true
+    });
+    setIsBreakModalOpen(false);
+  }, []);
+
+  const handleBreakDecline = useCallback(() => {
+    setIsBreakModalOpen(false);
+  }, []);
+
+  const handleBreakComplete = useCallback(() => {
+    setActiveBreakTimer(null);
+    toast({
+      title: "Break Complete!",
+      description: "Time to get back to your quests!",
+    });
+  }, [toast]);
+
+  const handleBreakCancel = useCallback(() => {
+    setActiveBreakTimer(null);
+  }, []);
+
+  // Timer countdown effects
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (activeTimer?.isRunning && activeTimer.timeRemaining > 0) {
+      interval = setInterval(() => {
+        setActiveTimer(prev => {
+          if (prev && prev.timeRemaining > 1) {
+            return { ...prev, timeRemaining: prev.timeRemaining - 1 };
+          }
+          return prev;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [activeTimer?.isRunning]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (activeBreakTimer?.isRunning && activeBreakTimer.timeRemaining > 0) {
+      interval = setInterval(() => {
+        setActiveBreakTimer(prev => {
+          if (prev && prev.timeRemaining > 1) {
+            return { ...prev, timeRemaining: prev.timeRemaining - 1 };
+          }
+          return prev;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [activeBreakTimer?.isRunning]);
+
   const renderQuestCard = (quest: Quest, showCompleteIcon = false) => (
     <div key={quest.id} className="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50 hover:border-slate-500/70 transition-all">
       <div className="flex items-center justify-between">
@@ -169,13 +349,53 @@ const QuestTracker = () => {
           </div>
         </div>
         
-        <div className={`w-3 h-3 rounded-full ${getPriorityColor(quest.priority)}`} title={`${quest.priority} Priority`} />
+        <div className="flex items-center gap-2">
+          {quest.status !== 'Completed' && quest.type !== 'Daily' && (
+            <Button
+              size="sm"
+              onClick={() => handleBeginQuest(quest)}
+              className="bg-amber-600 hover:bg-amber-700 text-white"
+              disabled={activeTimer?.questId === quest.id}
+            >
+              <Play className="w-4 h-4 mr-1" />
+              Begin Quest
+            </Button>
+          )}
+          <div className={`w-3 h-3 rounded-full ${getPriorityColor(quest.priority)}`} title={`${quest.priority} Priority`} />
+        </div>
       </div>
     </div>
   );
 
   return (
     <div className="space-y-6">
+      {/* Active Timer Widget */}
+      {activeTimer && (
+        <div className="sticky top-20 z-30">
+          <ActiveTimer
+            quest={quests.find(q => q.id === activeTimer.questId)!}
+            timeRemaining={activeTimer.timeRemaining}
+            totalTime={activeTimer.totalTime}
+            isRunning={activeTimer.isRunning}
+            onPause={handleTimerPause}
+            onResume={handleTimerResume}
+            onCancel={handleTimerCancel}
+            onComplete={handleTimerComplete}
+          />
+        </div>
+      )}
+
+      {/* Active Break Timer Widget */}
+      {activeBreakTimer && (
+        <div className="sticky top-20 z-30">
+          <ActiveBreakTimer
+            timeRemaining={activeBreakTimer.timeRemaining}
+            onComplete={handleBreakComplete}
+            onCancel={handleBreakCancel}
+          />
+        </div>
+      )}
+
       {/* Today's Focus Section */}
       {todaysFocus.length > 0 && (
         <div className="bg-gradient-to-br from-amber-900/30 to-amber-800/30 rounded-xl p-6 border border-amber-600/50 shadow-2xl">
@@ -216,6 +436,12 @@ const QuestTracker = () => {
           <div className="flex items-center gap-2">
             <Trophy className="w-6 h-6 text-emerald-400" />
             <h3 className="text-xl font-bold text-emerald-400">All Quests</h3>
+            {pomodoroCount > 0 && (
+              <Badge className="bg-amber-600 text-white ml-2">
+                <Coins className="w-3 h-3 mr-1" />
+                {pomodoroCount} Pomodoros
+              </Badge>
+            )}
           </div>
           <div className="flex gap-2">
             <Button 
@@ -259,8 +485,41 @@ const QuestTracker = () => {
           Total XP Available: <span className="text-amber-400 font-bold">
             {quests.reduce((total, quest) => total + quest.xp, 0)}
           </span>
+          {goldEarned > 0 && (
+            <span className="ml-4">
+              Gold Earned Today: <span className="text-yellow-400 font-bold">{goldEarned}</span>
+            </span>
+          )}
         </div>
       </div>
+
+      {/* Pomodoro Setup Modal */}
+      <PomodoroSetupModal
+        isOpen={isPomodoroModalOpen}
+        onClose={() => setIsPomodoroModalOpen(false)}
+        quest={selectedQuest}
+        onTimerStart={handleTimerStart}
+      />
+
+      {/* Timer Complete Modal */}
+      <TimerCompleteModal
+        isOpen={isTimerCompleteModalOpen}
+        quest={completedTimerQuest}
+        onComplete={handleQuestComplete}
+        onDismiss={() => {
+          setIsTimerCompleteModalOpen(false);
+          setCompletedTimerQuest(null);
+        }}
+        bonusXp={completedTimerQuest ? calculateRewards(completedTimerQuest).bonusXp : 0}
+        bonusGold={completedTimerQuest ? calculateRewards(completedTimerQuest).bonusGold : 0}
+      />
+
+      {/* Break Timer Modal */}
+      <BreakTimerModal
+        isOpen={isBreakModalOpen}
+        onAccept={handleBreakAccept}
+        onDecline={handleBreakDecline}
+      />
 
       {/* Quick Daily Setup Modal */}
       <QuickDailySetup
