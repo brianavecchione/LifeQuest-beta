@@ -3,7 +3,7 @@ import React from 'react';
 import CharacterStats from '@/components/CharacterStats';
 import QuestTimer from '@/components/QuestTimer';
 import QuestTracker from '@/components/QuestTracker';
-import { Plus } from 'lucide-react';
+import { Plus, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Home = () => {
@@ -56,6 +56,7 @@ const Home = () => {
                 Add New Quest
               </Button>
               <Button variant="outline" className="border-emerald-600 text-emerald-400 hover:bg-emerald-600 hover:text-white">
+                <Target className="w-4 h-4 mr-2" />
                 Quick Daily Setup
               </Button>
             </div>
