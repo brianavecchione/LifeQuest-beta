@@ -1,12 +1,21 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import QuestCategories from '@/components/QuestCategories';
 import NarrativeJournal from '@/components/NarrativeJournal';
 import { Search, Filter, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 
 const Quests = () => {
+  const { toast } = useToast();
+
+  const handleAddToFocus = (questId: string) => {
+    toast({
+      title: "Added to Today's Focus!",
+      description: "This quest will appear in your daily focus on the Today page.",
+    });
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* Fantasy background pattern */}
@@ -53,7 +62,7 @@ const Quests = () => {
         {/* Quest Categories */}
         <div className="mb-12">
           <h2 className="text-3xl font-bold text-center text-amber-400 mb-8">🗺️ Quest Categories</h2>
-          <QuestCategories />
+          <QuestCategories onAddToFocus={handleAddToFocus} />
         </div>
 
         {/* Narrative Journal */}
