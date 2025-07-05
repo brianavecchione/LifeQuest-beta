@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Flag, Crown, Target, Star } from 'lucide-react';
+import { Trophy, Flag, Crown, Target } from 'lucide-react';
 
 interface Quest {
   id: string;
@@ -29,14 +29,13 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
 }) => {
   const [selectedQuests, setSelectedQuests] = useState<string[]>([]);
 
-  // Filter out only completed quests - include all quest types
+  // Filter out daily quests for the setup
   const focusableQuests = quests.filter(quest => 
-    quest.status !== 'Completed'
+    quest.type !== 'Daily' && quest.status !== 'Completed'
   );
 
   const getTypeIcon = (type: Quest['type']) => {
     switch (type) {
-      case 'Daily': return <Star className="w-4 h-4" />;
       case 'Main': return <Trophy className="w-4 h-4" />;
       case 'Side': return <Flag className="w-4 h-4" />;
       case 'Legendary': return <Crown className="w-4 h-4" />;
@@ -46,7 +45,6 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
 
   const getTypeColor = (type: Quest['type']) => {
     switch (type) {
-      case 'Daily': return 'border-yellow-500/50 text-yellow-400';
       case 'Main': return 'border-red-500/50 text-red-400';
       case 'Side': return 'border-blue-500/50 text-blue-400';
       case 'Legendary': return 'border-purple-500/50 text-purple-400';
