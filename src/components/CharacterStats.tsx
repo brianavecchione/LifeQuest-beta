@@ -5,6 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { useUser } from '@/contexts/UserContext';
 
 interface CharacterStatsProps {
   character: {
@@ -18,18 +19,11 @@ interface CharacterStatsProps {
 }
 
 const CharacterStats = ({ character }: CharacterStatsProps) => {
+  const { getDailyXpData } = useUser();
   const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
   const xpProgress = (character.xp / character.xpToNext) * 100;
 
-  const weeklyXpData = [
-    { date: 'Mon', xp: 45, day: 'Monday' },
-    { date: 'Tue', xp: 30, day: 'Tuesday' },
-    { date: 'Wed', xp: 65, day: 'Wednesday' },
-    { date: 'Thu', xp: 20, day: 'Thursday' },
-    { date: 'Fri', xp: 80, day: 'Friday' },
-    { date: 'Sat', xp: 55, day: 'Saturday' },
-    { date: 'Sun', xp: 40, day: 'Sunday' },
-  ];
+  const weeklyXpData = getDailyXpData();
 
   const monthlyXpData = [
     { date: 'Week 1', xp: 280, period: 'First week' },

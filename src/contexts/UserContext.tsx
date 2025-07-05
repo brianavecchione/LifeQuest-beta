@@ -8,6 +8,7 @@ interface UserData {
   totalXp: number;
   gold: number;
   pomodoroCount: number;
+  dailyXp: Record<string, number>; // Track XP by date (YYYY-MM-DD format)
 }
 
 interface UserContextType {
@@ -17,6 +18,7 @@ interface UserContextType {
   addGold: (amount: number) => void;
   spendGold: (amount: number) => boolean;
   incrementPomodoro: () => void;
+  getDailyXpData: () => Array<{ date: string; xp: number; day: string }>;
 }
 
 const defaultUser: UserData = {
@@ -27,6 +29,7 @@ const defaultUser: UserData = {
   totalXp: 333,
   gold: 1250,
   pomodoroCount: 0,
+  dailyXp: {},
 };
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -61,12 +64,20 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         newXpToNext = newLevel * 100; // Simple formula: each level needs level * 100 XP
       }
 
+      // Track daily XP
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+      const updatedDailyXp = {
+        ...prev.dailyXp,
+        [today]: (prev.dailyXp[today] || 0) + amount
+      };
+
       return {
         ...prev,
         xp: newXp,
         level: newLevel,
         xpToNext: newXpToNext,
         totalXp: newTotalXp,
+        dailyXp: updatedDailyXp,
       };
     });
   };
@@ -87,6 +98,27 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(prev => ({ ...prev, pomodoroCount: prev.pomodoroCount + 1 }));
   };
 
+  const getDailyXpData = () => {
+    const last7Days = [];
+    const today = new Date();
+    
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+      const fullDayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+      
+      last7Days.push({
+        date: dayName,
+        xp: user.dailyXp[dateStr] || 0,
+        day: fullDayName
+      });
+    }
+    
+    return last7Days;
+  };
+
   const value: UserContextType = {
     user,
     updateUser,
@@ -94,6 +126,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     addGold,
     spendGold,
     incrementPomodoro,
+    getDailyXpData,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
