@@ -9,7 +9,7 @@ const Inventory = () => {
   const [activeTab, setActiveTab] = useState('inventory');
 
   const handleTabChange = (value: string) => {
-    console.log('Tab changing to:', value);
+    console.log('Tab changing from', activeTab, 'to:', value);
     setActiveTab(value);
   };
 
@@ -56,15 +56,15 @@ const Inventory = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="inventory" className={activeTab === 'inventory' ? 'block' : 'hidden'}>
+          <TabsContent value="inventory">
             <InventorySystem />
           </TabsContent>
 
-          <TabsContent value="gold-shop" className={activeTab === 'gold-shop' ? 'block' : 'hidden'}>
+          <TabsContent value="gold-shop">
             <GoldShop />
           </TabsContent>
 
-          <TabsContent value="minigames" className={activeTab === 'minigames' ? 'block' : 'hidden'}>
+          <TabsContent value="minigames">
             <Minigames />
           </TabsContent>
         </Tabs>
