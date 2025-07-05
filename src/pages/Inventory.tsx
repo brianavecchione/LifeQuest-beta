@@ -1,11 +1,18 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import InventorySystem from '@/components/InventorySystem';
 import Minigames from '@/components/Minigames';
 import GoldShop from '@/pages/GoldShop';
 
 const Inventory = () => {
+  const [activeTab, setActiveTab] = useState('inventory');
+
+  const handleTabChange = (value: string) => {
+    console.log('Tab changing to:', value);
+    setActiveTab(value);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* Fantasy background pattern */}
@@ -27,7 +34,7 @@ const Inventory = () => {
         </div>
 
         {/* Inventory Tabs */}
-        <Tabs defaultValue="inventory" className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-slate-800 border-slate-700 mb-8">
             <TabsTrigger 
               value="inventory" 
@@ -49,15 +56,15 @@ const Inventory = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="inventory">
+          <TabsContent value="inventory" className={activeTab === 'inventory' ? 'block' : 'hidden'}>
             <InventorySystem />
           </TabsContent>
 
-          <TabsContent value="gold-shop">
+          <TabsContent value="gold-shop" className={activeTab === 'gold-shop' ? 'block' : 'hidden'}>
             <GoldShop />
           </TabsContent>
 
-          <TabsContent value="minigames">
+          <TabsContent value="minigames" className={activeTab === 'minigames' ? 'block' : 'hidden'}>
             <Minigames />
           </TabsContent>
         </Tabs>
