@@ -137,14 +137,6 @@ const Settings = () => {
               
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="text-white font-medium">Level Up Celebrations</h4>
-                  <p className="text-slate-400 text-sm">Show animations when leveling up</p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div>
                   <h4 className="text-white font-medium">Streak Warnings</h4>
                   <p className="text-slate-400 text-sm">Alert when streaks are about to break</p>
                 </div>
