@@ -20,7 +20,8 @@ const Index = () => {
     xp: 75,
     xpToNext: 100,
     totalXp: 333,
-    gold: 35
+    gold: 35,
+    avatar: 'A'
   };
 
   return (

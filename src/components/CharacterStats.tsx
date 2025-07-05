@@ -15,6 +15,7 @@ interface CharacterStatsProps {
     xpToNext: number;
     totalXp: number;
     gold: number;
+    avatar: string;
   };
 }
 
@@ -64,9 +65,17 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
         {/* Character Info Section */}
         <div>
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-3xl font-bold text-slate-900 shadow-lg">
-              {character.name.charAt(0)}
-            </div>
+            {character.avatar.startsWith('data:') || character.avatar.startsWith('http') ? (
+              <img 
+                src={character.avatar} 
+                alt={character.name} 
+                className="w-24 h-24 rounded-full object-cover shadow-lg border-4 border-amber-400/30"
+              />
+            ) : (
+              <div className="w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-3xl font-bold text-slate-900 shadow-lg">
+                {character.avatar}
+              </div>
+            )}
             <div>
               <h2 className="text-2xl font-bold text-amber-400 mb-1">{character.name}</h2>
               <div className="flex items-center gap-2 text-yellow-300">
