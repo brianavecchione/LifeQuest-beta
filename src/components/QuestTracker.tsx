@@ -365,7 +365,7 @@ const QuestTracker = () => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <Trophy className="w-6 h-6 text-emerald-400" />
-            <h3 className="text-xl font-bold text-emerald-400">All Quests</h3>
+            <h3 className="text-xl font-bold text-emerald-400">Tracked Quests</h3>
             {pomodoroCount > 0 && (
               <Badge className="bg-amber-600 text-white ml-2">
                 <Coins className="w-3 h-3 mr-1" />
