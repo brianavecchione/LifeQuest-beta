@@ -12,10 +12,9 @@ import { useToast } from '@/hooks/use-toast';
 
 interface QuestCategoriesProps {
   onAddToFocus?: (questId: string) => void;
-  onAddQuest?: (questType: 'Daily' | 'Main' | 'Side' | 'Legendary') => void;
 }
 
-const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus, onAddQuest }) => {
+const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
   const { quests, toggleQuestStatus } = useQuests();
   const { addXP, addGold } = useUser();
   const { toast } = useToast();
@@ -210,7 +209,7 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus, onAddQu
     const colorClasses = getCategoryColor(type);
 
     return (
-      <div className={`bg-gradient-to-br ${colorClasses} rounded-xl p-6 shadow-2xl relative`}>
+      <div className={`bg-gradient-to-br ${colorClasses} rounded-xl p-6 shadow-2xl`}>
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="bg-white/20 p-2 rounded-lg">
@@ -221,14 +220,10 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus, onAddQu
               <p className="text-white/80 text-sm">{categoryQuests.length} quests</p>
             </div>
           </div>
-          <button
-            className="px-3 py-2 text-sm font-medium text-white bg-white/20 hover:bg-white/30 border border-white/30 rounded-lg transition-colors flex items-center gap-1 cursor-pointer z-10 relative"
-            onClick={() => onAddQuest?.(type)}
-            type="button"
-          >
-            <Plus className="w-4 h-4" />
+          <Button size="sm" className="bg-white/20 hover:bg-white/30 text-white border-white/30">
+            <Plus className="w-4 h-4 mr-1" />
             Add Quest
-          </button>
+          </Button>
         </div>
 
         <div className="space-y-3">
