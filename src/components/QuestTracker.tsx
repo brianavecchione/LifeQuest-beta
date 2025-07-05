@@ -14,10 +14,12 @@ import {
 } from './PomodoroTimer';
 import { useToast } from '@/hooks/use-toast';
 import { useQuests, Quest } from '@/contexts/QuestContext';
+import { useUser } from '@/contexts/UserContext';
 
 const QuestTracker = () => {
   const { toast } = useToast();
   const { quests, addQuest, toggleQuestStatus } = useQuests();
+  const { addXP, addGold } = useUser();
 
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
   const [isNewQuestModalOpen, setIsNewQuestModalOpen] = useState(false);
@@ -42,6 +44,7 @@ const QuestTracker = () => {
   } | null>(null);
   const [pomodoroCount, setPomodoroCount] = useState(0);
   const [goldEarned, setGoldEarned] = useState(0);
+  const [previousQuests, setPreviousQuests] = useState<Quest[]>([]);
 
   // Check if all focused quests are completed
   useEffect(() => {
@@ -51,6 +54,34 @@ const QuestTracker = () => {
       setShowAddMoreQuests(allCompleted);
     }
   }, [quests, todaysFocus]);
+
+  // Track quest completions and award XP
+  useEffect(() => {
+    if (previousQuests.length > 0) {
+      quests.forEach(currentQuest => {
+        const previousQuest = previousQuests.find(p => p.id === currentQuest.id);
+        
+        // If quest just changed to Completed, award XP and gold
+        if (previousQuest && 
+            previousQuest.status !== 'Completed' && 
+            currentQuest.status === 'Completed') {
+          
+          const baseGold = Math.floor(currentQuest.xp / 10) + 10; // Base gold calculation
+          
+          addXP(currentQuest.xp);
+          addGold(baseGold);
+          
+          toast({
+            title: "Quest Complete! 🎉",
+            description: `Earned ${currentQuest.xp} XP and ${baseGold} Gold!`,
+          });
+        }
+      });
+    }
+    
+    // Update previous quests for next comparison
+    setPreviousQuests([...quests]);
+  }, [quests, previousQuests, addXP, addGold, toast]);
 
   // Separate quests by type - only show dailies and focused quests
   const dailyQuests = quests.filter(quest => quest.type === 'Daily');
@@ -165,25 +196,26 @@ const QuestTracker = () => {
     if (completedTimerQuest) {
       const { bonusXp, bonusGold } = calculateRewards(completedTimerQuest);
       
-      // Update quest status using context
+      // Update quest status using context (regular XP/gold will be added by the useEffect)
       toggleQuestStatus(completedTimerQuest.id);
       if (quests.find(q => q.id === completedTimerQuest.id)?.status !== 'Completed') {
         toggleQuestStatus(completedTimerQuest.id); // Ensure it gets to Completed
       }
 
-      // Add rewards
-      setGoldEarned(prev => prev + bonusGold);
+      // Add bonus rewards from timer completion
+      addXP(bonusXp);
+      addGold(bonusGold);
 
       toast({
-        title: "Quest Complete! 🎉",
-        description: `Earned ${completedTimerQuest.xp + bonusXp} XP and ${bonusGold} Gold!`,
+        title: "Pomodoro Bonus! 🍅",
+        description: `Bonus: +${bonusXp} XP and +${bonusGold} Gold for focused work!`,
       });
 
       setIsTimerCompleteModalOpen(false);
       setCompletedTimerQuest(null);
       setIsBreakModalOpen(true); // Offer break
     }
-  }, [completedTimerQuest, toast, toggleQuestStatus, quests]);
+  }, [completedTimerQuest, toast, toggleQuestStatus, quests, addXP, addGold]);
 
   const handleBreakAccept = useCallback(() => {
     setActiveBreakTimer({
