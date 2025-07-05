@@ -13,69 +13,11 @@ import {
   ActiveBreakTimer 
 } from './PomodoroTimer';
 import { useToast } from '@/hooks/use-toast';
-
-interface Quest {
-  id: string;
-  name: string;
-  status: 'Not started' | 'In Progress' | 'Completed';
-  xp: number;
-  type: 'Daily' | 'Main' | 'Side' | 'Legendary';
-  priority: 'Low' | 'Medium' | 'High';
-}
+import { useQuests, Quest } from '@/contexts/QuestContext';
 
 const QuestTracker = () => {
   const { toast } = useToast();
-  
-  const [quests, setQuests] = useState<Quest[]>([
-    {
-      id: '1',
-      name: 'Complete morning workout',
-      status: 'Completed',
-      xp: 50,
-      type: 'Daily',
-      priority: 'High'
-    },
-    {
-      id: '2',
-      name: 'Finish project proposal',
-      status: 'In Progress',
-      xp: 150,
-      type: 'Main',
-      priority: 'High'
-    },
-    {
-      id: '3',
-      name: 'Read 30 pages',
-      status: 'Not started',
-      xp: 30,
-      type: 'Side',
-      priority: 'Medium'
-    },
-    {
-      id: '4',
-      name: 'Launch new product',
-      status: 'In Progress',
-      xp: 500,
-      type: 'Legendary',
-      priority: 'High'
-    },
-    {
-      id: '5',
-      name: 'Drink 8 glasses of water',
-      status: 'In Progress',
-      xp: 25,
-      type: 'Daily',
-      priority: 'Medium'
-    },
-    {
-      id: '6',
-      name: 'Write in journal',
-      status: 'Not started',
-      xp: 20,
-      type: 'Daily',
-      priority: 'Low'
-    }
-  ]);
+  const { quests, addQuest, toggleQuestStatus } = useQuests();
 
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
   const [isNewQuestModalOpen, setIsNewQuestModalOpen] = useState(false);
@@ -153,17 +95,6 @@ const QuestTracker = () => {
     }
   };
 
-  const toggleQuestStatus = (questId: string) => {
-    setQuests(quests.map(quest => {
-      if (quest.id === questId) {
-        const statusOrder: Quest['status'][] = ['Not started', 'In Progress', 'Completed'];
-        const currentIndex = statusOrder.indexOf(quest.status);
-        const nextIndex = (currentIndex + 1) % statusOrder.length;
-        return { ...quest, status: statusOrder[nextIndex] };
-      }
-      return quest;
-    }));
-  };
 
   const handleDailySetup = (selectedQuestIds: string[]) => {
     setTodaysFocus(selectedQuestIds);
@@ -236,12 +167,11 @@ const QuestTracker = () => {
     if (completedTimerQuest) {
       const { bonusXp, bonusGold } = calculateRewards(completedTimerQuest);
       
-      // Update quest status
-      setQuests(prev => prev.map(quest => 
-        quest.id === completedTimerQuest.id 
-          ? { ...quest, status: 'Completed' as const }
-          : quest
-      ));
+      // Update quest status using context
+      toggleQuestStatus(completedTimerQuest.id);
+      if (quests.find(q => q.id === completedTimerQuest.id)?.status !== 'Completed') {
+        toggleQuestStatus(completedTimerQuest.id); // Ensure it gets to Completed
+      }
 
       // Add rewards
       setGoldEarned(prev => prev + bonusGold);
@@ -255,7 +185,7 @@ const QuestTracker = () => {
       setCompletedTimerQuest(null);
       setIsBreakModalOpen(true); // Offer break
     }
-  }, [completedTimerQuest, toast]);
+  }, [completedTimerQuest, toast, toggleQuestStatus, quests]);
 
   const handleBreakAccept = useCallback(() => {
     setActiveBreakTimer({
@@ -529,7 +459,7 @@ const QuestTracker = () => {
         isOpen={isNewQuestModalOpen}
         onClose={() => setIsNewQuestModalOpen(false)}
         onQuestCreated={(newQuest) => {
-          setQuests(prev => [...prev, newQuest]);
+          addQuest(newQuest);
           toast({
             title: "Quest Added! 🎯",
             description: `${newQuest.name} has been added to your quest log.`,

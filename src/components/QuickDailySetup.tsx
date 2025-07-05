@@ -29,9 +29,9 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
 }) => {
   const [selectedQuests, setSelectedQuests] = useState<string[]>([]);
 
-  // Filter out daily quests for the setup
+  // Filter to show Main, Side, and Legendary quests (not completed)
   const focusableQuests = quests.filter(quest => 
-    quest.type !== 'Daily' && quest.status !== 'Completed'
+    ['Main', 'Side', 'Legendary'].includes(quest.type) && quest.status !== 'Completed'
   );
 
   const getTypeIcon = (type: Quest['type']) => {
