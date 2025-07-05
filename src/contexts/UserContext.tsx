@@ -9,6 +9,7 @@ interface UserData {
   gold: number;
   pomodoroCount: number;
   dailyXp: Record<string, number>; // Track XP by date (YYYY-MM-DD format)
+  reduceAnimations: boolean; // Accessibility setting to reduce animations
 }
 
 interface UserContextType {
@@ -32,6 +33,7 @@ const defaultUser: UserData = {
   gold: 1250,
   pomodoroCount: 0,
   dailyXp: {},
+  reduceAnimations: false,
 };
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -45,6 +47,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Ensure dailyXp exists for existing users
     if (!loadedUser.dailyXp) {
       loadedUser.dailyXp = {};
+    }
+    
+    // Ensure reduceAnimations exists for existing users
+    if (loadedUser.reduceAnimations === undefined) {
+      loadedUser.reduceAnimations = false;
     }
     
     return loadedUser;

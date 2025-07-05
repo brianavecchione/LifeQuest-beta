@@ -1,12 +1,33 @@
 
 import React from 'react';
 import AISidekick from '@/components/AISidekick';
-import { User, Bell, Zap, Shield } from 'lucide-react';
+import { User, Bell, Zap, Shield, Accessibility } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
+import { useUser } from '@/contexts/UserContext';
 
 const Settings = () => {
+  const { user, updateUser } = useUser();
+
+  const handleReduceAnimationsChange = (checked: boolean) => {
+    updateUser({ reduceAnimations: checked });
+    
+    // Apply CSS class to document root to control animations globally
+    if (checked) {
+      document.documentElement.classList.add('reduce-animations');
+    } else {
+      document.documentElement.classList.remove('reduce-animations');
+    }
+  };
+
+  // Apply reduce animations class on component mount if setting is enabled
+  React.useEffect(() => {
+    if (user.reduceAnimations) {
+      document.documentElement.classList.add('reduce-animations');
+    }
+  }, [user.reduceAnimations]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* Fantasy background pattern */}
@@ -90,6 +111,29 @@ const Settings = () => {
                   <p className="text-slate-400 text-sm">Alert when streaks are about to break</p>
                 </div>
                 <Switch defaultChecked />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Accessibility Settings */}
+        <div className="mb-12">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-rose-600/30 shadow-2xl">
+            <div className="flex items-center gap-2 mb-6">
+              <Accessibility className="w-6 h-6 text-rose-400" />
+              <h3 className="text-xl font-bold text-rose-400">Accessibility</h3>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-white font-medium">Reduce Animations</h4>
+                  <p className="text-slate-400 text-sm">Minimize visual motion and transitions for a calmer experience</p>
+                </div>
+                <Switch 
+                  checked={user.reduceAnimations}
+                  onCheckedChange={handleReduceAnimationsChange}
+                />
               </div>
             </div>
           </div>
