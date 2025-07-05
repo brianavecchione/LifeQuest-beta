@@ -65,7 +65,7 @@ const Settings = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent mb-4">
-            ⚙️ Settings & AI Sidekick
+            ⚙️ Settings
           </h1>
           <p className="text-xl text-slate-300">
             Configure your adventure preferences
