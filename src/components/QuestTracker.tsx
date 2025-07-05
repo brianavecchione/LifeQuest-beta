@@ -4,6 +4,7 @@ import { Trophy, Star, Flag, Crown, Plus, Target, CheckCircle2, Calendar, Play, 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import QuickDailySetup from './QuickDailySetup';
+import NewQuestModal from './NewQuestModal';
 import { 
   PomodoroSetupModal, 
   ActiveTimer, 
@@ -77,6 +78,7 @@ const QuestTracker = () => {
   ]);
 
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
+  const [isNewQuestModalOpen, setIsNewQuestModalOpen] = useState(false);
   const [todaysFocus, setTodaysFocus] = useState<string[]>([]);
   const [showAddMoreQuests, setShowAddMoreQuests] = useState(false);
 
@@ -455,7 +457,7 @@ const QuestTracker = () => {
             </Button>
             <Button 
               size="sm" 
-              onClick={() => setIsSetupModalOpen(true)}
+              onClick={() => setIsNewQuestModalOpen(true)}
               className="bg-emerald-600 hover:bg-emerald-700"
             >
               <Plus className="w-4 h-4 mr-1" />
@@ -531,6 +533,21 @@ const QuestTracker = () => {
         onClose={() => setIsSetupModalOpen(false)}
         quests={quests}
         onSetupComplete={handleDailySetup}
+      />
+
+      {/* New Quest Modal */}
+      <NewQuestModal
+        isOpen={isNewQuestModalOpen}
+        onClose={() => setIsNewQuestModalOpen(false)}
+        onQuestCreated={(newQuest) => {
+          setQuests(prev => [...prev, newQuest]);
+          toast({
+            title: "Quest Added! 🎯",
+            description: `${newQuest.name} has been added to your quest log.`,
+          });
+        }}
+        currentQuestCount={quests.filter(q => q.type !== 'Daily').length}
+        maxQuests={5}
       />
     </div>
   );
