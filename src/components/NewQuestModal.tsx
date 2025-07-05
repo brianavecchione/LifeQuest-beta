@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,34 +8,46 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Star, Trophy, Flag, Crown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Quest, useQuests } from '@/hooks/useQuests';
+import { useQuests, Quest } from '@/contexts/QuestContext';
 
 interface NewQuestModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentQuestCount?: number;
   maxQuests?: number;
+  prefilledQuestType?: string;
 }
 
 const NewQuestModal: React.FC<NewQuestModalProps> = ({ 
   isOpen, 
   onClose, 
   currentQuestCount = 0,
-  maxQuests = 5
+  maxQuests = 5,
+  prefilledQuestType = ''
 }) => {
   const { toast } = useToast();
-  const { createQuest } = useQuests();
+  const { addQuest } = useQuests();
   const [formData, setFormData] = useState({
     quest_name: '',
     description: '',
     xp_reward: '',
     gold_reward: '',
-    quest_type: 'Main' as Quest['quest_type'],
+    type: 'Main' as Quest['type'],
     priority: 'Medium' as Quest['priority'],
     tags: '',
   });
 
-  const getTypeIcon = (type: Quest['quest_type']) => {
+  // Update form data when modal opens with prefilled quest type
+  useEffect(() => {
+    if (isOpen && prefilledQuestType) {
+      setFormData(prev => ({
+        ...prev,
+        type: prefilledQuestType as Quest['type']
+      }));
+    }
+  }, [isOpen, prefilledQuestType]);
+
+  const getTypeIcon = (type: Quest['type']) => {
     switch (type) {
       case 'Daily': return <Star className="w-4 h-4" />;
       case 'Main': return <Trophy className="w-4 h-4" />;
@@ -44,7 +56,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
     }
   };
 
-  const getTypeColor = (type: Quest['quest_type']) => {
+  const getTypeColor = (type: Quest['type']) => {
     switch (type) {
       case 'Daily': return 'border-yellow-500/50 text-yellow-400';
       case 'Main': return 'border-red-500/50 text-red-400';
@@ -85,32 +97,30 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
       return;
     }
 
-    const questData = {
-      quest_name: formData.quest_name.trim(),
-      description: formData.description.trim() || undefined,
+    const questData: Quest = {
+      id: crypto.randomUUID(),
+      name: formData.quest_name.trim(),
       status: 'Not started' as const,
-      xp_reward: xpValue,
-      gold_reward: goldValue,
-      quest_type: formData.quest_type,
+      xp: xpValue,
+      type: formData.type,
       priority: formData.priority,
       tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(Boolean) : undefined,
     };
 
-    const success = await createQuest(questData);
-    if (success) {
-      // Reset form
-      setFormData({
-        quest_name: '',
-        description: '',
-        xp_reward: '',
-        gold_reward: '',
-        quest_type: 'Main',
-        priority: 'Medium',
-        tags: '',
-      });
+    addQuest(questData);
+    
+    // Reset form
+    setFormData({
+      quest_name: '',
+      description: '',
+      xp_reward: '',
+      gold_reward: '',
+      type: 'Main',
+      priority: 'Medium',
+      tags: '',
+    });
 
-      onClose();
-    }
+    onClose();
   };
 
   const isAtLimit = currentQuestCount >= maxQuests;
@@ -173,8 +183,8 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
             <div>
               <Label className="text-slate-300 font-medium mb-2 block">Quest Type</Label>
               <Select 
-                value={formData.quest_type} 
-                onValueChange={(value: Quest['quest_type']) => setFormData(prev => ({ ...prev, quest_type: value }))}
+                value={formData.type} 
+                onValueChange={(value: Quest['type']) => setFormData(prev => ({ ...prev, type: value }))}
               >
                 <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
                   <SelectValue />
@@ -271,8 +281,8 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
             <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
               <h4 className="text-sm font-medium text-slate-300 mb-2">Quest Preview:</h4>
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg border ${getTypeColor(formData.quest_type)} bg-slate-800/50`}>
-                  {getTypeIcon(formData.quest_type)}
+                <div className={`p-2 rounded-lg border ${getTypeColor(formData.type)} bg-slate-800/50`}>
+                  {getTypeIcon(formData.type)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h5 className="text-white font-medium truncate">{formData.quest_name}</h5>
@@ -286,8 +296,8 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
                     <Badge className={`${formData.priority === 'High' ? 'bg-red-600' : formData.priority === 'Medium' ? 'bg-yellow-600' : 'bg-green-600'} text-white text-xs`}>
                       {formData.priority}
                     </Badge>
-                    <Badge variant="outline" className={`${getTypeColor(formData.quest_type)} border-current text-xs`}>
-                      {formData.quest_type}
+                    <Badge variant="outline" className={`${getTypeColor(formData.type)} border-current text-xs`}>
+                      {formData.type}
                     </Badge>
                   </div>
                 </div>
