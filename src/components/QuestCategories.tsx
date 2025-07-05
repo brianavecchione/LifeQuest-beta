@@ -19,6 +19,7 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [xpRange, setXpRange] = useState<number[]>([1000]);
+  const [goldRange, setGoldRange] = useState<number[]>([0, 200]);
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
   // Filtered quests
@@ -26,9 +27,11 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
     const priorityMatch = priorityFilter === 'all' || quest.priority === priorityFilter;
     const typeMatch = typeFilter === 'all' || quest.type === typeFilter;
     const xpMatch = quest.xp <= xpRange[0];
+    const questGold = calculateBaseGold(quest.xp);
+    const goldMatch = questGold >= goldRange[0] && questGold <= goldRange[1];
     const statusMatch = statusFilter === 'all' || quest.status === statusFilter;
     
-    return priorityMatch && typeMatch && xpMatch && statusMatch;
+    return priorityMatch && typeMatch && xpMatch && goldMatch && statusMatch;
   });
 
   // Group filtered quests by type
@@ -215,7 +218,7 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
           <h3 className="text-lg font-semibold text-white">Filter Quests</h3>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {/* Priority Filter */}
           <div>
             <label className="text-sm font-medium text-slate-300 mb-2 block">Priority</label>
@@ -281,6 +284,25 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
             <div className="flex justify-between text-xs text-slate-400 mt-1">
               <span>10 XP</span>
               <span>1000 XP</span>
+            </div>
+          </div>
+
+          {/* Gold Range Filter */}
+          <div>
+            <label className="text-sm font-medium text-slate-300 mb-2 block">
+              Gold: {goldRange[0]} - {goldRange[1]}
+            </label>
+            <Slider
+              value={goldRange}
+              onValueChange={setGoldRange}
+              max={200}
+              min={0}
+              step={5}
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-slate-400 mt-1">
+              <span>0 Gold</span>
+              <span>200 Gold</span>
             </div>
           </div>
         </div>
