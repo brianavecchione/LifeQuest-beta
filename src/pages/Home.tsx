@@ -1,11 +1,8 @@
 
 import React, { useState } from 'react';
 import CharacterStats from '@/components/CharacterStats';
-import QuestTimer from '@/components/QuestTimer';
 import QuestTracker from '@/components/QuestTracker';
 import NewQuestModal from '@/components/NewQuestModal';
-import { Plus, Target } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useUser } from '@/contexts/UserContext';
 
 const Home = () => {
@@ -45,31 +42,6 @@ const Home = () => {
         {/* Quest Tracker */}
         <div className="mb-12">
           <QuestTracker />
-        </div>
-
-        {/* Quick Actions */}
-        <div className="mb-12">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-emerald-600/30 shadow-2xl">
-            <h3 className="text-xl font-bold text-emerald-400 mb-4">Quick Actions</h3>
-            <div className="flex gap-4">
-              <Button 
-                onClick={() => setIsNewQuestModalOpen(true)}
-                className="bg-emerald-600 hover:bg-emerald-700"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add New Quest
-              </Button>
-              <Button variant="outline" className="border-emerald-600 text-emerald-400 hover:bg-emerald-600 hover:text-white">
-                <Target className="w-4 h-4 mr-2" />
-                Quick Daily Setup
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Quest Timer */}
-        <div className="mb-12">
-          <QuestTimer />
         </div>
 
         {/* New Quest Modal */}
