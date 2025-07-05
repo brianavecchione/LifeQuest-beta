@@ -3,28 +3,43 @@ import React, { useState } from 'react';
 import { Palette, User, Eye, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useTheme } from '@/contexts/ThemeContext';
 
 const CustomizationPanel = () => {
-  const { theme, setTheme } = useTheme();
   const [currentTab, setCurrentTab] = useState<'themes' | 'avatar'>('themes');
+  const [selectedTheme, setSelectedTheme] = useState('dark-forest');
 
   const themes = [
     {
-      id: 'default',
-      name: 'Default',
-      description: 'Modern dark adventure theme',
-      colors: ['from-slate-900', 'to-slate-800'],
-      accent: 'blue',
-      preview: '⚔️'
+      id: 'dark-forest',
+      name: 'Dark Forest',
+      description: 'Mysterious woodland adventure',
+      colors: ['from-green-900', 'to-slate-900'],
+      accent: 'emerald',
+      preview: '🌲'
     },
     {
-      id: 'classic-fantasy',
-      name: 'Classic Fantasy',
-      description: 'Medieval parchment with enchanted forest elements',
-      colors: ['from-amber-900', 'to-orange-900'],
-      accent: 'amber',
-      preview: '🏰'
+      id: 'fiery-dungeon',
+      name: 'Fiery Dungeon',
+      description: 'Blazing underground realm',
+      colors: ['from-red-900', 'to-orange-900'],
+      accent: 'red-orange',
+      preview: '🔥'
+    },
+    {
+      id: 'icy-mountains',
+      name: 'Icy Mountains',
+      description: 'Frozen peaks and glaciers',
+      colors: ['from-blue-900', 'to-cyan-900'],
+      accent: 'blue-cyan',
+      preview: '🏔️'
+    },
+    {
+      id: 'mystical-void',
+      name: 'Mystical Void',
+      description: 'Cosmic magical realm',
+      colors: ['from-purple-900', 'to-indigo-900'],
+      accent: 'purple',
+      preview: '✨'
     }
   ];
 
@@ -108,25 +123,25 @@ const CustomizationPanel = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {themes.map((themeOption) => (
+            {themes.map((theme) => (
               <div
-                key={themeOption.id}
-                onClick={() => setTheme(themeOption.id as 'default' | 'classic-fantasy')}
+                key={theme.id}
+                onClick={() => setSelectedTheme(theme.id)}
                 className={`cursor-pointer rounded-lg p-4 border-2 transition-all hover:scale-105 ${
-                  theme === themeOption.id 
+                  selectedTheme === theme.id 
                     ? 'border-pink-500 bg-pink-900/20' 
                     : 'border-slate-600 bg-slate-700/50 hover:border-slate-500'
                 }`}
               >
                 <div className="text-center">
-                  <div className="text-4xl mb-2">{themeOption.preview}</div>
-                  <h5 className="text-white font-bold mb-1">{themeOption.name}</h5>
-                  <p className="text-slate-300 text-sm mb-3">{themeOption.description}</p>
+                  <div className="text-4xl mb-2">{theme.preview}</div>
+                  <h5 className="text-white font-bold mb-1">{theme.name}</h5>
+                  <p className="text-slate-300 text-sm mb-3">{theme.description}</p>
                   
                   {/* Theme Preview */}
-                  <div className={`h-8 rounded-lg bg-gradient-to-r ${themeOption.colors[0]} ${themeOption.colors[1]} mb-3`} />
+                  <div className={`h-8 rounded-lg bg-gradient-to-r ${theme.colors[0]} ${theme.colors[1]} mb-3`} />
                   
-                  {theme === themeOption.id && (
+                  {selectedTheme === theme.id && (
                     <Badge className="bg-pink-600 text-white">
                       Active
                     </Badge>
@@ -136,11 +151,10 @@ const CustomizationPanel = () => {
             ))}
           </div>
           
-          <div className="mt-4 p-3 bg-slate-700/30 rounded-lg">
-            <p className="text-slate-400 text-sm text-center">
-              Theme applied automatically - changes are saved across sessions
-            </p>
-          </div>
+          <Button className="w-full bg-pink-600 hover:bg-pink-700 text-white">
+            <Settings className="w-4 h-4 mr-2" />
+            Apply Theme
+          </Button>
         </div>
       )}
 
