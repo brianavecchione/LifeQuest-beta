@@ -326,37 +326,21 @@ const QuestTracker = () => {
         </div>
       )}
 
-      {/* Today's Focus Section */}
-      {todaysFocus.length > 0 && (
-        <div className="bg-gradient-to-br from-amber-900/30 to-amber-800/30 rounded-xl p-6 border border-amber-600/50 shadow-2xl">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <Target className="w-6 h-6 text-amber-400" />
-              <h3 className="text-xl font-bold text-amber-400">Today's Focus</h3>
-            </div>
-            {showAddMoreQuests && (
-              <Button 
-                size="sm" 
-                onClick={() => setIsSetupModalOpen(true)}
-                className="bg-green-600 hover:bg-green-700 animate-pulse"
-              >
-                <Plus className="w-4 h-4 mr-1" />
-                Add More Quests
-              </Button>
-            )}
-          </div>
-          
-          <div className="space-y-3">
-            {focusQuests.map((quest) => renderQuestCard(quest, true))}
-          </div>
-          
-          {showAddMoreQuests && (
-            <div className="mt-4 p-4 bg-green-900/20 rounded-lg border border-green-600/30 text-center">
-              <CheckCircle2 className="w-8 h-8 text-green-400 mx-auto mb-2" />
-              <p className="text-green-400 font-medium">🎉 Focus Complete!</p>
-              <p className="text-green-300 text-sm">Great job finishing your daily focus. Ready for more?</p>
-            </div>
-          )}
+      {/* Show message when no focus quests are selected */}
+      {todaysFocus.length === 0 && (
+        <div className="bg-slate-700/30 rounded-lg p-6 border border-amber-600/30 text-center mb-6">
+          <Target className="w-12 h-12 text-amber-400 mx-auto mb-4 opacity-50" />
+          <h4 className="text-lg font-semibold text-amber-400 mb-2">Set Your Daily Focus</h4>
+          <p className="text-slate-300 mb-4">
+            Choose 3-5 quests to focus on today using Quick Daily Setup
+          </p>
+          <Button 
+            onClick={() => setIsSetupModalOpen(true)}
+            className="bg-amber-600 hover:bg-amber-700"
+          >
+            <Target className="w-4 h-4 mr-2" />
+            Quick Daily Setup
+          </Button>
         </div>
       )}
 
@@ -365,7 +349,9 @@ const QuestTracker = () => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <Trophy className="w-6 h-6 text-emerald-400" />
-            <h3 className="text-xl font-bold text-emerald-400">All Quests</h3>
+            <h3 className="text-xl font-bold text-emerald-400">
+              {todaysFocus.length > 0 ? "Today's Quests" : "All Quests"}
+            </h3>
             {pomodoroCount > 0 && (
               <Badge className="bg-amber-600 text-white ml-2">
                 <Coins className="w-3 h-3 mr-1" />
@@ -394,36 +380,31 @@ const QuestTracker = () => {
           </div>
         </div>
 
-        {/* Show message when no focus quests are selected */}
-        {todaysFocus.length === 0 && (
-          <div className="bg-slate-700/30 rounded-lg p-6 border border-amber-600/30 text-center mb-6">
-            <Target className="w-12 h-12 text-amber-400 mx-auto mb-4 opacity-50" />
-            <h4 className="text-lg font-semibold text-amber-400 mb-2">Set Your Daily Focus</h4>
-            <p className="text-slate-300 mb-4">
-              Choose 3-5 quests to focus on today using Quick Daily Setup
-            </p>
-            <Button 
-              onClick={() => setIsSetupModalOpen(true)}
-              className="bg-amber-600 hover:bg-amber-700"
-            >
-              <Target className="w-4 h-4 mr-2" />
-              Quick Daily Setup
-            </Button>
-          </div>
-        )}
-
-        {/* Daily Quests Sidebar */}
-        {dailyQuests.length > 0 && (
-          <div className="bg-slate-700/30 rounded-lg p-4 border border-yellow-600/30">
-            <div className="flex items-center gap-2 mb-4">
-              <Calendar className="w-5 h-5 text-yellow-400" />
-              <h4 className="text-lg font-semibold text-yellow-400">Daily Habits</h4>
+        {/* Unified Quest List - Focus Quests + Daily Quests */}
+        <div className="space-y-3">
+          {/* Focus Quests */}
+          {focusQuests.map((quest) => renderQuestCard(quest, true))}
+          
+          {/* Daily Quests */}
+          {dailyQuests.map((quest) => renderQuestCard(quest))}
+          
+          {/* Show completion message when all focus quests are done */}
+          {showAddMoreQuests && focusQuests.length > 0 && (
+            <div className="mt-4 p-4 bg-green-900/20 rounded-lg border border-green-600/30 text-center">
+              <CheckCircle2 className="w-8 h-8 text-green-400 mx-auto mb-2" />
+              <p className="text-green-400 font-medium">🎉 Focus Complete!</p>
+              <p className="text-green-300 text-sm">Great job finishing your daily focus. Ready for more?</p>
+              <Button 
+                size="sm" 
+                onClick={() => setIsSetupModalOpen(true)}
+                className="bg-green-600 hover:bg-green-700 mt-3"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Add More Quests
+              </Button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {dailyQuests.map((quest) => renderQuestCard(quest))}
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Pomodoro Setup Modal */}
