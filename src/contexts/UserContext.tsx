@@ -38,7 +38,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<UserData>(() => {
     // Load from localStorage if available
     const savedUser = localStorage.getItem('lifequest-user');
-    return savedUser ? JSON.parse(savedUser) : defaultUser;
+    const loadedUser = savedUser ? JSON.parse(savedUser) : defaultUser;
+    
+    // Ensure dailyXp exists for existing users
+    if (!loadedUser.dailyXp) {
+      loadedUser.dailyXp = {};
+    }
+    
+    return loadedUser;
   });
 
   // Save to localStorage whenever user data changes
@@ -66,9 +73,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       // Track daily XP
       const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+      const currentDailyXp = prev.dailyXp || {};
       const updatedDailyXp = {
-        ...prev.dailyXp,
-        [today]: (prev.dailyXp[today] || 0) + amount
+        ...currentDailyXp,
+        [today]: (currentDailyXp[today] || 0) + amount
       };
 
       return {
@@ -102,6 +110,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const last7Days = [];
     const today = new Date();
     
+    // Ensure dailyXp exists
+    const dailyXpData = user.dailyXp || {};
+    
     for (let i = 6; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
@@ -111,7 +122,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       last7Days.push({
         date: dayName,
-        xp: user.dailyXp[dateStr] || 0,
+        xp: dailyXpData[dateStr] || 0,
         day: fullDayName
       });
     }

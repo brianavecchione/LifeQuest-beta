@@ -23,7 +23,24 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
   const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
   const xpProgress = (character.xp / character.xpToNext) * 100;
 
-  const weeklyXpData = getDailyXpData();
+  // Get real XP data with fallback for safety
+  const weeklyXpData = React.useMemo(() => {
+    try {
+      return getDailyXpData();
+    } catch (error) {
+      console.error('Error getting daily XP data:', error);
+      // Fallback to empty data
+      return Array.from({ length: 7 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (6 - i));
+        return {
+          date: date.toLocaleDateString('en-US', { weekday: 'short' }),
+          xp: 0,
+          day: date.toLocaleDateString('en-US', { weekday: 'long' })
+        };
+      });
+    }
+  }, [getDailyXpData]);
 
   const monthlyXpData = [
     { date: 'Week 1', xp: 280, period: 'First week' },

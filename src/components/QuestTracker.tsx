@@ -70,27 +70,30 @@ const QuestTracker = () => {
       quests.forEach(currentQuest => {
         const previousQuest = previousQuests.find(p => p.id === currentQuest.id);
         
-        // If quest just changed to Completed, award XP and gold
+        // If quest just changed to Completed and wasn't completed before, award XP and gold
         if (previousQuest && 
             previousQuest.status !== 'Completed' && 
             currentQuest.status === 'Completed') {
           
           const baseGold = Math.floor(currentQuest.xp / 10) + 10; // Base gold calculation
           
-          addXP(currentQuest.xp);
-          addGold(baseGold);
-          
-          toast({
-            title: "Quest Complete! 🎉",
-            description: `Earned ${currentQuest.xp} XP and ${baseGold} Gold!`,
-          });
+          // Use setTimeout to avoid state updates during render
+          setTimeout(() => {
+            addXP(currentQuest.xp);
+            addGold(baseGold);
+            
+            toast({
+              title: "Quest Complete! 🎉",
+              description: `Earned ${currentQuest.xp} XP and ${baseGold} Gold!`,
+            });
+          }, 0);
         }
       });
     }
     
     // Update previous quests for next comparison
     setPreviousQuests([...quests]);
-  }, [quests, previousQuests, addXP, addGold, toast]);
+  }, [quests, previousQuests.length, addXP, addGold, toast]); // Only depend on length to avoid infinite loops
 
   // Separate quests by type - only show dailies and focused quests
   const dailyQuests = quests.filter(quest => quest.type === 'Daily');
