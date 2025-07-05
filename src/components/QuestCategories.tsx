@@ -117,85 +117,85 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
   };
 
   const QuestCard: React.FC<{ quest: Quest }> = ({ quest }) => (
-    <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50 hover:border-slate-500/70 transition-all group">
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3 flex-1">
-          <button
-            onClick={() => toggleQuestStatus(quest.id)}
-            className="shrink-0"
-          >
-            {quest.status === 'Completed' ? (
-              <CheckCircle2 className="w-5 h-5 text-green-400" />
-            ) : (
-              <Circle className="w-5 h-5 text-slate-400 hover:text-blue-400 transition-colors" />
-            )}
-          </button>
-          
-          <div className="flex-1 min-w-0">
-            <h4 className={`font-medium mb-2 ${quest.status === 'Completed' ? 'line-through text-slate-400' : 'text-white'}`}>
+    <div className="bg-slate-700/50 rounded-lg p-3 sm:p-4 border border-slate-600/50 hover:border-slate-500/70 transition-all group">
+      <div className="flex items-start gap-3 mb-3">
+        <button
+          onClick={() => toggleQuestStatus(quest.id)}
+          className="shrink-0 mt-0.5"
+        >
+          {quest.status === 'Completed' ? (
+            <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
+          ) : (
+            <Circle className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 hover:text-blue-400 transition-colors" />
+          )}
+        </button>
+        
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <h4 className={`font-medium text-sm sm:text-base leading-tight ${quest.status === 'Completed' ? 'line-through text-slate-400' : 'text-white'}`}>
               {quest.name}
             </h4>
             
-            <div className="flex items-center gap-2 mb-2">
-              <Badge variant="outline" className="text-amber-400 border-amber-400/50 text-xs">
-                {quest.xp} XP
-              </Badge>
-              <Badge variant="outline" className="text-yellow-400 border-yellow-400/50 text-xs">
-                <Coins className="w-3 h-3 mr-1" />
-                {calculateBaseGold(quest.xp)} Gold
-              </Badge>
-              <Badge className={`${getPriorityColor(quest.priority)} text-xs`}>
-                {quest.priority}
-              </Badge>
-              <button
-                onClick={() => toggleQuestStatus(quest.id)}
-                className={`px-2 py-1 rounded-full text-xs font-medium transition-colors ${getStatusColor(quest.status)}`}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 shrink-0">
+                  <MoreVertical className="w-3 h-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="end" 
+                className="bg-slate-800 border-slate-700 text-white z-50"
               >
-                {quest.status}
-              </button>
-            </div>
-            
-            {quest.tags && quest.tags.length > 0 && (
-              <div className="flex items-center gap-1 flex-wrap">
-                {quest.tags.slice(0, 2).map((tag, index) => (
-                  <span key={index} className="text-xs text-slate-400 bg-slate-600/50 px-2 py-1 rounded-full flex items-center gap-1">
-                    <Tag className="w-3 h-3" />
-                    #{tag}
-                  </span>
-                ))}
-                {quest.tags.length > 2 && (
-                  <span className="text-xs text-slate-400">+{quest.tags.length - 2}</span>
-                )}
-              </div>
-            )}
+                <DropdownMenuItem 
+                  onClick={() => onAddToFocus?.(quest.id)}
+                  className="hover:bg-slate-700 focus:bg-slate-700 text-sm"
+                >
+                  <Target className="w-4 h-4 mr-2" />
+                  Add to Today's Focus
+                </DropdownMenuItem>
+                <DropdownMenuItem className="hover:bg-slate-700 focus:bg-slate-700 text-sm">
+                  Edit Quest
+                </DropdownMenuItem>
+                <DropdownMenuItem className="hover:bg-slate-700 focus:bg-slate-700 text-red-400 text-sm">
+                  Delete Quest
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-        </div>
-        
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
-              <MoreVertical className="w-4 h-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent 
-            align="end" 
-            className="bg-slate-800 border-slate-700 text-white z-50"
-          >
-            <DropdownMenuItem 
-              onClick={() => onAddToFocus?.(quest.id)}
-              className="hover:bg-slate-700 focus:bg-slate-700"
+          
+          <div className="flex items-center gap-1 sm:gap-2 mb-2 flex-wrap">
+            <Badge variant="outline" className="text-amber-400 border-amber-400/50 text-xs px-1.5 py-0.5">
+              {quest.xp} XP
+            </Badge>
+            <Badge variant="outline" className="text-yellow-400 border-yellow-400/50 text-xs px-1.5 py-0.5">
+              <Coins className="w-3 h-3 mr-1" />
+              {calculateBaseGold(quest.xp)} Gold
+            </Badge>
+            <Badge className={`${getPriorityColor(quest.priority)} text-xs px-1.5 py-0.5`}>
+              {quest.priority}
+            </Badge>
+            <button
+              onClick={() => toggleQuestStatus(quest.id)}
+              className={`px-2 py-1 rounded-full text-xs font-medium transition-colors ${getStatusColor(quest.status)} whitespace-nowrap`}
             >
-              <Target className="w-4 h-4 mr-2" />
-              Add to Today's Focus
-            </DropdownMenuItem>
-            <DropdownMenuItem className="hover:bg-slate-700 focus:bg-slate-700">
-              Edit Quest
-            </DropdownMenuItem>
-            <DropdownMenuItem className="hover:bg-slate-700 focus:bg-slate-700 text-red-400">
-              Delete Quest
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              {quest.status}
+            </button>
+          </div>
+          
+          {quest.tags && quest.tags.length > 0 && (
+            <div className="flex items-center gap-1 flex-wrap">
+              {quest.tags.slice(0, 2).map((tag, index) => (
+                <span key={index} className="text-xs text-slate-400 bg-slate-600/50 px-2 py-1 rounded-full flex items-center gap-1 whitespace-nowrap">
+                  <Tag className="w-3 h-3" />
+                  #{tag}
+                </span>
+              ))}
+              {quest.tags.length > 2 && (
+                <span className="text-xs text-slate-400">+{quest.tags.length - 2}</span>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -209,29 +209,29 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
     const colorClasses = getCategoryColor(type);
 
     return (
-      <div className={`bg-gradient-to-br ${colorClasses} rounded-xl p-6 shadow-2xl`}>
-        <div className="flex items-center justify-between mb-6">
+      <div className={`bg-gradient-to-br ${colorClasses} rounded-xl p-4 sm:p-6 shadow-2xl`}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="flex items-center gap-3">
-            <div className="bg-white/20 p-2 rounded-lg">
-              <Icon className="w-6 h-6 text-white" />
+            <div className="bg-white/20 p-2 rounded-lg shrink-0">
+              <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <div>
-              <h3 className="text-xl font-bold text-white">{title}</h3>
-              <p className="text-white/80 text-sm">{categoryQuests.length} quests</p>
+            <div className="min-w-0">
+              <h3 className="text-lg sm:text-xl font-bold text-white truncate">{title}</h3>
+              <p className="text-white/80 text-xs sm:text-sm">{categoryQuests.length} quests</p>
             </div>
           </div>
-          <Button size="sm" className="bg-white/20 hover:bg-white/30 text-white border-white/30">
-            <Plus className="w-4 h-4 mr-1" />
-            Add Quest
+          <Button size="sm" className="bg-white/20 hover:bg-white/30 text-white border-white/30 shrink-0 h-8 sm:h-9 text-xs sm:text-sm px-3">
+            <Plus className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
+            <span className="hidden sm:inline">Add Quest</span>
           </Button>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           {categoryQuests.length === 0 ? (
-            <div className="text-center py-8 text-white/60">
-              <Icon className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p className="font-medium mb-2">No quests found</p>
-              <p className="text-sm">Add a new quest to start your adventure!</p>
+            <div className="text-center py-6 sm:py-8 text-white/60">
+              <Icon className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 opacity-50" />
+              <p className="font-medium mb-2 text-sm sm:text-base">No quests found</p>
+              <p className="text-xs sm:text-sm px-4">Add a new quest to start your adventure!</p>
             </div>
           ) : (
             categoryQuests.map((quest) => (
@@ -246,18 +246,18 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
   return (
     <div className="space-y-8">
       {/* Filter Controls */}
-      <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50 backdrop-blur-sm">
-        <div className="flex items-center gap-2 mb-6">
+      <div className="bg-slate-800/50 rounded-xl p-4 sm:p-6 border border-slate-700/50 backdrop-blur-sm">
+        <div className="flex items-center gap-2 mb-4 sm:mb-6">
           <Filter className="w-5 h-5 text-slate-400" />
-          <h3 className="text-lg font-semibold text-white">Filter Quests</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-white">Filter Quests</h3>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
           {/* Priority Filter */}
-          <div>
-            <label className="text-sm font-medium text-slate-300 mb-2 block">Priority</label>
+          <div className="min-w-0">
+            <label className="text-xs sm:text-sm font-medium text-slate-300 mb-2 block">Priority</label>
             <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-              <SelectTrigger className="bg-slate-700 border-slate-600 text-white z-50">
+              <SelectTrigger className="bg-slate-700 border-slate-600 text-white z-50 h-9 sm:h-auto text-sm">
                 <SelectValue placeholder="All Priorities" />
               </SelectTrigger>
               <SelectContent className="bg-slate-800 border-slate-700 text-white z-50">
@@ -270,10 +270,10 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
           </div>
 
           {/* Type Filter */}
-          <div>
-            <label className="text-sm font-medium text-slate-300 mb-2 block">Quest Type</label>
+          <div className="min-w-0">
+            <label className="text-xs sm:text-sm font-medium text-slate-300 mb-2 block">Quest Type</label>
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="bg-slate-700 border-slate-600 text-white z-50">
+              <SelectTrigger className="bg-slate-700 border-slate-600 text-white z-50 h-9 sm:h-auto text-sm">
                 <SelectValue placeholder="All Types" />
               </SelectTrigger>
               <SelectContent className="bg-slate-800 border-slate-700 text-white z-50">
@@ -287,10 +287,10 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
           </div>
 
           {/* Status Filter */}
-          <div>
-            <label className="text-sm font-medium text-slate-300 mb-2 block">Status</label>
+          <div className="min-w-0">
+            <label className="text-xs sm:text-sm font-medium text-slate-300 mb-2 block">Status</label>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="bg-slate-700 border-slate-600 text-white z-50">
+              <SelectTrigger className="bg-slate-700 border-slate-600 text-white z-50 h-9 sm:h-auto text-sm">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent className="bg-slate-800 border-slate-700 text-white z-50">
@@ -303,8 +303,8 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
           </div>
 
           {/* XP Range Filter */}
-          <div>
-            <label className="text-sm font-medium text-slate-300 mb-2 block">
+          <div className="min-w-0">
+            <label className="text-xs sm:text-sm font-medium text-slate-300 mb-2 block">
               Max XP: {xpRange[0]}
             </label>
             <Slider
@@ -322,8 +322,8 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
           </div>
 
           {/* Gold Range Filter */}
-          <div>
-            <label className="text-sm font-medium text-slate-300 mb-2 block">
+          <div className="min-w-0">
+            <label className="text-xs sm:text-sm font-medium text-slate-300 mb-2 block">
               Gold: {goldRange[0]} - {goldRange[1]}
             </label>
             <Slider
@@ -343,7 +343,7 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
       </div>
 
       {/* Quest Categories */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         <CategorySection type="Daily" icon={Star} title="Daily Habits" />
         <CategorySection type="Main" icon={Trophy} title="Main Quests" />
         <CategorySection type="Side" icon={Flag} title="Side Quests" />

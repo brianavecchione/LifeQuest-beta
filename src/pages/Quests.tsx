@@ -27,46 +27,48 @@ const Quests = () => {
         }} />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-8">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent mb-4">
+        <div className="text-center mb-8 lg:mb-12">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent mb-4">
             🎯 Quests
           </h1>
-          <p className="text-xl text-slate-300">
+          <p className="text-lg sm:text-xl text-slate-300 px-4">
             Organize and manage your adventures
           </p>
         </div>
 
         {/* Search and Filter */}
-        <div className="mb-12">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-blue-600/30 shadow-2xl">
-            <div className="flex gap-4 mb-6">
+        <div className="mb-8 lg:mb-12">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-4 sm:p-6 border border-blue-600/30 shadow-2xl">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
                 <Input 
                   placeholder="Search quests..." 
-                  className="pl-10 bg-slate-700 border-slate-600 text-white"
+                  className="pl-10 bg-slate-700 border-slate-600 text-white h-10 sm:h-auto"
                 />
               </div>
-              <Button variant="outline" className="border-blue-600 text-blue-400">
-                <Filter className="w-4 h-4 mr-2" />
-                Filter
-              </Button>
-              <Button 
-                onClick={() => setIsNewQuestModalOpen(true)}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                New Quest
-              </Button>
+              <div className="flex gap-2 sm:gap-3">
+                <Button variant="outline" className="border-blue-600 text-blue-400 flex-1 sm:flex-none h-10 text-sm">
+                  <Filter className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Filter</span>
+                </Button>
+                <Button 
+                  onClick={() => setIsNewQuestModalOpen(true)}
+                  className="bg-blue-600 hover:bg-blue-700 flex-1 sm:flex-none h-10 text-sm"
+                >
+                  <Plus className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">New Quest</span>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Quest Categories */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-center text-amber-400 mb-8">🗺️ Quest Categories</h2>
+        <div className="mb-8 lg:mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-amber-400 mb-6 lg:mb-8 px-4">🗺️ Quest Categories</h2>
           <QuestCategories onAddToFocus={handleAddToFocus} />
         </div>
 
