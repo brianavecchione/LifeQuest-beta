@@ -209,6 +209,10 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus, onAddQu
     const categoryQuests = groupedQuests[type];
     const colorClasses = getCategoryColor(type);
 
+    const handleAddQuestClick = () => {
+      onAddQuest?.(type);
+    };
+
     return (
       <div className={`bg-gradient-to-br ${colorClasses} rounded-xl p-6 shadow-2xl`}>
         <div className="flex items-center justify-between mb-6">
@@ -221,14 +225,22 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus, onAddQu
               <p className="text-white/80 text-sm">{categoryQuests.length} quests</p>
             </div>
           </div>
-          <button 
-            type="button"
-            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium bg-white/20 hover:bg-white/30 text-white border border-white/30 h-9 px-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 relative z-10"
-            onClick={() => onAddQuest?.(type)}
+          <div
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium bg-white/20 hover:bg-white/30 text-white border border-white/30 h-9 px-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 cursor-pointer select-none"
+            onClick={handleAddQuestClick}
+            onMouseDown={(e) => e.preventDefault()}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleAddQuestClick();
+              }
+            }}
           >
             <Plus className="w-4 h-4" />
             Add Quest
-          </button>
+          </div>
         </div>
 
         <div className="space-y-3">
