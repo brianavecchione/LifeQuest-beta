@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { UserProvider } from "./contexts/UserContext";
 import Navigation from "./components/Navigation";
 import Home from "./pages/Home";
 import Quests from "./pages/Quests";
@@ -18,24 +19,26 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Navigation />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/quests" element={<Quests />} />
-          <Route path="/achievements" element={<Achievements />} />
-          <Route path="/inventory" element={<Inventory />} />
-          <Route path="/parties" element={<Parties />} />
-          <Route path="/soundtrack" element={<Soundtrack />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <UserProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Navigation />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/quests" element={<Quests />} />
+            <Route path="/achievements" element={<Achievements />} />
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/parties" element={<Parties />} />
+            <Route path="/soundtrack" element={<Soundtrack />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </UserProvider>
   </QueryClientProvider>
 );
 

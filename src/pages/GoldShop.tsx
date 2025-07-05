@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Coins, Gift, Plus, Clock, Star, Crown, Gem } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useUser } from '@/contexts/UserContext';
 
 interface Reward {
   id: string;
@@ -25,7 +26,7 @@ interface Reward {
 
 const GoldShop = () => {
   const { toast } = useToast();
-  const [userGold] = useState(2750);
+  const { user, spendGold } = useUser();
   const [customRewardName, setCustomRewardName] = useState('');
   const [customRewardCost, setCustomRewardCost] = useState('');
   const [isAddingReward, setIsAddingReward] = useState(false);
@@ -147,12 +148,12 @@ const GoldShop = () => {
   };
 
   const redeemReward = (reward: Reward) => {
-    if (userGold >= reward.goldCost) {
+    if (user.gold >= reward.goldCost) {
       setSelectedReward(reward);
     } else {
       toast({
         title: "Not Enough Gold! 💰",
-        description: `You need ${reward.goldCost - userGold} more gold to unlock this reward.`,
+        description: `You need ${reward.goldCost - user.gold} more gold to unlock this reward.`,
         variant: "destructive"
       });
     }
@@ -161,12 +162,14 @@ const GoldShop = () => {
   const confirmRedemption = () => {
     if (!selectedReward) return;
     
-    toast({
-      title: "🎉 You've Unlocked a Reward!",
-      description: selectedReward.type === 'custom' 
-        ? "Treat yourself—mark this as complete once you enjoy it!"
-        : "Check your email for delivery details, or update your shipping info.",
-    });
+    if (spendGold(selectedReward.goldCost)) {
+      toast({
+        title: "🎉 You've Unlocked a Reward!",
+        description: selectedReward.type === 'custom' 
+          ? "Treat yourself—mark this as complete once you enjoy it!"
+          : "Check your email for delivery details, or update your shipping info.",
+      });
+    }
     
     setSelectedReward(null);
   };
@@ -197,7 +200,7 @@ const GoldShop = () => {
               <div className="flex items-center gap-3">
                 <Coins className="w-8 h-8 text-yellow-400" />
                 <div>
-                  <div className="text-2xl font-bold text-yellow-400">{userGold.toLocaleString()} Gold</div>
+                  <div className="text-2xl font-bold text-yellow-400">{user.gold.toLocaleString()} Gold</div>
                   <div className="text-sm text-slate-300">Available to spend</div>
                 </div>
               </div>
@@ -284,23 +287,23 @@ const GoldShop = () => {
                       </div>
                     </div>
                     
-                    {userGold >= reward.goldCost ? (
+                    {user.gold >= reward.goldCost ? (
                       <Progress value={100} className="h-2 mb-4" />
                     ) : (
                       <div className="mb-4">
-                        <Progress value={(userGold / reward.goldCost) * 100} className="h-2 mb-1" />
+                        <Progress value={(user.gold / reward.goldCost) * 100} className="h-2 mb-1" />
                         <div className="text-xs text-slate-400">
-                          {reward.goldCost - userGold} more gold needed
+                          {reward.goldCost - user.gold} more gold needed
                         </div>
                       </div>
                     )}
                     
                     <Button
                       onClick={() => redeemReward(reward)}
-                      disabled={userGold < reward.goldCost}
+                      disabled={user.gold < reward.goldCost}
                       className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-slate-600"
                     >
-                      {userGold >= reward.goldCost ? 'Unlock Now' : 'Need More Gold'}
+                      {user.gold >= reward.goldCost ? 'Unlock Now' : 'Need More Gold'}
                     </Button>
                   </CardContent>
                 </Card>
@@ -351,23 +354,23 @@ const GoldShop = () => {
                         </div>
                       </div>
                       
-                      {userGold >= reward.goldCost ? (
+                      {user.gold >= reward.goldCost ? (
                         <Progress value={100} className="h-2" />
                       ) : (
                         <div>
-                          <Progress value={(userGold / reward.goldCost) * 100} className="h-2 mb-1" />
+                          <Progress value={(user.gold / reward.goldCost) * 100} className="h-2 mb-1" />
                           <div className="text-xs text-slate-400">
-                            {reward.goldCost - userGold} more gold needed
+                            {reward.goldCost - user.gold} more gold needed
                           </div>
                         </div>
                       )}
                       
                       <Button
                         onClick={() => redeemReward(reward)}
-                        disabled={userGold < reward.goldCost}
+                        disabled={user.gold < reward.goldCost}
                         className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600"
                       >
-                        {userGold >= reward.goldCost ? 'Claim Now' : 'Need More Gold'}
+                        {user.gold >= reward.goldCost ? 'Claim Now' : 'Need More Gold'}
                       </Button>
                     </div>
                   </CardContent>

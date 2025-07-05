@@ -453,7 +453,11 @@ const QuestTracker = () => {
               <Target className="w-4 h-4 mr-1" />
               Quick Daily Setup
             </Button>
-            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700">
+            <Button 
+              size="sm" 
+              onClick={() => setIsSetupModalOpen(true)}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
               <Plus className="w-4 h-4 mr-1" />
               New Quest
             </Button>

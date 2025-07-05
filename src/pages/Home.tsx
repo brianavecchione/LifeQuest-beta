@@ -1,19 +1,20 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import CharacterStats from '@/components/CharacterStats';
 import QuestTimer from '@/components/QuestTimer';
 import QuestTracker from '@/components/QuestTracker';
+import NewQuestModal from '@/components/NewQuestModal';
 import { Plus, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useUser } from '@/contexts/UserContext';
 
 const Home = () => {
-  const character = {
-    name: 'Adventurer',
-    level: 2,
-    xp: 75,
-    xpToNext: 100,
-    totalXp: 333,
-    gold: 35
+  const { user } = useUser();
+  const [isNewQuestModalOpen, setIsNewQuestModalOpen] = useState(false);
+
+  const handleQuestCreated = (quest: any) => {
+    console.log('New quest created:', quest);
+    // This will be handled by individual components for now
   };
 
   return (
@@ -38,7 +39,7 @@ const Home = () => {
 
         {/* Character Stats */}
         <div className="mb-12">
-          <CharacterStats character={character} />
+          <CharacterStats character={user} />
         </div>
 
         {/* Quest Tracker */}
@@ -51,7 +52,10 @@ const Home = () => {
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-emerald-600/30 shadow-2xl">
             <h3 className="text-xl font-bold text-emerald-400 mb-4">Quick Actions</h3>
             <div className="flex gap-4">
-              <Button className="bg-emerald-600 hover:bg-emerald-700">
+              <Button 
+                onClick={() => setIsNewQuestModalOpen(true)}
+                className="bg-emerald-600 hover:bg-emerald-700"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Add New Quest
               </Button>
@@ -67,6 +71,13 @@ const Home = () => {
         <div className="mb-12">
           <QuestTimer />
         </div>
+
+        {/* New Quest Modal */}
+        <NewQuestModal
+          isOpen={isNewQuestModalOpen}
+          onClose={() => setIsNewQuestModalOpen(false)}
+          onQuestCreated={handleQuestCreated}
+        />
       </div>
     </div>
   );

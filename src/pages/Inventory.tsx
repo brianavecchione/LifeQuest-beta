@@ -29,13 +29,22 @@ const Inventory = () => {
         {/* Inventory Tabs */}
         <Tabs defaultValue="inventory" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-slate-800 border-slate-700 mb-8">
-            <TabsTrigger value="inventory" className="data-[state=active]:bg-amber-600">
+            <TabsTrigger 
+              value="inventory" 
+              className="data-[state=active]:bg-amber-600 data-[state=active]:text-white"
+            >
               Inventory & Gear
             </TabsTrigger>
-            <TabsTrigger value="gold-shop" className="data-[state=active]:bg-yellow-600">
+            <TabsTrigger 
+              value="gold-shop" 
+              className="data-[state=active]:bg-yellow-600 data-[state=active]:text-white"
+            >
               Gold Shop
             </TabsTrigger>
-            <TabsTrigger value="minigames" className="data-[state=active]:bg-purple-600">
+            <TabsTrigger 
+              value="minigames" 
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+            >
               Minigames
             </TabsTrigger>
           </TabsList>

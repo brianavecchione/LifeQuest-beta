@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import QuestCategories from '@/components/QuestCategories';
 import NarrativeJournal from '@/components/NarrativeJournal';
+import NewQuestModal from '@/components/NewQuestModal';
 import { Search, Filter, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,12 +10,18 @@ import { useToast } from '@/hooks/use-toast';
 
 const Quests = () => {
   const { toast } = useToast();
+  const [isNewQuestModalOpen, setIsNewQuestModalOpen] = useState(false);
 
   const handleAddToFocus = (questId: string) => {
     toast({
       title: "Added to Today's Focus!",
       description: "This quest will appear in your daily focus on the Today page.",
     });
+  };
+
+  const handleQuestCreated = (quest: any) => {
+    console.log('New quest created:', quest);
+    // This will be handled by individual components for now
   };
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -51,7 +58,10 @@ const Quests = () => {
                 <Filter className="w-4 h-4 mr-2" />
                 Filter
               </Button>
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button 
+                onClick={() => setIsNewQuestModalOpen(true)}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 New Quest
               </Button>
@@ -69,6 +79,13 @@ const Quests = () => {
         <div className="mb-12">
           <NarrativeJournal />
         </div>
+
+        {/* New Quest Modal */}
+        <NewQuestModal
+          isOpen={isNewQuestModalOpen}
+          onClose={() => setIsNewQuestModalOpen(false)}
+          onQuestCreated={handleQuestCreated}
+        />
       </div>
     </div>
   );

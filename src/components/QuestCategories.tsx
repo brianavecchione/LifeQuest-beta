@@ -222,7 +222,7 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3 flex-1">
           <button
-            onClick={() => quest.status === 'Completed' ? null : quest.status === 'Not started' ? toggleQuestStatus(quest.id) : toggleQuestStatus(quest.id)}
+            onClick={() => toggleQuestStatus(quest.id)}
             className="shrink-0"
           >
             {quest.status === 'Completed' ? (
