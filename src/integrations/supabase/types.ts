@@ -14,25 +14,40 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           display_name: string | null
+          gold_balance: number
           id: string
+          level_progress: number
+          party_rank: string | null
           updated_at: string
           user_id: string
+          user_level: number
+          xp_balance: number
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
+          gold_balance?: number
           id?: string
+          level_progress?: number
+          party_rank?: string | null
           updated_at?: string
           user_id: string
+          user_level?: number
+          xp_balance?: number
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
+          gold_balance?: number
           id?: string
+          level_progress?: number
+          party_rank?: string | null
           updated_at?: string
           user_id?: string
+          user_level?: number
+          xp_balance?: number
         }
         Relationships: []
       }
@@ -89,7 +104,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_level_from_xp: {
+        Args: { total_xp: number }
+        Returns: number
+      }
+      calculate_level_progress: {
+        Args: { total_xp: number; current_level: number }
+        Returns: number
+      }
+      calculate_xp_for_level: {
+        Args: { level_num: number }
+        Returns: number
+      }
+      update_user_stats: {
+        Args: { p_user_id: string; xp_gained: number; gold_gained: number }
+        Returns: undefined
+      }
     }
     Enums: {
       quest_priority: "Low" | "Medium" | "High"
