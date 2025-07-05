@@ -28,36 +28,36 @@ const Inventory = () => {
 
         {/* Inventory Tabs */}
         <Tabs defaultValue="inventory" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-slate-800 border-slate-700 mb-8">
+          <TabsList className="grid w-full grid-cols-3 bg-slate-800/50 border border-slate-700 mb-8 p-1 rounded-lg">
             <TabsTrigger 
               value="inventory" 
-              className="data-[state=active]:bg-amber-600 data-[state=active]:text-white"
+              className="data-[state=active]:bg-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 rounded-md"
             >
               Inventory & Gear
             </TabsTrigger>
             <TabsTrigger 
               value="gold-shop" 
-              className="data-[state=active]:bg-yellow-600 data-[state=active]:text-white"
+              className="data-[state=active]:bg-yellow-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 rounded-md"
             >
               Gold Shop
             </TabsTrigger>
             <TabsTrigger 
               value="minigames" 
-              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 rounded-md"
             >
               Minigames
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="inventory">
+          <TabsContent value="inventory" className="focus-visible:outline-none">
             <InventorySystem />
           </TabsContent>
 
-          <TabsContent value="gold-shop">
+          <TabsContent value="gold-shop" className="focus-visible:outline-none">
             <GoldShop />
           </TabsContent>
 
-          <TabsContent value="minigames">
+          <TabsContent value="minigames" className="focus-visible:outline-none">
             <Minigames />
           </TabsContent>
         </Tabs>
