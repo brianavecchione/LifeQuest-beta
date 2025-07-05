@@ -19,7 +19,7 @@ import { useUser } from '@/contexts/UserContext';
 const QuestTracker = () => {
   const { toast } = useToast();
   const { quests, addQuest, toggleQuestStatus } = useQuests();
-  const { addXP, addGold } = useUser();
+  const { addXP, subtractXP, addGold, subtractGold } = useUser();
 
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
   const [isNewQuestModalOpen, setIsNewQuestModalOpen] = useState(false);
@@ -70,22 +70,30 @@ const QuestTracker = () => {
       quests.forEach(currentQuest => {
         const previousQuest = previousQuests.find(p => p.id === currentQuest.id);
         
-        // If quest just changed to Completed and wasn't completed before, award XP and gold
-        if (previousQuest && 
-            previousQuest.status !== 'Completed' && 
-            currentQuest.status === 'Completed') {
-          
-          const baseGold = Math.floor(currentQuest.xp / 10) + 10; // Base gold calculation
+        if (previousQuest && previousQuest.status !== currentQuest.status) {
+          const baseGold = Math.floor(currentQuest.xp / 10) + 10;
           
           // Use setTimeout to avoid state updates during render
           setTimeout(() => {
-            addXP(currentQuest.xp);
-            addGold(baseGold);
-            
-            toast({
-              title: "Quest Complete! 🎉",
-              description: `Earned ${currentQuest.xp} XP and ${baseGold} Gold!`,
-            });
+            if (previousQuest.status !== 'Completed' && currentQuest.status === 'Completed') {
+              // Quest was just completed
+              addXP(currentQuest.xp);
+              addGold(baseGold);
+              
+              toast({
+                title: "Quest Complete! 🎉",
+                description: `Earned ${currentQuest.xp} XP and ${baseGold} Gold!`,
+              });
+            } else if (previousQuest.status === 'Completed' && currentQuest.status !== 'Completed') {
+              // Quest was just uncompleted
+              subtractXP(currentQuest.xp);
+              subtractGold(baseGold);
+              
+              toast({
+                title: "Quest Uncompleted",
+                description: `Removed ${currentQuest.xp} XP and ${baseGold} Gold.`,
+              });
+            }
           }, 0);
         }
       });
@@ -93,7 +101,7 @@ const QuestTracker = () => {
     
     // Update previous quests for next comparison
     setPreviousQuests([...quests]);
-  }, [quests, previousQuests.length, addXP, addGold, toast]); // Only depend on length to avoid infinite loops
+  }, [quests, previousQuests.length, addXP, subtractXP, addGold, subtractGold, toast]);
 
   // Separate quests by type - only show dailies and focused quests
   const dailyQuests = quests.filter(quest => quest.type === 'Daily');

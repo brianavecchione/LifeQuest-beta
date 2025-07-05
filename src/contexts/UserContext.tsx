@@ -15,7 +15,9 @@ interface UserContextType {
   user: UserData;
   updateUser: (updates: Partial<UserData>) => void;
   addXP: (amount: number) => void;
+  subtractXP: (amount: number) => void;
   addGold: (amount: number) => void;
+  subtractGold: (amount: number) => void;
   spendGold: (amount: number) => boolean;
   incrementPomodoro: () => void;
   getDailyXpData: () => Array<{ date: string; xp: number; day: string }>;
@@ -94,6 +96,43 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(prev => ({ ...prev, gold: prev.gold + amount }));
   };
 
+  const subtractXP = (amount: number) => {
+    setUser(prev => {
+      const newTotalXp = Math.max(0, prev.totalXp - amount);
+      let newXp = Math.max(0, prev.xp - amount);
+      let newLevel = prev.level;
+      let newXpToNext = prev.xpToNext;
+
+      // Level down logic if necessary
+      while (newXp < 0 && newLevel > 1) {
+        newLevel--;
+        newXpToNext = newLevel * 100;
+        newXp += newXpToNext;
+      }
+
+      // Track daily XP subtraction
+      const today = new Date().toISOString().split('T')[0];
+      const currentDailyXp = prev.dailyXp || {};
+      const updatedDailyXp = {
+        ...currentDailyXp,
+        [today]: Math.max(0, (currentDailyXp[today] || 0) - amount)
+      };
+
+      return {
+        ...prev,
+        xp: Math.max(0, newXp),
+        level: newLevel,
+        xpToNext: newXpToNext,
+        totalXp: newTotalXp,
+        dailyXp: updatedDailyXp,
+      };
+    });
+  };
+
+  const subtractGold = (amount: number) => {
+    setUser(prev => ({ ...prev, gold: Math.max(0, prev.gold - amount) }));
+  };
+
   const spendGold = (amount: number): boolean => {
     if (user.gold >= amount) {
       setUser(prev => ({ ...prev, gold: prev.gold - amount }));
@@ -134,7 +173,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user,
     updateUser,
     addXP,
+    subtractXP,
     addGold,
+    subtractGold,
     spendGold,
     incrementPomodoro,
     getDailyXpData,
