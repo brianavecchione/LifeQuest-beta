@@ -13,7 +13,6 @@ import Quests from "./pages/Quests";
 import Achievements from "./pages/Achievements";
 import Inventory from "./pages/Inventory";
 import Parties from "./pages/Parties";
-import Soundtrack from "./pages/Soundtrack";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -37,7 +36,6 @@ const App = () => (
                 <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
                 <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
                 <Route path="/parties" element={<ProtectedRoute><Parties /></ProtectedRoute>} />
-                <Route path="/soundtrack" element={<ProtectedRoute><Soundtrack /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

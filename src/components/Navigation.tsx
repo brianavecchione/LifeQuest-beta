@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Target, Trophy, Sword, Music, Settings, Users, LogOut, Coins } from 'lucide-react';
+import { Home, Target, Trophy, Sword, Settings, Users, LogOut, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/contexts/UserContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -31,7 +31,6 @@ const Navigation = () => {
     { path: '/achievements', label: 'Achievements', icon: Trophy },
     { path: '/inventory', label: 'Inventory', icon: Sword },
     { path: '/parties', label: 'Parties', icon: Users },
-    { path: '/soundtrack', label: 'Atmosphere', icon: Music },
     { path: '/settings', label: 'Settings', icon: Settings },
   ];
 

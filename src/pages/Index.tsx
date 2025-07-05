@@ -6,12 +6,10 @@ import QuestTracker from '@/components/QuestTracker';
 import QuestCategories from '@/components/QuestCategories';
 
 import BadgeSystem from '@/components/BadgeSystem';
-import Soundtrack from '@/components/Soundtrack';
 import AISidekick from '@/components/AISidekick';
 import NarrativeJournal from '@/components/NarrativeJournal';
 import AchievementsSection from '@/components/AchievementsSection';
 import InventorySystem from '@/components/InventorySystem';
-import CustomizationPanel from '@/components/CustomizationPanel';
 
 const Index = () => {
   const character = {
@@ -79,16 +77,6 @@ const Index = () => {
         {/* Badge System */}
         <div className="mb-12">
           <BadgeSystem />
-        </div>
-
-        {/* Customization Panel */}
-        <div className="mb-12">
-          <CustomizationPanel />
-        </div>
-
-        {/* Soundtrack */}
-        <div className="mb-12">
-          <Soundtrack />
         </div>
 
         {/* Quest Timer - moved to bottom */}
