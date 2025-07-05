@@ -52,14 +52,12 @@ const QuestTracker = () => {
     }
   }, [quests, todaysFocus]);
 
-  // Separate quests by type
+  // Separate quests by type - only show dailies and focused quests
   const dailyQuests = quests.filter(quest => quest.type === 'Daily');
   const focusQuests = quests.filter(quest => 
     todaysFocus.includes(quest.id) && quest.type !== 'Daily'
   );
-  const otherQuests = quests.filter(quest => 
-    quest.type !== 'Daily' && !todaysFocus.includes(quest.id)
-  );
+  // Don't show other quests on Today page - only focused quests and dailies
 
   const getStatusColor = (status: Quest['status']) => {
     switch (status) {
@@ -396,11 +394,21 @@ const QuestTracker = () => {
           </div>
         </div>
 
-        {/* Other Quests (non-daily, non-focused) */}
-        {otherQuests.length > 0 && (
-          <div className="space-y-3 mb-6">
-            <h4 className="text-lg font-semibold text-slate-300">Main & Side Quests</h4>
-            {otherQuests.map((quest) => renderQuestCard(quest))}
+        {/* Show message when no focus quests are selected */}
+        {todaysFocus.length === 0 && (
+          <div className="bg-slate-700/30 rounded-lg p-6 border border-amber-600/30 text-center mb-6">
+            <Target className="w-12 h-12 text-amber-400 mx-auto mb-4 opacity-50" />
+            <h4 className="text-lg font-semibold text-amber-400 mb-2">Set Your Daily Focus</h4>
+            <p className="text-slate-300 mb-4">
+              Choose 3-5 quests to focus on today using Quick Daily Setup
+            </p>
+            <Button 
+              onClick={() => setIsSetupModalOpen(true)}
+              className="bg-amber-600 hover:bg-amber-700"
+            >
+              <Target className="w-4 h-4 mr-2" />
+              Quick Daily Setup
+            </Button>
           </div>
         )}
 
