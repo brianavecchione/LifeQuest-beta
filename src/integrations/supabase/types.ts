@@ -9,6 +9,54 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          achievement_name: string
+          achievement_progress_current: number
+          achievement_progress_goal: number
+          created_at: string
+          description: string
+          earned_at: string | null
+          gold_reward: number
+          id: string
+          is_completed: boolean
+          quest_value: Database["public"]["Enums"]["achievement_tier"]
+          updated_at: string
+          user_id: string
+          xp_reward: number
+        }
+        Insert: {
+          achievement_name: string
+          achievement_progress_current?: number
+          achievement_progress_goal?: number
+          created_at?: string
+          description: string
+          earned_at?: string | null
+          gold_reward?: number
+          id?: string
+          is_completed?: boolean
+          quest_value?: Database["public"]["Enums"]["achievement_tier"]
+          updated_at?: string
+          user_id: string
+          xp_reward?: number
+        }
+        Update: {
+          achievement_name?: string
+          achievement_progress_current?: number
+          achievement_progress_goal?: number
+          created_at?: string
+          description?: string
+          earned_at?: string | null
+          gold_reward?: number
+          id?: string
+          is_completed?: boolean
+          quest_value?: Database["public"]["Enums"]["achievement_tier"]
+          updated_at?: string
+          user_id?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -122,6 +170,7 @@ export type Database = {
       }
     }
     Enums: {
+      achievement_tier: "Bronze" | "Silver" | "Gold" | "Legendary"
       quest_priority: "Low" | "Medium" | "High"
       quest_type: "Daily" | "Main" | "Side" | "Legendary"
     }
@@ -239,6 +288,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      achievement_tier: ["Bronze", "Silver", "Gold", "Legendary"],
       quest_priority: ["Low", "Medium", "High"],
       quest_type: ["Daily", "Main", "Side", "Legendary"],
     },
