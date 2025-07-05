@@ -11,6 +11,13 @@ const Navigation = () => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { user } = useUser();
 
+  // Hide navigation on login and other auth pages
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/forgot-password';
+  
+  if (isAuthPage) {
+    return null;
+  }
+
   const handleLogout = async () => {
     setIsLoggingOut(true);
     
