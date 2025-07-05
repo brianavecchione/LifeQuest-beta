@@ -326,40 +326,6 @@ const QuestTracker = () => {
         </div>
       )}
 
-      {/* Today's Focus Section */}
-      {todaysFocus.length > 0 && (
-        <div className="bg-gradient-to-br from-amber-900/30 to-amber-800/30 rounded-xl p-6 border border-amber-600/50 shadow-2xl">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <Target className="w-6 h-6 text-amber-400" />
-              <h3 className="text-xl font-bold text-amber-400">Today's Focus</h3>
-            </div>
-            {showAddMoreQuests && (
-              <Button 
-                size="sm" 
-                onClick={() => setIsSetupModalOpen(true)}
-                className="bg-green-600 hover:bg-green-700 animate-pulse"
-              >
-                <Plus className="w-4 h-4 mr-1" />
-                Add More Quests
-              </Button>
-            )}
-          </div>
-          
-          <div className="space-y-3">
-            {focusQuests.map((quest) => renderQuestCard(quest, true))}
-          </div>
-          
-          {showAddMoreQuests && (
-            <div className="mt-4 p-4 bg-green-900/20 rounded-lg border border-green-600/30 text-center">
-              <CheckCircle2 className="w-8 h-8 text-green-400 mx-auto mb-2" />
-              <p className="text-green-400 font-medium">🎉 Focus Complete!</p>
-              <p className="text-green-300 text-sm">Great job finishing your daily focus. Ready for more?</p>
-            </div>
-          )}
-        </div>
-      )}
-
       {/* Main Quest Tracker */}
       <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-emerald-600/30 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
@@ -409,6 +375,40 @@ const QuestTracker = () => {
               <Target className="w-4 h-4 mr-2" />
               Quick Daily Setup
             </Button>
+          </div>
+        )}
+
+        {/* Today's Focus Section */}
+        {todaysFocus.length > 0 && (
+          <div className="bg-gradient-to-br from-amber-900/30 to-amber-800/30 rounded-lg p-6 border border-amber-600/50 mb-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <Target className="w-6 h-6 text-amber-400" />
+                <h4 className="text-lg font-bold text-amber-400">Today's Focus</h4>
+              </div>
+              {showAddMoreQuests && (
+                <Button 
+                  size="sm" 
+                  onClick={() => setIsSetupModalOpen(true)}
+                  className="bg-green-600 hover:bg-green-700 animate-pulse"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add More Quests
+                </Button>
+              )}
+            </div>
+            
+            <div className="space-y-3">
+              {focusQuests.map((quest) => renderQuestCard(quest, true))}
+            </div>
+            
+            {showAddMoreQuests && (
+              <div className="mt-4 p-4 bg-green-900/20 rounded-lg border border-green-600/30 text-center">
+                <CheckCircle2 className="w-8 h-8 text-green-400 mx-auto mb-2" />
+                <p className="text-green-400 font-medium">🎉 Focus Complete!</p>
+                <p className="text-green-300 text-sm">Great job finishing your daily focus. Ready for more?</p>
+              </div>
+            )}
           </div>
         )}
 
