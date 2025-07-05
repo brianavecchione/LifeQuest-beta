@@ -224,7 +224,12 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus, onAddQu
           <Button 
             size="sm" 
             className="bg-white/20 hover:bg-white/30 text-white border-white/30"
-            onClick={() => onAddQuest?.(type)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onAddQuest?.(type);
+            }}
+            type="button"
           >
             <Plus className="w-4 h-4 mr-1" />
             Add Quest
