@@ -486,17 +486,6 @@ const QuestTracker = () => {
             </div>
           </div>
         )}
-
-        <div className="mt-4 text-center text-slate-400 text-sm">
-          Total XP Available: <span className="text-amber-400 font-bold">
-            {quests.reduce((total, quest) => total + quest.xp, 0)}
-          </span>
-          {goldEarned > 0 && (
-            <span className="ml-4">
-              Gold Earned Today: <span className="text-yellow-400 font-bold">{goldEarned}</span>
-            </span>
-          )}
-        </div>
       </div>
 
       {/* Pomodoro Setup Modal */}
