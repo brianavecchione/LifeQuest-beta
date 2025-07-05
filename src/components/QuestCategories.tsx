@@ -7,6 +7,8 @@ import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useQuests, Quest } from '@/contexts/QuestContext';
+import { useUser } from '@/contexts/UserContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface QuestCategoriesProps {
   onAddToFocus?: (questId: string) => void;
@@ -14,6 +16,8 @@ interface QuestCategoriesProps {
 
 const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
   const { quests, toggleQuestStatus } = useQuests();
+  const { addXP, addGold } = useUser();
+  const { toast } = useToast();
 
   // Helper function to calculate base gold - moved to top to avoid hoisting issues
   const calculateBaseGold = (xp: number) => {
@@ -26,6 +30,35 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
   const [xpRange, setXpRange] = useState<number[]>([1000]);
   const [goldRange, setGoldRange] = useState<number[]>([0, 200]);
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [previousQuests, setPreviousQuests] = useState<Quest[]>([]);
+
+  // Track quest completions and award XP and Gold
+  useEffect(() => {
+    if (previousQuests.length > 0) {
+      quests.forEach(currentQuest => {
+        const previousQuest = previousQuests.find(p => p.id === currentQuest.id);
+        
+        // If quest just changed to Completed, award XP and gold
+        if (previousQuest && 
+            previousQuest.status !== 'Completed' && 
+            currentQuest.status === 'Completed') {
+          
+          const baseGold = calculateBaseGold(currentQuest.xp);
+          
+          addXP(currentQuest.xp);
+          addGold(baseGold);
+          
+          toast({
+            title: "Quest Complete! 🎉",
+            description: `Earned ${currentQuest.xp} XP and ${baseGold} Gold!`,
+          });
+        }
+      });
+    }
+    
+    // Update previous quests for next comparison
+    setPreviousQuests([...quests]);
+  }, [quests, previousQuests, addXP, addGold, toast]);
 
   // Filtered quests
   const filteredQuests = quests.filter(quest => {
