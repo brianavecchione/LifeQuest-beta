@@ -15,6 +15,7 @@ interface Quest {
   description?: string;
   status: 'Not started' | 'In Progress' | 'Completed';
   xp: number;
+  gold: number;
   type: 'Daily' | 'Main' | 'Side' | 'Legendary';
   priority: 'Low' | 'Medium' | 'High';
   tags?: string[];
@@ -40,6 +41,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
     name: '',
     description: '',
     xp: '',
+    gold: '',
     type: 'Main' as Quest['type'],
     priority: 'Medium' as Quest['priority'],
     tags: '',
@@ -66,10 +68,10 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name.trim() || !formData.xp) {
+    if (!formData.name.trim() || !formData.xp || !formData.gold) {
       toast({
         title: "Missing Information",
-        description: "Please fill in the quest name and XP value.",
+        description: "Please fill in the quest name, XP value, and Gold reward.",
         variant: "destructive"
       });
       return;
@@ -85,12 +87,23 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
       return;
     }
 
+    const goldValue = parseInt(formData.gold);
+    if (isNaN(goldValue) || goldValue < 0) {
+      toast({
+        title: "Invalid Gold Value",
+        description: "Gold must be a non-negative number.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     const newQuest: Quest = {
       id: Date.now().toString(),
       name: formData.name.trim(),
       description: formData.description.trim() || undefined,
       status: 'Not started',
       xp: xpValue,
+      gold: goldValue,
       type: formData.type,
       priority: formData.priority,
       tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(Boolean) : undefined,
@@ -103,6 +116,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
       name: '',
       description: '',
       xp: '',
+      gold: '',
       type: 'Main',
       priority: 'Medium',
       tags: '',
@@ -210,7 +224,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* XP Value */}
             <div>
               <Label htmlFor="quest-xp" className="text-slate-300 font-medium">
@@ -228,6 +242,26 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
               />
               <p className="text-xs text-slate-400 mt-1">
                 Suggested: Daily (10-30), Side (30-100), Main (100-300), Legendary (500+)
+              </p>
+            </div>
+
+            {/* Gold Value */}
+            <div>
+              <Label htmlFor="quest-gold" className="text-slate-300 font-medium">
+                Gold Reward *
+              </Label>
+              <Input
+                id="quest-gold"
+                type="number"
+                value={formData.gold}
+                onChange={(e) => setFormData(prev => ({ ...prev, gold: e.target.value }))}
+                placeholder="e.g., 25"
+                className="bg-slate-700 border-slate-600 text-white mt-1"
+                min="0"
+                max="1000"
+              />
+              <p className="text-xs text-slate-400 mt-1">
+                Suggested: Daily (5-15), Side (15-50), Main (50-150), Legendary (200+)
               </p>
             </div>
 
@@ -262,6 +296,9 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant="outline" className="text-amber-400 border-amber-400/50 text-xs">
                       {formData.xp || 0} XP
+                    </Badge>
+                    <Badge variant="outline" className="text-yellow-500 border-yellow-500/50 text-xs">
+                      {formData.gold || 0} Gold
                     </Badge>
                     <Badge className={`${formData.priority === 'High' ? 'bg-red-600' : formData.priority === 'Medium' ? 'bg-yellow-600' : 'bg-green-600'} text-white text-xs`}>
                       {formData.priority}
