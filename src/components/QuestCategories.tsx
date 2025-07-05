@@ -15,6 +15,11 @@ interface QuestCategoriesProps {
 const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
   const { quests, toggleQuestStatus } = useQuests();
 
+  // Helper function to calculate base gold - moved to top to avoid hoisting issues
+  const calculateBaseGold = (xp: number) => {
+    return Math.floor(xp / 10) + 10;
+  };
+
   // Filter states
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
@@ -76,10 +81,6 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
       case 'Legendary': return 'from-purple-600 to-violet-600 border-purple-500/50';
       default: return 'from-slate-600 to-slate-700 border-slate-500/50';
     }
-  };
-
-  const calculateBaseGold = (xp: number) => {
-    return Math.floor(xp / 10) + 10; // Base gold calculation
   };
 
   const QuestCard: React.FC<{ quest: Quest }> = ({ quest }) => (
