@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Target, Trophy, Sword, Settings, Users, LogOut, Coins, Menu, X } from 'lucide-react';
+import { Home, Target, Trophy, Sword, Settings, Users, LogOut, Coins, Menu, X, Crown, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/contexts/UserContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -53,12 +53,14 @@ const Navigation = () => {
               <div className="flex items-center gap-2 bg-slate-700/50 px-2 py-1 rounded-lg border border-amber-500/30">
                 <Coins className="w-4 h-4 text-yellow-400" />
                 <span className="text-yellow-400 font-bold text-sm">{userContext.gold.toLocaleString()}</span>
-                <span className="text-slate-400 text-xs">Gold</span>
               </div>
               <div className="flex items-center gap-2 bg-slate-700/50 px-2 py-1 rounded-lg border border-blue-500/30">
+                <Crown className="w-4 h-4 text-blue-400" />
                 <span className="text-blue-400 font-bold text-sm">Lv.{userContext.level}</span>
-                <span className="text-slate-400 text-xs">•</span>
-                <span className="text-blue-400 font-bold text-sm">{userContext.totalXp} XP</span>
+              </div>
+              <div className="flex items-center gap-2 bg-slate-700/50 px-2 py-1 rounded-lg border border-purple-500/30">
+                <Zap className="w-4 h-4 text-purple-400" />
+                <span className="text-purple-400 font-bold text-sm">{userContext.totalXp} XP</span>
               </div>
             </div>
           </div>
@@ -132,12 +134,14 @@ const Navigation = () => {
                 <div className="flex items-center gap-2">
                   <Coins className="w-4 h-4 text-yellow-400" />
                   <span className="text-yellow-400 font-bold text-sm">{userContext.gold.toLocaleString()}</span>
-                  <span className="text-slate-400 text-xs">Gold</span>
                 </div>
                 <div className="flex items-center gap-2">
+                  <Crown className="w-4 h-4 text-blue-400" />
                   <span className="text-blue-400 font-bold text-sm">Lv.{userContext.level}</span>
-                  <span className="text-slate-400 text-xs">•</span>
-                  <span className="text-blue-400 font-bold text-sm">{userContext.totalXp} XP</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-purple-400" />
+                  <span className="text-purple-400 font-bold text-sm">{userContext.totalXp} XP</span>
                 </div>
               </div>
 
