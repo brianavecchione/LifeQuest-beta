@@ -23,7 +23,11 @@ const QuestTracker = () => {
 
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
   const [isNewQuestModalOpen, setIsNewQuestModalOpen] = useState(false);
-  const [todaysFocus, setTodaysFocus] = useState<string[]>([]);
+  const [todaysFocus, setTodaysFocus] = useState<string[]>(() => {
+    // Load from localStorage if available
+    const savedFocus = localStorage.getItem('lifequest-todays-focus');
+    return savedFocus ? JSON.parse(savedFocus) : [];
+  });
   const [showAddMoreQuests, setShowAddMoreQuests] = useState(false);
 
   // Pomodoro Timer States
@@ -54,6 +58,11 @@ const QuestTracker = () => {
       setShowAddMoreQuests(allCompleted);
     }
   }, [quests, todaysFocus]);
+
+  // Save todaysFocus to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('lifequest-todays-focus', JSON.stringify(todaysFocus));
+  }, [todaysFocus]);
 
   // Track quest completions and award XP
   useEffect(() => {
