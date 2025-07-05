@@ -12,10 +12,9 @@ import { useToast } from '@/hooks/use-toast';
 
 interface QuestCategoriesProps {
   onAddToFocus?: (questId: string) => void;
-  onAddQuest?: (questType: Quest['type']) => void;
 }
 
-const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus, onAddQuest }) => {
+const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
   const { quests, toggleQuestStatus } = useQuests();
   const { addXP, addGold } = useUser();
   const { toast } = useToast();
@@ -221,17 +220,10 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus, onAddQu
               <p className="text-white/80 text-sm">{categoryQuests.length} quests</p>
             </div>
           </div>
-          <div
-            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium bg-white/20 hover:bg-white/30 text-white border border-white/30 h-9 px-3 transition-colors cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              onAddQuest?.(type);
-            }}
-          >
-            <Plus className="w-4 h-4" />
+          <Button size="sm" className="bg-white/20 hover:bg-white/30 text-white border-white/30">
+            <Plus className="w-4 h-4 mr-1" />
             Add Quest
-          </div>
+          </Button>
         </div>
 
         <div className="space-y-3">

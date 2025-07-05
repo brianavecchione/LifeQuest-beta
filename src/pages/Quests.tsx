@@ -11,18 +11,12 @@ import { useToast } from '@/hooks/use-toast';
 const Quests = () => {
   const { toast } = useToast();
   const [isNewQuestModalOpen, setIsNewQuestModalOpen] = useState(false);
-  const [prefilledQuestType, setPrefilledQuestType] = useState<string>('');
 
   const handleAddToFocus = (questId: string) => {
     toast({
       title: "Added to Today's Focus!",
       description: "This quest will appear in your daily focus on the Today page.",
     });
-  };
-
-  const handleAddQuest = (questType: string) => {
-    setPrefilledQuestType(questType);
-    setIsNewQuestModalOpen(true);
   };
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -73,7 +67,7 @@ const Quests = () => {
         {/* Quest Categories */}
         <div className="mb-12">
           <h2 className="text-3xl font-bold text-center text-amber-400 mb-8">🗺️ Quest Categories</h2>
-          <QuestCategories onAddToFocus={handleAddToFocus} onAddQuest={handleAddQuest} />
+          <QuestCategories onAddToFocus={handleAddToFocus} />
         </div>
 
         {/* Narrative Journal */}
@@ -84,11 +78,7 @@ const Quests = () => {
         {/* New Quest Modal */}
         <NewQuestModal
           isOpen={isNewQuestModalOpen}
-          onClose={() => {
-            setIsNewQuestModalOpen(false);
-            setPrefilledQuestType('');
-          }}
-          prefilledQuestType={prefilledQuestType}
+          onClose={() => setIsNewQuestModalOpen(false)}
         />
       </div>
     </div>
