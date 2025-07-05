@@ -12,9 +12,10 @@ import { useToast } from '@/hooks/use-toast';
 
 interface QuestCategoriesProps {
   onAddToFocus?: (questId: string) => void;
+  searchQuery?: string;
 }
 
-const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
+const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus, searchQuery = '' }) => {
   const { quests, toggleQuestStatus } = useQuests();
   const { addXP, addGold } = useUser();
   const { toast } = useToast();
@@ -69,7 +70,14 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
     const goldMatch = questGold >= goldRange[0] && questGold <= goldRange[1];
     const statusMatch = statusFilter === 'all' || quest.status === statusFilter;
     
-    return priorityMatch && typeMatch && xpMatch && goldMatch && statusMatch;
+    // Search functionality - case insensitive, partial matches
+    const searchMatch = searchQuery.trim() === '' || 
+      quest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (quest.tags && quest.tags.some(tag => 
+        tag.toLowerCase().includes(searchQuery.toLowerCase())
+      ));
+    
+    return priorityMatch && typeMatch && xpMatch && goldMatch && statusMatch && searchMatch;
   });
 
   // Group filtered quests by type
@@ -230,8 +238,15 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
           {categoryQuests.length === 0 ? (
             <div className="text-center py-6 sm:py-8 text-white/60">
               <Icon className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 opacity-50" />
-              <p className="font-medium mb-2 text-sm sm:text-base">No quests found</p>
-              <p className="text-xs sm:text-sm px-4">Add a new quest to start your adventure!</p>
+              <p className="font-medium mb-2 text-sm sm:text-base">
+                {searchQuery.trim() !== '' ? 'No matching quests found' : 'No quests found'}
+              </p>
+              <p className="text-xs sm:text-sm px-4">
+                {searchQuery.trim() !== '' 
+                  ? `Try adjusting your search term "${searchQuery}" or filters`
+                  : 'Add a new quest to start your adventure!'
+                }
+              </p>
             </div>
           ) : (
             categoryQuests.map((quest) => (

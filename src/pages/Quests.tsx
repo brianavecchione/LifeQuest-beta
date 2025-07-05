@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 const Quests = () => {
   const { toast } = useToast();
   const [isNewQuestModalOpen, setIsNewQuestModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleAddToFocus = (questId: string) => {
     toast({
@@ -46,6 +47,8 @@ const Quests = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
                 <Input 
                   placeholder="Search quests..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 bg-slate-700 border-slate-600 text-white h-10 sm:h-auto"
                 />
               </div>
@@ -69,7 +72,7 @@ const Quests = () => {
         {/* Quest Categories */}
         <div className="mb-8 lg:mb-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-amber-400 mb-6 lg:mb-8 px-4">🗺️ Quest Categories</h2>
-          <QuestCategories onAddToFocus={handleAddToFocus} />
+          <QuestCategories onAddToFocus={handleAddToFocus} searchQuery={searchQuery} />
         </div>
 
         {/* Narrative Journal */}
