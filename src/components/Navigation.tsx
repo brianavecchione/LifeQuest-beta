@@ -1,18 +1,19 @@
 
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Home, Target, Trophy, Sword, Music, Settings, Users, LogOut, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/contexts/UserContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Navigation = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const { user } = useUser();
+  const { user: userContext } = useUser();
+  const { signOut } = useAuth();
 
-  // Hide navigation on login and other auth pages
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/forgot-password';
+  // Hide navigation on auth page
+  const isAuthPage = location.pathname === '/auth';
   
   if (isAuthPage) {
     return null;
@@ -20,25 +21,8 @@ const Navigation = () => {
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
-    
-    // Clear any stored authentication data
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userSession');
-    localStorage.removeItem('lifequest-user'); // Clear user data
-    sessionStorage.clear();
-    
-    // Optional: API call to invalidate token on server
-    try {
-      // await fetch('/api/logout', { method: 'POST' });
-    } catch (error) {
-      console.error('Logout API call failed:', error);
-    }
-    
-    // Add a small delay for smooth UX
-    setTimeout(() => {
-      setIsLoggingOut(false);
-      navigate('/login');
-    }, 300);
+    await signOut();
+    setIsLoggingOut(false);
   };
   
   const navItems = [
@@ -63,29 +47,29 @@ const Navigation = () => {
             <div className="hidden lg:flex items-center gap-4 ml-8">
               <div className="flex items-center gap-2 bg-slate-700/50 px-3 py-1 rounded-lg border border-amber-500/30">
                 <Coins className="w-4 h-4 text-yellow-400" />
-                <span className="text-yellow-400 font-bold">{user.gold.toLocaleString()}</span>
+                <span className="text-yellow-400 font-bold">{userContext.gold.toLocaleString()}</span>
                 <span className="text-slate-400 text-sm">Gold</span>
               </div>
               <div className="flex items-center gap-2 bg-slate-700/50 px-3 py-1 rounded-lg border border-blue-500/30">
-                <span className="text-blue-400 font-bold">Lv.{user.level}</span>
+                <span className="text-blue-400 font-bold">Lv.{userContext.level}</span>
                 <span className="text-slate-400 text-sm">•</span>
-                <span className="text-blue-400 font-bold">{user.totalXp} XP</span>
+                <span className="text-blue-400 font-bold">{userContext.totalXp} XP</span>
               </div>
               
               {/* User Avatar and Name */}
               <div className="flex items-center gap-2 bg-slate-700/50 px-3 py-1 rounded-lg border border-purple-500/30">
-                {user.avatar.startsWith('data:') || user.avatar.startsWith('http') ? (
+                {userContext.avatar.startsWith('data:') || userContext.avatar.startsWith('http') ? (
                   <img 
-                    src={user.avatar} 
-                    alt={user.name} 
+                    src={userContext.avatar} 
+                    alt={userContext.name} 
                     className="w-6 h-6 rounded-full object-cover"
                   />
                 ) : (
                   <div className="w-6 h-6 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-slate-900">
-                    {user.avatar}
+                    {userContext.avatar}
                   </div>
                 )}
-                <span className="text-purple-400 font-medium">{user.name}</span>
+                <span className="text-purple-400 font-medium">{userContext.name}</span>
               </div>
             </div>
           </div>
