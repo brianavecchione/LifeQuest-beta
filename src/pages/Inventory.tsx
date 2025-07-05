@@ -1,11 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import InventorySystem from '@/components/InventorySystem';
-
-import GoldShop from '@/pages/GoldShop';
+import GoldShopContent from '@/components/GoldShopContent';
 
 const Inventory = () => {
+  const [activeTab, setActiveTab] = useState("inventory");
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* Fantasy background pattern */}
@@ -27,7 +28,7 @@ const Inventory = () => {
         </div>
 
         {/* Inventory Tabs */}
-        <Tabs defaultValue="inventory" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-slate-800 border-slate-700 mb-8">
             <TabsTrigger 
               value="inventory" 
@@ -43,12 +44,12 @@ const Inventory = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="inventory">
+          <TabsContent key="inventory" value="inventory">
             <InventorySystem />
           </TabsContent>
 
-          <TabsContent value="gold-shop">
-            <GoldShop />
+          <TabsContent key="gold-shop" value="gold-shop">
+            <GoldShopContent />
           </TabsContent>
 
         </Tabs>
