@@ -13,9 +13,26 @@ import { useToast } from '@/hooks/use-toast';
 interface QuestCategoriesProps {
   onAddToFocus?: (questId: string) => void;
   searchQuery?: string;
+  filters?: {
+    priorityFilter: string;
+    typeFilter: string;
+    statusFilter: string;
+    xpRange: number[];
+    goldRange: number[];
+  };
 }
 
-const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus, searchQuery = '' }) => {
+const QuestCategories: React.FC<QuestCategoriesProps> = ({ 
+  onAddToFocus, 
+  searchQuery = '',
+  filters = {
+    priorityFilter: 'all',
+    typeFilter: 'all',
+    statusFilter: 'all',
+    xpRange: [1000],
+    goldRange: [0, 200]
+  }
+}) => {
   const { quests, toggleQuestStatus } = useQuests();
   const { addXP, addGold } = useUser();
   const { toast } = useToast();
@@ -25,12 +42,8 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus, searchQ
     return Math.floor(xp / 10) + 10;
   };
 
-  // Filter states
-  const [priorityFilter, setPriorityFilter] = useState<string>('all');
-  const [typeFilter, setTypeFilter] = useState<string>('all');
-  const [xpRange, setXpRange] = useState<number[]>([1000]);
-  const [goldRange, setGoldRange] = useState<number[]>([0, 200]);
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  // Filter states - now received as props
+  const { priorityFilter, typeFilter, statusFilter, xpRange, goldRange } = filters;
   const [previousQuests, setPreviousQuests] = useState<Quest[]>([]);
 
   // Track quest completions and award XP and Gold
@@ -260,103 +273,6 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus, searchQ
 
   return (
     <div className="space-y-8">
-      {/* Filter Controls */}
-      <div className="bg-slate-800/50 rounded-xl p-4 sm:p-6 border border-slate-700/50 backdrop-blur-sm">
-        <div className="flex items-center gap-2 mb-4 sm:mb-6">
-          <Filter className="w-5 h-5 text-slate-400" />
-          <h3 className="text-base sm:text-lg font-semibold text-white">Filter Quests</h3>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
-          {/* Priority Filter */}
-          <div className="min-w-0">
-            <label className="text-xs sm:text-sm font-medium text-slate-300 mb-2 block">Priority</label>
-            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-              <SelectTrigger className="bg-slate-700 border-slate-600 text-white z-50 h-9 sm:h-auto text-sm">
-                <SelectValue placeholder="All Priorities" />
-              </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-slate-700 text-white z-50">
-                <SelectItem value="all">All Priorities</SelectItem>
-                <SelectItem value="High">High Priority</SelectItem>
-                <SelectItem value="Medium">Medium Priority</SelectItem>
-                <SelectItem value="Low">Low Priority</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Type Filter */}
-          <div className="min-w-0">
-            <label className="text-xs sm:text-sm font-medium text-slate-300 mb-2 block">Quest Type</label>
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="bg-slate-700 border-slate-600 text-white z-50 h-9 sm:h-auto text-sm">
-                <SelectValue placeholder="All Types" />
-              </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-slate-700 text-white z-50">
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="Daily">Dailies</SelectItem>
-                <SelectItem value="Main">Main Quests</SelectItem>
-                <SelectItem value="Side">Side Quests</SelectItem>
-                <SelectItem value="Legendary">Legendary</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Status Filter */}
-          <div className="min-w-0">
-            <label className="text-xs sm:text-sm font-medium text-slate-300 mb-2 block">Status</label>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="bg-slate-700 border-slate-600 text-white z-50 h-9 sm:h-auto text-sm">
-                <SelectValue placeholder="All Status" />
-              </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-slate-700 text-white z-50">
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="Not started">Not Started</SelectItem>
-                <SelectItem value="In Progress">In Progress</SelectItem>
-                <SelectItem value="Completed">Completed</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* XP Range Filter */}
-          <div className="min-w-0">
-            <label className="text-xs sm:text-sm font-medium text-slate-300 mb-2 block">
-              Max XP: {xpRange[0]}
-            </label>
-            <Slider
-              value={xpRange}
-              onValueChange={setXpRange}
-              max={1000}
-              min={10}
-              step={10}
-              className="w-full"
-            />
-            <div className="flex justify-between text-xs text-slate-400 mt-1">
-              <span>10 XP</span>
-              <span>1000 XP</span>
-            </div>
-          </div>
-
-          {/* Gold Range Filter */}
-          <div className="min-w-0">
-            <label className="text-xs sm:text-sm font-medium text-slate-300 mb-2 block">
-              Gold: {goldRange[0]} - {goldRange[1]}
-            </label>
-            <Slider
-              value={goldRange}
-              onValueChange={setGoldRange}
-              max={200}
-              min={0}
-              step={5}
-              className="w-full"
-            />
-            <div className="flex justify-between text-xs text-slate-400 mt-1">
-              <span>0 Gold</span>
-              <span>200 Gold</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Quest Categories */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         <CategorySection type="Daily" icon={Star} title="Daily Habits" />

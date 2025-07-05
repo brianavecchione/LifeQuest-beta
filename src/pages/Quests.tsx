@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import QuestCategories from '@/components/QuestCategories';
 import NarrativeJournal from '@/components/NarrativeJournal';
 import NewQuestModal from '@/components/NewQuestModal';
+import FilterModal from '@/components/FilterModal';
 import { Search, Filter, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,12 +12,36 @@ import { useToast } from '@/hooks/use-toast';
 const Quests = () => {
   const { toast } = useToast();
   const [isNewQuestModalOpen, setIsNewQuestModalOpen] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Filter states
+  const [filters, setFilters] = useState({
+    priorityFilter: 'all',
+    typeFilter: 'all',
+    statusFilter: 'all',
+    xpRange: [1000] as number[],
+    goldRange: [0, 200] as number[]
+  });
 
   const handleAddToFocus = (questId: string) => {
     toast({
       title: "Added to Today's Focus!",
       description: "This quest will appear in your daily focus on the Today page.",
+    });
+  };
+
+  const handleApplyFilters = (newFilters: typeof filters) => {
+    setFilters(newFilters);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      priorityFilter: 'all',
+      typeFilter: 'all',
+      statusFilter: 'all',
+      xpRange: [1000],
+      goldRange: [0, 200]
     });
   };
   return (
@@ -53,7 +78,11 @@ const Quests = () => {
                 />
               </div>
               <div className="flex gap-2 sm:gap-3">
-                <Button variant="outline" className="border-blue-600 text-blue-400 flex-1 sm:flex-none h-10 text-sm">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsFilterModalOpen(true)}
+                  className="border-blue-600 text-blue-400 flex-1 sm:flex-none h-10 text-sm"
+                >
                   <Filter className="w-4 h-4 sm:mr-2" />
                   <span className="hidden sm:inline">Filter</span>
                 </Button>
@@ -72,7 +101,11 @@ const Quests = () => {
         {/* Quest Categories */}
         <div className="mb-8 lg:mb-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-amber-400 mb-6 lg:mb-8 px-4">🗺️ Quest Categories</h2>
-          <QuestCategories onAddToFocus={handleAddToFocus} searchQuery={searchQuery} />
+          <QuestCategories 
+            onAddToFocus={handleAddToFocus} 
+            searchQuery={searchQuery}
+            filters={filters}
+          />
         </div>
 
         {/* Narrative Journal */}
@@ -84,6 +117,15 @@ const Quests = () => {
         <NewQuestModal
           isOpen={isNewQuestModalOpen}
           onClose={() => setIsNewQuestModalOpen(false)}
+        />
+
+        {/* Filter Modal */}
+        <FilterModal
+          isOpen={isFilterModalOpen}
+          onClose={() => setIsFilterModalOpen(false)}
+          filters={filters}
+          onApplyFilters={handleApplyFilters}
+          onClearFilters={handleClearFilters}
         />
       </div>
     </div>
