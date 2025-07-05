@@ -26,6 +26,7 @@ interface NewQuestModalProps {
   onQuestCreated: (quest: Quest) => void;
   currentQuestCount?: number;
   maxQuests?: number;
+  defaultType?: 'Daily' | 'Main' | 'Side' | 'Legendary';
 }
 
 const NewQuestModal: React.FC<NewQuestModalProps> = ({ 
@@ -33,17 +34,23 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
   onClose, 
   onQuestCreated,
   currentQuestCount = 0,
-  maxQuests = 5
+  maxQuests = 5,
+  defaultType = 'Main'
 }) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     xp: '',
-    type: 'Main' as Quest['type'],
+    type: defaultType as Quest['type'],
     priority: 'Medium' as Quest['priority'],
     tags: '',
   });
+
+  // Update form when defaultType changes
+  React.useEffect(() => {
+    setFormData(prev => ({ ...prev, type: defaultType }));
+  }, [defaultType]);
 
   const getTypeIcon = (type: Quest['type']) => {
     switch (type) {

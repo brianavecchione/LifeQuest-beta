@@ -7,10 +7,13 @@ import { Search, Filter, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { useQuests } from '@/contexts/QuestContext';
 
 const Quests = () => {
   const { toast } = useToast();
+  const { addQuest } = useQuests();
   const [isNewQuestModalOpen, setIsNewQuestModalOpen] = useState(false);
+  const [selectedQuestType, setSelectedQuestType] = useState<'Daily' | 'Main' | 'Side' | 'Legendary'>('Main');
 
   const handleAddToFocus = (questId: string) => {
     toast({
@@ -19,9 +22,17 @@ const Quests = () => {
     });
   };
 
+  const handleAddQuest = (questType: 'Daily' | 'Main' | 'Side' | 'Legendary') => {
+    setSelectedQuestType(questType);
+    setIsNewQuestModalOpen(true);
+  };
+
   const handleQuestCreated = (quest: any) => {
-    console.log('New quest created:', quest);
-    // This will be handled by individual components for now
+    addQuest(quest);
+    toast({
+      title: "Quest Added! 🎯",
+      description: `${quest.name} has been added to your quest log.`,
+    });
   };
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -72,7 +83,7 @@ const Quests = () => {
         {/* Quest Categories */}
         <div className="mb-12">
           <h2 className="text-3xl font-bold text-center text-amber-400 mb-8">🗺️ Quest Categories</h2>
-          <QuestCategories onAddToFocus={handleAddToFocus} />
+          <QuestCategories onAddToFocus={handleAddToFocus} onAddQuest={handleAddQuest} />
         </div>
 
         {/* Narrative Journal */}
@@ -85,6 +96,7 @@ const Quests = () => {
           isOpen={isNewQuestModalOpen}
           onClose={() => setIsNewQuestModalOpen(false)}
           onQuestCreated={handleQuestCreated}
+          defaultType={selectedQuestType}
         />
       </div>
     </div>

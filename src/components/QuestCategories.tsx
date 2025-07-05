@@ -12,9 +12,10 @@ import { useToast } from '@/hooks/use-toast';
 
 interface QuestCategoriesProps {
   onAddToFocus?: (questId: string) => void;
+  onAddQuest?: (questType: 'Daily' | 'Main' | 'Side' | 'Legendary') => void;
 }
 
-const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
+const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus, onAddQuest }) => {
   const { quests, toggleQuestStatus } = useQuests();
   const { addXP, addGold } = useUser();
   const { toast } = useToast();
@@ -220,7 +221,11 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
               <p className="text-white/80 text-sm">{categoryQuests.length} quests</p>
             </div>
           </div>
-          <Button size="sm" className="bg-white/20 hover:bg-white/30 text-white border-white/30">
+          <Button 
+            size="sm" 
+            className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+            onClick={() => onAddQuest?.(type)}
+          >
             <Plus className="w-4 h-4 mr-1" />
             Add Quest
           </Button>
