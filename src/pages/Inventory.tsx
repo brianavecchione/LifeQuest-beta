@@ -2,7 +2,7 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import InventorySystem from '@/components/InventorySystem';
-import Minigames from '@/components/Minigames';
+
 import GoldShop from '@/pages/GoldShop';
 
 const Inventory = () => {
@@ -28,7 +28,7 @@ const Inventory = () => {
 
         {/* Inventory Tabs */}
         <Tabs defaultValue="inventory" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-slate-800 border-slate-700 mb-8">
+          <TabsList className="grid w-full grid-cols-2 bg-slate-800 border-slate-700 mb-8">
             <TabsTrigger 
               value="inventory" 
               className="data-[state=active]:bg-amber-600 data-[state=active]:text-white"
@@ -41,12 +41,6 @@ const Inventory = () => {
             >
               Gold Shop
             </TabsTrigger>
-            <TabsTrigger 
-              value="minigames" 
-              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
-            >
-              Minigames
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="inventory">
@@ -57,9 +51,6 @@ const Inventory = () => {
             <GoldShop />
           </TabsContent>
 
-          <TabsContent value="minigames">
-            <Minigames />
-          </TabsContent>
         </Tabs>
       </div>
     </div>

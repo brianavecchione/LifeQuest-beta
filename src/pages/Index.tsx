@@ -4,7 +4,7 @@ import CharacterStats from '@/components/CharacterStats';
 import QuestTimer from '@/components/QuestTimer';
 import QuestTracker from '@/components/QuestTracker';
 import QuestCategories from '@/components/QuestCategories';
-import Minigames from '@/components/Minigames';
+
 import BadgeSystem from '@/components/BadgeSystem';
 import Soundtrack from '@/components/Soundtrack';
 import AISidekick from '@/components/AISidekick';
@@ -75,10 +75,6 @@ const Index = () => {
           <InventorySystem />
         </div>
 
-        {/* Minigames */}
-        <div className="mb-12">
-          <Minigames />
-        </div>
 
         {/* Badge System */}
         <div className="mb-12">
