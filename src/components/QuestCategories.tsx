@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Trophy, Flag, Crown, Plus, Filter, Target, CheckCircle2, Circle, MoreVertical, Tag } from 'lucide-react';
+import { Star, Trophy, Flag, Crown, Plus, Filter, Target, CheckCircle2, Circle, MoreVertical, Tag, Coins } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -75,6 +75,10 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
     }
   };
 
+  const calculateBaseGold = (xp: number) => {
+    return Math.floor(xp / 10) + 10; // Base gold calculation
+  };
+
   const QuestCard: React.FC<{ quest: Quest }> = ({ quest }) => (
     <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50 hover:border-slate-500/70 transition-all group">
       <div className="flex items-start justify-between mb-3">
@@ -98,6 +102,10 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus }) => {
             <div className="flex items-center gap-2 mb-2">
               <Badge variant="outline" className="text-amber-400 border-amber-400/50 text-xs">
                 {quest.xp} XP
+              </Badge>
+              <Badge variant="outline" className="text-yellow-400 border-yellow-400/50 text-xs">
+                <Coins className="w-3 h-3 mr-1" />
+                {calculateBaseGold(quest.xp)} Gold
               </Badge>
               <Badge className={`${getPriorityColor(quest.priority)} text-xs`}>
                 {quest.priority}

@@ -192,6 +192,10 @@ const QuestTracker = () => {
     return { bonusXp, bonusGold };
   };
 
+  const calculateBaseGold = (xp: number) => {
+    return Math.floor(xp / 10) + 10; // Base gold calculation
+  };
+
   const handleQuestComplete = useCallback(() => {
     if (completedTimerQuest) {
       const { bonusXp, bonusGold } = calculateRewards(completedTimerQuest);
@@ -303,6 +307,10 @@ const QuestTracker = () => {
             <div className="flex items-center gap-2 mt-1">
               <Badge variant="outline" className="text-amber-400 border-amber-400/50">
                 {quest.xp} XP
+              </Badge>
+              <Badge variant="outline" className="text-yellow-400 border-yellow-400/50">
+                <Coins className="w-3 h-3 mr-1" />
+                {calculateBaseGold(quest.xp)} Gold
               </Badge>
               <Badge variant="outline" className={`${getTypeColor(quest.type)} border-current`}>
                 {quest.type}
