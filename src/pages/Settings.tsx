@@ -1,14 +1,38 @@
 
 import React from 'react';
 import AISidekick from '@/components/AISidekick';
-import { User, Bell, Zap, Shield, Accessibility } from 'lucide-react';
+import AvatarUpload from '@/components/AvatarUpload';
+import { User, Bell, Zap, Shield, Accessibility, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { useUser } from '@/contexts/UserContext';
+import { useToast } from '@/hooks/use-toast';
 
 const Settings = () => {
   const { user, updateUser } = useUser();
+  const { toast } = useToast();
+  const [characterName, setCharacterName] = React.useState(user.name);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
+
+  const handleNameChange = (value: string) => {
+    setCharacterName(value);
+    setHasUnsavedChanges(value !== user.name);
+  };
+
+  const handleAvatarChange = (avatar: string) => {
+    updateUser({ avatar });
+    // Avatar changes are saved immediately, don't mark as unsaved
+  };
+
+  const handleSaveProfile = () => {
+    updateUser({ name: characterName });
+    setHasUnsavedChanges(false);
+    toast({
+      title: "Profile updated!",
+      description: "Your character name has been saved.",
+    });
+  };
 
   const handleReduceAnimationsChange = (checked: boolean) => {
     updateUser({ reduceAnimations: checked });
@@ -59,22 +83,36 @@ const Settings = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-slate-300 mb-2">Character Name</label>
-                <Input 
-                  defaultValue="Adventurer" 
-                  className="bg-slate-700 border-slate-600 text-white"
-                />
+                <div className="flex gap-2">
+                  <Input 
+                    value={characterName}
+                    onChange={(e) => handleNameChange(e.target.value)}
+                    className="bg-slate-700 border-slate-600 text-white flex-1"
+                    placeholder="Enter your character name"
+                  />
+                  {hasUnsavedChanges && (
+                    <Button 
+                      onClick={handleSaveProfile}
+                      className="bg-green-600 hover:bg-green-700 px-3"
+                    >
+                      <Save className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+                {hasUnsavedChanges && (
+                  <p className="text-xs text-amber-400 mt-1">
+                    You have unsaved changes
+                  </p>
+                )}
               </div>
               
               <div>
                 <label className="block text-slate-300 mb-2">Avatar</label>
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-2xl font-bold text-slate-900">
-                    A
-                  </div>
-                  <Button variant="outline" className="border-blue-600 text-blue-400">
-                    Change Avatar
-                  </Button>
-                </div>
+                <AvatarUpload 
+                  currentAvatar={user.avatar}
+                  onAvatarChange={handleAvatarChange}
+                  userName={user.name}
+                />
               </div>
             </div>
           </div>

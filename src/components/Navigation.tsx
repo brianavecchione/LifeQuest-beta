@@ -71,6 +71,22 @@ const Navigation = () => {
                 <span className="text-slate-400 text-sm">•</span>
                 <span className="text-blue-400 font-bold">{user.totalXp} XP</span>
               </div>
+              
+              {/* User Avatar and Name */}
+              <div className="flex items-center gap-2 bg-slate-700/50 px-3 py-1 rounded-lg border border-purple-500/30">
+                {user.avatar.startsWith('data:') || user.avatar.startsWith('http') ? (
+                  <img 
+                    src={user.avatar} 
+                    alt={user.name} 
+                    className="w-6 h-6 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-6 h-6 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-xs font-bold text-slate-900">
+                    {user.avatar}
+                  </div>
+                )}
+                <span className="text-purple-400 font-medium">{user.name}</span>
+              </div>
             </div>
           </div>
           

@@ -10,6 +10,7 @@ interface UserData {
   pomodoroCount: number;
   dailyXp: Record<string, number>; // Track XP by date (YYYY-MM-DD format)
   reduceAnimations: boolean; // Accessibility setting to reduce animations
+  avatar: string; // Avatar image URL or identifier
 }
 
 interface UserContextType {
@@ -34,6 +35,7 @@ const defaultUser: UserData = {
   pomodoroCount: 0,
   dailyXp: {},
   reduceAnimations: false,
+  avatar: 'A', // Default letter avatar
 };
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -52,6 +54,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Ensure reduceAnimations exists for existing users
     if (loadedUser.reduceAnimations === undefined) {
       loadedUser.reduceAnimations = false;
+    }
+    
+    // Ensure avatar exists for existing users
+    if (!loadedUser.avatar) {
+      loadedUser.avatar = loadedUser.name ? loadedUser.name.charAt(0).toUpperCase() : 'A';
     }
     
     return loadedUser;
