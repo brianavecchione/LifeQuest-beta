@@ -147,6 +147,45 @@ export type Database = {
         }
         Relationships: []
       }
+      streaks: {
+        Row: {
+          best_streak: number
+          created_at: string
+          current_streak: number
+          description: string
+          id: string
+          last_activity_date: string | null
+          status: Database["public"]["Enums"]["streak_status"]
+          streak_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          best_streak?: number
+          created_at?: string
+          current_streak?: number
+          description: string
+          id?: string
+          last_activity_date?: string | null
+          status?: Database["public"]["Enums"]["streak_status"]
+          streak_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          best_streak?: number
+          created_at?: string
+          current_streak?: number
+          description?: string
+          id?: string
+          last_activity_date?: string | null
+          status?: Database["public"]["Enums"]["streak_status"]
+          streak_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -164,6 +203,14 @@ export type Database = {
         Args: { level_num: number }
         Returns: number
       }
+      increment_streak: {
+        Args: { p_user_id: string; p_streak_name: string }
+        Returns: undefined
+      }
+      update_streak_status: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       update_user_stats: {
         Args: { p_user_id: string; xp_gained: number; gold_gained: number }
         Returns: undefined
@@ -173,6 +220,7 @@ export type Database = {
       achievement_tier: "Bronze" | "Silver" | "Gold" | "Legendary"
       quest_priority: "Low" | "Medium" | "High"
       quest_type: "Daily" | "Main" | "Side" | "Legendary"
+      streak_status: "Active" | "Inactive"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -291,6 +339,7 @@ export const Constants = {
       achievement_tier: ["Bronze", "Silver", "Gold", "Legendary"],
       quest_priority: ["Low", "Medium", "High"],
       quest_type: ["Daily", "Main", "Side", "Legendary"],
+      streak_status: ["Active", "Inactive"],
     },
   },
 } as const
