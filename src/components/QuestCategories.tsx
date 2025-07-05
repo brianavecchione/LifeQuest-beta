@@ -221,19 +221,14 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({ onAddToFocus, onAddQu
               <p className="text-white/80 text-sm">{categoryQuests.length} quests</p>
             </div>
           </div>
-          <Button 
+          <button 
             type="button"
-            size="sm" 
-            className="bg-white/20 hover:bg-white/30 text-white border-white/30"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onAddQuest?.(type);
-            }}
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium bg-white/20 hover:bg-white/30 text-white border border-white/30 h-9 px-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 relative z-10"
+            onClick={() => onAddQuest?.(type)}
           >
-            <Plus className="w-4 h-4 mr-1" />
+            <Plus className="w-4 h-4" />
             Add Quest
-          </Button>
+          </button>
         </div>
 
         <div className="space-y-3">
