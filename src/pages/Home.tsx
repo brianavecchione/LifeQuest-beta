@@ -10,11 +10,6 @@ const Home = () => {
   const { user } = useUser();
   const [isNewQuestModalOpen, setIsNewQuestModalOpen] = useState(false);
 
-  const handleQuestCreated = (quest: any) => {
-    console.log('New quest created:', quest);
-    // This will be handled by individual components for now
-  };
-
   // Format current date
   const getCurrentDate = () => {
     const now = new Date();
@@ -67,7 +62,6 @@ const Home = () => {
         <NewQuestModal
           isOpen={isNewQuestModalOpen}
           onClose={() => setIsNewQuestModalOpen(false)}
-          onQuestCreated={handleQuestCreated}
         />
       </div>
     </div>

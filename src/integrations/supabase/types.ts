@@ -36,6 +36,54 @@ export type Database = {
         }
         Relationships: []
       }
+      quests: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          gold_reward: number
+          id: string
+          priority: Database["public"]["Enums"]["quest_priority"]
+          quest_name: string
+          quest_type: Database["public"]["Enums"]["quest_type"]
+          status: string
+          tags: string[] | null
+          updated_at: string
+          user_id: string
+          xp_reward: number
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          gold_reward?: number
+          id?: string
+          priority?: Database["public"]["Enums"]["quest_priority"]
+          quest_name: string
+          quest_type?: Database["public"]["Enums"]["quest_type"]
+          status?: string
+          tags?: string[] | null
+          updated_at?: string
+          user_id: string
+          xp_reward?: number
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          gold_reward?: number
+          id?: string
+          priority?: Database["public"]["Enums"]["quest_priority"]
+          quest_name?: string
+          quest_type?: Database["public"]["Enums"]["quest_type"]
+          status?: string
+          tags?: string[] | null
+          updated_at?: string
+          user_id?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -44,7 +92,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      quest_priority: "Low" | "Medium" | "High"
+      quest_type: "Daily" | "Main" | "Side" | "Legendary"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -159,6 +208,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      quest_priority: ["Low", "Medium", "High"],
+      quest_type: ["Daily", "Main", "Side", "Legendary"],
+    },
   },
 } as const

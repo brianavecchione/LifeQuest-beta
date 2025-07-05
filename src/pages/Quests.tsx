@@ -18,11 +18,6 @@ const Quests = () => {
       description: "This quest will appear in your daily focus on the Today page.",
     });
   };
-
-  const handleQuestCreated = (quest: any) => {
-    console.log('New quest created:', quest);
-    // This will be handled by individual components for now
-  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* Fantasy background pattern */}
@@ -84,7 +79,6 @@ const Quests = () => {
         <NewQuestModal
           isOpen={isNewQuestModalOpen}
           onClose={() => setIsNewQuestModalOpen(false)}
-          onQuestCreated={handleQuestCreated}
         />
       </div>
     </div>

@@ -526,13 +526,6 @@ const QuestTracker = () => {
       <NewQuestModal
         isOpen={isNewQuestModalOpen}
         onClose={() => setIsNewQuestModalOpen(false)}
-        onQuestCreated={(newQuest) => {
-          addQuest(newQuest);
-          toast({
-            title: "Quest Added! 🎯",
-            description: `${newQuest.name} has been added to your quest log.`,
-          });
-        }}
         currentQuestCount={quests.filter(q => q.type !== 'Daily').length}
         maxQuests={5}
       />

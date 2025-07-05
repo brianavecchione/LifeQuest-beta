@@ -8,23 +8,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Star, Trophy, Flag, Crown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
-interface Quest {
-  id: string;
-  name: string;
-  description?: string;
-  status: 'Not started' | 'In Progress' | 'Completed';
-  xp: number;
-  gold: number;
-  type: 'Daily' | 'Main' | 'Side' | 'Legendary';
-  priority: 'Low' | 'Medium' | 'High';
-  tags?: string[];
-}
+import { Quest, useQuests } from '@/hooks/useQuests';
 
 interface NewQuestModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onQuestCreated: (quest: Quest) => void;
   currentQuestCount?: number;
   maxQuests?: number;
 }
@@ -32,22 +20,22 @@ interface NewQuestModalProps {
 const NewQuestModal: React.FC<NewQuestModalProps> = ({ 
   isOpen, 
   onClose, 
-  onQuestCreated,
   currentQuestCount = 0,
   maxQuests = 5
 }) => {
   const { toast } = useToast();
+  const { createQuest } = useQuests();
   const [formData, setFormData] = useState({
-    name: '',
+    quest_name: '',
     description: '',
-    xp: '',
-    gold: '',
-    type: 'Main' as Quest['type'],
+    xp_reward: '',
+    gold_reward: '',
+    quest_type: 'Main' as Quest['quest_type'],
     priority: 'Medium' as Quest['priority'],
     tags: '',
   });
 
-  const getTypeIcon = (type: Quest['type']) => {
+  const getTypeIcon = (type: Quest['quest_type']) => {
     switch (type) {
       case 'Daily': return <Star className="w-4 h-4" />;
       case 'Main': return <Trophy className="w-4 h-4" />;
@@ -56,7 +44,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
     }
   };
 
-  const getTypeColor = (type: Quest['type']) => {
+  const getTypeColor = (type: Quest['quest_type']) => {
     switch (type) {
       case 'Daily': return 'border-yellow-500/50 text-yellow-400';
       case 'Main': return 'border-red-500/50 text-red-400';
@@ -65,10 +53,10 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name.trim() || !formData.xp || !formData.gold) {
+    if (!formData.quest_name.trim() || !formData.xp_reward || !formData.gold_reward) {
       toast({
         title: "Missing Information",
         description: "Please fill in the quest name, XP value, and Gold reward.",
@@ -77,7 +65,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
       return;
     }
 
-    const xpValue = parseInt(formData.xp);
+    const xpValue = parseInt(formData.xp_reward);
     if (isNaN(xpValue) || xpValue < 1) {
       toast({
         title: "Invalid XP Value",
@@ -87,7 +75,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
       return;
     }
 
-    const goldValue = parseInt(formData.gold);
+    const goldValue = parseInt(formData.gold_reward);
     if (isNaN(goldValue) || goldValue < 0) {
       toast({
         title: "Invalid Gold Value",
@@ -97,37 +85,32 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
       return;
     }
 
-    const newQuest: Quest = {
-      id: Date.now().toString(),
-      name: formData.name.trim(),
+    const questData = {
+      quest_name: formData.quest_name.trim(),
       description: formData.description.trim() || undefined,
-      status: 'Not started',
-      xp: xpValue,
-      gold: goldValue,
-      type: formData.type,
+      status: 'Not started' as const,
+      xp_reward: xpValue,
+      gold_reward: goldValue,
+      quest_type: formData.quest_type,
       priority: formData.priority,
       tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(Boolean) : undefined,
     };
 
-    onQuestCreated(newQuest);
-    
-    // Reset form
-    setFormData({
-      name: '',
-      description: '',
-      xp: '',
-      gold: '',
-      type: 'Main',
-      priority: 'Medium',
-      tags: '',
-    });
+    const success = await createQuest(questData);
+    if (success) {
+      // Reset form
+      setFormData({
+        quest_name: '',
+        description: '',
+        xp_reward: '',
+        gold_reward: '',
+        quest_type: 'Main',
+        priority: 'Medium',
+        tags: '',
+      });
 
-    toast({
-      title: "Quest Created! 🎯",
-      description: `${newQuest.name} has been added to your quest log.`,
-    });
-
-    onClose();
+      onClose();
+    }
   };
 
   const isAtLimit = currentQuestCount >= maxQuests;
@@ -162,8 +145,8 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
             </Label>
             <Input
               id="quest-name"
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              value={formData.quest_name}
+              onChange={(e) => setFormData(prev => ({ ...prev, quest_name: e.target.value }))}
               placeholder="e.g., Complete project proposal"
               className="bg-slate-700 border-slate-600 text-white mt-1"
               maxLength={100}
@@ -190,8 +173,8 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
             <div>
               <Label className="text-slate-300 font-medium mb-2 block">Quest Type</Label>
               <Select 
-                value={formData.type} 
-                onValueChange={(value: Quest['type']) => setFormData(prev => ({ ...prev, type: value }))}
+                value={formData.quest_type} 
+                onValueChange={(value: Quest['quest_type']) => setFormData(prev => ({ ...prev, quest_type: value }))}
               >
                 <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
                   <SelectValue />
@@ -233,8 +216,8 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
               <Input
                 id="quest-xp"
                 type="number"
-                value={formData.xp}
-                onChange={(e) => setFormData(prev => ({ ...prev, xp: e.target.value }))}
+                value={formData.xp_reward}
+                onChange={(e) => setFormData(prev => ({ ...prev, xp_reward: e.target.value }))}
                 placeholder="e.g., 50"
                 className="bg-slate-700 border-slate-600 text-white mt-1"
                 min="1"
@@ -253,8 +236,8 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
               <Input
                 id="quest-gold"
                 type="number"
-                value={formData.gold}
-                onChange={(e) => setFormData(prev => ({ ...prev, gold: e.target.value }))}
+                value={formData.gold_reward}
+                onChange={(e) => setFormData(prev => ({ ...prev, gold_reward: e.target.value }))}
                 placeholder="e.g., 25"
                 className="bg-slate-700 border-slate-600 text-white mt-1"
                 min="0"
@@ -284,27 +267,27 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
           </div>
 
           {/* Quest Preview */}
-          {formData.name && (
+          {formData.quest_name && (
             <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
               <h4 className="text-sm font-medium text-slate-300 mb-2">Quest Preview:</h4>
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg border ${getTypeColor(formData.type)} bg-slate-800/50`}>
-                  {getTypeIcon(formData.type)}
+                <div className={`p-2 rounded-lg border ${getTypeColor(formData.quest_type)} bg-slate-800/50`}>
+                  {getTypeIcon(formData.quest_type)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h5 className="text-white font-medium truncate">{formData.name}</h5>
+                  <h5 className="text-white font-medium truncate">{formData.quest_name}</h5>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant="outline" className="text-amber-400 border-amber-400/50 text-xs">
-                      {formData.xp || 0} XP
+                      {formData.xp_reward || 0} XP
                     </Badge>
                     <Badge variant="outline" className="text-yellow-500 border-yellow-500/50 text-xs">
-                      {formData.gold || 0} Gold
+                      {formData.gold_reward || 0} Gold
                     </Badge>
                     <Badge className={`${formData.priority === 'High' ? 'bg-red-600' : formData.priority === 'Medium' ? 'bg-yellow-600' : 'bg-green-600'} text-white text-xs`}>
                       {formData.priority}
                     </Badge>
-                    <Badge variant="outline" className={`${getTypeColor(formData.type)} border-current text-xs`}>
-                      {formData.type}
+                    <Badge variant="outline" className={`${getTypeColor(formData.quest_type)} border-current text-xs`}>
+                      {formData.quest_type}
                     </Badge>
                   </div>
                 </div>
