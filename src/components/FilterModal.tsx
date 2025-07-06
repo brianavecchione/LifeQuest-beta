@@ -14,6 +14,7 @@ interface FilterModalProps {
     statusFilter: string;
     xpRange: number[];
     goldRange: number[];
+    dueDateFilter: string;
   };
   onApplyFilters: (filters: {
     priorityFilter: string;
@@ -21,6 +22,7 @@ interface FilterModalProps {
     statusFilter: string;
     xpRange: number[];
     goldRange: number[];
+    dueDateFilter: string;
   }) => void;
   onClearFilters: () => void;
 }
@@ -53,7 +55,8 @@ const FilterModal: React.FC<FilterModalProps> = ({
       typeFilter: 'all',
       statusFilter: 'all',
       xpRange: [1000],
-      goldRange: [0, 200]
+      goldRange: [0, 200],
+      dueDateFilter: 'all'
     };
     setLocalFilters(clearedFilters);
     onClearFilters();
@@ -74,7 +77,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Priority Filter */}
             <div className="min-w-0">
               <label className="text-xs sm:text-sm font-medium text-slate-300 mb-2 block">Priority</label>
@@ -129,6 +132,26 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   <SelectItem value="Not started">Not Started</SelectItem>
                   <SelectItem value="In Progress">In Progress</SelectItem>
                   <SelectItem value="Completed">Completed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Due Date Filter */}
+            <div className="min-w-0">
+              <label className="text-xs sm:text-sm font-medium text-slate-300 mb-2 block">Due Date</label>
+              <Select 
+                value={localFilters.dueDateFilter} 
+                onValueChange={(value) => setLocalFilters(prev => ({ ...prev, dueDateFilter: value }))}
+              >
+                <SelectTrigger className="bg-slate-700 border-slate-600 text-white z-50 h-9 sm:h-auto text-sm">
+                  <SelectValue placeholder="All Due Dates" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-800 border-slate-700 text-white z-[60]">
+                  <SelectItem value="all">All Due Dates</SelectItem>
+                  <SelectItem value="overdue">Overdue</SelectItem>
+                  <SelectItem value="dueToday">Due Today</SelectItem>
+                  <SelectItem value="dueThisWeek">Due This Week</SelectItem>
+                  <SelectItem value="noDueDate">No Due Date</SelectItem>
                 </SelectContent>
               </Select>
             </div>

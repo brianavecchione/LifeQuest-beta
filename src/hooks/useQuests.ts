@@ -19,6 +19,7 @@ export interface Quest {
   created_at: string;
   updated_at: string;
   completed_at?: string;
+  due_date?: string;
   user_id: string;
 }
 
@@ -36,6 +37,7 @@ const transformDbQuest = (dbQuest: DbQuest): Quest => ({
   created_at: dbQuest.created_at,
   updated_at: dbQuest.updated_at,
   completed_at: dbQuest.completed_at || undefined,
+  due_date: dbQuest.due_date || undefined,
   user_id: dbQuest.user_id,
 });
 

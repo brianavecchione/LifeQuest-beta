@@ -104,6 +104,7 @@ export type Database = {
           completed_at: string | null
           created_at: string
           description: string | null
+          due_date: string | null
           gold_reward: number
           id: string
           priority: Database["public"]["Enums"]["quest_priority"]
@@ -119,6 +120,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           description?: string | null
+          due_date?: string | null
           gold_reward?: number
           id?: string
           priority?: Database["public"]["Enums"]["quest_priority"]
@@ -134,6 +136,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           description?: string | null
+          due_date?: string | null
           gold_reward?: number
           id?: string
           priority?: Database["public"]["Enums"]["quest_priority"]

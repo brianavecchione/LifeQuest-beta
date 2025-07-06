@@ -6,9 +6,13 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Star, Trophy, Flag, Crown } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Star, Trophy, Flag, Crown, CalendarIcon } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast'; 
 import { Quest, useQuests } from '@/hooks/useQuests';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface NewQuestModalProps {
   isOpen: boolean;
@@ -33,6 +37,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
     quest_type: 'Main' as Quest['quest_type'],
     priority: 'Medium' as Quest['priority'],
     tags: '',
+    due_date: null as Date | null,
   });
 
   const getTypeIcon = (type: Quest['quest_type']) => {
@@ -94,6 +99,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
       quest_type: formData.quest_type,
       priority: formData.priority,
       tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(Boolean) : undefined,
+      due_date: formData.due_date ? format(formData.due_date, 'yyyy-MM-dd') : undefined,
     };
 
     const success = await createQuest(questData);
@@ -107,6 +113,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
         quest_type: 'Main',
         priority: 'Medium',
         tags: '',
+        due_date: null,
       });
 
       onClose();
@@ -262,6 +269,40 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
               />
               <p className="text-xs text-slate-400 mt-1">
                 Separate tags with commas
+              </p>
+            </div>
+
+            {/* Due Date */}
+            <div>
+              <Label className="text-slate-300 font-medium mb-2 block">
+                Due Date (Optional)
+              </Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal bg-slate-700 border-slate-600 text-white hover:bg-slate-600",
+                      !formData.due_date && "text-slate-400"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formData.due_date ? format(formData.due_date, "PPP") : <span>Pick a due date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-slate-800 border-slate-700" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={formData.due_date || undefined}
+                    onSelect={(date) => setFormData(prev => ({ ...prev, due_date: date || null }))}
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+              <p className="text-xs text-slate-400 mt-1">
+                Optional deadline for quest completion
               </p>
             </div>
           </div>

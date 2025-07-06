@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Trophy, Flag, Crown, Plus, Filter, Target, CheckCircle2, Circle, MoreVertical, Tag, Coins } from 'lucide-react';
+import { Star, Trophy, Flag, Crown, Plus, Filter, Target, CheckCircle2, Circle, MoreVertical, Tag, Coins, Calendar, AlertTriangle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { useQuests, Quest } from '@/contexts/QuestContext';
-import { useUser } from '@/contexts/UserContext';
+import { useQuests, Quest } from '@/hooks/useQuests';
 import { useToast } from '@/hooks/use-toast';
+import { format, isToday, isBefore, isAfter, endOfWeek, startOfDay } from 'date-fns';
 
 interface QuestCategoriesProps {
   onAddToFocus?: (questId: string) => void;
@@ -19,6 +19,7 @@ interface QuestCategoriesProps {
     statusFilter: string;
     xpRange: number[];
     goldRange: number[];
+    dueDateFilter: string;
   };
 }
 
@@ -30,11 +31,11 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
     typeFilter: 'all',
     statusFilter: 'all',
     xpRange: [1000],
-    goldRange: [0, 200]
+    goldRange: [0, 200],
+    dueDateFilter: 'all'
   }
 }) => {
-  const { quests, toggleQuestStatus } = useQuests();
-  const { addXP, addGold } = useUser();
+  const { quests, loading, updateQuestStatus } = useQuests();
   const { toast } = useToast();
 
   // Helper function to calculate base gold - moved to top to avoid hoisting issues
@@ -42,63 +43,74 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
     return Math.floor(xp / 10) + 10;
   };
 
+  // Helper function to check if quest is overdue
+  const isQuestOverdue = (quest: Quest) => {
+    if (!quest.due_date || quest.status === 'Completed') return false;
+    const dueDate = new Date(quest.due_date);
+    const today = startOfDay(new Date());
+    return isBefore(dueDate, today);
+  };
+
+  // Helper function to filter by due date
+  const matchesDueDateFilter = (quest: Quest, dueDateFilter: string) => {
+    if (dueDateFilter === 'all') return true;
+    
+    const today = new Date();
+    const hasNoDueDate = !quest.due_date;
+    
+    switch (dueDateFilter) {
+      case 'noDueDate':
+        return hasNoDueDate;
+      case 'overdue':
+        return !hasNoDueDate && isQuestOverdue(quest);
+      case 'dueToday':
+        return !hasNoDueDate && isToday(new Date(quest.due_date));
+      case 'dueThisWeek':
+        if (hasNoDueDate) return false;
+        const dueDate = new Date(quest.due_date);
+        const weekEnd = endOfWeek(today);
+        return !isBefore(dueDate, today) && !isAfter(dueDate, weekEnd);
+      default:
+        return true;
+    }
+  };
+
   // Filter states - now received as props
-  const { priorityFilter, typeFilter, statusFilter, xpRange, goldRange } = filters;
+  const { priorityFilter, typeFilter, statusFilter, xpRange, goldRange, dueDateFilter } = filters;
   const [previousQuests, setPreviousQuests] = useState<Quest[]>([]);
 
-  // Track quest completions and award XP and Gold
+  // Track quest completions and award XP and Gold - handled by database triggers now
   useEffect(() => {
-    if (previousQuests.length > 0) {
-      quests.forEach(currentQuest => {
-        const previousQuest = previousQuests.find(p => p.id === currentQuest.id);
-        
-        // If quest just changed to Completed, award XP and gold
-        if (previousQuest && 
-            previousQuest.status !== 'Completed' && 
-            currentQuest.status === 'Completed') {
-          
-          const baseGold = calculateBaseGold(currentQuest.xp);
-          
-          addXP(currentQuest.xp);
-          addGold(baseGold);
-          
-          toast({
-            title: "Quest Complete! 🎉",
-            description: `Earned ${currentQuest.xp} XP and ${baseGold} Gold!`,
-          });
-        }
-      });
-    }
-    
     // Update previous quests for next comparison
     setPreviousQuests([...quests]);
-  }, [quests, previousQuests, addXP, addGold, toast]);
+  }, [quests]);
 
   // Filtered quests
   const filteredQuests = quests.filter(quest => {
     const priorityMatch = priorityFilter === 'all' || quest.priority === priorityFilter;
-    const typeMatch = typeFilter === 'all' || quest.type === typeFilter;
-    const xpMatch = quest.xp <= xpRange[0];
-    const questGold = calculateBaseGold(quest.xp);
+    const typeMatch = typeFilter === 'all' || quest.quest_type === typeFilter;
+    const xpMatch = quest.xp_reward <= xpRange[0];
+    const questGold = quest.gold_reward;
     const goldMatch = questGold >= goldRange[0] && questGold <= goldRange[1];
     const statusMatch = statusFilter === 'all' || quest.status === statusFilter;
+    const dueDateMatch = matchesDueDateFilter(quest, dueDateFilter);
     
     // Search functionality - case insensitive, partial matches
     const searchMatch = searchQuery.trim() === '' || 
-      quest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      quest.quest_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (quest.tags && quest.tags.some(tag => 
         tag.toLowerCase().includes(searchQuery.toLowerCase())
       ));
     
-    return priorityMatch && typeMatch && xpMatch && goldMatch && statusMatch && searchMatch;
+    return priorityMatch && typeMatch && xpMatch && goldMatch && statusMatch && dueDateMatch && searchMatch;
   });
 
   // Group filtered quests by type
   const groupedQuests = {
-    Daily: filteredQuests.filter(q => q.type === 'Daily'),
-    Main: filteredQuests.filter(q => q.type === 'Main'),
-    Side: filteredQuests.filter(q => q.type === 'Side'),
-    Legendary: filteredQuests.filter(q => q.type === 'Legendary')
+    Daily: filteredQuests.filter(q => q.quest_type === 'Daily'),
+    Main: filteredQuests.filter(q => q.quest_type === 'Main'),
+    Side: filteredQuests.filter(q => q.quest_type === 'Side'),
+    Legendary: filteredQuests.filter(q => q.quest_type === 'Legendary')
   };
 
 
@@ -118,7 +130,7 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
     }
   };
 
-  const getTypeIcon = (type: Quest['type']) => {
+  const getTypeIcon = (type: Quest['quest_type']) => {
     switch (type) {
       case 'Daily': return <Star className="w-4 h-4" />;
       case 'Main': return <Trophy className="w-4 h-4" />;
@@ -137,89 +149,116 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
     }
   };
 
-  const QuestCard: React.FC<{ quest: Quest }> = ({ quest }) => (
-    <div className="bg-slate-700/50 rounded-lg p-3 sm:p-4 border border-slate-600/50 hover:border-slate-500/70 transition-all group">
-      <div className="flex items-start gap-3 mb-3">
-        <button
-          onClick={() => toggleQuestStatus(quest.id)}
-          className="shrink-0 mt-0.5"
-        >
-          {quest.status === 'Completed' ? (
-            <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
-          ) : (
-            <Circle className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 hover:text-blue-400 transition-colors" />
-          )}
-        </button>
-        
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2 mb-2">
-            <h4 className={`font-medium text-sm sm:text-base leading-tight ${quest.status === 'Completed' ? 'line-through text-slate-400' : 'text-white'}`}>
-              {quest.name}
-            </h4>
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 shrink-0">
-                  <MoreVertical className="w-3 h-3" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                align="end" 
-                className="bg-slate-800 border-slate-700 text-white z-50"
-              >
-                <DropdownMenuItem 
-                  onClick={() => onAddToFocus?.(quest.id)}
-                  className="hover:bg-slate-700 focus:bg-slate-700 text-sm"
+  const QuestCard: React.FC<{ quest: Quest }> = ({ quest }) => {
+    const isOverdue = isQuestOverdue(quest);
+    
+    return (
+      <div className="bg-slate-700/50 rounded-lg p-3 sm:p-4 border border-slate-600/50 hover:border-slate-500/70 transition-all group">
+        <div className="flex items-start gap-3 mb-3">
+          <button
+            onClick={() => updateQuestStatus(quest.id, quest.status === 'Completed' ? 'Not started' : 'Completed')}
+            className="shrink-0 mt-0.5"
+          >
+            {quest.status === 'Completed' ? (
+              <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
+            ) : (
+              <Circle className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 hover:text-blue-400 transition-colors" />
+            )}
+          </button>
+          
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <h4 className={`font-medium text-sm sm:text-base leading-tight ${quest.status === 'Completed' ? 'line-through text-slate-400' : 'text-white'}`}>
+                  {quest.quest_name}
+                </h4>
+                {isOverdue && (
+                  <div 
+                    className="shrink-0 flex items-center text-red-400"
+                    title="Quest is overdue"
+                    aria-label="Quest is overdue"
+                  >
+                    <AlertTriangle className="w-4 h-4" />
+                    <span className="sr-only">Overdue</span>
+                  </div>
+                )}
+              </div>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 shrink-0">
+                    <MoreVertical className="w-3 h-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                  align="end" 
+                  className="bg-slate-800 border-slate-700 text-white z-50"
                 >
-                  <Target className="w-4 h-4 mr-2" />
-                  Add to Today's Focus
-                </DropdownMenuItem>
-                <DropdownMenuItem className="hover:bg-slate-700 focus:bg-slate-700 text-sm">
-                  Edit Quest
-                </DropdownMenuItem>
-                <DropdownMenuItem className="hover:bg-slate-700 focus:bg-slate-700 text-red-400 text-sm">
-                  Delete Quest
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          
-          <div className="flex items-center gap-1 sm:gap-2 mb-2 flex-wrap">
-            <Badge variant="outline" className="text-amber-400 border-amber-400/50 text-xs px-1.5 py-0.5">
-              {quest.xp} XP
-            </Badge>
-            <Badge variant="outline" className="text-yellow-400 border-yellow-400/50 text-xs px-1.5 py-0.5">
-              <Coins className="w-3 h-3 mr-1" />
-              {calculateBaseGold(quest.xp)} Gold
-            </Badge>
-            <Badge className={`${getPriorityColor(quest.priority)} text-xs px-1.5 py-0.5`}>
-              {quest.priority}
-            </Badge>
-            <button
-              onClick={() => toggleQuestStatus(quest.id)}
-              className={`px-2 py-1 rounded-full text-xs font-medium transition-colors ${getStatusColor(quest.status)} whitespace-nowrap`}
-            >
-              {quest.status}
-            </button>
-          </div>
-          
-          {quest.tags && quest.tags.length > 0 && (
-            <div className="flex items-center gap-1 flex-wrap">
-              {quest.tags.slice(0, 2).map((tag, index) => (
-                <span key={index} className="text-xs text-slate-400 bg-slate-600/50 px-2 py-1 rounded-full flex items-center gap-1 whitespace-nowrap">
-                  <Tag className="w-3 h-3" />
-                  #{tag}
-                </span>
-              ))}
-              {quest.tags.length > 2 && (
-                <span className="text-xs text-slate-400">+{quest.tags.length - 2}</span>
-              )}
+                  <DropdownMenuItem 
+                    onClick={() => onAddToFocus?.(quest.id)}
+                    className="hover:bg-slate-700 focus:bg-slate-700 text-sm"
+                  >
+                    <Target className="w-4 h-4 mr-2" />
+                    Add to Today's Focus
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="hover:bg-slate-700 focus:bg-slate-700 text-sm">
+                    Edit Quest
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="hover:bg-slate-700 focus:bg-slate-700 text-red-400 text-sm">
+                    Delete Quest
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-          )}
+            
+            <div className="flex items-center gap-1 sm:gap-2 mb-2 flex-wrap">
+              <Badge variant="outline" className="text-amber-400 border-amber-400/50 text-xs px-1.5 py-0.5">
+                {quest.xp_reward} XP
+              </Badge>
+              <Badge variant="outline" className="text-yellow-400 border-yellow-400/50 text-xs px-1.5 py-0.5">
+                <Coins className="w-3 h-3 mr-1" />
+                {quest.gold_reward} Gold
+              </Badge>
+              <Badge className={`${getPriorityColor(quest.priority)} text-xs px-1.5 py-0.5`}>
+                {quest.priority}
+              </Badge>
+              <button
+                onClick={() => updateQuestStatus(quest.id, quest.status === 'Completed' ? 'Not started' : 'Completed')}
+                className={`px-2 py-1 rounded-full text-xs font-medium transition-colors ${getStatusColor(quest.status)} whitespace-nowrap`}
+              >
+                {quest.status}
+              </button>
+            </div>
+
+            {/* Due Date Display */}
+            {quest.due_date && (
+              <div className="flex items-center gap-1 mb-2">
+                <Calendar className="w-3 h-3 text-slate-400" />
+                <span className={`text-xs ${isOverdue ? 'text-red-400 font-medium' : 'text-slate-400'}`}>
+                  Due {format(new Date(quest.due_date), 'MMM dd, yyyy')}
+                  {isOverdue && ' (Overdue)'}
+                </span>
+              </div>
+            )}
+            
+            {quest.tags && quest.tags.length > 0 && (
+              <div className="flex items-center gap-1 flex-wrap">
+                {quest.tags.slice(0, 2).map((tag, index) => (
+                  <span key={index} className="text-xs text-slate-400 bg-slate-600/50 px-2 py-1 rounded-full flex items-center gap-1 whitespace-nowrap">
+                    <Tag className="w-3 h-3" />
+                    #{tag}
+                  </span>
+                ))}
+                {quest.tags.length > 2 && (
+                  <span className="text-xs text-slate-400">+{quest.tags.length - 2}</span>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const CategorySection: React.FC<{ 
     type: keyof typeof groupedQuests; 

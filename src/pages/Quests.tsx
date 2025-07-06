@@ -21,7 +21,8 @@ const Quests = () => {
     typeFilter: 'all',
     statusFilter: 'all',
     xpRange: [1000] as number[],
-    goldRange: [0, 200] as number[]
+    goldRange: [0, 200] as number[],
+    dueDateFilter: 'all'
   });
 
   const handleAddToFocus = (questId: string) => {
@@ -41,7 +42,8 @@ const Quests = () => {
       typeFilter: 'all',
       statusFilter: 'all',
       xpRange: [1000],
-      goldRange: [0, 200]
+      goldRange: [0, 200],
+      dueDateFilter: 'all'
     });
   };
   return (
