@@ -176,20 +176,9 @@ const GoldShopContent = () => {
 
   return (
     <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-yellow-600/30 shadow-2xl">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-2">
-          <Coins className="w-6 h-6 text-yellow-400" />
-          <h3 className="text-xl font-bold text-yellow-400">Gold Shop</h3>
-        </div>
-        
-        {/* Gold Balance Display */}
-        <div className="bg-gradient-to-r from-yellow-600/20 to-amber-600/20 border border-yellow-500/30 rounded-lg p-3">
-          <div className="flex items-center gap-2">
-            <Coins className="w-5 h-5 text-yellow-400" />
-            <div className="text-lg font-bold text-yellow-400">{user.gold.toLocaleString()}</div>
-            <div className="text-sm text-slate-300">Gold</div>
-          </div>
-        </div>
+      <div className="flex items-center gap-2 mb-6">
+        <Coins className="w-6 h-6 text-yellow-400" />
+        <h3 className="text-xl font-bold text-yellow-400">Gold Shop</h3>
       </div>
 
       {/* Shop Tabs */}

@@ -3,9 +3,12 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import InventorySystem from '@/components/InventorySystem';
 import GoldShopContent from '@/components/GoldShopContent';
+import { Coins } from 'lucide-react';
+import { useUser } from '@/contexts/UserContext';
 
 const Inventory = () => {
   const [activeTab, setActiveTab] = useState("inventory");
+  const { user } = useUser();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -25,6 +28,17 @@ const Inventory = () => {
           <p className="text-xl text-slate-300">
             Equip your gear and claim your rewards
           </p>
+        </div>
+
+        {/* Gold Balance Display */}
+        <div className="flex justify-center mb-8">
+          <div className="bg-gradient-to-r from-yellow-600/20 to-amber-600/20 border border-yellow-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <Coins className="w-6 h-6 text-yellow-400" />
+              <div className="text-2xl font-bold text-yellow-400">{user.gold.toLocaleString()}</div>
+              <div className="text-lg text-slate-300">Gold</div>
+            </div>
+          </div>
         </div>
 
         {/* Inventory Tabs */}
