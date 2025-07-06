@@ -21,6 +21,7 @@ interface QuestCategoriesProps {
     goldRange: number[];
     dueDateFilter: string;
   };
+  onOpenNewQuestModal?: () => void;
 }
 
 const QuestCategories: React.FC<QuestCategoriesProps> = ({ 
@@ -33,10 +34,13 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
     xpRange: [1000],
     goldRange: [0, 200],
     dueDateFilter: 'all'
-  }
+  },
+  onOpenNewQuestModal
 }) => {
   const { quests, loading, updateQuestStatus } = useQuests();
   const { toast } = useToast();
+
+  console.log('QuestCategories - quests:', quests, 'loading:', loading);
 
   // Helper function to calculate base gold - moved to top to avoid hoisting issues
   const calculateBaseGold = (xp: number) => {
@@ -280,7 +284,11 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
               <p className="text-white/80 text-xs sm:text-sm">{categoryQuests.length} quests</p>
             </div>
           </div>
-          <Button size="sm" className="bg-white/20 hover:bg-white/30 text-white border-white/30 shrink-0 h-8 sm:h-9 text-xs sm:text-sm px-3">
+          <Button 
+            size="sm" 
+            onClick={onOpenNewQuestModal}
+            className="bg-white/20 hover:bg-white/30 text-white border-white/30 shrink-0 h-8 sm:h-9 text-xs sm:text-sm px-3"
+          >
             <Plus className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
             <span className="hidden sm:inline">Add Quest</span>
           </Button>
@@ -312,13 +320,22 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
 
   return (
     <div className="space-y-8">
-      {/* Quest Categories */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-        <CategorySection type="Daily" icon={Star} title="Daily Habits" />
-        <CategorySection type="Main" icon={Trophy} title="Main Quests" />
-        <CategorySection type="Side" icon={Flag} title="Side Quests" />
-        <CategorySection type="Legendary" icon={Crown} title="Legendary Quests" />
-      </div>
+      {loading ? (
+        <div className="text-center py-8 text-slate-400">
+          <div className="animate-spin w-8 h-8 border-2 border-amber-400 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p>Loading your quests...</p>
+        </div>
+      ) : (
+        <>
+          {/* Quest Categories */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <CategorySection type="Daily" icon={Star} title="Daily Habits" />
+            <CategorySection type="Main" icon={Trophy} title="Main Quests" />
+            <CategorySection type="Side" icon={Flag} title="Side Quests" />
+            <CategorySection type="Legendary" icon={Crown} title="Legendary Quests" />
+          </div>
+        </>
+      )}
     </div>
   );
 };

@@ -107,6 +107,7 @@ const Quests = () => {
             onAddToFocus={handleAddToFocus} 
             searchQuery={searchQuery}
             filters={filters}
+            onOpenNewQuestModal={() => setIsNewQuestModalOpen(true)}
           />
         </div>
 
