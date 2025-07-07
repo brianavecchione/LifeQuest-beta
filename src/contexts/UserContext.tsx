@@ -91,7 +91,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             reduceAnimations: settings.reduceAnimations || false,
             avatar: profile.avatar_url || (profile.display_name ? profile.display_name.charAt(0).toUpperCase() : 'A'),
           };
-          setUser(userData);
+          
+          // Only update if this is a significant change, preserve local dailyXp
+          setUser(prev => ({
+            ...userData,
+            dailyXp: prev.dailyXp || userData.dailyXp, // Preserve existing dailyXp
+            pomodoroCount: prev.pomodoroCount || userData.pomodoroCount,
+            reduceAnimations: prev.reduceAnimations || userData.reduceAnimations,
+          }));
         } else {
           // Use default user data if no profile found
           setUser({
