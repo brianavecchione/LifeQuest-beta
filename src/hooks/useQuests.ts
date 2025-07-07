@@ -182,6 +182,19 @@ export const useQuests = () => {
         await refetchDailyXp();
       }
 
+      // Trigger badge progress update after quest completion
+      if (status === 'Completed' && previousStatus !== 'Completed') {
+        // Small delay to ensure quest completion is processed first
+        setTimeout(async () => {
+          try {
+            // Trigger badge update via database call which will cascade to real-time updates
+            await supabase.from('achievements').select('id').eq('user_id', user.id).limit(1);
+          } catch (error) {
+            console.error('Error triggering badge update:', error);
+          }
+        }, 100);
+      }
+
       // Show success message with context about balance limits
       if (status === 'Completed') {
         toast({

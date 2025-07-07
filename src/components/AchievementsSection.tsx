@@ -49,6 +49,33 @@ const AchievementsSection = () => {
     }
   }, [authUser]);
 
+  // Set up real-time subscription for achievements
+  useEffect(() => {
+    if (!authUser) return;
+
+    const channel = supabase
+      .channel('achievements-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'achievements',
+          filter: `user_id=eq.${authUser.id}`
+        },
+        (payload) => {
+          console.log('Achievement changed:', payload);
+          // Refresh achievements when they change
+          fetchAchievements();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [authUser]);
+
   const initializeUserAchievements = async () => {
     try {
       // First check if user has any achievements
@@ -138,11 +165,11 @@ const AchievementsSection = () => {
 
   // Filter achievements based on current filters
   const filteredAchievements = achievements.filter(achievement => {
-    const statusMatch = filter === 'all' || 
-      (filter === 'earned' && achievement.is_completed) ||
-      (filter === 'locked' && !achievement.is_completed);
-
-    return statusMatch;
+    const state = getAchievementState(achievement);
+    
+    if (filter === 'earned') return state === 'earned';
+    if (filter === 'locked') return state === 'locked' || state === 'unlockable';
+    return true; // 'all' shows everything
   });
 
   const getCategoryFromTag = (tag: string): string => {
@@ -281,6 +308,7 @@ const AchievementsSection = () => {
   }
 
   const earnedCount = achievements.filter(a => a.is_completed).length;
+  const unlockableCount = achievements.filter(a => a.is_unlockable && !a.is_completed).length;
   const totalCount = achievements.length;
 
   return (
@@ -294,6 +322,11 @@ const AchievementsSection = () => {
             <Badge className="bg-emerald-600 text-white text-sm">
               {earnedCount}/{totalCount} Earned
             </Badge>
+            {unlockableCount > 0 && (
+              <Badge className="bg-amber-600 text-white text-sm animate-pulse">
+                {unlockableCount} Ready to Claim!
+              </Badge>
+            )}
           </div>
           <button
             onClick={() => setShowStreaks(!showStreaks)}
