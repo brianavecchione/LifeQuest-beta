@@ -65,6 +65,33 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_xp_history: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          updated_at: string
+          user_id: string
+          xp_earned: number
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          xp_earned?: number
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          xp_earned?: number
+        }
+        Relationships: []
+      }
       gold_shop_items: {
         Row: {
           availability_status: Database["public"]["Enums"]["availability_status"]
@@ -703,6 +730,10 @@ export type Database = {
       }
       seed_locked_rewards: {
         Args: { p_user_id: string }
+        Returns: undefined
+      }
+      update_daily_xp_history: {
+        Args: { p_user_id: string; xp_gained: number }
         Returns: undefined
       }
       update_streak_status: {

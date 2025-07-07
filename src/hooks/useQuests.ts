@@ -143,35 +143,7 @@ export const useQuests = () => {
 
     const previousStatus = quest.status;
     
-    // Check if unchecking would result in negative balances (informational only)
-    let willHitZeroBalances = false;
-    if (status !== 'Completed' && previousStatus === 'Completed') {
-      // Check current user balances
-      if (currentUser.totalXp < quest.xp_reward || currentUser.gold < quest.gold_reward) {
-        willHitZeroBalances = true;
-      }
-    }
-    
-    // Track daily XP for chart only (database trigger handles actual XP/gold balance)
-    if (status === 'Completed' && previousStatus !== 'Completed') {
-      // Quest is being completed - track daily XP for chart only
-      const today = new Date().toISOString().split('T')[0];
-      const currentDailyXp = currentUser.dailyXp || {};
-      const updatedDailyXp = {
-        ...currentDailyXp,
-        [today]: (currentDailyXp[today] || 0) + quest.xp_reward
-      };
-      updateUser({ dailyXp: updatedDailyXp });
-    } else if (status !== 'Completed' && previousStatus === 'Completed') {
-      // Quest is being unchecked - update daily XP tracking for chart only
-      const today = new Date().toISOString().split('T')[0];
-      const currentDailyXp = currentUser.dailyXp || {};
-      const updatedDailyXp = {
-        ...currentDailyXp,
-        [today]: Math.max(0, (currentDailyXp[today] || 0) - quest.xp_reward)
-      };
-      updateUser({ dailyXp: updatedDailyXp });
-    }
+    // No need to track daily XP locally anymore - database handles it
 
     // Update quest status in local state immediately
     setQuests(prev => 
@@ -212,38 +184,15 @@ export const useQuests = () => {
           description: `You earned ${quest.xp_reward} XP and ${quest.gold_reward} Gold!`,
         });
       } else if (previousStatus === 'Completed') {
-        const description = willHitZeroBalances 
-          ? `Quest unchecked. Your XP and Gold have been reduced to their minimum values.`
-          : `${quest.xp_reward} XP and ${quest.gold_reward} Gold have been subtracted.`;
-        
         toast({
           title: 'Quest Unchecked',
-          description,
+          description: `${quest.xp_reward} XP and ${quest.gold_reward} Gold have been subtracted.`,
         });
       }
 
       return true;
     } catch (error) {
       console.error('Error updating quest status:', error);
-      
-      // Revert daily XP tracking on error
-      if (status === 'Completed' && previousStatus !== 'Completed') {
-        const today = new Date().toISOString().split('T')[0];
-        const currentDailyXp = currentUser.dailyXp || {};
-        const updatedDailyXp = {
-          ...currentDailyXp,
-          [today]: Math.max(0, (currentDailyXp[today] || 0) - quest.xp_reward)
-        };
-        updateUser({ dailyXp: updatedDailyXp });
-      } else if (previousStatus === 'Completed') {
-        const today = new Date().toISOString().split('T')[0];
-        const currentDailyXp = currentUser.dailyXp || {};
-        const updatedDailyXp = {
-          ...currentDailyXp,
-          [today]: (currentDailyXp[today] || 0) + quest.xp_reward
-        };
-        updateUser({ dailyXp: updatedDailyXp });
-      }
 
       // Revert quest status in local state
       setQuests(prev => 

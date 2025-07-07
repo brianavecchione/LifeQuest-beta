@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useDailyXp } from '@/hooks/useDailyXp';
 
 interface UserData {
   name: string;
@@ -49,6 +50,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { user: authUser } = useAuth();
   const [user, setUser] = useState<UserData>(emptyUser);
   const [isLoading, setIsLoading] = useState(true);
+  const { dailyXpData, weeklyXpData } = useDailyXp();
 
   // Load user profile data from Supabase
   const loadUserProfile = async () => {
@@ -95,7 +97,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           totalXp: profile.xp_balance, // Use database as source of truth
           gold: profile.gold_balance, // Use database as source of truth
           pomodoroCount: settings.pomodoroCount || 0,
-          dailyXp: settings.dailyXp || {},
+          dailyXp: {}, // No longer used, keep for compatibility
           reduceAnimations: settings.reduceAnimations || false,
           avatar: profile.avatar_url || (profile.display_name ? profile.display_name.charAt(0).toUpperCase() : 'A'),
         };
@@ -106,8 +108,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Only preserve local-only settings, use database for XP/gold
           pomodoroCount: prev.pomodoroCount || userData.pomodoroCount,
           reduceAnimations: prev.reduceAnimations || userData.reduceAnimations,
-          // Preserve dailyXp for chart functionality
-          dailyXp: prev.dailyXp || userData.dailyXp,
+          // Keep empty dailyXp since we're using database now
+          dailyXp: {},
         }));
       } else {
         // Use default user data if no profile found
@@ -115,7 +117,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           ...emptyUser,
           name: authUser.user_metadata?.display_name || 'Adventurer',
           pomodoroCount: settings.pomodoroCount || 0,
-          dailyXp: settings.dailyXp || {},
+          dailyXp: {},
           reduceAnimations: settings.reduceAnimations || false,
         });
       }
@@ -164,12 +166,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!isLoading && authUser) {
       const localSettings = {
         pomodoroCount: user.pomodoroCount,
-        dailyXp: user.dailyXp,
         reduceAnimations: user.reduceAnimations,
       };
       localStorage.setItem('lifequest-user-settings', JSON.stringify(localSettings));
     }
-  }, [user.pomodoroCount, user.dailyXp, user.reduceAnimations, isLoading, authUser]);
+  }, [user.pomodoroCount, user.reduceAnimations, isLoading, authUser]);
 
   const updateUser = (updates: Partial<UserData>) => {
     setUser(prev => ({ ...prev, ...updates }));
@@ -262,56 +263,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const getDailyXpData = () => {
-    const last7Days = [];
-    const today = new Date();
-    
-    // Ensure dailyXp exists
-    const dailyXpData = user.dailyXp || {};
-    
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
-      const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-      const fullDayName = date.toLocaleDateString('en-US', { weekday: 'long' });
-      
-      last7Days.push({
-        date: dayName,
-        xp: dailyXpData[dateStr] || 0,
-        day: fullDayName
-      });
-    }
-    
-    return last7Days;
+    return dailyXpData;
   };
 
   const getWeeklyXpData = () => {
-    const last4Weeks = [];
-    const today = new Date();
-    
-    // Ensure dailyXp exists
-    const dailyXpData = user.dailyXp || {};
-    
-    for (let weekOffset = 3; weekOffset >= 0; weekOffset--) {
-      const weekStart = new Date(today);
-      weekStart.setDate(today.getDate() - (weekOffset * 7) - today.getDay());
-      
-      let weeklyXp = 0;
-      for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
-        const date = new Date(weekStart);
-        date.setDate(weekStart.getDate() + dayOffset);
-        const dateStr = date.toISOString().split('T')[0];
-        weeklyXp += dailyXpData[dateStr] || 0;
-      }
-      
-      last4Weeks.push({
-        date: `Week ${4 - weekOffset}`,
-        xp: weeklyXp,
-        period: `Week of ${weekStart.toLocaleDateString()}`
-      });
-    }
-    
-    return last4Weeks;
+    return weeklyXpData;
   };
 
   const value: UserContextType = {
