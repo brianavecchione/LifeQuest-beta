@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { Upload, Camera, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface AvatarUploadProps {
   currentAvatar: string;
@@ -11,8 +13,10 @@ interface AvatarUploadProps {
 
 const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatar, onAvatarChange, userName }) => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -47,14 +51,64 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatar, onAvatarChan
     reader.readAsDataURL(file);
   };
 
-  const handleSaveAvatar = () => {
-    if (previewImage) {
-      onAvatarChange(previewImage);
+  const handleSaveAvatar = async () => {
+    if (!previewImage || !user) return;
+    
+    setIsUploading(true);
+    try {
+      // Convert base64 to blob
+      const response = await fetch(previewImage);
+      const blob = await response.blob();
+      
+      // Create a unique filename
+      const timestamp = Date.now();
+      const fileExtension = blob.type.split('/')[1] || 'png';
+      const fileName = `${user.id}/avatar_${timestamp}.${fileExtension}`;
+      
+      // Upload to Supabase storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, blob, {
+          cacheControl: '3600',
+          upsert: true
+        });
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Get the public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      // Update user profile in database
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('user_id', user.id);
+
+      if (profileError) {
+        throw profileError;
+      }
+
+      // Update local state
+      onAvatarChange(publicUrl);
       setPreviewImage(null);
+      
       toast({
         title: "Avatar updated!",
-        description: "Your new avatar has been saved.",
+        description: "Your new avatar has been saved permanently.",
       });
+    } catch (error: any) {
+      console.error('Error uploading avatar:', error);
+      toast({
+        title: "Upload failed",
+        description: error.message || "Failed to save avatar. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -117,13 +171,15 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatar, onAvatarChan
             <div className="flex gap-2">
               <Button 
                 onClick={handleSaveAvatar}
+                disabled={isUploading}
                 className="bg-green-600 hover:bg-green-700"
               >
-                Save Avatar
+                {isUploading ? 'Saving...' : 'Save Avatar'}
               </Button>
               <Button 
                 variant="outline" 
                 onClick={handleCancelPreview}
+                disabled={isUploading}
                 className="border-slate-600 text-slate-400"
               >
                 Cancel

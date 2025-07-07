@@ -173,8 +173,24 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user.pomodoroCount, user.reduceAnimations, isLoading, authUser]);
 
-  const updateUser = (updates: Partial<UserData>) => {
+  const updateUser = async (updates: Partial<UserData>) => {
     setUser(prev => ({ ...prev, ...updates }));
+    
+    // If avatar is being updated and user is authenticated, save to database
+    if (updates.avatar && authUser) {
+      try {
+        const { error } = await supabase
+          .from('profiles')
+          .update({ avatar_url: updates.avatar })
+          .eq('user_id', authUser.id);
+          
+        if (error) {
+          console.error('Error updating avatar in database:', error);
+        }
+      } catch (error) {
+        console.error('Error updating avatar:', error);
+      }
+    }
   };
 
   const addXP = (amount: number) => {
