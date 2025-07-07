@@ -58,6 +58,9 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
   const isQuestOverdue = (quest: Quest) => {
     if (!quest.due_date || quest.status === 'Completed') return false;
     
+    // Daily quests don't show due date indicators, so they're never considered overdue
+    if (quest.quest_type === 'Daily') return false;
+    
     // Parse the due date as a local date (not UTC)
     const [year, month, day] = quest.due_date.split('-').map(Number);
     const dueDate = new Date(year, month - 1, day); // month is 0-indexed
@@ -365,8 +368,8 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
               </button>
             </div>
 
-            {/* Due Date Display */}
-            {quest.due_date && (
+            {/* Due Date Display - Hide for Daily quests */}
+            {quest.due_date && quest.quest_type !== 'Daily' && (
               <div className="flex items-center gap-1 mb-2">
                 <Calendar className="w-3 h-3 text-slate-400" />
                 <span className={`text-xs ${isOverdue ? 'text-red-400 font-medium' : 'text-slate-400'}`}>
