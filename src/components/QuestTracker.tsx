@@ -170,7 +170,11 @@ const QuestTracker = () => {
   const handleRemoveFromFocus = (questId: string) => {
     const newFocus = todaysFocus.filter(id => id !== questId);
     
-    // If removing would drop below 3 tasks, show setup modal to add replacements
+    // Always remove the task first
+    setTodaysFocus(newFocus);
+    window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
+    
+    // If removing drops below 3 tasks, show setup modal to add replacements
     if (newFocus.length < 3) {
       toast({
         title: "Minimum Focus Required",
@@ -178,8 +182,6 @@ const QuestTracker = () => {
       });
       setIsSetupModalOpen(true);
     } else {
-      setTodaysFocus(newFocus);
-      window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
       toast({
         title: "Quest Removed",
         description: "Quest removed from Today's Focus.",
