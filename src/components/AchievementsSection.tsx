@@ -193,14 +193,44 @@ const AchievementsSection = () => {
     return 'locked';
   };
 
-  // Filter achievements based on current filters
-  const filteredAchievements = achievements.filter(achievement => {
-    const state = getAchievementState(achievement);
-    
-    if (filter === 'earned') return state === 'earned';
-    if (filter === 'locked') return state === 'locked' || state === 'unlockable';
-    return true; // 'all' shows everything
-  });
+  // Filter and sort achievements based on current filters
+  const filteredAchievements = achievements
+    .filter(achievement => {
+      const state = getAchievementState(achievement);
+      
+      if (filter === 'earned') return state === 'earned';
+      if (filter === 'locked') return state === 'locked' || state === 'unlockable';
+      return true; // 'all' shows everything
+    })
+    .sort((a, b) => {
+      const stateA = getAchievementState(a);
+      const stateB = getAchievementState(b);
+      
+      // Define priority order: unlockable (0), earned (1), locked (2)
+      const statePriority = {
+        'unlockable': 0,
+        'earned': 1,
+        'locked': 2
+      };
+      
+      const priorityA = statePriority[stateA];
+      const priorityB = statePriority[stateB];
+      
+      // Sort by priority first, then by rarity (Bronze=0, Silver=1, Gold=2, Legendary=3), then by name
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+      }
+      
+      const rarityOrder = { 'Bronze': 0, 'Silver': 1, 'Gold': 2, 'Legendary': 3 };
+      const rarityA = rarityOrder[a.quest_value] || 0;
+      const rarityB = rarityOrder[b.quest_value] || 0;
+      
+      if (rarityA !== rarityB) {
+        return rarityA - rarityB;
+      }
+      
+      return a.achievement_name.localeCompare(b.achievement_name);
+    });
 
   const getCategoryFromTag = (tag: string): string => {
     const categoryMap: Record<string, string> = {
