@@ -93,6 +93,20 @@ const BadgeSystem = () => {
           <p className={`text-sm mb-2 ${isEarned ? 'text-slate-300' : 'text-slate-400'}`}>
             {achievement.description}
           </p>
+          
+          {/* Reward Display - Always show XP and Gold for all states */}
+          <div className={`flex items-center gap-2 mb-2 text-xs font-medium ${
+            isEarned ? 'text-emerald-300' : 'text-slate-400'
+          }`}>
+            <span className="flex items-center gap-1">
+              ⚡ +{achievement.xp_reward} XP
+            </span>
+            <span className="text-slate-500">·</span>
+            <span className="flex items-center gap-1">
+              🪙 +{achievement.gold_reward} Gold
+            </span>
+          </div>
+          
           {!isEarned && (
             <>
               <div className="bg-slate-600 rounded-full h-2 mb-1">

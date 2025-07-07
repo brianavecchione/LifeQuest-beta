@@ -356,15 +356,23 @@ const AchievementsSection = () => {
         // Trigger celebration animation
         triggerCelebration();
         
-        // Show success toast
+        // Find the claimed achievement for reward info
+        const claimedAchievement = achievements.find(a => a.id === achievementId);
+        
+        // Show success toast with reward details
         toast({
           title: "Badge Claimed! 🎉",
-          description: "Congratulations on your achievement!",
-          duration: 3000,
+          description: claimedAchievement 
+            ? `Earned +${claimedAchievement.xp_reward} XP and +${claimedAchievement.gold_reward} Gold!`
+            : "Congratulations on your achievement!",
+          duration: 4000,
         });
 
-        // Refresh achievements to show updated status
-        await fetchAchievements();
+        // Force profile refresh to sync XP/Gold balances immediately
+        await Promise.all([
+          fetchAchievements(),
+          forceProfileRefresh()
+        ]);
       } else {
         toast({
           title: "Unable to claim badge",
@@ -492,16 +500,26 @@ const AchievementsSection = () => {
                           <span className="text-xs text-slate-400">
                             {getCategoryName(achievement.tags || [])}
                           </span>
-                          {state === 'earned' && (
-                            <Badge className="bg-emerald-600 text-white text-xs">
-                              +{achievement.xp_reward} XP
-                            </Badge>
-                          )}
                           {state === 'unlockable' && (
                             <Badge className="bg-amber-600 text-white text-xs animate-pulse">
                               Ready to Claim!
                             </Badge>
                           )}
+                        </div>
+                        
+                        {/* Reward Display - Always show XP and Gold for all states */}
+                        <div className={`flex items-center gap-2 mb-2 text-xs font-medium ${
+                          state === 'earned' ? 'text-emerald-300' : 
+                          state === 'unlockable' ? 'text-amber-300' : 
+                          'text-slate-400'
+                        }`}>
+                          <span className="flex items-center gap-1">
+                            ⚡ +{achievement.xp_reward} XP
+                          </span>
+                          <span className="text-slate-500">·</span>
+                          <span className="flex items-center gap-1">
+                            🪙 +{achievement.gold_reward} Gold
+                          </span>
                         </div>
                         <p className={`text-sm mb-2 ${
                           state === 'earned' ? 'text-slate-300' : 

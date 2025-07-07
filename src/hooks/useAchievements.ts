@@ -9,10 +9,12 @@ interface Achievement {
   achievement_progress_current: number;
   achievement_progress_goal: number;
   is_completed: boolean;
+  is_unlockable: boolean;
   quest_value: 'Bronze' | 'Silver' | 'Gold' | 'Legendary';
   xp_reward: number;
   gold_reward: number;
   earned_at: string | null;
+  claimed_at: string | null;
   tags: string[] | null;
 }
 
@@ -97,6 +99,34 @@ export const useAchievements = () => {
     }
   };
 
+  const claimAchievement = async (achievementId: string) => {
+    if (!user) return { success: false, achievement: null };
+
+    try {
+      const { data, error } = await supabase.rpc('claim_achievement', {
+        p_achievement_id: achievementId,
+        p_user_id: user.id
+      });
+
+      if (error) throw error;
+
+      if (data) {
+        // Find the achievement for return data
+        const claimedAchievement = achievements.find(a => a.id === achievementId);
+        
+        // Refresh achievements to show updated status
+        await fetchAchievements();
+        
+        return { success: true, achievement: claimedAchievement };
+      } else {
+        return { success: false, achievement: null };
+      }
+    } catch (error) {
+      console.error('Error claiming achievement:', error);
+      return { success: false, achievement: null };
+    }
+  };
+
   useEffect(() => {
     fetchAchievements();
   }, [user]);
@@ -132,6 +162,7 @@ export const useAchievements = () => {
     loading,
     updateAchievementProgress,
     createUserAchievement,
+    claimAchievement,
     refetch: fetchAchievements
   };
 };
