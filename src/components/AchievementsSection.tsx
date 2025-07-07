@@ -418,13 +418,6 @@ const AchievementsSection = () => {
               <Flame className="w-4 h-4 mr-1 inline" />
               {showStreaks ? 'Hide' : 'Show'} Streaks
             </button>
-            <button
-              onClick={recalculateBadgeProgress}
-              className="px-3 py-1 rounded-lg text-sm font-medium bg-blue-700 text-white hover:bg-blue-600 transition-colors"
-              title="Recalculate XP and level based on updated badge rewards"
-            >
-              🔄 Recalculate XP
-            </button>
           </div>
         </div>
 
