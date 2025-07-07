@@ -1,28 +1,33 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Trophy, Star, Flag, Crown, Plus, Target, CheckCircle2, Calendar, Play, Coins, X } from 'lucide-react';
+import { Trophy, Star, Flag, Crown, Plus, Target, CheckCircle2, Calendar, Play, Coins, X, MoreVertical, Edit, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import QuickDailySetup from './QuickDailySetup';
 import NewQuestModal from './NewQuestModal';
+import EditQuestModal from './EditQuestModal';
 import { 
   PomodoroSetupModal, 
   ActiveTimer, 
   TimerCompleteModal, 
   BreakTimerModal, 
   ActiveBreakTimer 
-} from './PomodoroTimer';
+ } from './PomodoroTimer';
 import { useToast } from '@/hooks/use-toast';
 import { useQuests, Quest } from '@/hooks/useQuests';
 import { useUser } from '@/contexts/UserContext';
 
 const QuestTracker = () => {
   const { toast } = useToast();
-  const { quests, updateQuestStatus } = useQuests();
+  const { quests, updateQuestStatus, deleteQuest, refetchQuests } = useQuests();
   const { addXP, subtractXP, addGold, subtractGold } = useUser();
 
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
   const [isNewQuestModalOpen, setIsNewQuestModalOpen] = useState(false);
+  const [editingQuest, setEditingQuest] = useState<Quest | null>(null);
+  const [deletingQuest, setDeletingQuest] = useState<Quest | null>(null);
   const [todaysFocus, setTodaysFocus] = useState<string[]>(() => {
     // Load from localStorage if available
     const savedFocus = localStorage.getItem('lifequest-todays-focus');
@@ -199,6 +204,26 @@ const QuestTracker = () => {
     }
   };
 
+  const handleEditQuest = (quest: Quest) => {
+    setEditingQuest(quest);
+  };
+
+  const handleDeleteQuest = async () => {
+    if (!deletingQuest) return;
+    
+    const success = await deleteQuest(deletingQuest.id);
+    if (success) {
+      // Remove from focus if it was in focus
+      if (todaysFocus.includes(deletingQuest.id)) {
+        const newFocus = todaysFocus.filter(id => id !== deletingQuest.id);
+        setTodaysFocus(newFocus);
+        localStorage.setItem('lifequest-todays-focus', JSON.stringify(newFocus));
+        window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
+      }
+      setDeletingQuest(null);
+    }
+  };
+
   // Pomodoro Timer Functions
   const handleBeginQuest = (quest: Quest) => {
     setSelectedQuest(quest);
@@ -352,7 +377,7 @@ const QuestTracker = () => {
   }, [activeBreakTimer?.isRunning]);
 
   const renderQuestCard = (quest: Quest, showCompleteIcon = false, showDeleteButton = false) => (
-    <div key={quest.id} className="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50 hover:border-slate-500/70 transition-all">
+    <div key={quest.id} className="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50 hover:border-slate-500/70 transition-all group">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 flex-1">
           {showCompleteIcon && quest.status === 'Completed' && (
@@ -398,6 +423,32 @@ const QuestTracker = () => {
               <X className="w-4 h-4" />
             </Button>
           )}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 shrink-0">
+                <MoreVertical className="w-3 h-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent 
+              align="end" 
+              className="bg-slate-800 border-slate-700 text-white z-50"
+            >
+              <DropdownMenuItem 
+                onClick={() => handleEditQuest(quest)}
+                className="hover:bg-slate-700 focus:bg-slate-700 text-sm"
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Edit Quest
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => setDeletingQuest(quest)}
+                className="hover:bg-slate-700 focus:bg-slate-700 text-red-400 text-sm"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete Quest
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           {quest.status !== 'Completed' && quest.quest_type !== 'Daily' && (
             <Button
               size="sm"
@@ -595,6 +646,37 @@ const QuestTracker = () => {
         currentQuestCount={quests.filter(q => q.quest_type !== 'Daily').length}
         maxQuests={15}
       />
+
+      {/* Edit Quest Modal */}
+      <EditQuestModal
+        isOpen={!!editingQuest}
+        onClose={() => setEditingQuest(null)}
+        quest={editingQuest}
+        onQuestUpdated={refetchQuests}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deletingQuest} onOpenChange={() => setDeletingQuest(null)}>
+        <AlertDialogContent className="bg-slate-800 border-slate-700 text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-red-400">Delete Quest</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-300">
+              Are you sure you want to delete "{deletingQuest?.quest_name}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="border-slate-600 text-slate-300 hover:bg-slate-700">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteQuest}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Delete Quest
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
