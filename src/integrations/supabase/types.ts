@@ -688,6 +688,10 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: undefined
       }
+      seed_dummy_account_only: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       seed_locked_achievements: {
         Args: { p_user_id: string }
         Returns: undefined
