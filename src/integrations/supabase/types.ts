@@ -21,6 +21,7 @@ export type Database = {
           id: string
           is_completed: boolean
           quest_value: Database["public"]["Enums"]["achievement_tier"]
+          tags: string[] | null
           updated_at: string
           user_id: string
           xp_reward: number
@@ -36,6 +37,7 @@ export type Database = {
           id?: string
           is_completed?: boolean
           quest_value?: Database["public"]["Enums"]["achievement_tier"]
+          tags?: string[] | null
           updated_at?: string
           user_id: string
           xp_reward?: number
@@ -51,6 +53,7 @@ export type Database = {
           id?: string
           is_completed?: boolean
           quest_value?: Database["public"]["Enums"]["achievement_tier"]
+          tags?: string[] | null
           updated_at?: string
           user_id?: string
           xp_reward?: number

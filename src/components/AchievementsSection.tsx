@@ -1,71 +1,112 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Trophy, Target, Flame, Calendar, Clock, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+
+interface Achievement {
+  id: string;
+  achievement_name: string;
+  description: string;
+  achievement_progress_current: number;
+  achievement_progress_goal: number;
+  is_completed: boolean;
+  quest_value: 'Bronze' | 'Silver' | 'Gold' | 'Legendary';
+  xp_reward: number;
+  gold_reward: number;
+  earned_at: string | null;
+  tags: string[] | null;
+}
+
+interface Streak {
+  id: string;
+  streak_name: string;
+  description: string;
+  current_streak: number;
+  best_streak: number;
+  status: 'Active' | 'Inactive';
+}
 
 const AchievementsSection = () => {
+  const { user: authUser } = useAuth();
   const [currentTab, setCurrentTab] = useState<'achievements' | 'streaks'>('achievements');
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [streaks, setStreaks] = useState<Streak[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const achievements = [
-    {
-      name: 'Quest Initiate',
-      description: 'Complete your first 10 quests',
-      progress: 10,
-      total: 10,
-      completed: true,
-      icon: '🏆',
-      rarity: 'Bronze',
-      xpReward: 100
-    },
-    {
-      name: 'Focus Master',
-      description: 'Complete 5 hours of focused work',
-      progress: 3,
-      total: 5,
-      completed: false,
-      icon: '🎯',
-      rarity: 'Silver',
-      xpReward: 250
-    },
-    {
-      name: 'Legend in Making',
-      description: 'Complete 100 total quests',
-      progress: 47,
-      total: 100,
-      completed: false,
-      icon: '👑',
-      rarity: 'Gold',
-      xpReward: 500
+  useEffect(() => {
+    if (authUser) {
+      fetchAchievements();
+      fetchStreaks();
     }
-  ];
+  }, [authUser]);
 
-  const streaks = [
-    {
-      name: 'Daily Quester',
-      description: 'Complete at least one quest daily',
-      currentStreak: 7,
-      bestStreak: 12,
-      icon: '🔥',
-      active: true
-    },
-    {
-      name: 'Focus Warrior',
-      description: 'Use quest timer daily',
-      currentStreak: 3,
-      bestStreak: 8,
-      icon: '⏰',
-      active: true
-    },
-    {
-      name: 'XP Hunter',
-      description: 'Earn 100+ XP daily',
-      currentStreak: 0,
-      bestStreak: 5,
-      icon: '⭐',
-      active: false
+  const fetchAchievements = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('achievements')
+        .select('*')
+        .eq('user_id', authUser?.id)
+        .order('is_completed', { ascending: false })
+        .order('quest_value', { ascending: true });
+
+      if (error) throw error;
+      setAchievements(data || []);
+    } catch (error) {
+      console.error('Error fetching achievements:', error);
     }
-  ];
+  };
+
+  const fetchStreaks = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('streaks')
+        .select('*')
+        .eq('user_id', authUser?.id)
+        .order('status', { ascending: false })
+        .order('current_streak', { ascending: false });
+
+      if (error) throw error;
+      setStreaks(data || []);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching streaks:', error);
+      setLoading(false);
+    }
+  };
+
+  const getCompletionStatus = (current: number, goal: number, isCompleted: boolean) => {
+    if (isCompleted) return 'Completed';
+    if (current > 0) return 'In Progress';
+    return 'Not Started';
+  };
+
+  const getAchievementIcon = (name: string, tier: string) => {
+    const icons: Record<string, string> = {
+      'Quest Initiate': '🏆',
+      'Focus Master': '🎯',
+      'Quest Collector': '📚',
+      'Legendary Hero': '👑',
+      'Streak Champion': '🔥',
+      'Social Butterfly': '🦋'
+    };
+    return icons[name] || (tier === 'Legendary' ? '👑' : tier === 'Gold' ? '🥇' : tier === 'Silver' ? '🥈' : '🥉');
+  };
+
+  const getStreakIcon = (name: string) => {
+    const icons: Record<string, string> = {
+      'Daily Habit Streak': '🔥',
+      'Reading Streak': '📖',
+      'Exercise Streak': '💪'
+    };
+    return icons[name] || '⭐';
+  };
+
+  if (loading) {
+    return <div className="text-center text-slate-300">Loading achievements...</div>;
+  }
 
   const getRarityColor = (rarity: string) => {
     switch (rarity) {
@@ -113,32 +154,44 @@ const AchievementsSection = () => {
         {currentTab === 'achievements' && (
           <div className="space-y-4">
             {achievements.map((achievement, index) => (
-              <div key={index} className={`rounded-lg p-4 border transition-all ${
-                achievement.completed 
+              <div key={achievement.id} className={`rounded-lg p-4 border transition-all ${
+                achievement.is_completed 
                   ? 'bg-emerald-900/30 border-emerald-500/50' 
                   : 'bg-slate-700/50 border-slate-600/50'
               }`}>
                 <div className="flex items-center gap-4">
-                  <div className={`text-3xl ${achievement.completed ? '' : 'opacity-50'}`}>
-                    {achievement.icon}
+                  <div className={`text-3xl ${achievement.is_completed ? '' : 'opacity-50'}`}>
+                    {getAchievementIcon(achievement.achievement_name, achievement.quest_value)}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="text-white font-bold">{achievement.name}</h4>
-                      <Badge className={`${getRarityColor(achievement.rarity)} text-white`}>
-                        {achievement.rarity}
+                      <h4 className="text-white font-bold">{achievement.achievement_name}</h4>
+                      <Badge className={`${getRarityColor(achievement.quest_value)} text-white`}>
+                        {achievement.quest_value}
                       </Badge>
-                      {achievement.completed && (
+                      {achievement.is_completed && (
                         <Badge className="bg-emerald-600 text-white">
-                          +{achievement.xpReward} XP
+                          +{achievement.xp_reward} XP
                         </Badge>
                       )}
+                      <Badge variant="outline" className="text-slate-400">
+                        {getCompletionStatus(achievement.achievement_progress_current, achievement.achievement_progress_goal, achievement.is_completed)}
+                      </Badge>
                     </div>
                     <p className="text-slate-300 text-sm mb-2">{achievement.description}</p>
+                    {achievement.tags && achievement.tags.length > 0 && (
+                      <div className="flex gap-1 mb-2 flex-wrap">
+                        {achievement.tags.map((tag, tagIndex) => (
+                          <Badge key={tagIndex} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
                     <div className="flex items-center gap-2">
-                      <Progress value={(achievement.progress / achievement.total) * 100} className="flex-1 h-2" />
+                      <Progress value={(achievement.achievement_progress_current / achievement.achievement_progress_goal) * 100} className="flex-1 h-2" />
                       <span className="text-slate-400 text-sm">
-                        {achievement.progress}/{achievement.total}
+                        {achievement.achievement_progress_current}/{achievement.achievement_progress_goal}
                       </span>
                     </div>
                   </div>
@@ -151,19 +204,19 @@ const AchievementsSection = () => {
         {currentTab === 'streaks' && (
           <div className="space-y-4">
             {streaks.map((streak, index) => (
-              <div key={index} className={`rounded-lg p-4 border transition-all ${
-                streak.active 
+              <div key={streak.id} className={`rounded-lg p-4 border transition-all ${
+                streak.status === 'Active' 
                   ? 'bg-orange-900/30 border-orange-500/50' 
                   : 'bg-slate-700/50 border-slate-600/50'
               }`}>
                 <div className="flex items-center gap-4">
-                  <div className={`text-3xl ${streak.active ? '' : 'opacity-50'}`}>
-                    {streak.icon}
+                  <div className={`text-3xl ${streak.status === 'Active' ? '' : 'opacity-50'}`}>
+                    {getStreakIcon(streak.streak_name)}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="text-white font-bold">{streak.name}</h4>
-                      {streak.active && (
+                      <h4 className="text-white font-bold">{streak.streak_name}</h4>
+                      {streak.status === 'Active' && (
                         <Badge className="bg-orange-600 text-white">
                           Active
                         </Badge>
@@ -174,13 +227,13 @@ const AchievementsSection = () => {
                       <div className="flex items-center gap-1">
                         <Flame className="w-4 h-4 text-orange-400" />
                         <span className="text-orange-400 font-medium">
-                          Current: {streak.currentStreak}
+                          Current: {streak.current_streak}
                         </span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Star className="w-4 h-4 text-yellow-400" />
                         <span className="text-yellow-400 font-medium">
-                          Best: {streak.bestStreak}
+                          Best: {streak.best_streak}
                         </span>
                       </div>
                     </div>
