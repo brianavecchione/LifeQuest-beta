@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface UserData {
   name: string;
@@ -15,6 +17,7 @@ interface UserData {
 
 interface UserContextType {
   user: UserData;
+  isLoading: boolean;
   updateUser: (updates: Partial<UserData>) => void;
   addXP: (amount: number) => void;
   subtractXP: (amount: number) => void;
@@ -41,33 +44,83 @@ const defaultUser: UserData = {
 const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<UserData>(() => {
-    // Load from localStorage if available
-    const savedUser = localStorage.getItem('lifequest-user');
-    const loadedUser = savedUser ? JSON.parse(savedUser) : defaultUser;
-    
-    // Ensure dailyXp exists for existing users
-    if (!loadedUser.dailyXp) {
-      loadedUser.dailyXp = {};
-    }
-    
-    // Ensure reduceAnimations exists for existing users
-    if (loadedUser.reduceAnimations === undefined) {
-      loadedUser.reduceAnimations = false;
-    }
-    
-    // Ensure avatar exists for existing users
-    if (!loadedUser.avatar) {
-      loadedUser.avatar = loadedUser.name ? loadedUser.name.charAt(0).toUpperCase() : 'A';
-    }
-    
-    return loadedUser;
-  });
+  const { user: authUser } = useAuth();
+  const [user, setUser] = useState<UserData>(defaultUser);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Save to localStorage whenever user data changes
+  // Load user profile data from Supabase when auth user changes
   useEffect(() => {
-    localStorage.setItem('lifequest-user', JSON.stringify(user));
-  }, [user]);
+    const loadUserProfile = async () => {
+      if (!authUser) {
+        // Clear user data and localStorage when logged out
+        setUser(defaultUser);
+        localStorage.removeItem('lifequest-user');
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        
+        // Fetch user profile from Supabase
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('user_id', authUser.id)
+          .single();
+
+        if (error) {
+          console.error('Error fetching user profile:', error);
+        }
+
+        if (profile) {
+          // Map Supabase profile to UserData format
+          const userData: UserData = {
+            name: profile.display_name || 'Adventurer',
+            level: profile.user_level,
+            xp: Math.round(profile.level_progress * (profile.user_level * 100 + Math.max(profile.user_level - 1, 0) * 50) / 100),
+            xpToNext: profile.user_level * 100 + Math.max(profile.user_level - 1, 0) * 50,
+            totalXp: profile.xp_balance,
+            gold: profile.gold_balance,
+            pomodoroCount: 0, // This data isn't in Supabase yet
+            dailyXp: {}, // This data isn't in Supabase yet
+            reduceAnimations: false, // This setting isn't in Supabase yet
+            avatar: profile.avatar_url || (profile.display_name ? profile.display_name.charAt(0).toUpperCase() : 'A'),
+          };
+          setUser(userData);
+        } else {
+          // Use default user data if no profile found
+          setUser({
+            ...defaultUser,
+            name: authUser.user_metadata?.display_name || 'Adventurer'
+          });
+        }
+        
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error loading user profile:', error);
+        setUser({
+          ...defaultUser,
+          name: authUser.user_metadata?.display_name || 'Adventurer'
+        });
+        setIsLoading(false);
+      }
+    };
+
+    loadUserProfile();
+  }, [authUser]);
+
+  // Save to localStorage whenever user data changes (but only local settings)
+  useEffect(() => {
+    if (!isLoading && authUser) {
+      const localSettings = {
+        pomodoroCount: user.pomodoroCount,
+        dailyXp: user.dailyXp,
+        reduceAnimations: user.reduceAnimations,
+      };
+      localStorage.setItem('lifequest-user-settings', JSON.stringify(localSettings));
+    }
+  }, [user.pomodoroCount, user.dailyXp, user.reduceAnimations, isLoading, authUser]);
 
   const updateUser = (updates: Partial<UserData>) => {
     setUser(prev => ({ ...prev, ...updates }));
@@ -185,6 +238,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const value: UserContextType = {
     user,
+    isLoading,
     updateUser,
     addXP,
     subtractXP,
