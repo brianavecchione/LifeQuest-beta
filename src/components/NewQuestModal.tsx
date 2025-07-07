@@ -90,6 +90,11 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
       return;
     }
 
+    // Auto-assign due date for Daily quests to today
+    const finalDueDate = formData.quest_type === 'Daily' 
+      ? format(new Date(), 'yyyy-MM-dd')
+      : formData.due_date ? format(formData.due_date, 'yyyy-MM-dd') : undefined;
+
     const questData = {
       quest_name: formData.quest_name.trim(),
       description: formData.description.trim() || undefined,
@@ -99,7 +104,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
       quest_type: formData.quest_type,
       priority: formData.priority,
       tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(Boolean) : undefined,
-      due_date: formData.due_date ? format(formData.due_date, 'yyyy-MM-dd') : undefined,
+      due_date: finalDueDate,
     };
 
     const success = await createQuest(questData);
@@ -272,39 +277,49 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
               </p>
             </div>
 
-            {/* Due Date */}
-            <div>
-              <Label className="text-slate-300 font-medium mb-2 block">
-                Due Date (Optional)
-              </Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal bg-slate-700 border-slate-600 text-white hover:bg-slate-600",
-                      !formData.due_date && "text-slate-400"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.due_date ? format(formData.due_date, "PPP") : <span>Pick a due date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-slate-800 border-slate-700" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={formData.due_date || undefined}
-                    onSelect={(date) => setFormData(prev => ({ ...prev, due_date: date || null }))}
-                    disabled={(date) => date < new Date()}
-                    initialFocus
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
-              <p className="text-xs text-slate-400 mt-1">
-                Optional deadline for quest completion
-              </p>
-            </div>
+            {/* Due Date - Hidden for Daily quests (auto-assigned) */}
+            {formData.quest_type !== 'Daily' && (
+              <div>
+                <Label className="text-slate-300 font-medium mb-2 block">
+                  Due Date (Optional)
+                </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal bg-slate-700 border-slate-600 text-white hover:bg-slate-600",
+                        !formData.due_date && "text-slate-400"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.due_date ? format(formData.due_date, "PPP") : <span>Pick a due date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-slate-800 border-slate-700" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={formData.due_date || undefined}
+                      onSelect={(date) => setFormData(prev => ({ ...prev, due_date: date || null }))}
+                      disabled={(date) => date < new Date()}
+                      initialFocus
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+                <p className="text-xs text-slate-400 mt-1">
+                  Optional deadline for quest completion
+                </p>
+              </div>
+            )}
+            {formData.quest_type === 'Daily' && (
+              <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-3">
+                <p className="text-yellow-400 text-sm font-medium">📅 Daily Quest Auto-Schedule</p>
+                <p className="text-yellow-300/80 text-xs mt-1">
+                  Due date automatically set to today and will reset daily
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Quest Preview */}

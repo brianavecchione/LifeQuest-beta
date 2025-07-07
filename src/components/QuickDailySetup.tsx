@@ -5,36 +5,28 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Trophy, Flag, Crown, Target } from 'lucide-react';
 
-interface Quest {
-  id: string;
-  name: string;
-  status: 'Not started' | 'In Progress' | 'Completed';
-  xp: number;
-  type: 'Daily' | 'Main' | 'Side' | 'Legendary';
-  priority: 'Low' | 'Medium' | 'High';
-}
+import { useQuests, Quest } from '@/hooks/useQuests';
 
 interface QuickDailySetupProps {
   isOpen: boolean;
   onClose: () => void;
-  quests: Quest[];
   onSetupComplete: (selectedQuests: string[]) => void;
 }
 
 const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
   isOpen,
   onClose,
-  quests,
   onSetupComplete
 }) => {
   const [selectedQuests, setSelectedQuests] = useState<string[]>([]);
+  const { quests } = useQuests();
 
   // Filter to show Main, Side, and Legendary quests (not completed)
   const focusableQuests = quests.filter(quest => 
-    ['Main', 'Side', 'Legendary'].includes(quest.type) && quest.status !== 'Completed'
+    ['Main', 'Side', 'Legendary'].includes(quest.quest_type) && quest.status !== 'Completed'
   );
 
-  const getTypeIcon = (type: Quest['type']) => {
+  const getTypeIcon = (type: Quest['quest_type']) => {
     switch (type) {
       case 'Main': return <Trophy className="w-4 h-4" />;
       case 'Side': return <Flag className="w-4 h-4" />;
@@ -43,7 +35,7 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
     }
   };
 
-  const getTypeColor = (type: Quest['type']) => {
+  const getTypeColor = (type: Quest['quest_type']) => {
     switch (type) {
       case 'Main': return 'border-red-500/50 text-red-400';
       case 'Side': return 'border-blue-500/50 text-blue-400';
@@ -133,8 +125,8 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
                       className="data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600"
                     />
                     
-                    <div className={`p-2 rounded-lg border ${getTypeColor(quest.type)} bg-slate-800/50`}>
-                      {getTypeIcon(quest.type)}
+                    <div className={`p-2 rounded-lg border ${getTypeColor(quest.quest_type)} bg-slate-800/50`}>
+                      {getTypeIcon(quest.quest_type)}
                     </div>
                     
                     <div className="flex-1">
@@ -142,14 +134,14 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
                         htmlFor={quest.id}
                         className="text-white font-medium cursor-pointer hover:text-amber-400 transition-colors"
                       >
-                        {quest.name}
+                        {quest.quest_name}
                       </label>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge variant="outline" className="text-amber-400 border-amber-400/50 text-xs">
-                          {quest.xp} XP
+                          {quest.xp_reward} XP
                         </Badge>
-                        <Badge variant="outline" className={`${getTypeColor(quest.type)} border-current text-xs`}>
-                          {quest.type}
+                        <Badge variant="outline" className={`${getTypeColor(quest.quest_type)} border-current text-xs`}>
+                          {quest.quest_type}
                         </Badge>
                       </div>
                     </div>

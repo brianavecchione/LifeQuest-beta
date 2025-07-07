@@ -109,12 +109,22 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
     return priorityMatch && typeMatch && xpMatch && goldMatch && statusMatch && dueDateMatch && searchMatch;
   });
 
-  // Group filtered quests by type
+  // Group filtered quests by type and sort completed to bottom
+  const sortQuestsByCompletion = (questArray: Quest[]) => {
+    return [...questArray].sort((a, b) => {
+      // Completed quests go to bottom
+      if (a.status === 'Completed' && b.status !== 'Completed') return 1;
+      if (a.status !== 'Completed' && b.status === 'Completed') return -1;
+      // Within same completion status, maintain creation order (newest first)
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+  };
+
   const groupedQuests = {
-    Daily: filteredQuests.filter(q => q.quest_type === 'Daily'),
-    Main: filteredQuests.filter(q => q.quest_type === 'Main'),
-    Side: filteredQuests.filter(q => q.quest_type === 'Side'),
-    Legendary: filteredQuests.filter(q => q.quest_type === 'Legendary')
+    Daily: sortQuestsByCompletion(filteredQuests.filter(q => q.quest_type === 'Daily')),
+    Main: sortQuestsByCompletion(filteredQuests.filter(q => q.quest_type === 'Main')),
+    Side: sortQuestsByCompletion(filteredQuests.filter(q => q.quest_type === 'Side')),
+    Legendary: sortQuestsByCompletion(filteredQuests.filter(q => q.quest_type === 'Legendary'))
   };
 
 

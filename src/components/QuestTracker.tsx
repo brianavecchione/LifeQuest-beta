@@ -13,12 +13,12 @@ import {
   ActiveBreakTimer 
 } from './PomodoroTimer';
 import { useToast } from '@/hooks/use-toast';
-import { useQuests, Quest } from '@/contexts/QuestContext';
+import { useQuests, Quest } from '@/hooks/useQuests';
 import { useUser } from '@/contexts/UserContext';
 
 const QuestTracker = () => {
   const { toast } = useToast();
-  const { quests, addQuest, toggleQuestStatus } = useQuests();
+  const { quests, updateQuestStatus } = useQuests();
   const { addXP, subtractXP, addGold, subtractGold } = useUser();
 
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
@@ -64,51 +64,29 @@ const QuestTracker = () => {
     localStorage.setItem('lifequest-todays-focus', JSON.stringify(todaysFocus));
   }, [todaysFocus]);
 
-  // Track quest completions and award XP
+  // Track quest completions and award XP - removed since handled by database triggers
   useEffect(() => {
-    if (previousQuests.length > 0) {
-      quests.forEach(currentQuest => {
-        const previousQuest = previousQuests.find(p => p.id === currentQuest.id);
-        
-        if (previousQuest && previousQuest.status !== currentQuest.status) {
-          const baseGold = Math.floor(currentQuest.xp / 10) + 10;
-          
-          // Use setTimeout to avoid state updates during render
-          setTimeout(() => {
-            if (previousQuest.status !== 'Completed' && currentQuest.status === 'Completed') {
-              // Quest was just completed
-              addXP(currentQuest.xp);
-              addGold(baseGold);
-              
-              toast({
-                title: "Quest Complete! 🎉",
-                description: `Earned ${currentQuest.xp} XP and ${baseGold} Gold!`,
-              });
-            } else if (previousQuest.status === 'Completed' && currentQuest.status !== 'Completed') {
-              // Quest was just uncompleted
-              subtractXP(currentQuest.xp);
-              subtractGold(baseGold);
-              
-              toast({
-                title: "Quest Uncompleted",
-                description: `Removed ${currentQuest.xp} XP and ${baseGold} Gold.`,
-              });
-            }
-          }, 0);
-        }
-      });
-    }
-    
     // Update previous quests for next comparison
     setPreviousQuests([...quests]);
-  }, [quests, previousQuests.length, addXP, subtractXP, addGold, subtractGold, toast]);
+  }, [quests]);
 
-  // Separate quests by type - only show dailies and focused quests
-  const dailyQuests = quests.filter(quest => quest.type === 'Daily');
+  // Separate quests by type - show all dailies automatically and focused quests
+  const allDailies = quests.filter(quest => quest.quest_type === 'Daily');
+  const sortedDailies = [...allDailies].sort((a, b) => {
+    // Completed dailies go to bottom
+    if (a.status === 'Completed' && b.status !== 'Completed') return 1;
+    if (a.status !== 'Completed' && b.status === 'Completed') return -1;
+    return 0;
+  });
+  
   const focusQuests = quests.filter(quest => 
-    todaysFocus.includes(quest.id) && quest.type !== 'Daily'
-  );
-  // Don't show other quests on Today page - only focused quests and dailies
+    todaysFocus.includes(quest.id) && quest.quest_type !== 'Daily'
+  ).sort((a, b) => {
+    // Completed focused quests go to bottom
+    if (a.status === 'Completed' && b.status !== 'Completed') return 1;
+    if (a.status !== 'Completed' && b.status === 'Completed') return -1;
+    return 0;
+  });
 
   const getStatusColor = (status: Quest['status']) => {
     switch (status) {
@@ -118,7 +96,7 @@ const QuestTracker = () => {
     }
   };
 
-  const getTypeIcon = (type: Quest['type']) => {
+  const getTypeIcon = (type: Quest['quest_type']) => {
     switch (type) {
       case 'Daily': return <Star className="w-4 h-4" />;
       case 'Main': return <Trophy className="w-4 h-4" />;
@@ -127,7 +105,7 @@ const QuestTracker = () => {
     }
   };
 
-  const getTypeColor = (type: Quest['type']) => {
+  const getTypeColor = (type: Quest['quest_type']) => {
     switch (type) {
       case 'Daily': return 'border-yellow-500/50 text-yellow-400';
       case 'Main': return 'border-red-500/50 text-red-400';
@@ -143,6 +121,14 @@ const QuestTracker = () => {
       case 'Low': return 'bg-green-600';
     }
   };
+
+  // Helper to transform new Quest to old interface for Pomodoro components
+  const transformQuestForPomodoro = (quest: Quest) => ({
+    id: quest.id,
+    name: quest.quest_name,
+    xp: quest.xp_reward,
+    type: quest.quest_type
+  });
 
 
   const handleDailySetup = (selectedQuestIds: string[]) => {
@@ -207,8 +193,8 @@ const QuestTracker = () => {
   }, [activeTimer, quests]);
 
   const calculateRewards = (quest: Quest) => {
-    const bonusXp = Math.floor(quest.xp * 0.5); // 50% bonus
-    const bonusGold = Math.floor(quest.xp / 10) + 25; // Base gold calculation
+    const bonusXp = Math.floor(quest.xp_reward * 0.5); // 50% bonus
+    const bonusGold = Math.floor(quest.xp_reward / 10) + 25; // Base gold calculation
     return { bonusXp, bonusGold };
   };
 
@@ -220,11 +206,8 @@ const QuestTracker = () => {
     if (completedTimerQuest) {
       const { bonusXp, bonusGold } = calculateRewards(completedTimerQuest);
       
-      // Update quest status using context (regular XP/gold will be added by the useEffect)
-      toggleQuestStatus(completedTimerQuest.id);
-      if (quests.find(q => q.id === completedTimerQuest.id)?.status !== 'Completed') {
-        toggleQuestStatus(completedTimerQuest.id); // Ensure it gets to Completed
-      }
+      // Update quest status using new hook
+      updateQuestStatus(completedTimerQuest.id, 'Completed');
 
       // Add bonus rewards from timer completion
       addXP(bonusXp);
@@ -239,7 +222,7 @@ const QuestTracker = () => {
       setCompletedTimerQuest(null);
       setIsBreakModalOpen(true); // Offer break
     }
-  }, [completedTimerQuest, toast, toggleQuestStatus, quests, addXP, addGold]);
+  }, [completedTimerQuest, toast, updateQuestStatus, addXP, addGold]);
 
   const handleBreakAccept = useCallback(() => {
     setActiveBreakTimer({
@@ -312,35 +295,35 @@ const QuestTracker = () => {
             <CheckCircle2 className="w-5 h-5 text-green-400 animate-pulse" />
           )}
           <button
-            onClick={() => toggleQuestStatus(quest.id)}
+            onClick={() => updateQuestStatus(quest.id, quest.status === 'Completed' ? 'Not started' : 'Completed')}
             className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${getStatusColor(quest.status)}`}
           >
             {quest.status}
           </button>
           
-          <div className={`p-2 rounded-lg border ${getTypeColor(quest.type)} bg-slate-800/50`}>
-            {getTypeIcon(quest.type)}
+          <div className={`p-2 rounded-lg border ${getTypeColor(quest.quest_type)} bg-slate-800/50`}>
+            {getTypeIcon(quest.quest_type)}
           </div>
           
           <div className="flex-1">
-            <h4 className="text-white font-medium">{quest.name}</h4>
+            <h4 className="text-white font-medium">{quest.quest_name}</h4>
             <div className="flex items-center gap-2 mt-1">
               <Badge variant="outline" className="text-amber-400 border-amber-400/50">
-                {quest.xp} XP
+                {quest.xp_reward} XP
               </Badge>
               <Badge variant="outline" className="text-yellow-400 border-yellow-400/50">
                 <Coins className="w-3 h-3 mr-1" />
-                {calculateBaseGold(quest.xp)} Gold
+                {quest.gold_reward} Gold
               </Badge>
-              <Badge variant="outline" className={`${getTypeColor(quest.type)} border-current`}>
-                {quest.type}
+              <Badge variant="outline" className={`${getTypeColor(quest.quest_type)} border-current`}>
+                {quest.quest_type}
               </Badge>
             </div>
           </div>
         </div>
         
         <div className="flex items-center gap-2">
-          {quest.status !== 'Completed' && quest.type !== 'Daily' && (
+          {quest.status !== 'Completed' && quest.quest_type !== 'Daily' && (
             <Button
               size="sm"
               onClick={() => handleBeginQuest(quest)}
@@ -363,7 +346,7 @@ const QuestTracker = () => {
       {activeTimer && (
         <div className="sticky top-20 z-30">
           <ActiveTimer
-            quest={quests.find(q => q.id === activeTimer.questId)!}
+            quest={transformQuestForPomodoro(quests.find(q => q.id === activeTimer.questId)!)}
             timeRemaining={activeTimer.timeRemaining}
             totalTime={activeTimer.totalTime}
             isRunning={activeTimer.isRunning}
@@ -472,22 +455,24 @@ const QuestTracker = () => {
           </div>
         )}
 
-        {/* Daily Quests Sidebar */}
-        {dailyQuests.length > 0 ? (
+        {/* Daily Quests Section - Always Show All Dailies */}
+        {sortedDailies.length > 0 ? (
           <div className="bg-slate-700/30 rounded-lg p-4 border border-yellow-600/30">
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="w-5 h-5 text-yellow-400" />
-              <h4 className="text-lg font-semibold text-yellow-400">Daily Habits</h4>
+              <h4 className="text-lg font-bold text-yellow-400">Daily Habits</h4>
+              <span className="text-yellow-300/70 text-sm">({sortedDailies.filter(q => q.status === 'Completed').length}/{sortedDailies.length})</span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {dailyQuests.map((quest) => renderQuestCard(quest))}
+            
+            <div className="space-y-3">
+              {sortedDailies.map((quest) => renderQuestCard(quest, true))}
             </div>
           </div>
         ) : (
-          <div className="bg-slate-700/30 rounded-lg p-6 border border-yellow-600/30 text-center">
-            <Star className="w-12 h-12 text-yellow-400 mx-auto mb-4 opacity-50" />
-            <p className="text-yellow-400 font-medium text-lg mb-2">No daily habits tracked yet</p>
-            <p className="text-yellow-300 text-sm">Add a habit to build your streaks!</p>
+          <div className="bg-slate-700/30 rounded-lg p-4 border border-yellow-600/30 text-center">
+            <Calendar className="w-8 h-8 text-yellow-400 mx-auto mb-2 opacity-50" />
+            <p className="text-yellow-400 font-medium">No Daily Habits Created Yet</p>
+            <p className="text-yellow-300/70 text-sm">Create some daily habits to build consistency!</p>
           </div>
         )}
       </div>
@@ -496,14 +481,14 @@ const QuestTracker = () => {
       <PomodoroSetupModal
         isOpen={isPomodoroModalOpen}
         onClose={() => setIsPomodoroModalOpen(false)}
-        quest={selectedQuest}
+        quest={selectedQuest ? transformQuestForPomodoro(selectedQuest) : null}
         onTimerStart={handleTimerStart}
       />
 
       {/* Timer Complete Modal */}
       <TimerCompleteModal
         isOpen={isTimerCompleteModalOpen}
-        quest={completedTimerQuest}
+        quest={completedTimerQuest ? transformQuestForPomodoro(completedTimerQuest) : null}
         onComplete={handleQuestComplete}
         onDismiss={() => {
           setIsTimerCompleteModalOpen(false);
@@ -524,7 +509,6 @@ const QuestTracker = () => {
       <QuickDailySetup
         isOpen={isSetupModalOpen}
         onClose={() => setIsSetupModalOpen(false)}
-        quests={quests}
         onSetupComplete={handleDailySetup}
       />
 
@@ -532,8 +516,8 @@ const QuestTracker = () => {
       <NewQuestModal
         isOpen={isNewQuestModalOpen}
         onClose={() => setIsNewQuestModalOpen(false)}
-        currentQuestCount={quests.filter(q => q.type !== 'Daily').length}
-        maxQuests={5}
+        currentQuestCount={quests.filter(q => q.quest_type !== 'Daily').length}
+        maxQuests={15}
       />
     </div>
   );
