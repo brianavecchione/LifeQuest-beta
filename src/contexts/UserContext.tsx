@@ -73,6 +73,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.error('Error fetching user profile:', error);
         }
 
+        // Load local settings from localStorage
+        const localSettings = localStorage.getItem('lifequest-user-settings');
+        const settings = localSettings ? JSON.parse(localSettings) : {};
+
         if (profile) {
           // Map Supabase profile to UserData format
           const userData: UserData = {
@@ -82,9 +86,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             xpToNext: profile.user_level * 100 + Math.max(profile.user_level - 1, 0) * 50,
             totalXp: profile.xp_balance,
             gold: profile.gold_balance,
-            pomodoroCount: 0, // This data isn't in Supabase yet
-            dailyXp: {}, // This data isn't in Supabase yet
-            reduceAnimations: false, // This setting isn't in Supabase yet
+            pomodoroCount: settings.pomodoroCount || 0,
+            dailyXp: settings.dailyXp || {},
+            reduceAnimations: settings.reduceAnimations || false,
             avatar: profile.avatar_url || (profile.display_name ? profile.display_name.charAt(0).toUpperCase() : 'A'),
           };
           setUser(userData);
@@ -92,7 +96,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Use default user data if no profile found
           setUser({
             ...defaultUser,
-            name: authUser.user_metadata?.display_name || 'Adventurer'
+            name: authUser.user_metadata?.display_name || 'Adventurer',
+            pomodoroCount: settings.pomodoroCount || 0,
+            dailyXp: settings.dailyXp || {},
+            reduceAnimations: settings.reduceAnimations || false,
           });
         }
         
@@ -108,6 +115,29 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     loadUserProfile();
+
+    // Set up real-time subscription to profile changes
+    const channel = supabase
+      .channel('profile-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `user_id=eq.${authUser?.id}`
+        },
+        (payload) => {
+          console.log('Profile updated:', payload);
+          // Reload profile data when it changes
+          loadUserProfile();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [authUser]);
 
   // Save to localStorage whenever user data changes (but only local settings)
