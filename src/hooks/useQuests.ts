@@ -152,9 +152,9 @@ export const useQuests = () => {
       }
     }
     
-    // Track daily XP for chart (but let database handle total XP balance)
+    // Track daily XP for chart only (database trigger handles actual XP/gold balance)
     if (status === 'Completed' && previousStatus !== 'Completed') {
-      // Quest is being completed - track daily XP for chart
+      // Quest is being completed - track daily XP for chart only
       const today = new Date().toISOString().split('T')[0];
       const currentDailyXp = currentUser.dailyXp || {};
       const updatedDailyXp = {
@@ -163,7 +163,7 @@ export const useQuests = () => {
       };
       updateUser({ dailyXp: updatedDailyXp });
     } else if (status !== 'Completed' && previousStatus === 'Completed') {
-      // Quest is being unchecked - update daily XP tracking
+      // Quest is being unchecked - update daily XP tracking for chart only
       const today = new Date().toISOString().split('T')[0];
       const currentDailyXp = currentUser.dailyXp || {};
       const updatedDailyXp = {
