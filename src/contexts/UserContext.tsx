@@ -78,12 +78,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const settings = localSettings ? JSON.parse(localSettings) : {};
 
         if (profile) {
+          // Calculate current level XP from total XP and level
+          const currentLevelXp = profile.user_level * 100 + Math.max(profile.user_level - 1, 0) * 50;
+          const previousLevelXp = profile.user_level > 1 
+            ? (profile.user_level - 1) * 100 + Math.max(profile.user_level - 2, 0) * 50 
+            : 0;
+          const xpInCurrentLevel = profile.xp_balance - previousLevelXp;
+          
           // Map Supabase profile to UserData format
           const userData: UserData = {
             name: profile.display_name || 'Adventurer',
             level: profile.user_level,
-            xp: Math.round(profile.level_progress * (profile.user_level * 100 + Math.max(profile.user_level - 1, 0) * 50) / 100),
-            xpToNext: profile.user_level * 100 + Math.max(profile.user_level - 1, 0) * 50,
+            xp: Math.max(0, xpInCurrentLevel), // XP progress within current level
+            xpToNext: currentLevelXp - previousLevelXp, // XP needed for next level
             totalXp: profile.xp_balance,
             gold: profile.gold_balance,
             pomodoroCount: settings.pomodoroCount || 0,
