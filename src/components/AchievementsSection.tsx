@@ -163,6 +163,12 @@ const AchievementsSection = () => {
     }
   };
 
+  const getAchievementState = (achievement: Achievement) => {
+    if (achievement.is_completed) return 'earned';
+    if (achievement.is_unlockable) return 'unlockable';
+    return 'locked';
+  };
+
   // Filter achievements based on current filters
   const filteredAchievements = achievements.filter(achievement => {
     const state = getAchievementState(achievement);
@@ -297,11 +303,6 @@ const AchievementsSection = () => {
     }
   };
 
-  const getAchievementState = (achievement: Achievement) => {
-    if (achievement.is_completed) return 'earned';
-    if (achievement.is_unlockable) return 'unlockable';
-    return 'locked';
-  };
 
   if (loading) {
     return <div className="text-center text-slate-300">Loading achievements...</div>;
