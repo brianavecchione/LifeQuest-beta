@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Trophy, Star, Flag, Crown, Plus, Target, CheckCircle2, Calendar, Play, Coins } from 'lucide-react';
+import { Trophy, Star, Flag, Crown, Plus, Target, CheckCircle2, Calendar, Play, Coins, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import QuickDailySetup from './QuickDailySetup';
@@ -158,7 +158,33 @@ const QuestTracker = () => {
 
 
   const handleDailySetup = (selectedQuestIds: string[]) => {
-    setTodaysFocus(selectedQuestIds);
+    // Add selected quests to current focus instead of replacing
+    const newFocus = [...todaysFocus, ...selectedQuestIds];
+    setTodaysFocus(newFocus);
+    
+    // Trigger localStorage update event for sync
+    window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
+  };
+
+  // Remove quest from Today's Focus with minimum enforcement
+  const handleRemoveFromFocus = (questId: string) => {
+    const newFocus = todaysFocus.filter(id => id !== questId);
+    
+    // If removing would drop below 3 tasks, show setup modal to add replacements
+    if (newFocus.length < 3) {
+      toast({
+        title: "Minimum Focus Required",
+        description: "Today's Focus needs at least 3 quests. Please select replacement quests.",
+      });
+      setIsSetupModalOpen(true);
+    } else {
+      setTodaysFocus(newFocus);
+      window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
+      toast({
+        title: "Quest Removed",
+        description: "Quest removed from Today's Focus.",
+      });
+    }
   };
 
   // Pomodoro Timer Functions
@@ -313,7 +339,7 @@ const QuestTracker = () => {
     };
   }, [activeBreakTimer?.isRunning]);
 
-  const renderQuestCard = (quest: Quest, showCompleteIcon = false) => (
+  const renderQuestCard = (quest: Quest, showCompleteIcon = false, showDeleteButton = false) => (
     <div key={quest.id} className="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50 hover:border-slate-500/70 transition-all">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 flex-1">
@@ -349,6 +375,17 @@ const QuestTracker = () => {
         </div>
         
         <div className="flex items-center gap-2">
+          {showDeleteButton && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => handleRemoveFromFocus(quest.id)}
+              className="border-red-500 text-red-400 hover:bg-red-600 hover:text-white p-2"
+              title="Remove from Today's Focus"
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          )}
           {quest.status !== 'Completed' && quest.quest_type !== 'Daily' && (
             <Button
               size="sm"
@@ -455,20 +492,20 @@ const QuestTracker = () => {
                 <Target className="w-6 h-6 text-amber-400" />
                 <h4 className="text-lg font-bold text-amber-400">Today's Focus</h4>
               </div>
-              {showAddMoreQuests && (
+               {(showAddMoreQuests || todaysFocus.length < 5) && (
                 <Button 
                   size="sm" 
                   onClick={() => setIsSetupModalOpen(true)}
-                  className="bg-green-600 hover:bg-green-700 animate-pulse"
+                  className={showAddMoreQuests ? "bg-green-600 hover:bg-green-700 animate-pulse" : "bg-amber-600 hover:bg-amber-700"}
                 >
                   <Plus className="w-4 h-4 mr-1" />
-                  Add More Quests
+                  {showAddMoreQuests ? 'Add More Quests' : 'Add Quest'}
                 </Button>
               )}
             </div>
             
             <div className="space-y-3">
-              {focusQuests.map((quest) => renderQuestCard(quest, true))}
+              {focusQuests.map((quest) => renderQuestCard(quest, true, true))}
             </div>
             
             {showAddMoreQuests && (
@@ -536,6 +573,7 @@ const QuestTracker = () => {
         isOpen={isSetupModalOpen}
         onClose={() => setIsSetupModalOpen(false)}
         onSetupComplete={handleDailySetup}
+        currentFocusQuests={todaysFocus}
       />
 
       {/* New Quest Modal */}

@@ -11,20 +11,30 @@ interface QuickDailySetupProps {
   isOpen: boolean;
   onClose: () => void;
   onSetupComplete: (selectedQuests: string[]) => void;
+  currentFocusQuests: string[]; // Track current focus tasks
 }
 
 const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
   isOpen,
   onClose,
-  onSetupComplete
+  onSetupComplete,
+  currentFocusQuests
 }) => {
   const [selectedQuests, setSelectedQuests] = useState<string[]>([]);
   const { quests } = useQuests();
 
-  // Filter to show Main, Side, and Legendary quests (not completed)
+  // Filter to show Main, Side, and Legendary quests (not completed and not already in focus)
   const focusableQuests = quests.filter(quest => 
-    ['Main', 'Side', 'Legendary'].includes(quest.quest_type) && quest.status !== 'Completed'
+    ['Main', 'Side', 'Legendary'].includes(quest.quest_type) && 
+    quest.status !== 'Completed' &&
+    !currentFocusQuests.includes(quest.id) // Exclude quests already in Today's Focus
   );
+
+  const currentFocusCount = currentFocusQuests.length;
+  const maxFocusQuests = 5;
+  const minFocusQuests = 3;
+  const spotsAvailable = maxFocusQuests - currentFocusCount;
+  const needToSelect = Math.max(0, minFocusQuests - currentFocusCount);
 
   const getTypeIcon = (type: Quest['quest_type']) => {
     switch (type) {
@@ -48,7 +58,7 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
     setSelectedQuests(prev => {
       if (prev.includes(questId)) {
         return prev.filter(id => id !== questId);
-      } else if (prev.length < 5) {
+      } else if (prev.length < spotsAvailable) {
         return [...prev, questId];
       }
       return prev;
@@ -56,14 +66,14 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
   };
 
   const handleSetupComplete = () => {
-    if (selectedQuests.length >= 3 && selectedQuests.length <= 5) {
+    if (selectedQuests.length >= needToSelect) {
       onSetupComplete(selectedQuests);
       onClose();
       setSelectedQuests([]);
     }
   };
 
-  const isValidSelection = selectedQuests.length >= 3 && selectedQuests.length <= 5;
+  const isValidSelection = selectedQuests.length >= needToSelect;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -74,7 +84,13 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
             Set Your Focus for Today
           </DialogTitle>
           <DialogDescription className="text-slate-300 text-lg">
-            Pick 3–5 quests to complete first. You can add more after you finish these!
+            {spotsAvailable === 0 ? (
+              <>Your Today's Focus is full. Remove a task before adding a new one!</>
+            ) : needToSelect > 0 ? (
+              <>Pick {needToSelect}–{spotsAvailable} more quests to reach your daily focus minimum.</>
+            ) : (
+              <>Pick up to {spotsAvailable} more quests to add to your focus.</>
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -82,9 +98,9 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
           {/* Progress Indicator */}
           <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-slate-300">Selected Quests</span>
+              <span className="text-slate-300">Focus Progress</span>
               <span className={`font-bold ${isValidSelection ? 'text-green-400' : 'text-amber-400'}`}>
-                {selectedQuests.length}/5
+                {currentFocusCount + selectedQuests.length}/{maxFocusQuests}
               </span>
             </div>
             <div className="bg-slate-600 rounded-full h-2">
@@ -92,25 +108,34 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
                 className={`h-full rounded-full transition-all duration-300 ${
                   isValidSelection ? 'bg-green-500' : 'bg-amber-400'
                 }`}
-                style={{ width: `${Math.min((selectedQuests.length / 5) * 100, 100)}%` }}
+                style={{ width: `${Math.min(((currentFocusCount + selectedQuests.length) / maxFocusQuests) * 100, 100)}%` }}
               />
             </div>
             <p className="text-xs text-slate-400 mt-1">
-              {selectedQuests.length < 3 
-                ? `Select at least ${3 - selectedQuests.length} more quest${3 - selectedQuests.length !== 1 ? 's' : ''}`
-                : selectedQuests.length <= 5 
-                ? 'Perfect! You can select up to 5 quests total.'
-                : 'Maximum of 5 quests reached'
-              }
+              {spotsAvailable === 0 ? (
+                'Your focus is full! Remove tasks to add new ones.'
+              ) : needToSelect > 0 ? (
+                `Select at least ${needToSelect - selectedQuests.length} more quest${(needToSelect - selectedQuests.length) !== 1 ? 's' : ''} to reach minimum`
+              ) : selectedQuests.length === 0 ? (
+                `You can add up to ${spotsAvailable} more quests to your focus.`
+              ) : (
+                `Perfect! You can add up to ${spotsAvailable - selectedQuests.length} more quests.`
+              )}
             </p>
           </div>
 
           {/* Quest Selection */}
           <div className="space-y-3 max-h-96 overflow-y-auto">
-            {focusableQuests.length === 0 ? (
+            {spotsAvailable === 0 ? (
               <div className="text-center py-8 text-slate-400">
                 <Target className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>No quests available for focus selection.</p>
+                <p className="text-amber-400 font-medium">Your Today's Focus is full!</p>
+                <p className="text-sm">Remove a task before adding a new one.</p>
+              </div>
+            ) : focusableQuests.length === 0 ? (
+              <div className="text-center py-8 text-slate-400">
+                <Target className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>No additional quests available for focus selection.</p>
                 <p className="text-sm">Create some Main or Side quests first!</p>
               </div>
             ) : (
@@ -121,7 +146,7 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
                       id={quest.id}
                       checked={selectedQuests.includes(quest.id)}
                       onCheckedChange={() => handleQuestToggle(quest.id)}
-                      disabled={!selectedQuests.includes(quest.id) && selectedQuests.length >= 5}
+                      disabled={!selectedQuests.includes(quest.id) && selectedQuests.length >= spotsAvailable}
                       className="data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600"
                     />
                     
@@ -162,14 +187,14 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
             </Button>
             <Button 
               onClick={handleSetupComplete}
-              disabled={!isValidSelection}
+              disabled={!isValidSelection || spotsAvailable === 0}
               className={`flex-1 ${
-                isValidSelection 
+                isValidSelection && spotsAvailable > 0
                   ? 'bg-amber-600 hover:bg-amber-700 text-white' 
                   : 'bg-slate-600 text-slate-400 cursor-not-allowed'
               }`}
             >
-              Set Today's Focus
+              {spotsAvailable === 0 ? 'Focus is Full' : 'Add to Today\'s Focus'}
             </Button>
           </div>
         </div>
