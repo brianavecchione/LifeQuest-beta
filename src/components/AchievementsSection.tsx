@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Trophy, Target, Flame, TrendingUp, Users, Sparkles, Zap, Filter, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+import confetti from 'canvas-confetti';
 
 interface Achievement {
   id: string;
@@ -12,10 +15,12 @@ interface Achievement {
   achievement_progress_current: number;
   achievement_progress_goal: number;
   is_completed: boolean;
+  is_unlockable: boolean;
   quest_value: 'Bronze' | 'Silver' | 'Gold' | 'Legendary';
   xp_reward: number;
   gold_reward: number;
   earned_at: string | null;
+  claimed_at: string | null;
   tags: string[] | null;
 }
 
@@ -30,9 +35,11 @@ interface Streak {
 
 const AchievementsSection = () => {
   const { user: authUser } = useAuth();
+  const { toast } = useToast();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [streaks, setStreaks] = useState<Streak[]>([]);
   const [loading, setLoading] = useState(true);
+  const [claiming, setClaiming] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'earned' | 'locked'>('all');
   const [showStreaks, setShowStreaks] = useState(false);
 
@@ -209,6 +216,66 @@ const AchievementsSection = () => {
     return icons[name] || '⭐';
   };
 
+  const triggerCelebration = () => {
+    // Confetti animation
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#10b981', '#fbbf24', '#8b5cf6', '#f59e0b']
+    });
+  };
+
+  const claimBadge = async (achievementId: string) => {
+    if (!authUser || claiming) return;
+    
+    setClaiming(achievementId);
+    try {
+      const { data, error } = await supabase.rpc('claim_achievement', {
+        p_achievement_id: achievementId,
+        p_user_id: authUser.id
+      });
+
+      if (error) throw error;
+
+      if (data) {
+        // Trigger celebration animation
+        triggerCelebration();
+        
+        // Show success toast
+        toast({
+          title: "Badge Claimed! 🎉",
+          description: "Congratulations on your achievement!",
+          duration: 3000,
+        });
+
+        // Refresh achievements to show updated status
+        await fetchAchievements();
+      } else {
+        toast({
+          title: "Unable to claim badge",
+          description: "This badge is not eligible for claiming yet.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error claiming badge:', error);
+      toast({
+        title: "Error",
+        description: "Failed to claim badge. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setClaiming(null);
+    }
+  };
+
+  const getAchievementState = (achievement: Achievement) => {
+    if (achievement.is_completed) return 'earned';
+    if (achievement.is_unlockable) return 'unlockable';
+    return 'locked';
+  };
+
   if (loading) {
     return <div className="text-center text-slate-300">Loading achievements...</div>;
   }
@@ -264,66 +331,115 @@ const AchievementsSection = () => {
 
         {/* Achievements Grid */}
         <div className="space-y-4">
-          {filteredAchievements.length > 0 ? (
+           {filteredAchievements.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {filteredAchievements.map((achievement) => (
-                <div 
-                  key={achievement.id} 
-                  className={`rounded-lg p-4 border transition-all hover:scale-105 animate-fade-in ${
-                    achievement.is_completed 
-                      ? 'bg-emerald-900/30 border-emerald-500/50 hover:border-emerald-400/70' 
-                      : 'bg-slate-700/30 border-slate-600/30 opacity-75 hover:border-amber-500/50'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="text-3xl">
-                      {achievement.is_completed ? getRarityEmoji(achievement.quest_value) : '🔒'}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        {getCategoryIcon(achievement.tags || [])}
-                        <h3 className={`font-bold ${achievement.is_completed ? 'text-white' : 'text-slate-300'}`}>
-                          {achievement.achievement_name}
-                        </h3>
+              {filteredAchievements.map((achievement) => {
+                const state = getAchievementState(achievement);
+                return (
+                  <div 
+                    key={achievement.id} 
+                    className={`rounded-lg p-4 border transition-all hover:scale-105 animate-fade-in ${
+                      state === 'earned'
+                        ? 'bg-emerald-900/30 border-emerald-500/50 hover:border-emerald-400/70' 
+                        : state === 'unlockable'
+                        ? 'bg-amber-900/20 border-amber-500/50 hover:border-amber-400/70'
+                        : 'bg-slate-700/30 border-slate-600/30 opacity-75 hover:border-slate-500/50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`text-3xl ${state === 'unlockable' ? 'animate-pulse' : ''}`}>
+                        {state === 'earned' 
+                          ? getRarityEmoji(achievement.quest_value) 
+                          : state === 'unlockable'
+                          ? '✨'
+                          : '🔒'
+                        }
                       </div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge className={`${getRarityColor(achievement.quest_value)} text-white text-xs ${achievement.is_completed ? '' : 'opacity-75'}`}>
-                          {achievement.quest_value}
-                        </Badge>
-                        <span className="text-xs text-slate-400">
-                          {getCategoryName(achievement.tags || [])}
-                        </span>
-                        {achievement.is_completed && (
-                          <Badge className="bg-emerald-600 text-white text-xs">
-                            +{achievement.xp_reward} XP
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          {getCategoryIcon(achievement.tags || [])}
+                          <h3 className={`font-bold ${
+                            state === 'earned' ? 'text-white' : 
+                            state === 'unlockable' ? 'text-amber-300' : 
+                            'text-slate-300'
+                          }`}>
+                            {achievement.achievement_name}
+                          </h3>
+                        </div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge className={`${getRarityColor(achievement.quest_value)} text-white text-xs ${
+                            state === 'earned' ? '' : 'opacity-75'
+                          }`}>
+                            {achievement.quest_value}
                           </Badge>
+                          <span className="text-xs text-slate-400">
+                            {getCategoryName(achievement.tags || [])}
+                          </span>
+                          {state === 'earned' && (
+                            <Badge className="bg-emerald-600 text-white text-xs">
+                              +{achievement.xp_reward} XP
+                            </Badge>
+                          )}
+                          {state === 'unlockable' && (
+                            <Badge className="bg-amber-600 text-white text-xs animate-pulse">
+                              Ready to Claim!
+                            </Badge>
+                          )}
+                        </div>
+                        <p className={`text-sm mb-2 ${
+                          state === 'earned' ? 'text-slate-300' : 
+                          state === 'unlockable' ? 'text-amber-200' : 
+                          'text-slate-400'
+                        }`}>
+                          {achievement.description}
+                        </p>
+                        
+                        {/* Progress bar for locked achievements */}
+                        {state === 'locked' && (
+                          <>
+                            <div className="bg-slate-600 rounded-full h-2 mb-1">
+                              <div 
+                                className="bg-amber-400 h-full rounded-full transition-all duration-500"
+                                style={{ width: `${Math.min(100, (achievement.achievement_progress_current / achievement.achievement_progress_goal) * 100)}%` }}
+                              />
+                            </div>
+                            <span className="text-amber-400 text-xs font-medium">
+                              {achievement.achievement_progress_current}/{achievement.achievement_progress_goal}
+                            </span>
+                          </>
+                        )}
+                        
+                        {/* Claim button for unlockable achievements */}
+                        {state === 'unlockable' && (
+                          <div className="mt-3">
+                            <Button
+                              onClick={() => claimBadge(achievement.id)}
+                              disabled={claiming === achievement.id}
+                              className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105"
+                            >
+                              {claiming === achievement.id ? (
+                                <div className="flex items-center gap-2">
+                                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                  Claiming...
+                                </div>
+                              ) : (
+                                <>🏆 Claim Badge</>
+                              )}
+                            </Button>
+                          </div>
+                        )}
+                        
+                        {/* Earned date for completed achievements */}
+                        {state === 'earned' && achievement.earned_at && (
+                          <p className="text-emerald-400 text-xs">
+                            Earned {new Date(achievement.earned_at).toLocaleDateString()}
+                          </p>
                         )}
                       </div>
-                      <p className={`text-sm mb-2 ${achievement.is_completed ? 'text-slate-300' : 'text-slate-400'}`}>
-                        {achievement.description}
-                      </p>
-                      {!achievement.is_completed && (
-                        <>
-                          <div className="bg-slate-600 rounded-full h-2 mb-1">
-                            <div 
-                              className="bg-amber-400 h-full rounded-full transition-all duration-500"
-                              style={{ width: `${Math.min(100, (achievement.achievement_progress_current / achievement.achievement_progress_goal) * 100)}%` }}
-                            />
-                          </div>
-                          <span className="text-amber-400 text-xs font-medium">
-                            {achievement.achievement_progress_current}/{achievement.achievement_progress_goal}
-                          </span>
-                        </>
-                      )}
-                      {achievement.is_completed && achievement.earned_at && (
-                        <p className="text-emerald-400 text-xs">
-                          Earned {new Date(achievement.earned_at).toLocaleDateString()}
-                        </p>
-                      )}
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-8">

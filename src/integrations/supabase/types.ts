@@ -19,12 +19,14 @@ export type Database = {
           achievement_name: string
           achievement_progress_current: number
           achievement_progress_goal: number
+          claimed_at: string | null
           created_at: string
           description: string
           earned_at: string | null
           gold_reward: number
           id: string
           is_completed: boolean
+          is_unlockable: boolean
           quest_value: Database["public"]["Enums"]["achievement_tier"]
           tags: string[] | null
           updated_at: string
@@ -35,12 +37,14 @@ export type Database = {
           achievement_name: string
           achievement_progress_current?: number
           achievement_progress_goal?: number
+          claimed_at?: string | null
           created_at?: string
           description: string
           earned_at?: string | null
           gold_reward?: number
           id?: string
           is_completed?: boolean
+          is_unlockable?: boolean
           quest_value?: Database["public"]["Enums"]["achievement_tier"]
           tags?: string[] | null
           updated_at?: string
@@ -51,12 +55,14 @@ export type Database = {
           achievement_name?: string
           achievement_progress_current?: number
           achievement_progress_goal?: number
+          claimed_at?: string | null
           created_at?: string
           description?: string
           earned_at?: string | null
           gold_reward?: number
           id?: string
           is_completed?: boolean
+          is_unlockable?: boolean
           quest_value?: Database["public"]["Enums"]["achievement_tier"]
           tags?: string[] | null
           updated_at?: string
@@ -707,6 +713,10 @@ export type Database = {
       calculate_xp_for_level: {
         Args: { level_num: number }
         Returns: number
+      }
+      claim_achievement: {
+        Args: { p_achievement_id: string; p_user_id: string }
+        Returns: boolean
       }
       increment_streak: {
         Args: { p_user_id: string; p_streak_name: string }
