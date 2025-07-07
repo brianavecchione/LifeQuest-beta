@@ -137,7 +137,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Load user profile data from Supabase when auth user changes
   useEffect(() => {
-    console.log('🔄 Loading user profile data for updated XP calculations...');
+    console.log('🔄 Loading user profile data after stat correction...');
     loadUserProfile();
 
     // Set up real-time subscription to profile changes
@@ -290,7 +290,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const forceProfileRefresh = async () => {
-    console.log('Force refreshing user profile after XP recalculation...');
+    console.log('🔄 Force refreshing user profile data after stat correction...');
+    
+    // Clear any cached values
+    setUser(emptyUser);
+    setIsLoading(true);
+    
+    // Force reload from database
     await loadUserProfile();
   };
 
