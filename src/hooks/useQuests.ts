@@ -187,8 +187,11 @@ export const useQuests = () => {
         // Small delay to ensure quest completion is processed first
         setTimeout(async () => {
           try {
-            // Trigger badge update via database call which will cascade to real-time updates
-            await supabase.from('achievements').select('id').eq('user_id', user.id).limit(1);
+            // Trigger badge recalculation via database function
+            await supabase.rpc('recalculate_badge_progress', {
+              p_user_id: user.id
+            });
+            console.log('Badge progress recalculated after quest completion');
           } catch (error) {
             console.error('Error triggering badge update:', error);
           }

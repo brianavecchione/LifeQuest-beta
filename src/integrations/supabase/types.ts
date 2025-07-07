@@ -722,6 +722,10 @@ export type Database = {
         Args: { p_user_id: string; p_streak_name: string }
         Returns: undefined
       }
+      recalculate_badge_progress: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       reset_dummy_user_data: {
         Args: Record<PropertyKey, never>
         Returns: undefined

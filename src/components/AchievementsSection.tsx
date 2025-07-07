@@ -49,6 +49,27 @@ const AchievementsSection = () => {
     }
   }, [authUser]);
 
+  const recalculateBadgeProgress = async () => {
+    if (!authUser) return;
+    
+    try {
+      console.log('Recalculating badge progress for user:', authUser.id);
+      const { error } = await supabase.rpc('recalculate_badge_progress', {
+        p_user_id: authUser.id
+      });
+
+      if (error) {
+        console.error('Error recalculating badge progress:', error);
+      } else {
+        console.log('Badge progress recalculated successfully');
+        // Refresh achievements after recalculation
+        await fetchAchievements();
+      }
+    } catch (error) {
+      console.error('Error in recalculateBadgeProgress:', error);
+    }
+  };
+
   // Set up real-time subscription for achievements
   useEffect(() => {
     if (!authUser) return;
@@ -120,6 +141,9 @@ const AchievementsSection = () => {
         }
       }
 
+      // Recalculate badge progress after seeding to ensure accurate states
+      await recalculateBadgeProgress();
+      
       // Fetch achievements and streaks
       await Promise.all([fetchAchievements(), fetchStreaks()]);
     } catch (error) {
@@ -329,13 +353,22 @@ const AchievementsSection = () => {
               </Badge>
             )}
           </div>
-          <button
-            onClick={() => setShowStreaks(!showStreaks)}
-            className="px-3 py-1 rounded-lg text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 transition-colors"
-          >
-            <Flame className="w-4 h-4 mr-1 inline" />
-            {showStreaks ? 'Hide' : 'Show'} Streaks
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowStreaks(!showStreaks)}
+              className="px-3 py-1 rounded-lg text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 transition-colors"
+            >
+              <Flame className="w-4 h-4 mr-1 inline" />
+              {showStreaks ? 'Hide' : 'Show'} Streaks
+            </button>
+            <button
+              onClick={recalculateBadgeProgress}
+              className="px-3 py-1 rounded-lg text-sm font-medium bg-blue-700 text-white hover:bg-blue-600 transition-colors"
+              title="Refresh badge progress based on current user data"
+            >
+              🔄 Refresh
+            </button>
+          </div>
         </div>
 
         {/* Filter Controls */}
