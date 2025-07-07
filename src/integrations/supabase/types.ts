@@ -153,6 +153,224 @@ export type Database = {
         }
         Relationships: []
       }
+      parties: {
+        Row: {
+          created_at: string
+          party_description: string | null
+          party_goal_xp: number
+          party_id: string
+          party_leader_id: string
+          party_members: string[]
+          party_name: string
+          total_quests_completed: number
+          total_xp: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          party_description?: string | null
+          party_goal_xp?: number
+          party_id?: string
+          party_leader_id: string
+          party_members?: string[]
+          party_name: string
+          total_quests_completed?: number
+          total_xp?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          party_description?: string | null
+          party_goal_xp?: number
+          party_id?: string
+          party_leader_id?: string
+          party_members?: string[]
+          party_name?: string
+          total_quests_completed?: number
+          total_xp?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      party_chat: {
+        Row: {
+          message: string
+          message_id: string
+          party_id: string
+          timestamp: string
+          user_id: string
+        }
+        Insert: {
+          message: string
+          message_id?: string
+          party_id: string
+          timestamp?: string
+          user_id: string
+        }
+        Update: {
+          message?: string
+          message_id?: string
+          party_id?: string
+          timestamp?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "party_chat_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "parties"
+            referencedColumns: ["party_id"]
+          },
+        ]
+      }
+      party_leaderboard: {
+        Row: {
+          created_at: string
+          id: string
+          party_id: string
+          quests_completed: number
+          time_range: Database["public"]["Enums"]["leaderboard_time_range"]
+          updated_at: string
+          user_id: string
+          xp_earned: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          party_id: string
+          quests_completed?: number
+          time_range: Database["public"]["Enums"]["leaderboard_time_range"]
+          updated_at?: string
+          user_id: string
+          xp_earned?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          party_id?: string
+          quests_completed?: number
+          time_range?: Database["public"]["Enums"]["leaderboard_time_range"]
+          updated_at?: string
+          user_id?: string
+          xp_earned?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "party_leaderboard_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "parties"
+            referencedColumns: ["party_id"]
+          },
+        ]
+      }
+      party_members: {
+        Row: {
+          id: string
+          is_active: boolean
+          joined_at: string
+          level: number
+          party_id: string
+          role: Database["public"]["Enums"]["party_role"]
+          updated_at: string
+          user_id: string
+          username: string
+          xp: number
+        }
+        Insert: {
+          id?: string
+          is_active?: boolean
+          joined_at?: string
+          level?: number
+          party_id: string
+          role?: Database["public"]["Enums"]["party_role"]
+          updated_at?: string
+          user_id: string
+          username: string
+          xp?: number
+        }
+        Update: {
+          id?: string
+          is_active?: boolean
+          joined_at?: string
+          level?: number
+          party_id?: string
+          role?: Database["public"]["Enums"]["party_role"]
+          updated_at?: string
+          user_id?: string
+          username?: string
+          xp?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "party_members_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "parties"
+            referencedColumns: ["party_id"]
+          },
+        ]
+      }
+      party_quests: {
+        Row: {
+          assigned_by_user_id: string
+          assigned_date: string
+          completed_by: string[]
+          created_at: string
+          due_date: string | null
+          party_id: string
+          party_quest_id: string
+          progress_denominator: number
+          progress_numerator: number
+          quest_description: string | null
+          quest_name: string
+          status: Database["public"]["Enums"]["party_quest_status"]
+          updated_at: string
+          xp_reward: number
+        }
+        Insert: {
+          assigned_by_user_id: string
+          assigned_date?: string
+          completed_by?: string[]
+          created_at?: string
+          due_date?: string | null
+          party_id: string
+          party_quest_id?: string
+          progress_denominator?: number
+          progress_numerator?: number
+          quest_description?: string | null
+          quest_name: string
+          status?: Database["public"]["Enums"]["party_quest_status"]
+          updated_at?: string
+          xp_reward?: number
+        }
+        Update: {
+          assigned_by_user_id?: string
+          assigned_date?: string
+          completed_by?: string[]
+          created_at?: string
+          due_date?: string | null
+          party_id?: string
+          party_quest_id?: string
+          progress_denominator?: number
+          progress_numerator?: number
+          quest_description?: string | null
+          quest_name?: string
+          status?: Database["public"]["Enums"]["party_quest_status"]
+          updated_at?: string
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "party_quests_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "parties"
+            referencedColumns: ["party_id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -396,6 +614,9 @@ export type Database = {
       availability_status: "Available" | "SoldOut" | "Unavailable"
       item_category: "Gear" | "Companion"
       item_rarity: "Common" | "Rare" | "Epic" | "Legendary"
+      leaderboard_time_range: "Week" | "Month"
+      party_quest_status: "In Progress" | "Completed"
+      party_role: "Leader" | "Co-Leader" | "Member"
       quest_priority: "Low" | "Medium" | "High"
       quest_type: "Daily" | "Main" | "Side" | "Legendary"
       reward_status: "Locked" | "Unlocked" | "Redeemed"
@@ -521,6 +742,9 @@ export const Constants = {
       availability_status: ["Available", "SoldOut", "Unavailable"],
       item_category: ["Gear", "Companion"],
       item_rarity: ["Common", "Rare", "Epic", "Legendary"],
+      leaderboard_time_range: ["Week", "Month"],
+      party_quest_status: ["In Progress", "Completed"],
+      party_role: ["Leader", "Co-Leader", "Member"],
       quest_priority: ["Low", "Medium", "High"],
       quest_type: ["Daily", "Main", "Side", "Legendary"],
       reward_status: ["Locked", "Unlocked", "Redeemed"],
