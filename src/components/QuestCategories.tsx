@@ -57,8 +57,12 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
   // Helper function to check if quest is overdue
   const isQuestOverdue = (quest: Quest) => {
     if (!quest.due_date || quest.status === 'Completed') return false;
-    const dueDate = new Date(quest.due_date);
+    
+    // Parse the due date as a local date (not UTC)
+    const [year, month, day] = quest.due_date.split('-').map(Number);
+    const dueDate = new Date(year, month - 1, day); // month is 0-indexed
     const today = startOfDay(new Date());
+    
     return isBefore(dueDate, today);
   };
 
@@ -75,12 +79,16 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
       case 'overdue':
         return !hasNoDueDate && isQuestOverdue(quest);
       case 'dueToday':
-        return !hasNoDueDate && isToday(new Date(quest.due_date));
+        if (hasNoDueDate) return false;
+        const [year, month, day] = quest.due_date.split('-').map(Number);
+        const questDueDate = new Date(year, month - 1, day);
+        return isToday(questDueDate);
       case 'dueThisWeek':
         if (hasNoDueDate) return false;
-        const dueDate = new Date(quest.due_date);
+        const [weekYear, weekMonth, weekDay] = quest.due_date.split('-').map(Number);
+        const weekDueDate = new Date(weekYear, weekMonth - 1, weekDay);
         const weekEnd = endOfWeek(today);
-        return !isBefore(dueDate, today) && !isAfter(dueDate, weekEnd);
+        return !isBefore(weekDueDate, today) && !isAfter(weekDueDate, weekEnd);
       default:
         return true;
     }
@@ -362,7 +370,14 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
               <div className="flex items-center gap-1 mb-2">
                 <Calendar className="w-3 h-3 text-slate-400" />
                 <span className={`text-xs ${isOverdue ? 'text-red-400 font-medium' : 'text-slate-400'}`}>
-                  Due {format(new Date(quest.due_date), 'MMM dd, yyyy')}
+                  {(() => {
+                    const [year, month, day] = quest.due_date.split('-').map(Number);
+                    const dueDate = new Date(year, month - 1, day);
+                    if (isToday(dueDate)) {
+                      return 'Due Today';
+                    }
+                    return `Due ${format(dueDate, 'MMM dd, yyyy')}`;
+                  })()}
                   {isOverdue && ' (Overdue)'}
                 </span>
               </div>
