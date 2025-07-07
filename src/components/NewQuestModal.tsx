@@ -301,7 +301,11 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
                       mode="single"
                       selected={formData.due_date || undefined}
                       onSelect={(date) => setFormData(prev => ({ ...prev, due_date: date || null }))}
-                      disabled={(date) => date < new Date()}
+                      disabled={(date) => {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        return date < today;
+                      }}
                       initialFocus
                       className="pointer-events-auto"
                     />
