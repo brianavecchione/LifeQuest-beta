@@ -137,6 +137,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Load user profile data from Supabase when auth user changes
   useEffect(() => {
+    console.log('🔄 Loading user profile data for updated XP calculations...');
     loadUserProfile();
 
     // Set up real-time subscription to profile changes

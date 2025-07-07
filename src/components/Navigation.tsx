@@ -13,6 +13,18 @@ const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user: userContext, isLoading } = useUser();
   const { signOut } = useAuth();
+  
+  // Debug log for XP recalculation
+  React.useEffect(() => {
+    if (!isLoading && userContext) {
+      console.log('📊 Navigation - Current user stats:', {
+        level: userContext.level,
+        xp: userContext.xp,
+        totalXp: userContext.totalXp,
+        gold: userContext.gold
+      });
+    }
+  }, [userContext, isLoading]);
 
   // Hide navigation on auth page
   const isAuthPage = location.pathname === '/auth';
