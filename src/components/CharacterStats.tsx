@@ -20,14 +20,19 @@ interface CharacterStatsProps {
 }
 
 const CharacterStats = ({ character }: CharacterStatsProps) => {
-  const { getDailyXpData } = useUser();
+  const { user: liveUser, getDailyXpData } = useUser();
   const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
-  const xpProgress = (character.xp / character.xpToNext) * 100;
+  
+  // Use live user data instead of prop to ensure real-time updates
+  const currentUser = liveUser;
+  const xpProgress = (currentUser.xp / currentUser.xpToNext) * 100;
 
   // Get real XP data with fallback for safety
   const weeklyXpData = React.useMemo(() => {
     try {
-      return getDailyXpData();
+      const data = getDailyXpData();
+      console.log('Daily XP data:', data, 'User dailyXp:', currentUser.dailyXp); // Debug log
+      return data;
     } catch (error) {
       console.error('Error getting daily XP data:', error);
       // Fallback to empty data
@@ -41,7 +46,7 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
         };
       });
     }
-  }, [getDailyXpData]);
+  }, [getDailyXpData, currentUser.dailyXp, currentUser.totalXp]); // Add dependencies
 
   const monthlyXpData = [
     { date: 'Week 1', xp: 280, period: 'First week' },
@@ -65,22 +70,22 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
         {/* Character Info Section */}
         <div>
           <div className="flex items-center gap-4 mb-6">
-            {character.avatar.startsWith('data:') || character.avatar.startsWith('http') ? (
+            {currentUser.avatar.startsWith('data:') || currentUser.avatar.startsWith('http') ? (
               <img 
-                src={character.avatar} 
-                alt={character.name} 
+                src={currentUser.avatar} 
+                alt={currentUser.name} 
                 className="w-24 h-24 rounded-full object-cover shadow-lg border-4 border-amber-400/30"
               />
             ) : (
               <div className="w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-3xl font-bold text-slate-900 shadow-lg">
-                {character.avatar}
+                {currentUser.avatar}
               </div>
             )}
             <div>
-              <h2 className="text-2xl font-bold text-amber-400 mb-1">{character.name}</h2>
+              <h2 className="text-2xl font-bold text-amber-400 mb-1">{currentUser.name}</h2>
               <div className="flex items-center gap-2 text-yellow-300">
                 <Crown className="w-5 h-5" />
-                <span className="text-lg font-semibold">Level {character.level}</span>
+                <span className="text-lg font-semibold">Level {currentUser.level}</span>
               </div>
             </div>
           </div>
@@ -89,7 +94,7 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-slate-300 font-medium">Level Progress</span>
-                <span className="text-amber-400 font-bold">{character.xp}/{character.xpToNext} XP</span>
+                <span className="text-amber-400 font-bold">{currentUser.xp}/{currentUser.xpToNext} XP</span>
               </div>
               <Progress value={xpProgress} className="h-3 bg-slate-700">
                 <div className="h-full bg-gradient-to-r from-green-500 to-emerald-400 rounded-full transition-all duration-500" style={{ width: `${xpProgress}%` }} />
@@ -102,7 +107,7 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
                   <TrendingUp className="w-4 h-4 text-red-400 mr-1" />
                   <span className="text-red-400 text-sm font-medium">Total XP</span>
                 </div>
-                <div className="text-xl font-bold text-white">{character.totalXp}</div>
+                <div className="text-xl font-bold text-white">{currentUser.totalXp}</div>
               </div>
 
               <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-yellow-500/30">
@@ -110,7 +115,7 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
                   <Star className="w-4 h-4 text-yellow-400 mr-1" />
                   <span className="text-yellow-400 text-sm font-medium">Gold</span>
                 </div>
-                <div className="text-xl font-bold text-white">{character.gold}</div>
+                <div className="text-xl font-bold text-white">{currentUser.gold}</div>
               </div>
 
               <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-purple-500/30">
