@@ -299,12 +299,18 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
             <div className="text-center py-6 sm:py-8 text-white/60">
               <Icon className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 opacity-50" />
               <p className="font-medium mb-2 text-sm sm:text-base">
-                {searchQuery.trim() !== '' ? 'No matching quests found' : 'No quests found'}
+                {searchQuery.trim() !== '' ? 'No matching quests found' : 
+                  type === 'Daily' ? 'No daily habits tracked yet' :
+                  type === 'Main' ? 'No main quests created yet' :
+                  type === 'Side' ? 'No side quests available' :
+                  'No legendary quests unlocked yet'
+                }
               </p>
               <p className="text-xs sm:text-sm px-4">
                 {searchQuery.trim() !== '' 
                   ? `Try adjusting your search term "${searchQuery}" or filters`
-                  : 'Add a new quest to start your adventure!'
+                  : type === 'Daily' ? 'Add a habit to build your streaks!' :
+                    'Use the "Add Quest" button to start your adventure!'
                 }
               </p>
             </div>

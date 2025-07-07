@@ -348,7 +348,8 @@ const InventorySystem = () => {
             ) : (
               <div className="text-center text-slate-400 py-8">
                 <Package className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>No items currently equipped</p>
+                <p className="text-lg font-medium mb-2">Your inventory is empty</p>
+                <p className="text-sm">Complete quests or visit the Gold Shop to collect gear!</p>
               </div>
             )}
           </div>

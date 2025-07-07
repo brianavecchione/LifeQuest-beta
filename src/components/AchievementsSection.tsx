@@ -153,94 +153,110 @@ const AchievementsSection = () => {
 
         {currentTab === 'achievements' && (
           <div className="space-y-4">
-            {achievements.map((achievement, index) => (
-              <div key={achievement.id} className={`rounded-lg p-4 border transition-all ${
-                achievement.is_completed 
-                  ? 'bg-emerald-900/30 border-emerald-500/50' 
-                  : 'bg-slate-700/50 border-slate-600/50'
-              }`}>
-                <div className="flex items-center gap-4">
-                  <div className={`text-3xl ${achievement.is_completed ? '' : 'opacity-50'}`}>
-                    {getAchievementIcon(achievement.achievement_name, achievement.quest_value)}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="text-white font-bold">{achievement.achievement_name}</h4>
-                      <Badge className={`${getRarityColor(achievement.quest_value)} text-white`}>
-                        {achievement.quest_value}
-                      </Badge>
-                      {achievement.is_completed && (
-                        <Badge className="bg-emerald-600 text-white">
-                          +{achievement.xp_reward} XP
-                        </Badge>
-                      )}
-                      <Badge variant="outline" className="text-slate-400">
-                        {getCompletionStatus(achievement.achievement_progress_current, achievement.achievement_progress_goal, achievement.is_completed)}
-                      </Badge>
+            {achievements.length > 0 ? (
+              achievements.map((achievement, index) => (
+                <div key={achievement.id} className={`rounded-lg p-4 border transition-all ${
+                  achievement.is_completed 
+                    ? 'bg-emerald-900/30 border-emerald-500/50' 
+                    : 'bg-slate-700/50 border-slate-600/50'
+                }`}>
+                  <div className="flex items-center gap-4">
+                    <div className={`text-3xl ${achievement.is_completed ? '' : 'opacity-50'}`}>
+                      {getAchievementIcon(achievement.achievement_name, achievement.quest_value)}
                     </div>
-                    <p className="text-slate-300 text-sm mb-2">{achievement.description}</p>
-                    {achievement.tags && achievement.tags.length > 0 && (
-                      <div className="flex gap-1 mb-2 flex-wrap">
-                        {achievement.tags.map((tag, tagIndex) => (
-                          <Badge key={tagIndex} variant="secondary" className="text-xs">
-                            {tag}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="text-white font-bold">{achievement.achievement_name}</h4>
+                        <Badge className={`${getRarityColor(achievement.quest_value)} text-white`}>
+                          {achievement.quest_value}
+                        </Badge>
+                        {achievement.is_completed && (
+                          <Badge className="bg-emerald-600 text-white">
+                            +{achievement.xp_reward} XP
                           </Badge>
-                        ))}
+                        )}
+                        <Badge variant="outline" className="text-slate-400">
+                          {getCompletionStatus(achievement.achievement_progress_current, achievement.achievement_progress_goal, achievement.is_completed)}
+                        </Badge>
                       </div>
-                    )}
-                    <div className="flex items-center gap-2">
-                      <Progress value={(achievement.achievement_progress_current / achievement.achievement_progress_goal) * 100} className="flex-1 h-2" />
-                      <span className="text-slate-400 text-sm">
-                        {achievement.achievement_progress_current}/{achievement.achievement_progress_goal}
-                      </span>
+                      <p className="text-slate-300 text-sm mb-2">{achievement.description}</p>
+                      {achievement.tags && achievement.tags.length > 0 && (
+                        <div className="flex gap-1 mb-2 flex-wrap">
+                          {achievement.tags.map((tag, tagIndex) => (
+                            <Badge key={tagIndex} variant="secondary" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <Progress value={(achievement.achievement_progress_current / achievement.achievement_progress_goal) * 100} className="flex-1 h-2" />
+                        <span className="text-slate-400 text-sm">
+                          {achievement.achievement_progress_current}/{achievement.achievement_progress_goal}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div className="text-center py-8">
+                <Target className="w-12 h-12 text-emerald-400 mx-auto mb-4 opacity-50" />
+                <p className="text-emerald-400 font-medium text-lg mb-2">No achievements earned yet</p>
+                <p className="text-emerald-300 text-sm">Complete quests to unlock them!</p>
               </div>
-            ))}
+            )}
           </div>
         )}
 
         {currentTab === 'streaks' && (
           <div className="space-y-4">
-            {streaks.map((streak, index) => (
-              <div key={streak.id} className={`rounded-lg p-4 border transition-all ${
-                streak.status === 'Active' 
-                  ? 'bg-orange-900/30 border-orange-500/50' 
-                  : 'bg-slate-700/50 border-slate-600/50'
-              }`}>
-                <div className="flex items-center gap-4">
-                  <div className={`text-3xl ${streak.status === 'Active' ? '' : 'opacity-50'}`}>
-                    {getStreakIcon(streak.streak_name)}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="text-white font-bold">{streak.streak_name}</h4>
-                      {streak.status === 'Active' && (
-                        <Badge className="bg-orange-600 text-white">
-                          Active
-                        </Badge>
-                      )}
+            {streaks.length > 0 ? (
+              streaks.map((streak, index) => (
+                <div key={streak.id} className={`rounded-lg p-4 border transition-all ${
+                  streak.status === 'Active' 
+                    ? 'bg-orange-900/30 border-orange-500/50' 
+                    : 'bg-slate-700/50 border-slate-600/50'
+                }`}>
+                  <div className="flex items-center gap-4">
+                    <div className={`text-3xl ${streak.status === 'Active' ? '' : 'opacity-50'}`}>
+                      {getStreakIcon(streak.streak_name)}
                     </div>
-                    <p className="text-slate-300 text-sm mb-2">{streak.description}</p>
-                    <div className="flex gap-4 text-sm">
-                      <div className="flex items-center gap-1">
-                        <Flame className="w-4 h-4 text-orange-400" />
-                        <span className="text-orange-400 font-medium">
-                          Current: {streak.current_streak}
-                        </span>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="text-white font-bold">{streak.streak_name}</h4>
+                        {streak.status === 'Active' && (
+                          <Badge className="bg-orange-600 text-white">
+                            Active
+                          </Badge>
+                        )}
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 text-yellow-400" />
-                        <span className="text-yellow-400 font-medium">
-                          Best: {streak.best_streak}
-                        </span>
+                      <p className="text-slate-300 text-sm mb-2">{streak.description}</p>
+                      <div className="flex gap-4 text-sm">
+                        <div className="flex items-center gap-1">
+                          <Flame className="w-4 h-4 text-orange-400" />
+                          <span className="text-orange-400 font-medium">
+                            Current: {streak.current_streak}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Star className="w-4 h-4 text-yellow-400" />
+                          <span className="text-yellow-400 font-medium">
+                            Best: {streak.best_streak}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div className="text-center py-8">
+                <Flame className="w-12 h-12 text-orange-400 mx-auto mb-4 opacity-50" />
+                <p className="text-orange-400 font-medium text-lg mb-2">You haven't started any streaks</p>
+                <p className="text-orange-300 text-sm">Build consistency to unlock powerful streak bonuses!</p>
               </div>
-            ))}
+            )}
           </div>
         )}
       </div>

@@ -424,9 +424,9 @@ const QuestTracker = () => {
         {todaysFocus.length === 0 && (
           <div className="bg-slate-700/30 rounded-lg p-6 border border-amber-600/30 text-center mb-6">
             <Target className="w-12 h-12 text-amber-400 mx-auto mb-4 opacity-50" />
-            <h4 className="text-lg font-semibold text-amber-400 mb-2">Set Your Daily Focus</h4>
+            <h4 className="text-lg font-semibold text-amber-400 mb-2">You haven't added any quests yet</h4>
             <p className="text-slate-300 mb-4">
-              Choose 3-5 quests to focus on today using Quick Daily Setup
+              Use the 'New Quest' button to start your adventure!
             </p>
             <Button 
               onClick={() => setIsSetupModalOpen(true)}
@@ -473,7 +473,7 @@ const QuestTracker = () => {
         )}
 
         {/* Daily Quests Sidebar */}
-        {dailyQuests.length > 0 && (
+        {dailyQuests.length > 0 ? (
           <div className="bg-slate-700/30 rounded-lg p-4 border border-yellow-600/30">
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="w-5 h-5 text-yellow-400" />
@@ -482,6 +482,12 @@ const QuestTracker = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {dailyQuests.map((quest) => renderQuestCard(quest))}
             </div>
+          </div>
+        ) : (
+          <div className="bg-slate-700/30 rounded-lg p-6 border border-yellow-600/30 text-center">
+            <Star className="w-12 h-12 text-yellow-400 mx-auto mb-4 opacity-50" />
+            <p className="text-yellow-400 font-medium text-lg mb-2">No daily habits tracked yet</p>
+            <p className="text-yellow-300 text-sm">Add a habit to build your streaks!</p>
           </div>
         )}
       </div>

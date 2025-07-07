@@ -198,39 +198,47 @@ const GoldShopContent = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {personalRewards.map((reward) => (
-              <Card key={reward.reward_id} className="bg-slate-700/50 border-slate-600/50 hover:border-amber-500/50 transition-colors">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-amber-400 flex items-center gap-2 text-base">
-                    <Gift className="w-4 h-4" />
-                    {reward.name}
-                  </CardTitle>
-                  <CardDescription className="text-slate-300 text-sm">
-                    {reward.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <Coins className="w-4 h-4 text-yellow-400" />
-                      <span className="text-yellow-400 font-bold text-sm">{reward.gold_cost} Gold</span>
+            {personalRewards.length > 0 ? (
+              personalRewards.map((reward) => (
+                <Card key={reward.reward_id} className="bg-slate-700/50 border-slate-600/50 hover:border-amber-500/50 transition-colors">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-amber-400 flex items-center gap-2 text-base">
+                      <Gift className="w-4 h-4" />
+                      {reward.name}
+                    </CardTitle>
+                    <CardDescription className="text-slate-300 text-sm">
+                      {reward.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Coins className="w-4 h-4 text-yellow-400" />
+                        <span className="text-yellow-400 font-bold text-sm">{reward.gold_cost} Gold</span>
+                      </div>
+                      <Badge className={reward.status === 'Redeemed' ? 'bg-green-600' : reward.status === 'Unlocked' ? 'bg-blue-600' : 'bg-slate-600'}>
+                        {reward.status}
+                      </Badge>
                     </div>
-                    <Badge className={reward.status === 'Redeemed' ? 'bg-green-600' : reward.status === 'Unlocked' ? 'bg-blue-600' : 'bg-slate-600'}>
-                      {reward.status}
-                    </Badge>
-                  </div>
-                  
-                  <Button
-                    onClick={() => handleUnlockReward(reward)}
-                    disabled={reward.status === 'Redeemed' || (reward.status === 'Locked' && currentGold < reward.gold_cost)}
-                    size="sm"
-                    className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-slate-600"
-                  >
-                    {reward.status === 'Redeemed' ? 'Completed' : reward.status === 'Unlocked' ? 'Redeem' : 'Unlock'}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                    
+                    <Button
+                      onClick={() => handleUnlockReward(reward)}
+                      disabled={reward.status === 'Redeemed' || (reward.status === 'Locked' && currentGold < reward.gold_cost)}
+                      size="sm"
+                      className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-slate-600"
+                    >
+                      {reward.status === 'Redeemed' ? 'Completed' : reward.status === 'Unlocked' ? 'Redeem' : 'Unlock'}
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-8">
+                <Gift className="w-12 h-12 text-amber-400 mx-auto mb-4 opacity-50" />
+                <p className="text-amber-400 font-medium text-lg mb-2">You don't have any rewards yet</p>
+                <p className="text-amber-300 text-sm">Earn Gold to unlock exciting rewards here!</p>
+              </div>
+            )}
           </div>
         </TabsContent>
 
