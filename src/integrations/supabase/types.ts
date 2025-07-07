@@ -720,6 +720,10 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: undefined
       }
+      seed_comprehensive_badges: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       seed_dummy_account_only: {
         Args: Record<PropertyKey, never>
         Returns: undefined
