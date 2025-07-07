@@ -79,6 +79,19 @@ export const useQuests = () => {
   const createQuest = async (questData: Omit<Quest, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'completed_at'>) => {
     if (!user) return null;
 
+    // Create optimistic quest object for immediate UI update
+    const optimisticQuest: Quest = {
+      id: `temp-${Date.now()}`, // Temporary ID
+      user_id: user.id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      completed_at: undefined,
+      ...questData,
+    };
+
+    // Add quest immediately to local state for instant feedback
+    setQuests(prev => [optimisticQuest, ...prev]);
+
     try {
       const { data, error } = await supabase
         .from('quests')
@@ -92,15 +105,26 @@ export const useQuests = () => {
       if (error) throw error;
 
       const transformedQuest = transformDbQuest(data);
-      setQuests(prev => [transformedQuest, ...prev]);
+      
+      // Replace the optimistic quest with the real one from the database
+      setQuests(prev => 
+        prev.map(quest => 
+          quest.id === optimisticQuest.id ? transformedQuest : quest
+        )
+      );
+      
       toast({
         title: 'Quest Created! 🎯',
         description: `${data.quest_name} has been added to your quest log.`,
       });
 
-      return data;
+      return transformedQuest;
     } catch (error) {
       console.error('Error creating quest:', error);
+      
+      // Remove the optimistic quest on error
+      setQuests(prev => prev.filter(quest => quest.id !== optimisticQuest.id));
+      
       toast({
         title: 'Error',
         description: 'Failed to create quest. Please try again.',
