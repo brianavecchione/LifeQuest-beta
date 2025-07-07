@@ -28,6 +28,32 @@ const QuestTracker = () => {
     const savedFocus = localStorage.getItem('lifequest-todays-focus');
     return savedFocus ? JSON.parse(savedFocus) : [];
   });
+
+  // Listen for localStorage changes to sync Today's Focus across pages
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'lifequest-todays-focus' && e.newValue) {
+        setTodaysFocus(JSON.parse(e.newValue));
+      }
+    };
+
+    // Listen for manual localStorage updates from same window
+    const handleLocalUpdate = () => {
+      const savedFocus = localStorage.getItem('lifequest-todays-focus');
+      if (savedFocus) {
+        const newFocus = JSON.parse(savedFocus);
+        setTodaysFocus(newFocus);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('todaysFocusUpdated', handleLocalUpdate);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('todaysFocusUpdated', handleLocalUpdate);
+    };
+  }, []);
   const [showAddMoreQuests, setShowAddMoreQuests] = useState(false);
 
   // Pomodoro Timer States

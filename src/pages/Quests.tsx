@@ -26,10 +26,8 @@ const Quests = () => {
   });
 
   const handleAddToFocus = (questId: string) => {
-    toast({
-      title: "Added to Today's Focus!",
-      description: "This quest will appear in your daily focus on the Today page.",
-    });
+    // This function is now handled by QuestCategories component directly
+    // No need for additional logic here since QuestCategories handles the real functionality
   };
 
   const handleApplyFilters = (newFilters: typeof filters) => {

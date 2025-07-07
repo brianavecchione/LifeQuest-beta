@@ -182,8 +182,31 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
       });
       return;
     }
+
+    if (currentFocus.includes(questId)) {
+      toast({
+        title: "Already Added",
+        description: "This quest is already in your Today's Focus!",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Add quest to focus list
+    const newFocus = [...currentFocus, questId];
+    localStorage.setItem('lifequest-todays-focus', JSON.stringify(newFocus));
     
-    onAddToFocus?.(questId);
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
+    
+    if (onAddToFocus) {
+      onAddToFocus(questId);
+    }
+
+    toast({
+      title: "Added to Today's Focus! 🎯",
+      description: "This quest will appear in your daily focus on the Today page.",
+    });
   };
 
   const handleEditQuest = (quest: Quest) => {
