@@ -30,31 +30,31 @@ interface UserContextType {
   refetchUserProfile: () => Promise<void>;
 }
 
-const defaultUser: UserData = {
-  name: 'Adventurer',
-  level: 2,
-  xp: 75,
+const emptyUser: UserData = {
+  name: '',
+  level: 1,
+  xp: 0,
   xpToNext: 100,
-  totalXp: 333,
-  gold: 1250,
+  totalXp: 0,
+  gold: 0,
   pomodoroCount: 0,
   dailyXp: {},
   reduceAnimations: false,
-  avatar: 'A', // Default letter avatar
+  avatar: '',
 };
 
 const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user: authUser } = useAuth();
-  const [user, setUser] = useState<UserData>(defaultUser);
+  const [user, setUser] = useState<UserData>(emptyUser);
   const [isLoading, setIsLoading] = useState(true);
 
   // Load user profile data from Supabase
   const loadUserProfile = async () => {
     if (!authUser) {
       // Clear user data and localStorage when logged out
-      setUser(defaultUser);
+      setUser(emptyUser);
       localStorage.removeItem('lifequest-user');
       setIsLoading(false);
       return;
@@ -112,7 +112,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         // Use default user data if no profile found
         setUser({
-          ...defaultUser,
+          ...emptyUser,
           name: authUser.user_metadata?.display_name || 'Adventurer',
           pomodoroCount: settings.pomodoroCount || 0,
           dailyXp: settings.dailyXp || {},
@@ -124,7 +124,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Error loading user profile:', error);
       setUser({
-        ...defaultUser,
+        ...emptyUser,
         name: authUser.user_metadata?.display_name || 'Adventurer'
       });
       setIsLoading(false);

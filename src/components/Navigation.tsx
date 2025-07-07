@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Target, Trophy, Sword, Settings, Users, LogOut, Coins, Menu, X, Crown, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/contexts/UserContext';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -10,7 +11,7 @@ const Navigation = () => {
   const location = useLocation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user: userContext } = useUser();
+  const { user: userContext, isLoading } = useUser();
   const { signOut } = useAuth();
 
   // Hide navigation on auth page
@@ -50,18 +51,28 @@ const Navigation = () => {
             
             {/* User Stats - Hidden on smaller screens */}
             <div className="hidden xl:flex items-center gap-3 ml-6">
-              <div className="flex items-center gap-2 bg-slate-700/50 px-2 py-1 rounded-lg border border-amber-500/30">
-                <Coins className="w-4 h-4 text-yellow-400" />
-                <span className="text-yellow-400 font-bold text-sm">{userContext.gold.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center gap-2 bg-slate-700/50 px-2 py-1 rounded-lg border border-blue-500/30">
-                <Crown className="w-4 h-4 text-blue-400" />
-                <span className="text-blue-400 font-bold text-sm">Lv.{userContext.level}</span>
-              </div>
-              <div className="flex items-center gap-2 bg-slate-700/50 px-2 py-1 rounded-lg border border-purple-500/30">
-                <Zap className="w-4 h-4 text-purple-400" />
-                <span className="text-purple-400 font-bold text-sm">{userContext.totalXp} XP</span>
-              </div>
+              {isLoading || !userContext.name ? (
+                <>
+                  <Skeleton className="h-6 w-16 bg-slate-700" />
+                  <Skeleton className="h-6 w-12 bg-slate-700" />
+                  <Skeleton className="h-6 w-14 bg-slate-700" />
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 bg-slate-700/50 px-2 py-1 rounded-lg border border-amber-500/30">
+                    <Coins className="w-4 h-4 text-yellow-400" />
+                    <span className="text-yellow-400 font-bold text-sm">{userContext.gold.toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-slate-700/50 px-2 py-1 rounded-lg border border-blue-500/30">
+                    <Crown className="w-4 h-4 text-blue-400" />
+                    <span className="text-blue-400 font-bold text-sm">Lv.{userContext.level}</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-slate-700/50 px-2 py-1 rounded-lg border border-purple-500/30">
+                    <Zap className="w-4 h-4 text-purple-400" />
+                    <span className="text-purple-400 font-bold text-sm">{userContext.totalXp} XP</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
           
@@ -131,18 +142,28 @@ const Navigation = () => {
             <div className="px-2 pt-2 pb-3 space-y-1">
               {/* Mobile User Stats */}
               <div className="flex items-center justify-center gap-3 py-3 mb-2 bg-slate-700/30 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <Coins className="w-4 h-4 text-yellow-400" />
-                  <span className="text-yellow-400 font-bold text-sm">{userContext.gold.toLocaleString()}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Crown className="w-4 h-4 text-blue-400" />
-                  <span className="text-blue-400 font-bold text-sm">Lv.{userContext.level}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-purple-400" />
-                  <span className="text-purple-400 font-bold text-sm">{userContext.totalXp} XP</span>
-                </div>
+                {isLoading || !userContext.name ? (
+                  <>
+                    <Skeleton className="h-5 w-12 bg-slate-600" />
+                    <Skeleton className="h-5 w-10 bg-slate-600" />
+                    <Skeleton className="h-5 w-14 bg-slate-600" />
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <Coins className="w-4 h-4 text-yellow-400" />
+                      <span className="text-yellow-400 font-bold text-sm">{userContext.gold.toLocaleString()}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Crown className="w-4 h-4 text-blue-400" />
+                      <span className="text-blue-400 font-bold text-sm">Lv.{userContext.level}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-purple-400" />
+                      <span className="text-purple-400 font-bold text-sm">{userContext.totalXp} XP</span>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Mobile Navigation Links */}
