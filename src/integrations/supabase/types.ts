@@ -684,6 +684,18 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      seed_basic_streaks: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
+      seed_locked_achievements: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
+      seed_locked_rewards: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       update_streak_status: {
         Args: Record<PropertyKey, never>
         Returns: undefined
