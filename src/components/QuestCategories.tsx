@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useQuests, Quest } from '@/hooks/useQuests';
 import { useToast } from '@/hooks/use-toast';
@@ -273,14 +274,22 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
                   {quest.quest_name}
                 </h4>
                 {isInTodaysFocus && (
-                  <div 
-                    className="shrink-0 flex items-center text-orange-400"
-                    title="In Today's Focus"
-                    aria-label="In Today's Focus"
-                  >
-                    <Flame className="w-4 h-4" />
-                    <span className="sr-only">Today's Focus</span>
-                  </div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge 
+                          variant="outline" 
+                          className="shrink-0 bg-orange-500/20 border-orange-500/50 text-orange-300 hover:bg-orange-500/30 text-xs px-2 py-0.5 font-medium flex items-center gap-1"
+                        >
+                          <Flame className="w-3 h-3" />
+                          Today's Focus
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-slate-800 border-slate-600 text-white">
+                        <p>This quest is part of your daily focus</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 )}
                 {isOverdue && (
                   <div 
