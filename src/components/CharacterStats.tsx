@@ -25,6 +25,51 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
   const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
   const xpProgress = (character.xp / character.xpToNext) * 100;
 
+  // Get real XP data with fallback for safety - MUST call hooks before any conditional returns
+  const weeklyXpData = React.useMemo(() => {
+    try {
+      return getDailyXpData();
+    } catch (error) {
+      console.error('Error getting daily XP data:', error);
+      // Fallback to empty data
+      return Array.from({ length: 7 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (6 - i));
+        return {
+          date: date.toLocaleDateString('en-US', { weekday: 'short' }),
+          xp: 0,
+          day: date.toLocaleDateString('en-US', { weekday: 'long' })
+        };
+      });
+    }
+  }, [getDailyXpData]);
+
+  const monthlyXpData = React.useMemo(() => {
+    try {
+      return getWeeklyXpData();
+    } catch (error) {
+      console.error('Error getting weekly XP data:', error);
+      // Fallback to empty data
+      return Array.from({ length: 4 }, (_, i) => ({
+        date: `Week ${i + 1}`,
+        xp: 0,
+        period: `Week ${i + 1}`
+      }));
+    }
+  }, [getWeeklyXpData]);
+
+  const chartConfig = {
+    xp: {
+      label: "XP Earned",
+      color: "hsl(var(--chart-1))",
+    },
+  };
+
+  const currentData = chartPeriod === 'week' ? weeklyXpData : monthlyXpData;
+  
+  // Check if user has any XP data
+  const hasXpData = currentData.some(item => item.xp > 0);
+
   // Show loading state if user data is still loading or if user has no name yet
   if (isLoading || !character.name) {
     return (
@@ -74,51 +119,6 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
       </div>
     );
   }
-
-  // Get real XP data with fallback for safety
-  const weeklyXpData = React.useMemo(() => {
-    try {
-      return getDailyXpData();
-    } catch (error) {
-      console.error('Error getting daily XP data:', error);
-      // Fallback to empty data
-      return Array.from({ length: 7 }, (_, i) => {
-        const date = new Date();
-        date.setDate(date.getDate() - (6 - i));
-        return {
-          date: date.toLocaleDateString('en-US', { weekday: 'short' }),
-          xp: 0,
-          day: date.toLocaleDateString('en-US', { weekday: 'long' })
-        };
-      });
-    }
-  }, [getDailyXpData]);
-
-  const monthlyXpData = React.useMemo(() => {
-    try {
-      return getWeeklyXpData();
-    } catch (error) {
-      console.error('Error getting weekly XP data:', error);
-      // Fallback to empty data
-      return Array.from({ length: 4 }, (_, i) => ({
-        date: `Week ${i + 1}`,
-        xp: 0,
-        period: `Week ${i + 1}`
-      }));
-    }
-  }, [getWeeklyXpData]);
-
-  const chartConfig = {
-    xp: {
-      label: "XP Earned",
-      color: "hsl(var(--chart-1))",
-    },
-  };
-
-  const currentData = chartPeriod === 'week' ? weeklyXpData : monthlyXpData;
-  
-  // Check if user has any XP data
-  const hasXpData = currentData.some(item => item.xp > 0);
 
   return (
     <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-yellow-600/30 shadow-2xl">
