@@ -47,7 +47,7 @@ export const useQuests = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
-  const { user: currentUser, updateUser, refetchUserProfile } = useUser();
+  const { user: currentUser, updateUser, refetchUserProfile, refetchDailyXp } = useUser();
 
   // Fetch all quests for the current user
   const fetchQuests = async () => {
@@ -175,6 +175,11 @@ export const useQuests = () => {
       // This ensures immediate UI updates while real-time subscriptions catch up
       if (refetchUserProfile) {
         await refetchUserProfile();
+      }
+
+      // Also refresh daily XP data for chart updates
+      if (refetchDailyXp) {
+        await refetchDailyXp();
       }
 
       // Show success message with context about balance limits

@@ -29,6 +29,7 @@ interface UserContextType {
   getDailyXpData: () => Array<{ date: string; xp: number; day: string }>;
   getWeeklyXpData: () => Array<{ date: string; xp: number; period: string }>;
   refetchUserProfile: () => Promise<void>;
+  refetchDailyXp: () => Promise<void>;
 }
 
 const emptyUser: UserData = {
@@ -50,7 +51,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { user: authUser } = useAuth();
   const [user, setUser] = useState<UserData>(emptyUser);
   const [isLoading, setIsLoading] = useState(true);
-  const { dailyXpData, weeklyXpData } = useDailyXp();
+  const { dailyXpData, weeklyXpData, refetch: refetchDailyXp } = useDailyXp();
 
   // Load user profile data from Supabase
   const loadUserProfile = async () => {
@@ -283,6 +284,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getDailyXpData,
     getWeeklyXpData,
     refetchUserProfile: loadUserProfile,
+    refetchDailyXp,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

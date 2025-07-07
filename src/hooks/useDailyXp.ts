@@ -30,6 +30,7 @@ export const useDailyXp = () => {
 
     try {
       setLoading(true);
+      console.log('Fetching daily XP history for user:', user.id);
       
       // Fetch last 30 days of XP history
       const thirtyDaysAgo = new Date();
@@ -40,7 +41,9 @@ export const useDailyXp = () => {
         .select('date, xp_earned')
         .eq('user_id', user.id)
         .gte('date', thirtyDaysAgo.toISOString().split('T')[0])
-        .order('date', { ascending: true });
+         .order('date', { ascending: true });
+
+      console.log('Daily XP history query result:', { data, error });
 
       if (error) {
         console.error('Error fetching daily XP history:', error);
@@ -95,6 +98,7 @@ export const useDailyXp = () => {
         });
       }
 
+      console.log('Generated XP data:', { dailyData: last7Days, weeklyData: last4Weeks });
       setDailyXpData(last7Days);
       setWeeklyXpData(last4Weeks);
       
@@ -107,11 +111,11 @@ export const useDailyXp = () => {
 
   useEffect(() => {
     fetchDailyXpHistory();
-  }, [user]);
+  }, [user?.id]); // Only depend on user ID to avoid unnecessary refetches
 
   // Set up real-time subscription for XP history updates
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
 
     const channel = supabase
       .channel('daily-xp-changes')
@@ -123,7 +127,8 @@ export const useDailyXp = () => {
           table: 'daily_xp_history',
           filter: `user_id=eq.${user.id}`
         },
-        () => {
+        (payload) => {
+          console.log('Daily XP history updated:', payload);
           // Refetch data when daily XP history changes
           fetchDailyXpHistory();
         }
@@ -133,7 +138,7 @@ export const useDailyXp = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user]);
+  }, [user?.id]); // Only depend on user ID
 
   return {
     dailyXpData,
