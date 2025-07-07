@@ -240,61 +240,58 @@ const GoldShopContent = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {lifequestShopItems.map((item) => (
-              <Card key={reward.id} className="bg-slate-700/50 border-slate-600/50 hover:border-purple-500/50 transition-colors">
+              <Card key={item.shop_item_id} className="bg-slate-700/50 border-slate-600/50 hover:border-purple-500/50 transition-colors">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between mb-2">
-                    <CardTitle className="text-purple-400 text-base">{reward.name}</CardTitle>
-                    {reward.rarity && (
-                      <Badge className={`${getRarityColor(reward.rarity)} text-xs`}>
-                        {getRarityIcon(reward.rarity)}
-                        {reward.rarity.charAt(0).toUpperCase() + reward.rarity.slice(1)}
-                      </Badge>
-                    )}
+                    <CardTitle className="text-purple-400 text-base">{item.name}</CardTitle>
+                    <Badge className="bg-purple-600 text-white text-xs">
+                      {item.category}
+                    </Badge>
                   </div>
                   <CardDescription className="text-slate-300 text-sm">
-                    {reward.description}
+                    {item.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="space-y-3">
-                    {reward.effect && (
+                    {item.effect_description && (
                       <div className="bg-slate-600/50 p-2 rounded border border-green-500/30">
-                        <div className="text-green-400 text-xs font-medium">Effect: {reward.effect}</div>
+                        <div className="text-green-400 text-xs font-medium">Effect: {item.effect_description}</div>
                       </div>
                     )}
                     
-                    {reward.duration && (
+                    {item.duration_days && (
                       <div className="flex items-center gap-2 text-slate-300 text-xs">
                         <Clock className="w-3 h-3" />
-                        Duration: {reward.duration} days
+                        Duration: {item.duration_days} days
                       </div>
                     )}
                     
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Coins className="w-4 h-4 text-yellow-400" />
-                        <span className="text-yellow-400 font-bold text-sm">{reward.goldCost} Gold</span>
+                        <span className="text-yellow-400 font-bold text-sm">{item.gold_cost} Gold</span>
                       </div>
                     </div>
                     
-                    {user.gold >= reward.goldCost ? (
+                    {currentGold >= item.gold_cost ? (
                       <Progress value={100} className="h-2" />
                     ) : (
                       <div>
-                        <Progress value={(user.gold / reward.goldCost) * 100} className="h-2 mb-1" />
+                        <Progress value={(currentGold / item.gold_cost) * 100} className="h-2 mb-1" />
                         <div className="text-xs text-slate-400">
-                          {reward.goldCost - user.gold} more gold needed
+                          {item.gold_cost - currentGold} more gold needed
                         </div>
                       </div>
                     )}
                     
                     <Button
-                      onClick={() => redeemReward(reward)}
-                      disabled={user.gold < reward.goldCost}
+                      onClick={() => handlePurchaseShopItem(item)}
+                      disabled={currentGold < item.gold_cost}
                       size="sm"
                       className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600"
                     >
-                      {user.gold >= reward.goldCost ? 'Claim Now' : 'Need More Gold'}
+                      {currentGold >= item.gold_cost ? 'Purchase Now' : 'Need More Gold'}
                     </Button>
                   </div>
                 </CardContent>
