@@ -34,7 +34,6 @@ const AchievementsSection = () => {
   const [streaks, setStreaks] = useState<Streak[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'earned' | 'locked'>('all');
-  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [showStreaks, setShowStreaks] = useState(false);
 
   useEffect(() => {
@@ -135,11 +134,8 @@ const AchievementsSection = () => {
     const statusMatch = filter === 'all' || 
       (filter === 'earned' && achievement.is_completed) ||
       (filter === 'locked' && !achievement.is_completed);
-    
-    const categoryMatch = categoryFilter === 'all' || 
-      achievement.tags?.some(tag => getCategoryFromTag(tag) === categoryFilter);
 
-    return statusMatch && categoryMatch;
+    return statusMatch;
   });
 
   const getCategoryFromTag = (tag: string): string => {
@@ -264,23 +260,6 @@ const AchievementsSection = () => {
             ))}
           </div>
 
-          {/* Category Filter */}
-          <div className="flex flex-wrap gap-2">
-            <span className="text-sm font-medium text-slate-300">Category:</span>
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setCategoryFilter(category)}
-                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                  categoryFilter === category
-                    ? 'bg-amber-600 text-white'
-                    : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                }`}
-              >
-                {category === 'all' ? 'All Categories' : category}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Achievements Grid */}
