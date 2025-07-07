@@ -47,7 +47,7 @@ export const useQuests = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
-  const { addXP, subtractXP, addGold, subtractGold } = useUser();
+  const { user: currentUser, addXP, subtractXP, addGold, subtractGold } = useUser();
 
   // Fetch all quests for the current user
   const fetchQuests = async () => {
@@ -143,6 +143,15 @@ export const useQuests = () => {
 
     const previousStatus = quest.status;
     
+    // Check if unchecking would result in negative balances (informational only)
+    let willHitZeroBalances = false;
+    if (status !== 'Completed' && previousStatus === 'Completed') {
+      // Check current user balances
+      if (currentUser.totalXp < quest.xp_reward || currentUser.gold < quest.gold_reward) {
+        willHitZeroBalances = true;
+      }
+    }
+    
     // Optimistic UI updates for immediate feedback
     if (status === 'Completed' && previousStatus !== 'Completed') {
       // Quest is being completed - add rewards
@@ -180,16 +189,20 @@ export const useQuests = () => {
         )
       );
 
-      // Show success message
+      // Show success message with context about balance limits
       if (status === 'Completed') {
         toast({
           title: 'Quest Completed! ✨',
           description: `You earned ${quest.xp_reward} XP and ${quest.gold_reward} Gold!`,
         });
       } else if (previousStatus === 'Completed') {
+        const description = willHitZeroBalances 
+          ? `Quest unchecked. Your XP and Gold have been reduced to their minimum values.`
+          : `${quest.xp_reward} XP and ${quest.gold_reward} Gold have been subtracted.`;
+        
         toast({
           title: 'Quest Unchecked',
-          description: `${quest.xp_reward} XP and ${quest.gold_reward} Gold have been subtracted.`,
+          description,
         });
       }
 
@@ -213,9 +226,14 @@ export const useQuests = () => {
         )
       );
 
+      // More specific error message
+      const errorMessage = error.message?.includes('check constraint') 
+        ? 'Cannot uncheck quest: would result in negative balance.'
+        : 'Failed to update quest status. Please try again.';
+
       toast({
         title: 'Error',
-        description: 'Failed to update quest status. Please try again.',
+        description: errorMessage,
         variant: 'destructive',
       });
       return false;
