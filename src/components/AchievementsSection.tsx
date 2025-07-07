@@ -5,6 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
 import confetti from 'canvas-confetti';
 
@@ -35,6 +36,7 @@ interface Streak {
 
 const AchievementsSection = () => {
   const { user: authUser } = useAuth();
+  const { forceProfileRefresh } = useUser();
   const { toast } = useToast();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [streaks, setStreaks] = useState<Streak[]>([]);
@@ -61,17 +63,37 @@ const AchievementsSection = () => {
 
       if (error) {
         console.error('❌ Error recalculating badge progress:', error);
+        toast({
+          title: "Error",
+          description: "Failed to recalculate badge progress. Please try again.",
+          variant: "destructive",
+        });
       } else {
         console.log('✅ Badge progress recalculated successfully');
+        
+        // Show success toast
+        toast({
+          title: "XP Recalculated! ✨",
+          description: "Your XP and level have been updated based on the new badge values.",
+          duration: 3000,
+        });
         
         // Small delay to ensure database triggers have processed
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        // Refresh achievements after recalculation
-        await fetchAchievements();
+        // Refresh both achievements and user profile
+        await Promise.all([
+          fetchAchievements(),
+          forceProfileRefresh()
+        ]);
       }
     } catch (error) {
       console.error('❌ Error in recalculateBadgeProgress:', error);
+      toast({
+        title: "Error",
+        description: "Failed to recalculate XP. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -399,9 +421,9 @@ const AchievementsSection = () => {
             <button
               onClick={recalculateBadgeProgress}
               className="px-3 py-1 rounded-lg text-sm font-medium bg-blue-700 text-white hover:bg-blue-600 transition-colors"
-              title="Refresh badge progress based on current user data"
+              title="Recalculate XP and level based on updated badge rewards"
             >
-              🔄 Refresh
+              🔄 Recalculate XP
             </button>
           </div>
         </div>

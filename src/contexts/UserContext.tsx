@@ -30,6 +30,7 @@ interface UserContextType {
   getWeeklyXpData: () => Array<{ date: string; xp: number; period: string }>;
   refetchUserProfile: () => Promise<void>;
   refetchDailyXp: () => Promise<void>;
+  forceProfileRefresh: () => Promise<void>;
 }
 
 const emptyUser: UserData = {
@@ -287,6 +288,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return weeklyXpData;
   };
 
+  const forceProfileRefresh = async () => {
+    console.log('Force refreshing user profile after XP recalculation...');
+    await loadUserProfile();
+  };
+
   const value: UserContextType = {
     user,
     isLoading,
@@ -301,6 +307,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getWeeklyXpData,
     refetchUserProfile: loadUserProfile,
     refetchDailyXp,
+    forceProfileRefresh,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
