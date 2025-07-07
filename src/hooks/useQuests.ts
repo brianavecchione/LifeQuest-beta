@@ -287,6 +287,50 @@ export const useQuests = () => {
 
   useEffect(() => {
     fetchQuests();
+
+    // Set up real-time subscription to quest changes
+    const channel = supabase
+      .channel('quest-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'quests',
+          filter: `user_id=eq.${user?.id}`
+        },
+        (payload) => {
+          console.log('Quest real-time update:', payload);
+          
+          if (payload.eventType === 'INSERT') {
+            const newQuest = transformDbQuest(payload.new as any);
+            setQuests(prev => {
+              // Avoid duplicates by checking if quest already exists
+              const exists = prev.some(quest => quest.id === newQuest.id);
+              if (!exists) {
+                return [newQuest, ...prev];
+              }
+              return prev;
+            });
+          } else if (payload.eventType === 'UPDATE') {
+            const updatedQuest = transformDbQuest(payload.new as any);
+            setQuests(prev => 
+              prev.map(quest => 
+                quest.id === updatedQuest.id ? updatedQuest : quest
+              )
+            );
+          } else if (payload.eventType === 'DELETE') {
+            setQuests(prev => 
+              prev.filter(quest => quest.id !== payload.old.id)
+            );
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
   return {
