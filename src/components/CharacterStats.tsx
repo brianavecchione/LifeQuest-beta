@@ -20,7 +20,7 @@ interface CharacterStatsProps {
 }
 
 const CharacterStats = ({ character }: CharacterStatsProps) => {
-  const { getDailyXpData } = useUser();
+  const { getDailyXpData, getWeeklyXpData } = useUser();
   const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
   const xpProgress = (character.xp / character.xpToNext) * 100;
 
@@ -43,12 +43,19 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
     }
   }, [getDailyXpData]);
 
-  const monthlyXpData = [
-    { date: 'Week 1', xp: 280, period: 'First week' },
-    { date: 'Week 2', xp: 350, period: 'Second week' },
-    { date: 'Week 3', xp: 420, period: 'Third week' },
-    { date: 'Week 4', xp: 380, period: 'Fourth week' },
-  ];
+  const monthlyXpData = React.useMemo(() => {
+    try {
+      return getWeeklyXpData();
+    } catch (error) {
+      console.error('Error getting weekly XP data:', error);
+      // Fallback to empty data
+      return Array.from({ length: 4 }, (_, i) => ({
+        date: `Week ${i + 1}`,
+        xp: 0,
+        period: `Week ${i + 1}`
+      }));
+    }
+  }, [getWeeklyXpData]);
 
   const chartConfig = {
     xp: {
@@ -58,6 +65,9 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
   };
 
   const currentData = chartPeriod === 'week' ? weeklyXpData : monthlyXpData;
+  
+  // Check if user has any XP data
+  const hasXpData = currentData.some(item => item.xp > 0);
 
   return (
     <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-yellow-600/30 shadow-2xl">
@@ -152,49 +162,63 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
           </div>
 
           <div className="bg-slate-700/30 rounded-lg p-4 border border-green-500/20">
-            <ChartContainer config={chartConfig} className="h-[200px] w-full">
-              <AreaChart data={currentData}>
-                <defs>
-                  <linearGradient id="xpGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.05}/>
-                  </linearGradient>
-                </defs>
-                <XAxis 
-                  dataKey="date" 
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: '#94a3b8', fontSize: 12 }}
-                />
-                <YAxis 
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: '#94a3b8', fontSize: 12 }}
-                />
-                <ChartTooltip 
-                  content={<ChartTooltipContent />}
-                  labelStyle={{ color: '#f1f5f9' }}
-                  contentStyle={{ 
-                    backgroundColor: '#1e293b', 
-                    border: '1px solid #10b981',
-                    borderRadius: '8px'
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="xp"
-                  stroke="#10b981"
-                  strokeWidth={2}
-                  fill="url(#xpGradient)"
-                />
-              </AreaChart>
-            </ChartContainer>
-            
-            <div className="mt-2 text-center">
-              <span className="text-slate-400 text-sm">
-                {chartPeriod === 'week' ? 'Daily XP Earned This Week' : 'Weekly XP Earned This Month'}
-              </span>
-            </div>
+            {hasXpData ? (
+              <>
+                <ChartContainer config={chartConfig} className="h-[200px] w-full">
+                  <AreaChart data={currentData}>
+                    <defs>
+                      <linearGradient id="xpGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0.05}/>
+                      </linearGradient>
+                    </defs>
+                    <XAxis 
+                      dataKey="date" 
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: '#94a3b8', fontSize: 12 }}
+                    />
+                    <YAxis 
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: '#94a3b8', fontSize: 12 }}
+                    />
+                    <ChartTooltip 
+                      content={<ChartTooltipContent />}
+                      labelStyle={{ color: '#f1f5f9' }}
+                      contentStyle={{ 
+                        backgroundColor: '#1e293b', 
+                        border: '1px solid #10b981',
+                        borderRadius: '8px'
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="xp"
+                      stroke="#10b981"
+                      strokeWidth={2}
+                      fill="url(#xpGradient)"
+                    />
+                  </AreaChart>
+                </ChartContainer>
+                
+                <div className="mt-2 text-center">
+                  <span className="text-slate-400 text-sm">
+                    {chartPeriod === 'week' ? 'Daily XP Earned This Week' : 'Weekly XP Earned This Month'}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div className="h-[200px] flex flex-col items-center justify-center text-center">
+                <div className="text-slate-400 mb-2">
+                  <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                  <p className="text-lg font-medium mb-1">No XP Data Yet</p>
+                  <p className="text-sm">
+                    You haven't earned any XP yet. Start completing quests to track your progress here!
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

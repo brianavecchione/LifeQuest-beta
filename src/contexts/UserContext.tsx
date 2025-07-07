@@ -26,6 +26,7 @@ interface UserContextType {
   spendGold: (amount: number) => boolean;
   incrementPomodoro: () => void;
   getDailyXpData: () => Array<{ date: string; xp: number; day: string }>;
+  getWeeklyXpData: () => Array<{ date: string; xp: number; period: string }>;
 }
 
 const defaultUser: UserData = {
@@ -280,6 +281,35 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return last7Days;
   };
 
+  const getWeeklyXpData = () => {
+    const last4Weeks = [];
+    const today = new Date();
+    
+    // Ensure dailyXp exists
+    const dailyXpData = user.dailyXp || {};
+    
+    for (let weekOffset = 3; weekOffset >= 0; weekOffset--) {
+      const weekStart = new Date(today);
+      weekStart.setDate(today.getDate() - (weekOffset * 7) - today.getDay());
+      
+      let weeklyXp = 0;
+      for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
+        const date = new Date(weekStart);
+        date.setDate(weekStart.getDate() + dayOffset);
+        const dateStr = date.toISOString().split('T')[0];
+        weeklyXp += dailyXpData[dateStr] || 0;
+      }
+      
+      last4Weeks.push({
+        date: `Week ${4 - weekOffset}`,
+        xp: weeklyXp,
+        period: `Week of ${weekStart.toLocaleDateString()}`
+      });
+    }
+    
+    return last4Weeks;
+  };
+
   const value: UserContextType = {
     user,
     isLoading,
@@ -291,6 +321,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     spendGold,
     incrementPomodoro,
     getDailyXpData,
+    getWeeklyXpData,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
