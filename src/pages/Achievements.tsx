@@ -1,7 +1,6 @@
 
 import React from 'react';
 import AchievementsSection from '@/components/AchievementsSection';
-import BadgeSystem from '@/components/BadgeSystem';
 
 const Achievements = () => {
   return (
@@ -24,14 +23,9 @@ const Achievements = () => {
           </p>
         </div>
 
-        {/* Achievements and Streaks */}
+        {/* Achievements and Streaks with Integrated Badges */}
         <div className="mb-12">
           <AchievementsSection />
-        </div>
-
-        {/* Badge System */}
-        <div className="mb-12">
-          <BadgeSystem />
         </div>
       </div>
     </div>

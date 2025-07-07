@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Trophy, Target, Flame, Calendar, Clock, Star } from 'lucide-react';
+import { Trophy, Target, Flame, Calendar, Clock, Star, TrendingUp, Users, Sparkles, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
@@ -123,7 +123,7 @@ const AchievementsSection = () => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <Trophy className="w-6 h-6 text-emerald-400" />
-            <h3 className="text-xl font-bold text-emerald-400">Achievements & Milestones</h3>
+            <h3 className="text-xl font-bold text-emerald-400">Achievements & Streaks</h3>
           </div>
           <div className="flex gap-2">
             <button
@@ -259,9 +259,153 @@ const AchievementsSection = () => {
             )}
           </div>
         )}
+
+        {/* Badge System - Integrated */}
+        <div className="mt-8 space-y-6">
+          {/* Earned Badges */}
+          <div className="space-y-4">
+            <h4 className="text-lg font-semibold text-green-400 flex items-center gap-2">
+              🏆 Earned Badges ({achievements.filter(a => a.is_completed).length})
+            </h4>
+            
+            {achievements.filter(a => a.is_completed).length > 0 ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                {achievements.filter(a => a.is_completed).map((achievement) => (
+                  <div 
+                    key={achievement.id} 
+                    className="bg-slate-700/50 border-slate-600/50 hover:border-green-500/50 rounded-lg p-4 border transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="text-2xl">
+                        {getRarityEmoji(achievement.quest_value)}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          {getCategoryIcon(achievement.tags || [])}
+                          <h3 className="font-bold text-white">
+                            {achievement.achievement_name}
+                          </h3>
+                        </div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge className={`${getRarityColor(achievement.quest_value)} text-white text-xs`}>
+                            {achievement.quest_value}
+                          </Badge>
+                          <span className="text-xs text-slate-400">
+                            {getCategoryName(achievement.tags || [])}
+                          </span>
+                        </div>
+                        <p className="text-sm mb-2 text-slate-300">
+                          {achievement.description}
+                        </p>
+                        {achievement.earned_at && (
+                          <p className="text-green-400 text-xs">
+                            Earned {new Date(achievement.earned_at).toLocaleDateString()}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6">
+                <Trophy className="w-10 h-10 text-green-400 mx-auto mb-3 opacity-50" />
+                <p className="text-green-400 font-medium mb-1">No badges earned yet</p>
+                <p className="text-green-300 text-sm">Complete quests and explore features to unlock your first badges!</p>
+              </div>
+            )}
+          </div>
+
+          {/* Available Badges */}
+          <div className="space-y-4">
+            <h4 className="text-lg font-semibold text-amber-400 flex items-center gap-2">
+              🔒 Available Badges ({achievements.filter(a => !a.is_completed).length})
+            </h4>
+            
+            {achievements.filter(a => !a.is_completed).length > 0 ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                {achievements.filter(a => !a.is_completed).map((achievement) => (
+                  <div 
+                    key={achievement.id} 
+                    className="bg-slate-700/30 border-slate-600/30 opacity-75 rounded-lg p-4 border transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="text-2xl">
+                        🔒
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          {getCategoryIcon(achievement.tags || [])}
+                          <h3 className="font-bold text-slate-300">
+                            {achievement.achievement_name}
+                          </h3>
+                        </div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge className={`${getRarityColor(achievement.quest_value)} text-white text-xs opacity-75`}>
+                            {achievement.quest_value}
+                          </Badge>
+                          <span className="text-xs text-slate-400">
+                            {getCategoryName(achievement.tags || [])}
+                          </span>
+                        </div>
+                        <p className="text-sm mb-2 text-slate-400">
+                          {achievement.description}
+                        </p>
+                        <div className="bg-slate-600 rounded-full h-2 mb-1">
+                          <div 
+                            className="bg-amber-400 h-full rounded-full transition-all duration-500"
+                            style={{ width: `${Math.min(100, (achievement.achievement_progress_current / achievement.achievement_progress_goal) * 100)}%` }}
+                          />
+                        </div>
+                        <span className="text-amber-400 text-xs font-medium">
+                          {achievement.achievement_progress_current}/{achievement.achievement_progress_goal}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6">
+                <Trophy className="w-10 h-10 text-amber-400 mx-auto mb-3 opacity-50" />
+                <p className="text-amber-400 font-medium mb-1">All badges earned!</p>
+                <p className="text-amber-300 text-sm">You've completed every challenge - amazing work!</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
+
+  // Helper functions for badge rendering
+  function getRarityEmoji(rarity: string) {
+    switch (rarity) {
+      case 'Bronze': return '🥉';
+      case 'Silver': return '🥈';
+      case 'Gold': return '🥇';
+      case 'Legendary': return '👑';
+      default: return '🏆';
+    }
+  }
+
+  function getCategoryIcon(tags: string[]) {
+    if (tags?.includes('progress') || tags?.includes('leveling')) return <TrendingUp className="w-4 h-4" />;
+    if (tags?.includes('social') || tags?.includes('collaboration')) return <Users className="w-4 h-4" />;
+    if (tags?.includes('focus') || tags?.includes('planning')) return <Target className="w-4 h-4" />;
+    if (tags?.includes('fun') || tags?.includes('customization')) return <Sparkles className="w-4 h-4" />;
+    if (tags?.includes('quests') || tags?.includes('habits')) return <Zap className="w-4 h-4" />;
+    return <Trophy className="w-4 h-4" />;
+  }
+
+  function getCategoryName(tags: string[]) {
+    if (tags?.includes('progress') || tags?.includes('leveling')) return 'Progress & Consistency';
+    if (tags?.includes('social') || tags?.includes('collaboration')) return 'Social & Party Play';
+    if (tags?.includes('focus') || tags?.includes('planning')) return 'Focus & Planning';
+    if (tags?.includes('fun') || tags?.includes('customization')) return 'Fun & Surprise';
+    if (tags?.includes('quests') || tags?.includes('habits')) return 'Quest & Learning';
+    return 'General';
+  }
 };
 
 export default AchievementsSection;
