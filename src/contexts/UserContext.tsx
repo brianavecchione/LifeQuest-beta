@@ -92,20 +92,22 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             level: profile.user_level,
             xp: Math.max(0, xpInCurrentLevel), // XP progress within current level
             xpToNext: currentLevelXp - previousLevelXp, // XP needed for next level
-            totalXp: profile.xp_balance,
-            gold: profile.gold_balance,
+            totalXp: profile.xp_balance, // Use database as source of truth
+            gold: profile.gold_balance, // Use database as source of truth
             pomodoroCount: settings.pomodoroCount || 0,
             dailyXp: settings.dailyXp || {},
             reduceAnimations: settings.reduceAnimations || false,
             avatar: profile.avatar_url || (profile.display_name ? profile.display_name.charAt(0).toUpperCase() : 'A'),
           };
           
-          // Only update if this is a significant change, preserve local dailyXp
+          // Update state with database values as source of truth
           setUser(prev => ({
             ...userData,
-            dailyXp: prev.dailyXp || userData.dailyXp, // Preserve existing dailyXp
+            // Only preserve local-only settings, use database for XP/gold
             pomodoroCount: prev.pomodoroCount || userData.pomodoroCount,
             reduceAnimations: prev.reduceAnimations || userData.reduceAnimations,
+            // Preserve dailyXp for chart functionality
+            dailyXp: prev.dailyXp || userData.dailyXp,
           }));
         } else {
           // Use default user data if no profile found
@@ -144,7 +146,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
         (payload) => {
           console.log('Profile updated:', payload);
-          // Reload profile data when it changes
+          // When profile updates from database, reload to sync local state
           loadUserProfile();
         }
       )

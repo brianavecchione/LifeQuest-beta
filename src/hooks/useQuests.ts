@@ -47,7 +47,7 @@ export const useQuests = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
-  const { user: currentUser, addXP, subtractXP, addGold, subtractGold } = useUser();
+  const { user: currentUser, updateUser } = useUser();
 
   // Fetch all quests for the current user
   const fetchQuests = async () => {
@@ -152,15 +152,25 @@ export const useQuests = () => {
       }
     }
     
-    // Optimistic UI updates for immediate feedback
+    // Track daily XP for chart (but let database handle total XP balance)
     if (status === 'Completed' && previousStatus !== 'Completed') {
-      // Quest is being completed - add rewards
-      addXP(quest.xp_reward);
-      addGold(quest.gold_reward);
+      // Quest is being completed - track daily XP for chart
+      const today = new Date().toISOString().split('T')[0];
+      const currentDailyXp = currentUser.dailyXp || {};
+      const updatedDailyXp = {
+        ...currentDailyXp,
+        [today]: (currentDailyXp[today] || 0) + quest.xp_reward
+      };
+      updateUser({ dailyXp: updatedDailyXp });
     } else if (status !== 'Completed' && previousStatus === 'Completed') {
-      // Quest is being unchecked - subtract rewards
-      subtractXP(quest.xp_reward);
-      subtractGold(quest.gold_reward);
+      // Quest is being unchecked - update daily XP tracking
+      const today = new Date().toISOString().split('T')[0];
+      const currentDailyXp = currentUser.dailyXp || {};
+      const updatedDailyXp = {
+        ...currentDailyXp,
+        [today]: Math.max(0, (currentDailyXp[today] || 0) - quest.xp_reward)
+      };
+      updateUser({ dailyXp: updatedDailyXp });
     }
 
     // Update quest status in local state immediately
@@ -210,13 +220,23 @@ export const useQuests = () => {
     } catch (error) {
       console.error('Error updating quest status:', error);
       
-      // Revert optimistic updates on error
+      // Revert daily XP tracking on error
       if (status === 'Completed' && previousStatus !== 'Completed') {
-        subtractXP(quest.xp_reward);
-        subtractGold(quest.gold_reward);
+        const today = new Date().toISOString().split('T')[0];
+        const currentDailyXp = currentUser.dailyXp || {};
+        const updatedDailyXp = {
+          ...currentDailyXp,
+          [today]: Math.max(0, (currentDailyXp[today] || 0) - quest.xp_reward)
+        };
+        updateUser({ dailyXp: updatedDailyXp });
       } else if (previousStatus === 'Completed') {
-        addXP(quest.xp_reward);
-        addGold(quest.gold_reward);
+        const today = new Date().toISOString().split('T')[0];
+        const currentDailyXp = currentUser.dailyXp || {};
+        const updatedDailyXp = {
+          ...currentDailyXp,
+          [today]: (currentDailyXp[today] || 0) + quest.xp_reward
+        };
+        updateUser({ dailyXp: updatedDailyXp });
       }
 
       // Revert quest status in local state
