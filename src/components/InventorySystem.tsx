@@ -155,23 +155,16 @@ const InventorySystem = () => {
             {/* Equipped Gear */}
             <div>
               <h4 className="text-lg font-semibold text-blue-300 mb-4">Currently Equipped</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {Object.entries(oldEquippedItems).map(([slot, item]) => (
-                  <div key={slot} className="bg-slate-700/50 rounded-lg p-4 border border-blue-500/30 hover:border-blue-500/50 transition-all">
-                    <div className="flex items-center gap-3">
-                      <div className="text-2xl">{item.icon}</div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h5 className="text-white font-bold">{item.name}</h5>
-                          <Badge className={`${getRarityColor(item.rarity)} text-white text-xs`}>
-                            {item.rarity}
-                          </Badge>
-                        </div>
-                        <p className="text-slate-300 text-xs mb-2">{item.description}</p>
-                        <Button size="sm" variant="outline" className="text-xs border-slate-600 text-slate-300 hover:bg-slate-600">
-                          Unequip
-                        </Button>
-                      </div>
+                  <div key={slot} className="bg-slate-700/50 rounded-lg p-4 border border-blue-500/30">
+                    <div className="text-center">
+                      <div className="text-3xl mb-2">{item.icon}</div>
+                      <h5 className="text-white font-bold mb-1">{item.name}</h5>
+                      <Badge className={`${getRarityColor(item.rarity)} text-white mb-2`}>
+                        {item.rarity}
+                      </Badge>
+                      <p className="text-slate-300 text-xs">{item.description}</p>
                     </div>
                   </div>
                 ))}
@@ -183,20 +176,15 @@ const InventorySystem = () => {
               <h4 className="text-lg font-semibold text-blue-300 mb-4">Companion</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {oldPets.filter(pet => pet.active).map((pet, index) => (
-                  <div key={index} className="bg-slate-700/50 rounded-lg p-4 border border-orange-500/30 hover:border-orange-500/50 transition-all">
+                  <div key={index} className="bg-slate-700/50 rounded-lg p-4 border border-orange-500/30">
                     <div className="flex items-center gap-3">
                       <div className="text-2xl">{pet.icon}</div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h5 className="text-white font-bold">{pet.name}</h5>
-                          <Badge className={`${getRarityColor(pet.rarity)} text-white text-xs`}>
-                            {pet.rarity}
-                          </Badge>
-                        </div>
-                        <p className="text-slate-300 text-xs mb-2">{pet.description}</p>
-                        <Button size="sm" variant="outline" className="text-xs border-slate-600 text-slate-300 hover:bg-slate-600">
-                          Dismiss
-                        </Button>
+                      <div>
+                        <h5 className="text-white font-bold">{pet.name}</h5>
+                        <Badge className={`${getRarityColor(pet.rarity)} text-white text-xs`}>
+                          {pet.rarity}
+                        </Badge>
+                        <p className="text-slate-300 text-xs mt-1">{pet.description}</p>
                       </div>
                     </div>
                   </div>
