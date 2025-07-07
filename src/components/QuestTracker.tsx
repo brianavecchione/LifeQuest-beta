@@ -162,6 +162,9 @@ const QuestTracker = () => {
     const newFocus = [...todaysFocus, ...selectedQuestIds];
     setTodaysFocus(newFocus);
     
+    // Save to localStorage immediately to ensure persistence
+    localStorage.setItem('lifequest-todays-focus', JSON.stringify(newFocus));
+    
     // Trigger localStorage update event for sync
     window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
   };
