@@ -27,6 +27,7 @@ interface UserContextType {
   incrementPomodoro: () => void;
   getDailyXpData: () => Array<{ date: string; xp: number; day: string }>;
   getWeeklyXpData: () => Array<{ date: string; xp: number; period: string }>;
+  refetchUserProfile: () => Promise<void>;
 }
 
 const defaultUser: UserData = {
@@ -49,88 +50,89 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<UserData>(defaultUser);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load user profile data from Supabase when auth user changes
-  useEffect(() => {
-    const loadUserProfile = async () => {
-      if (!authUser) {
-        // Clear user data and localStorage when logged out
-        setUser(defaultUser);
-        localStorage.removeItem('lifequest-user');
-        setIsLoading(false);
-        return;
+  // Load user profile data from Supabase
+  const loadUserProfile = async () => {
+    if (!authUser) {
+      // Clear user data and localStorage when logged out
+      setUser(defaultUser);
+      localStorage.removeItem('lifequest-user');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      
+      // Fetch user profile from Supabase
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', authUser.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user profile:', error);
       }
 
-      try {
-        setIsLoading(true);
+      // Load local settings from localStorage
+      const localSettings = localStorage.getItem('lifequest-user-settings');
+      const settings = localSettings ? JSON.parse(localSettings) : {};
+
+      if (profile) {
+        // Calculate current level XP from total XP and level
+        const currentLevelXp = profile.user_level * 100 + Math.max(profile.user_level - 1, 0) * 50;
+        const previousLevelXp = profile.user_level > 1 
+          ? (profile.user_level - 1) * 100 + Math.max(profile.user_level - 2, 0) * 50 
+          : 0;
+        const xpInCurrentLevel = profile.xp_balance - previousLevelXp;
         
-        // Fetch user profile from Supabase
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('user_id', authUser.id)
-          .single();
-
-        if (error) {
-          console.error('Error fetching user profile:', error);
-        }
-
-        // Load local settings from localStorage
-        const localSettings = localStorage.getItem('lifequest-user-settings');
-        const settings = localSettings ? JSON.parse(localSettings) : {};
-
-        if (profile) {
-          // Calculate current level XP from total XP and level
-          const currentLevelXp = profile.user_level * 100 + Math.max(profile.user_level - 1, 0) * 50;
-          const previousLevelXp = profile.user_level > 1 
-            ? (profile.user_level - 1) * 100 + Math.max(profile.user_level - 2, 0) * 50 
-            : 0;
-          const xpInCurrentLevel = profile.xp_balance - previousLevelXp;
-          
-          // Map Supabase profile to UserData format
-          const userData: UserData = {
-            name: profile.display_name || 'Adventurer',
-            level: profile.user_level,
-            xp: Math.max(0, xpInCurrentLevel), // XP progress within current level
-            xpToNext: currentLevelXp - previousLevelXp, // XP needed for next level
-            totalXp: profile.xp_balance, // Use database as source of truth
-            gold: profile.gold_balance, // Use database as source of truth
-            pomodoroCount: settings.pomodoroCount || 0,
-            dailyXp: settings.dailyXp || {},
-            reduceAnimations: settings.reduceAnimations || false,
-            avatar: profile.avatar_url || (profile.display_name ? profile.display_name.charAt(0).toUpperCase() : 'A'),
-          };
-          
-          // Update state with database values as source of truth
-          setUser(prev => ({
-            ...userData,
-            // Only preserve local-only settings, use database for XP/gold
-            pomodoroCount: prev.pomodoroCount || userData.pomodoroCount,
-            reduceAnimations: prev.reduceAnimations || userData.reduceAnimations,
-            // Preserve dailyXp for chart functionality
-            dailyXp: prev.dailyXp || userData.dailyXp,
-          }));
-        } else {
-          // Use default user data if no profile found
-          setUser({
-            ...defaultUser,
-            name: authUser.user_metadata?.display_name || 'Adventurer',
-            pomodoroCount: settings.pomodoroCount || 0,
-            dailyXp: settings.dailyXp || {},
-            reduceAnimations: settings.reduceAnimations || false,
-          });
-        }
+        // Map Supabase profile to UserData format
+        const userData: UserData = {
+          name: profile.display_name || 'Adventurer',
+          level: profile.user_level,
+          xp: Math.max(0, xpInCurrentLevel), // XP progress within current level
+          xpToNext: currentLevelXp - previousLevelXp, // XP needed for next level
+          totalXp: profile.xp_balance, // Use database as source of truth
+          gold: profile.gold_balance, // Use database as source of truth
+          pomodoroCount: settings.pomodoroCount || 0,
+          dailyXp: settings.dailyXp || {},
+          reduceAnimations: settings.reduceAnimations || false,
+          avatar: profile.avatar_url || (profile.display_name ? profile.display_name.charAt(0).toUpperCase() : 'A'),
+        };
         
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error loading user profile:', error);
+        // Update state with database values as source of truth
+        setUser(prev => ({
+          ...userData,
+          // Only preserve local-only settings, use database for XP/gold
+          pomodoroCount: prev.pomodoroCount || userData.pomodoroCount,
+          reduceAnimations: prev.reduceAnimations || userData.reduceAnimations,
+          // Preserve dailyXp for chart functionality
+          dailyXp: prev.dailyXp || userData.dailyXp,
+        }));
+      } else {
+        // Use default user data if no profile found
         setUser({
           ...defaultUser,
-          name: authUser.user_metadata?.display_name || 'Adventurer'
+          name: authUser.user_metadata?.display_name || 'Adventurer',
+          pomodoroCount: settings.pomodoroCount || 0,
+          dailyXp: settings.dailyXp || {},
+          reduceAnimations: settings.reduceAnimations || false,
         });
-        setIsLoading(false);
       }
-    };
+      
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+      setUser({
+        ...defaultUser,
+        name: authUser.user_metadata?.display_name || 'Adventurer'
+      });
+      setIsLoading(false);
+    }
+  };
 
+  // Load user profile data from Supabase when auth user changes
+  useEffect(() => {
     loadUserProfile();
 
     // Set up real-time subscription to profile changes
@@ -324,6 +326,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     incrementPomodoro,
     getDailyXpData,
     getWeeklyXpData,
+    refetchUserProfile: loadUserProfile,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

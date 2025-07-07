@@ -47,7 +47,7 @@ export const useQuests = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
-  const { user: currentUser, updateUser } = useUser();
+  const { user: currentUser, updateUser, refetchUserProfile } = useUser();
 
   // Fetch all quests for the current user
   const fetchQuests = async () => {
@@ -198,6 +198,12 @@ export const useQuests = () => {
           q.id === questId ? transformedQuest : q
         )
       );
+
+      // Manually refresh user profile to sync XP/Gold balances
+      // This ensures immediate UI updates while real-time subscriptions catch up
+      if (refetchUserProfile) {
+        await refetchUserProfile();
+      }
 
       // Show success message with context about balance limits
       if (status === 'Completed') {
