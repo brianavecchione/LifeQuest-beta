@@ -503,6 +503,42 @@ export type Database = {
         }
         Relationships: []
       }
+      soundtracks: {
+        Row: {
+          artist: string
+          created_at: string
+          duration: string
+          id: string
+          is_active: boolean
+          tags: string[]
+          track_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          artist: string
+          created_at?: string
+          duration: string
+          id?: string
+          is_active?: boolean
+          tags?: string[]
+          track_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          artist?: string
+          created_at?: string
+          duration?: string
+          id?: string
+          is_active?: boolean
+          tags?: string[]
+          track_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       streaks: {
         Row: {
           best_streak: number
@@ -575,6 +611,54 @@ export type Database = {
         }
         Relationships: []
       }
+      user_settings: {
+        Row: {
+          active_theme: Database["public"]["Enums"]["theme_choice"]
+          avatar_choice: Database["public"]["Enums"]["avatar_choice"]
+          avatar_image_url: string | null
+          bonus_xp_for_streaks_enabled: boolean
+          character_name: string
+          created_at: string
+          daily_quest_reminders_enabled: boolean
+          difficulty_multipliers_enabled: boolean
+          id: string
+          reduce_animations_enabled: boolean
+          streak_warnings_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active_theme?: Database["public"]["Enums"]["theme_choice"]
+          avatar_choice?: Database["public"]["Enums"]["avatar_choice"]
+          avatar_image_url?: string | null
+          bonus_xp_for_streaks_enabled?: boolean
+          character_name?: string
+          created_at?: string
+          daily_quest_reminders_enabled?: boolean
+          difficulty_multipliers_enabled?: boolean
+          id?: string
+          reduce_animations_enabled?: boolean
+          streak_warnings_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active_theme?: Database["public"]["Enums"]["theme_choice"]
+          avatar_choice?: Database["public"]["Enums"]["avatar_choice"]
+          avatar_image_url?: string | null
+          bonus_xp_for_streaks_enabled?: boolean
+          character_name?: string
+          created_at?: string
+          daily_quest_reminders_enabled?: boolean
+          difficulty_multipliers_enabled?: boolean
+          id?: string
+          reduce_animations_enabled?: boolean
+          streak_warnings_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -612,6 +696,12 @@ export type Database = {
     Enums: {
       achievement_tier: "Bronze" | "Silver" | "Gold" | "Legendary"
       availability_status: "Available" | "SoldOut" | "Unavailable"
+      avatar_choice:
+        | "noble_knight"
+        | "wise_mage"
+        | "shadow_rogue"
+        | "custom"
+        | "initials"
       item_category: "Gear" | "Companion"
       item_rarity: "Common" | "Rare" | "Epic" | "Legendary"
       leaderboard_time_range: "Week" | "Month"
@@ -623,6 +713,11 @@ export type Database = {
       reward_type: "Personal" | "Company"
       shop_category: "Personal" | "LifeQuest"
       streak_status: "Active" | "Inactive"
+      theme_choice:
+        | "dark_forest"
+        | "fiery_dungeon"
+        | "icy_mountains"
+        | "mystical_void"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -740,6 +835,13 @@ export const Constants = {
     Enums: {
       achievement_tier: ["Bronze", "Silver", "Gold", "Legendary"],
       availability_status: ["Available", "SoldOut", "Unavailable"],
+      avatar_choice: [
+        "noble_knight",
+        "wise_mage",
+        "shadow_rogue",
+        "custom",
+        "initials",
+      ],
       item_category: ["Gear", "Companion"],
       item_rarity: ["Common", "Rare", "Epic", "Legendary"],
       leaderboard_time_range: ["Week", "Month"],
@@ -751,6 +853,12 @@ export const Constants = {
       reward_type: ["Personal", "Company"],
       shop_category: ["Personal", "LifeQuest"],
       streak_status: ["Active", "Inactive"],
+      theme_choice: [
+        "dark_forest",
+        "fiery_dungeon",
+        "icy_mountains",
+        "mystical_void",
+      ],
     },
   },
 } as const
