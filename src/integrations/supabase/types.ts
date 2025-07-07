@@ -60,6 +60,99 @@ export type Database = {
         }
         Relationships: []
       }
+      gold_shop_items: {
+        Row: {
+          availability_status: Database["public"]["Enums"]["availability_status"]
+          category: Database["public"]["Enums"]["shop_category"]
+          created_at: string
+          description: string | null
+          duration_days: number | null
+          effect_description: string | null
+          gold_cost: number
+          is_limited_edition: boolean
+          name: string
+          shop_item_id: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          availability_status?: Database["public"]["Enums"]["availability_status"]
+          category?: Database["public"]["Enums"]["shop_category"]
+          created_at?: string
+          description?: string | null
+          duration_days?: number | null
+          effect_description?: string | null
+          gold_cost?: number
+          is_limited_edition?: boolean
+          name: string
+          shop_item_id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          availability_status?: Database["public"]["Enums"]["availability_status"]
+          category?: Database["public"]["Enums"]["shop_category"]
+          created_at?: string
+          description?: string | null
+          duration_days?: number | null
+          effect_description?: string | null
+          gold_cost?: number
+          is_limited_edition?: boolean
+          name?: string
+          shop_item_id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      inventory_items: {
+        Row: {
+          category: Database["public"]["Enums"]["item_category"]
+          created_at: string
+          date_acquired: string
+          date_expiration: string | null
+          description: string | null
+          duration_days: number | null
+          effect_description: string | null
+          equipped: boolean
+          item_id: string
+          name: string
+          rarity: Database["public"]["Enums"]["item_rarity"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["item_category"]
+          created_at?: string
+          date_acquired?: string
+          date_expiration?: string | null
+          description?: string | null
+          duration_days?: number | null
+          effect_description?: string | null
+          equipped?: boolean
+          item_id?: string
+          name: string
+          rarity?: Database["public"]["Enums"]["item_rarity"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["item_category"]
+          created_at?: string
+          date_acquired?: string
+          date_expiration?: string | null
+          description?: string | null
+          duration_days?: number | null
+          effect_description?: string | null
+          equipped?: boolean
+          item_id?: string
+          name?: string
+          rarity?: Database["public"]["Enums"]["item_rarity"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -153,6 +246,45 @@ export type Database = {
         }
         Relationships: []
       }
+      rewards: {
+        Row: {
+          created_at: string
+          date_unlocked: string | null
+          description: string | null
+          gold_cost: number
+          name: string
+          reward_id: string
+          reward_type: Database["public"]["Enums"]["reward_type"]
+          status: Database["public"]["Enums"]["reward_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date_unlocked?: string | null
+          description?: string | null
+          gold_cost?: number
+          name: string
+          reward_id?: string
+          reward_type?: Database["public"]["Enums"]["reward_type"]
+          status?: Database["public"]["Enums"]["reward_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date_unlocked?: string | null
+          description?: string | null
+          gold_cost?: number
+          name?: string
+          reward_id?: string
+          reward_type?: Database["public"]["Enums"]["reward_type"]
+          status?: Database["public"]["Enums"]["reward_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       streaks: {
         Row: {
           best_streak: number
@@ -192,6 +324,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_balances: {
+        Row: {
+          created_at: string
+          current_gold_balance: number
+          inventory_capacity: number
+          inventory_slots_used: number
+          total_gold_earned: number
+          total_gold_spent: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_gold_balance?: number
+          inventory_capacity?: number
+          inventory_slots_used?: number
+          total_gold_earned?: number
+          total_gold_spent?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_gold_balance?: number
+          inventory_capacity?: number
+          inventory_slots_used?: number
+          total_gold_earned?: number
+          total_gold_spent?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -224,8 +389,14 @@ export type Database = {
     }
     Enums: {
       achievement_tier: "Bronze" | "Silver" | "Gold" | "Legendary"
+      availability_status: "Available" | "SoldOut" | "Unavailable"
+      item_category: "Gear" | "Companion"
+      item_rarity: "Common" | "Rare" | "Epic" | "Legendary"
       quest_priority: "Low" | "Medium" | "High"
       quest_type: "Daily" | "Main" | "Side" | "Legendary"
+      reward_status: "Locked" | "Unlocked" | "Redeemed"
+      reward_type: "Personal" | "Company"
+      shop_category: "Personal" | "LifeQuest"
       streak_status: "Active" | "Inactive"
     }
     CompositeTypes: {
@@ -343,8 +514,14 @@ export const Constants = {
   public: {
     Enums: {
       achievement_tier: ["Bronze", "Silver", "Gold", "Legendary"],
+      availability_status: ["Available", "SoldOut", "Unavailable"],
+      item_category: ["Gear", "Companion"],
+      item_rarity: ["Common", "Rare", "Epic", "Legendary"],
       quest_priority: ["Low", "Medium", "High"],
       quest_type: ["Daily", "Main", "Side", "Legendary"],
+      reward_status: ["Locked", "Unlocked", "Redeemed"],
+      reward_type: ["Personal", "Company"],
+      shop_category: ["Personal", "LifeQuest"],
       streak_status: ["Active", "Inactive"],
     },
   },
