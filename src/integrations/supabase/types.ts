@@ -378,6 +378,10 @@ export type Database = {
         Args: { p_user_id: string; p_streak_name: string }
         Returns: undefined
       }
+      reset_dummy_user_data: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       update_streak_status: {
         Args: Record<PropertyKey, never>
         Returns: undefined
