@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Trophy, Flag, Crown, Plus, Filter, Target, CheckCircle2, Circle, MoreVertical, Tag, Coins, Calendar, AlertTriangle, Edit, Trash2 } from 'lucide-react';
+import { Star, Trophy, Flag, Crown, Plus, Filter, Target, CheckCircle2, Circle, MoreVertical, Tag, Coins, Calendar, AlertTriangle, Edit, Trash2, Flame } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -88,6 +88,32 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
   // Filter states - now received as props
   const { priorityFilter, typeFilter, statusFilter, xpRange, goldRange, dueDateFilter } = filters;
   const [previousQuests, setPreviousQuests] = useState<Quest[]>([]);
+  
+  // Track Today's Focus quests
+  const [todaysFocusQuests, setTodaysFocusQuests] = useState<string[]>([]);
+
+  // Load Today's Focus on mount and listen for updates
+  useEffect(() => {
+    const loadTodaysFocus = () => {
+      const savedFocus = localStorage.getItem('lifequest-todays-focus');
+      const currentFocus = savedFocus ? JSON.parse(savedFocus) : [];
+      setTodaysFocusQuests(currentFocus);
+    };
+
+    // Load initial data
+    loadTodaysFocus();
+
+    // Listen for focus updates
+    const handleFocusUpdate = () => {
+      loadTodaysFocus();
+    };
+
+    window.addEventListener('todaysFocusUpdated', handleFocusUpdate);
+
+    return () => {
+      window.removeEventListener('todaysFocusUpdated', handleFocusUpdate);
+    };
+  }, []);
 
   // Track quest completions and award XP and Gold - handled by database triggers now
   useEffect(() => {
@@ -224,6 +250,7 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
 
   const QuestCard: React.FC<{ quest: Quest }> = ({ quest }) => {
     const isOverdue = isQuestOverdue(quest);
+    const isInTodaysFocus = todaysFocusQuests.includes(quest.id);
     
     return (
       <div className="bg-slate-700/50 rounded-lg p-3 sm:p-4 border border-slate-600/50 hover:border-slate-500/70 transition-all group">
@@ -245,6 +272,16 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
                 <h4 className={`font-medium text-sm sm:text-base leading-tight ${quest.status === 'Completed' ? 'line-through text-slate-400' : 'text-white'}`}>
                   {quest.quest_name}
                 </h4>
+                {isInTodaysFocus && (
+                  <div 
+                    className="shrink-0 flex items-center text-orange-400"
+                    title="In Today's Focus"
+                    aria-label="In Today's Focus"
+                  >
+                    <Flame className="w-4 h-4" />
+                    <span className="sr-only">Today's Focus</span>
+                  </div>
+                )}
                 {isOverdue && (
                   <div 
                     className="shrink-0 flex items-center text-red-400"
