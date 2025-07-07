@@ -8,21 +8,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 const PartyLeaderboard = () => {
   const [timePeriod, setTimePeriod] = useState<'week' | 'month'>('week');
 
-  const weeklyLeaderboard = [
-    { id: '1', name: 'Emma', xp: 520, level: 13, questsCompleted: 8, avatar: null },
-    { id: '2', name: 'Alexander', xp: 485, level: 12, questsCompleted: 7, avatar: null },
-    { id: '3', name: 'Sarah', xp: 470, level: 11, questsCompleted: 9, avatar: null },
-    { id: '4', name: 'Mike', xp: 440, level: 10, questsCompleted: 6, avatar: null },
-    { id: '5', name: 'David', xp: 380, level: 9, questsCompleted: 5, avatar: null }
-  ];
-
-  const monthlyLeaderboard = [
-    { id: '1', name: 'Alexander', xp: 2150, level: 12, questsCompleted: 28, avatar: null },
-    { id: '2', name: 'Emma', xp: 2080, level: 13, questsCompleted: 32, avatar: null },
-    { id: '3', name: 'Sarah', xp: 1950, level: 11, questsCompleted: 31, avatar: null },
-    { id: '4', name: 'Mike', xp: 1820, level: 10, questsCompleted: 24, avatar: null },
-    { id: '5', name: 'David', xp: 1650, level: 9, questsCompleted: 22, avatar: null }
-  ];
+  // Empty arrays - all data should come from database
+  const weeklyLeaderboard: any[] = [];
+  const monthlyLeaderboard: any[] = [];
 
   const currentLeaderboard = timePeriod === 'week' ? weeklyLeaderboard : monthlyLeaderboard;
 
@@ -73,49 +61,59 @@ const PartyLeaderboard = () => {
         </div>
       </div>
 
-      <div className="space-y-3">
-        {currentLeaderboard.map((member, index) => {
-          const rank = index + 1;
-          
-          return (
-            <div key={member.id} className={`flex items-center gap-4 p-4 rounded-lg border ${getRankColor(rank)} transition-all hover:border-opacity-70`}>
-              <div className="flex items-center justify-center w-8">
-                {getRankIcon(rank)}
-              </div>
+      {currentLeaderboard.length > 0 ? (
+        <>
+          <div className="space-y-3">
+            {currentLeaderboard.map((member, index) => {
+              const rank = index + 1;
               
-              <Avatar className="w-12 h-12">
-                <AvatarImage src={member.avatar} />
-                <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-600 text-white font-bold">
-                  {member.name.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-white font-semibold">{member.name}</span>
-                  <Badge variant="outline" className="text-purple-400 border-purple-400/50 text-xs">
-                    Level {member.level}
-                  </Badge>
+              return (
+                <div key={member.id} className={`flex items-center gap-4 p-4 rounded-lg border ${getRankColor(rank)} transition-all hover:border-opacity-70`}>
+                  <div className="flex items-center justify-center w-8">
+                    {getRankIcon(rank)}
+                  </div>
+                  
+                  <Avatar className="w-12 h-12">
+                    <AvatarImage src={member.avatar} />
+                    <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-600 text-white font-bold">
+                      {member.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-white font-semibold">{member.name}</span>
+                      <Badge variant="outline" className="text-purple-400 border-purple-400/50 text-xs">
+                        Level {member.level}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm text-slate-300">
+                      <span>{member.questsCompleted} quests completed</span>
+                    </div>
+                  </div>
+                  
+                  <div className="text-right">
+                    <div className="text-xl font-bold text-yellow-400">{member.xp}</div>
+                    <div className="text-xs text-slate-400">XP earned</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 text-sm text-slate-300">
-                  <span>{member.questsCompleted} quests completed</span>
-                </div>
-              </div>
-              
-              <div className="text-right">
-                <div className="text-xl font-bold text-yellow-400">{member.xp}</div>
-                <div className="text-xs text-slate-400">XP earned</div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+              );
+            })}
+          </div>
 
-      <div className="mt-4 p-3 bg-slate-700/30 rounded-lg border border-slate-600/50">
-        <div className="text-center text-slate-300 text-sm">
-          <strong>Party Total:</strong> {currentLeaderboard.reduce((sum, member) => sum + member.xp, 0)} XP this {timePeriod}
+          <div className="mt-4 p-3 bg-slate-700/30 rounded-lg border border-slate-600/50">
+            <div className="text-center text-slate-300 text-sm">
+              <strong>Party Total:</strong> {currentLeaderboard.reduce((sum, member) => sum + member.xp, 0)} XP this {timePeriod}
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="text-center py-8">
+          <Trophy className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+          <p className="text-slate-400 text-lg mb-2">No leaderboard data</p>
+          <p className="text-slate-500 text-sm">Join a party to see member rankings here.</p>
         </div>
-      </div>
+      )}
     </div>
   );
 };

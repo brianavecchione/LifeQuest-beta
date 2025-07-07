@@ -6,41 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 const PartyQuests = () => {
-  const partyQuests = [
-    {
-      id: '1',
-      name: 'Complete 50 Daily Quests Together',
-      description: 'Work as a team to complete daily challenges',
-      progress: 32,
-      target: 50,
-      xpReward: 500,
-      status: 'active',
-      assignedBy: 'Alexander',
-      completedBy: ['Sarah', 'Mike', 'Emma']
-    },
-    {
-      id: '2',
-      name: 'Master the Legendary Challenge',
-      description: 'Each member must complete at least 1 legendary quest',
-      progress: 3,
-      target: 5,
-      xpReward: 1000,
-      status: 'active',
-      assignedBy: 'Alexander',
-      completedBy: ['Alexander', 'Sarah', 'Emma']
-    },
-    {
-      id: '3',
-      name: 'Weekly Focus Sprint',
-      description: 'Accumulate 20 hours of focused work time',
-      progress: 20,
-      target: 20,
-      xpReward: 300,
-      status: 'completed',
-      assignedBy: 'Sarah',
-      completedBy: ['Alexander', 'Sarah', 'Mike', 'Emma', 'David']
-    }
-  ];
+  // Empty array - all data should come from database
+  const partyQuests: any[] = [];
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -70,69 +37,77 @@ const PartyQuests = () => {
         </Button>
       </div>
 
-      <div className="space-y-4">
-        {partyQuests.map((quest) => {
-          const progressPercentage = (quest.progress / quest.target) * 100;
-          
-          return (
-            <div key={quest.id} className={`p-4 rounded-lg border ${getStatusColor(quest.status)} transition-all hover:border-opacity-70`}>
-              <div className="flex items-start gap-3">
-                {getStatusIcon(quest.status)}
-                
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-white font-semibold">{quest.name}</h4>
-                    <Badge variant="outline" className="text-amber-400 border-amber-400/50">
-                      {quest.xpReward} XP
-                    </Badge>
-                  </div>
+      {partyQuests.length > 0 ? (
+        <div className="space-y-4">
+          {partyQuests.map((quest) => {
+            const progressPercentage = (quest.progress / quest.target) * 100;
+            
+            return (
+              <div key={quest.id} className={`p-4 rounded-lg border ${getStatusColor(quest.status)} transition-all hover:border-opacity-70`}>
+                <div className="flex items-start gap-3">
+                  {getStatusIcon(quest.status)}
                   
-                  <p className="text-slate-300 text-sm mb-3">{quest.description}</p>
-                  
-                  <div className="mb-3">
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-slate-400 text-sm">Progress</span>
-                      <span className="text-blue-400 font-medium text-sm">{quest.progress}/{quest.target}</span>
-                    </div>
-                    <Progress value={progressPercentage} className="h-2 bg-slate-700">
-                      <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-500" style={{ width: `${progressPercentage}%` }} />
-                    </Progress>
-                  </div>
-                  
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-1 text-slate-400">
-                      <Crown className="w-3 h-3" />
-                      <span>Assigned by {quest.assignedBy}</span>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-white font-semibold">{quest.name}</h4>
+                      <Badge variant="outline" className="text-amber-400 border-amber-400/50">
+                        {quest.xpReward} XP
+                      </Badge>
                     </div>
                     
-                    {quest.completedBy.length > 0 && (
-                      <div className="flex items-center gap-1">
-                        <span className="text-slate-400">Completed by:</span>
-                        <div className="flex -space-x-1">
-                          {quest.completedBy.slice(0, 3).map((name, index) => (
-                            <div
-                              key={index}
-                              className="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-xs font-bold text-white border-2 border-slate-800"
-                              title={name}
-                            >
-                              {name.charAt(0)}
-                            </div>
-                          ))}
-                          {quest.completedBy.length > 3 && (
-                            <div className="w-6 h-6 bg-slate-600 rounded-full flex items-center justify-center text-xs font-bold text-white border-2 border-slate-800">
-                              +{quest.completedBy.length - 3}
-                            </div>
-                          )}
-                        </div>
+                    <p className="text-slate-300 text-sm mb-3">{quest.description}</p>
+                    
+                    <div className="mb-3">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-slate-400 text-sm">Progress</span>
+                        <span className="text-blue-400 font-medium text-sm">{quest.progress}/{quest.target}</span>
                       </div>
-                    )}
+                      <Progress value={progressPercentage} className="h-2 bg-slate-700">
+                        <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-500" style={{ width: `${progressPercentage}%` }} />
+                      </Progress>
+                    </div>
+                    
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-1 text-slate-400">
+                        <Crown className="w-3 h-3" />
+                        <span>Assigned by {quest.assignedBy}</span>
+                      </div>
+                      
+                      {quest.completedBy.length > 0 && (
+                        <div className="flex items-center gap-1">
+                          <span className="text-slate-400">Completed by:</span>
+                          <div className="flex -space-x-1">
+                            {quest.completedBy.slice(0, 3).map((name, index) => (
+                              <div
+                                key={index}
+                                className="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-xs font-bold text-white border-2 border-slate-800"
+                                title={name}
+                              >
+                                {name.charAt(0)}
+                              </div>
+                            ))}
+                            {quest.completedBy.length > 3 && (
+                              <div className="w-6 h-6 bg-slate-600 rounded-full flex items-center justify-center text-xs font-bold text-white border-2 border-slate-800">
+                                +{quest.completedBy.length - 3}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="text-center py-8">
+          <Target className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+          <p className="text-slate-400 text-lg mb-2">No active party quests</p>
+          <p className="text-slate-500 text-sm">Join a party to see collaborative quests here.</p>
+        </div>
+      )}
     </div>
   );
 };

@@ -7,22 +7,8 @@ import { Button } from '@/components/ui/button';
 const NarrativeJournal = () => {
   const [currentTab, setCurrentTab] = useState<'journal' | 'lore'>('journal');
 
-  const journalEntries = [
-    {
-      date: '2025-01-07',
-      title: 'The Journey Begins',
-      content: 'Today I started my quest to become a more productive adventurer. Completed my first workout quest and earned 50 XP!',
-      xp: 50,
-      type: 'milestone'
-    },
-    {
-      date: '2025-01-06',
-      title: 'Forest of Focus',
-      content: 'Struggled through the dense forest of procrastination but emerged victorious with my project proposal complete.',
-      xp: 150,
-      type: 'quest'
-    }
-  ];
+  // Empty arrays - all data should come from database
+  const journalEntries: any[] = [];
 
   const dailyLore = {
     title: "The Misty Mountains Challenge",
@@ -62,21 +48,29 @@ const NarrativeJournal = () => {
 
       {currentTab === 'journal' && (
         <div className="space-y-4">
-          {journalEntries.map((entry, index) => (
-            <div key={index} className="bg-slate-700/50 rounded-lg p-4 border-l-4 border-amber-500">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-slate-400" />
-                  <span className="text-slate-400 text-sm">{entry.date}</span>
+          {journalEntries.length > 0 ? (
+            journalEntries.map((entry, index) => (
+              <div key={index} className="bg-slate-700/50 rounded-lg p-4 border-l-4 border-amber-500">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-slate-400" />
+                    <span className="text-slate-400 text-sm">{entry.date}</span>
+                  </div>
+                  <Badge className="bg-amber-600 text-white">
+                    +{entry.xp} XP
+                  </Badge>
                 </div>
-                <Badge className="bg-amber-600 text-white">
-                  +{entry.xp} XP
-                </Badge>
+                <h4 className="text-white font-bold mb-2">{entry.title}</h4>
+                <p className="text-slate-300 text-sm">{entry.content}</p>
               </div>
-              <h4 className="text-white font-bold mb-2">{entry.title}</h4>
-              <p className="text-slate-300 text-sm">{entry.content}</p>
+            ))
+          ) : (
+            <div className="text-center py-8">
+              <Scroll className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+              <p className="text-slate-400 text-lg mb-2">No entries yet!</p>
+              <p className="text-slate-500 text-sm">Start your adventure to see your progress here.</p>
             </div>
-          ))}
+          )}
           
           <Button className="w-full bg-amber-600 hover:bg-amber-700 text-white">
             <Feather className="w-4 h-4 mr-2" />
