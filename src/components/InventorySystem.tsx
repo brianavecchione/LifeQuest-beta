@@ -115,8 +115,9 @@ const InventorySystem = () => {
     });
   };
 
-  // If this is the dummy account, show the old layout
-  if (isDummyAccount) {
+  // EXPLICIT CHECK: Only render old layout for the exact dummy account email
+  if (authUser && authUser.email && authUser.email === 'contact@lifequest.com') {
+    console.log('Rendering OLD LAYOUT for dummy account:', authUser.email); // Debug log
     return (
       <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-blue-600/30 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
@@ -152,43 +153,59 @@ const InventorySystem = () => {
 
         {currentTab === 'equipped' && (
           <div className="space-y-6">
-            {/* Equipped Gear */}
+            {/* EXACT OLD LAYOUT: Currently Equipped */}
             <div>
               <h4 className="text-lg font-semibold text-blue-300 mb-4">Currently Equipped</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {Object.entries(oldEquippedItems).map(([slot, item]) => (
-                  <div key={slot} className="bg-slate-700/50 rounded-lg p-4 border border-blue-500/30">
-                    <div className="text-center">
-                      <div className="text-3xl mb-2">{item.icon}</div>
-                      <h5 className="text-white font-bold mb-1">{item.name}</h5>
-                      <Badge className={`${getRarityColor(item.rarity)} text-white mb-2`}>
-                        {item.rarity}
-                      </Badge>
-                      <p className="text-slate-300 text-xs">{item.description}</p>
-                    </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div className="bg-slate-700/50 rounded-lg p-6 border border-blue-500/30 shadow-lg">
+                  <div className="text-center">
+                    <div className="text-4xl mb-3">⚔️</div>
+                    <h5 className="text-white font-bold text-base mb-2">Sword of Productivity</h5>
+                    <Badge className="bg-blue-600 text-white mb-3 text-xs px-2 py-1">
+                      Rare
+                    </Badge>
+                    <p className="text-slate-300 text-sm leading-relaxed">+10% XP from Main Quests</p>
                   </div>
-                ))}
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-6 border border-blue-500/30 shadow-lg">
+                  <div className="text-center">
+                    <div className="text-4xl mb-3">🏺</div>
+                    <h5 className="text-white font-bold text-base mb-2">Cloak of Focus</h5>
+                    <Badge className="bg-purple-600 text-white mb-3 text-xs px-2 py-1">
+                      Epic
+                    </Badge>
+                    <p className="text-slate-300 text-sm leading-relaxed">+5 minutes to quest timer</p>
+                  </div>
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-6 border border-blue-500/30 shadow-lg">
+                  <div className="text-center">
+                    <div className="text-4xl mb-3">💍</div>
+                    <h5 className="text-white font-bold text-base mb-2">Ring of Motivation</h5>
+                    <Badge className="bg-slate-600 text-white mb-3 text-xs px-2 py-1">
+                      Common
+                    </Badge>
+                    <p className="text-slate-300 text-sm leading-relaxed">+5% daily XP boost</p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Active Pets */}
+            {/* EXACT OLD LAYOUT: Companion */}
             <div>
               <h4 className="text-lg font-semibold text-blue-300 mb-4">Companion</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {oldPets.filter(pet => pet.active).map((pet, index) => (
-                  <div key={index} className="bg-slate-700/50 rounded-lg p-4 border border-orange-500/30">
-                    <div className="flex items-center gap-3">
-                      <div className="text-2xl">{pet.icon}</div>
-                      <div>
-                        <h5 className="text-white font-bold">{pet.name}</h5>
-                        <Badge className={`${getRarityColor(pet.rarity)} text-white text-xs`}>
-                          {pet.rarity}
-                        </Badge>
-                        <p className="text-slate-300 text-xs mt-1">{pet.description}</p>
-                      </div>
+              <div className="max-w-2xl mx-auto">
+                <div className="bg-slate-700/50 rounded-lg p-6 border border-orange-500/30 shadow-lg">
+                  <div className="flex items-center gap-4">
+                    <div className="text-3xl">🔥</div>
+                    <div>
+                      <h5 className="text-white font-bold text-base mb-1">Phoenix Companion</h5>
+                      <Badge className="bg-orange-600 text-white text-xs px-2 py-1 mb-2">
+                        Legendary
+                      </Badge>
+                      <p className="text-slate-300 text-sm leading-relaxed">Revives failed daily streaks once per week</p>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
             </div>
           </div>
