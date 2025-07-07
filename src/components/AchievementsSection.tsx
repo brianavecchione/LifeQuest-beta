@@ -71,13 +71,6 @@ const AchievementsSection = () => {
       } else {
         console.log('✅ Badge progress recalculated successfully');
         
-        // Show success toast
-        toast({
-          title: "XP Recalculated! ✨",
-          description: "Your XP and level have been updated based on the new badge values.",
-          duration: 3000,
-        });
-        
         // Small delay to ensure database triggers have processed
         await new Promise(resolve => setTimeout(resolve, 500));
         
