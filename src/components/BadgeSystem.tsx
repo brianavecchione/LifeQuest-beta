@@ -1,64 +1,23 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
+import { useAchievements } from '@/hooks/useAchievements';
 
 const BadgeSystem = () => {
-  const earnedBadges = [
-    {
-      name: 'Everlasting Bond',
-      rarity: 'Main',
-      icon: '💕',
-      description: 'Completed your first relationship quest'
-    },
-    {
-      name: 'Castle Keeper',
-      rarity: 'Legendary',
-      icon: '🏰',
-      description: 'Maintained your home for 30 days'
-    },
-    {
-      name: 'Animal Caretaker',
-      rarity: 'Legendary',
-      icon: '🐾',
-      description: 'Cared for pets consistently'
-    }
-  ];
+  const { achievements, loading } = useAchievements();
+  
+  if (loading) {
+    return <div className="text-center text-muted-foreground">Loading achievements...</div>;
+  }
 
-  const unearnedBadges = [
-    {
-      name: 'Muscle Master',
-      rarity: 'Side',
-      icon: '💪',
-      description: 'Complete 50 workout quests',
-      progress: '23/50'
-    },
-    {
-      name: 'Lean Legionnaire',
-      rarity: 'Side',
-      icon: '⚔️',
-      description: 'Maintain healthy eating for 21 days',
-      progress: '12/21'
-    },
-    {
-      name: 'Admin Achiever',
-      rarity: 'Main',
-      icon: '✅',
-      description: 'Complete 100 administrative tasks',
-      progress: '67/100'
-    },
-    {
-      name: 'LifeQuest Master',
-      rarity: 'Legendary',
-      icon: '👑',
-      description: 'Complete 1000 total quests',
-      progress: '342/1000'
-    }
-  ];
+  const earnedBadges = achievements.filter(achievement => achievement.is_completed);
+  const unearnedBadges = achievements.filter(achievement => !achievement.is_completed);
 
   const getRarityColor = (rarity: string) => {
     switch (rarity) {
-      case 'Main': return 'bg-blue-600';
-      case 'Side': return 'bg-green-600';
+      case 'Bronze': return 'bg-orange-600';
+      case 'Silver': return 'bg-gray-500';
+      case 'Gold': return 'bg-yellow-600';
       case 'Legendary': return 'bg-purple-600';
       default: return 'bg-slate-600';
     }
@@ -73,15 +32,15 @@ const BadgeSystem = () => {
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {earnedBadges.map((badge, index) => (
-            <div key={index} className="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50 hover:border-green-500/50 transition-all">
+          {earnedBadges.map((achievement) => (
+            <div key={achievement.id} className="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50 hover:border-green-500/50 transition-all">
               <div className="text-center">
-                <div className="text-4xl mb-3">{badge.icon}</div>
-                <h3 className="text-white font-bold mb-2">{badge.name}</h3>
-                <Badge className={`${getRarityColor(badge.rarity)} text-white mb-2`}>
-                  {badge.rarity}
+                <div className="text-4xl mb-3">🏆</div>
+                <h3 className="text-white font-bold mb-2">{achievement.achievement_name}</h3>
+                <Badge className={`${getRarityColor(achievement.quest_value)} text-white mb-2`}>
+                  {achievement.quest_value}
                 </Badge>
-                <p className="text-slate-300 text-sm">{badge.description}</p>
+                <p className="text-slate-300 text-sm">{achievement.description}</p>
               </div>
             </div>
           ))}
@@ -99,23 +58,25 @@ const BadgeSystem = () => {
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {unearnedBadges.map((badge, index) => (
-            <div key={index} className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/30 opacity-75">
+          {unearnedBadges.map((achievement) => (
+            <div key={achievement.id} className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/30 opacity-75">
               <div className="flex items-center gap-4">
-                <div className="text-3xl opacity-50">{badge.icon}</div>
+                <div className="text-3xl opacity-50">🔒</div>
                 <div className="flex-1">
-                  <h3 className="text-slate-300 font-bold mb-1">{badge.name}</h3>
-                  <Badge className={`${getRarityColor(badge.rarity)} text-white mb-2 opacity-75`}>
-                    {badge.rarity}
+                  <h3 className="text-slate-300 font-bold mb-1">{achievement.achievement_name}</h3>
+                  <Badge className={`${getRarityColor(achievement.quest_value)} text-white mb-2 opacity-75`}>
+                    {achievement.quest_value}
                   </Badge>
-                  <p className="text-slate-400 text-sm mb-2">{badge.description}</p>
+                  <p className="text-slate-400 text-sm mb-2">{achievement.description}</p>
                   <div className="bg-slate-600 rounded-full h-2 mb-1">
                     <div 
                       className="bg-amber-400 h-full rounded-full transition-all duration-500"
-                      style={{ width: `${(parseInt(badge.progress.split('/')[0]) / parseInt(badge.progress.split('/')[1])) * 100}%` }}
+                      style={{ width: `${(achievement.achievement_progress_current / achievement.achievement_progress_goal) * 100}%` }}
                     />
                   </div>
-                  <span className="text-amber-400 text-xs font-medium">{badge.progress}</span>
+                  <span className="text-amber-400 text-xs font-medium">
+                    {achievement.achievement_progress_current}/{achievement.achievement_progress_goal}
+                  </span>
                 </div>
               </div>
             </div>
