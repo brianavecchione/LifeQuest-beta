@@ -38,10 +38,61 @@ const AchievementsSection = () => {
 
   useEffect(() => {
     if (authUser) {
-      fetchAchievements();
-      fetchStreaks();
+      initializeUserAchievements();
     }
   }, [authUser]);
+
+  const initializeUserAchievements = async () => {
+    try {
+      // First check if user has any achievements
+      const { data: existingAchievements } = await supabase
+        .from('achievements')
+        .select('id')
+        .eq('user_id', authUser?.id)
+        .limit(1);
+
+      // If no achievements exist, seed them
+      if (!existingAchievements || existingAchievements.length === 0) {
+        console.log('No achievements found, seeding...');
+        const { error: seedError } = await supabase.rpc('seed_comprehensive_badges', {
+          p_user_id: authUser?.id
+        });
+        
+        if (seedError) {
+          console.error('Error seeding achievements:', seedError);
+        } else {
+          console.log('Achievements seeded successfully');
+        }
+      }
+
+      // Check if user has any streaks
+      const { data: existingStreaks } = await supabase
+        .from('streaks')
+        .select('id')
+        .eq('user_id', authUser?.id)
+        .limit(1);
+
+      // If no streaks exist, seed them
+      if (!existingStreaks || existingStreaks.length === 0) {
+        console.log('No streaks found, seeding...');
+        const { error: streakError } = await supabase.rpc('seed_basic_streaks', {
+          p_user_id: authUser?.id
+        });
+        
+        if (streakError) {
+          console.error('Error seeding streaks:', streakError);
+        } else {
+          console.log('Streaks seeded successfully');
+        }
+      }
+
+      // Fetch achievements and streaks
+      await Promise.all([fetchAchievements(), fetchStreaks()]);
+    } catch (error) {
+      console.error('Error initializing achievements:', error);
+      setLoading(false);
+    }
+  };
 
   const fetchAchievements = async () => {
     try {
@@ -53,6 +104,7 @@ const AchievementsSection = () => {
         .order('quest_value', { ascending: true });
 
       if (error) throw error;
+      console.log('Achievements fetched:', data);
       setAchievements(data || []);
     } catch (error) {
       console.error('Error fetching achievements:', error);
