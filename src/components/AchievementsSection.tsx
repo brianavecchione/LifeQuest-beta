@@ -53,20 +53,25 @@ const AchievementsSection = () => {
     if (!authUser) return;
     
     try {
-      console.log('Recalculating badge progress for user:', authUser.id);
-      const { error } = await supabase.rpc('recalculate_badge_progress', {
+      console.log('🔄 Recalculating badge progress for user:', authUser.id);
+      
+      const { data, error } = await supabase.rpc('recalculate_badge_progress', {
         p_user_id: authUser.id
       });
 
       if (error) {
-        console.error('Error recalculating badge progress:', error);
+        console.error('❌ Error recalculating badge progress:', error);
       } else {
-        console.log('Badge progress recalculated successfully');
+        console.log('✅ Badge progress recalculated successfully');
+        
+        // Small delay to ensure database triggers have processed
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         // Refresh achievements after recalculation
         await fetchAchievements();
       }
     } catch (error) {
-      console.error('Error in recalculateBadgeProgress:', error);
+      console.error('❌ Error in recalculateBadgeProgress:', error);
     }
   };
 
