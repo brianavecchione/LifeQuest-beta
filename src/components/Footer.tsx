@@ -40,7 +40,7 @@ const Footer = () => {
         {/* Copyright or additional info */}
         <div className="text-center mt-8 pt-6 border-t border-slate-800">
           <p className="text-slate-500 text-sm">
-            © 2024 LifeQuest. Turn your daily tasks into epic adventures.
+            © 2025 LifeQuest. Turn your daily tasks into epic adventures.
           </p>
         </div>
       </div>
