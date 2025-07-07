@@ -158,8 +158,10 @@ const QuestTracker = () => {
 
 
   const handleDailySetup = (selectedQuestIds: string[]) => {
+    console.log('Adding quests to focus:', selectedQuestIds, 'Current focus:', todaysFocus);
     // Add selected quests to current focus instead of replacing
     const newFocus = [...todaysFocus, ...selectedQuestIds];
+    console.log('New focus after adding:', newFocus);
     setTodaysFocus(newFocus);
     
     // Save to localStorage immediately to ensure persistence
@@ -167,14 +169,19 @@ const QuestTracker = () => {
     
     // Trigger localStorage update event for sync
     window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
+    
+    setIsSetupModalOpen(false);
   };
 
   // Remove quest from Today's Focus with minimum enforcement
   const handleRemoveFromFocus = (questId: string) => {
+    console.log('Removing quest from focus:', questId, 'Current focus:', todaysFocus);
     const newFocus = todaysFocus.filter(id => id !== questId);
+    console.log('New focus after removal:', newFocus);
     
     // Always remove the task first
     setTodaysFocus(newFocus);
+    localStorage.setItem('lifequest-todays-focus', JSON.stringify(newFocus));
     window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
     
     // If removing drops below 3 tasks, show setup modal to add replacements

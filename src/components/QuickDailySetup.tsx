@@ -36,6 +36,8 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
   const spotsAvailable = maxFocusQuests - currentFocusCount;
   const needToSelect = Math.max(0, minFocusQuests - currentFocusCount);
 
+  console.log('QuickDailySetup - currentFocusCount:', currentFocusCount, 'spotsAvailable:', spotsAvailable, 'currentFocusQuests:', currentFocusQuests);
+
   const getTypeIcon = (type: Quest['quest_type']) => {
     switch (type) {
       case 'Main': return <Trophy className="w-4 h-4" />;
