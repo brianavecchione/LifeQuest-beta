@@ -122,6 +122,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
       });
 
       onClose();
+      // The quest list will automatically update because createQuest updates the state
     }
   };
 

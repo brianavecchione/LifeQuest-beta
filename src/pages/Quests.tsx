@@ -108,6 +108,7 @@ const Quests = () => {
             searchQuery={searchQuery}
             filters={filters}
             onOpenNewQuestModal={() => setIsNewQuestModalOpen(true)}
+            maxFocusQuests={5}
           />
         </div>
 

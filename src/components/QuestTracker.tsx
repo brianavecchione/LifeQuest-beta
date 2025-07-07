@@ -306,7 +306,7 @@ const QuestTracker = () => {
           </div>
           
           <div className="flex-1">
-            <h4 className="text-white font-medium">{quest.quest_name}</h4>
+            <h4 className={`font-medium ${quest.status === 'Completed' ? 'line-through text-slate-400' : 'text-white'}`}>{quest.quest_name}</h4>
             <div className="flex items-center gap-2 mt-1">
               <Badge variant="outline" className="text-amber-400 border-amber-400/50">
                 {quest.xp_reward} XP

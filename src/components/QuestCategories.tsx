@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Trophy, Flag, Crown, Plus, Filter, Target, CheckCircle2, Circle, MoreVertical, Tag, Coins, Calendar, AlertTriangle } from 'lucide-react';
+import { Star, Trophy, Flag, Crown, Plus, Filter, Target, CheckCircle2, Circle, MoreVertical, Tag, Coins, Calendar, AlertTriangle, Edit, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useQuests, Quest } from '@/hooks/useQuests';
 import { useToast } from '@/hooks/use-toast';
 import { format, isToday, isBefore, isAfter, endOfWeek, startOfDay } from 'date-fns';
+import EditQuestModal from './EditQuestModal';
 
 interface QuestCategoriesProps {
   onAddToFocus?: (questId: string) => void;
@@ -22,6 +24,7 @@ interface QuestCategoriesProps {
     dueDateFilter: string;
   };
   onOpenNewQuestModal?: () => void;
+  maxFocusQuests?: number;
 }
 
 const QuestCategories: React.FC<QuestCategoriesProps> = ({ 
@@ -35,10 +38,13 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
     goldRange: [0, 200],
     dueDateFilter: 'all'
   },
-  onOpenNewQuestModal
+  onOpenNewQuestModal,
+  maxFocusQuests = 5
 }) => {
-  const { quests, loading, updateQuestStatus } = useQuests();
+  const { quests, loading, updateQuestStatus, deleteQuest, refetchQuests } = useQuests();
   const { toast } = useToast();
+  const [editingQuest, setEditingQuest] = useState<Quest | null>(null);
+  const [deletingQuest, setDeletingQuest] = useState<Quest | null>(null);
 
   console.log('QuestCategories - quests:', quests, 'loading:', loading);
 
@@ -163,6 +169,36 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
     }
   };
 
+  const handleAddToFocus = (questId: string) => {
+    // Get current focus count from localStorage or Today page
+    const savedFocus = localStorage.getItem('lifequest-todays-focus');
+    const currentFocus = savedFocus ? JSON.parse(savedFocus) : [];
+    
+    if (currentFocus.length >= maxFocusQuests) {
+      toast({
+        title: "Focus List Full",
+        description: `You can only have ${maxFocusQuests} quests in your Today's Focus. Complete some first!`,
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    onAddToFocus?.(questId);
+  };
+
+  const handleEditQuest = (quest: Quest) => {
+    setEditingQuest(quest);
+  };
+
+  const handleDeleteQuest = async () => {
+    if (!deletingQuest) return;
+    
+    const success = await deleteQuest(deletingQuest.id);
+    if (success) {
+      setDeletingQuest(null);
+    }
+  };
+
   const QuestCard: React.FC<{ quest: Quest }> = ({ quest }) => {
     const isOverdue = isQuestOverdue(quest);
     
@@ -209,16 +245,24 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
                   className="bg-slate-800 border-slate-700 text-white z-50"
                 >
                   <DropdownMenuItem 
-                    onClick={() => onAddToFocus?.(quest.id)}
+                    onClick={() => handleAddToFocus(quest.id)}
                     className="hover:bg-slate-700 focus:bg-slate-700 text-sm"
                   >
                     <Target className="w-4 h-4 mr-2" />
                     Add to Today's Focus
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="hover:bg-slate-700 focus:bg-slate-700 text-sm">
+                  <DropdownMenuItem 
+                    onClick={() => handleEditQuest(quest)}
+                    className="hover:bg-slate-700 focus:bg-slate-700 text-sm"
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
                     Edit Quest
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="hover:bg-slate-700 focus:bg-slate-700 text-red-400 text-sm">
+                  <DropdownMenuItem 
+                    onClick={() => setDeletingQuest(quest)}
+                    className="hover:bg-slate-700 focus:bg-slate-700 text-red-400 text-sm"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
                     Delete Quest
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -352,6 +396,37 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
           </div>
         </>
       )}
+
+      {/* Edit Quest Modal */}
+      <EditQuestModal
+        isOpen={!!editingQuest}
+        onClose={() => setEditingQuest(null)}
+        quest={editingQuest}
+        onQuestUpdated={refetchQuests}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deletingQuest} onOpenChange={() => setDeletingQuest(null)}>
+        <AlertDialogContent className="bg-slate-800 border-slate-700 text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-red-400">Delete Quest</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-300">
+              Are you sure you want to delete "{deletingQuest?.quest_name}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="border-slate-600 text-slate-300 hover:bg-slate-700">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteQuest}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Delete Quest
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
