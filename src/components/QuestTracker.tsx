@@ -425,7 +425,7 @@ const QuestTracker = () => {
           )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 shrink-0">
+              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 shrink-0 text-slate-400 hover:text-white">
                 <MoreVertical className="w-3 h-3" />
               </Button>
             </DropdownMenuTrigger>
@@ -460,7 +460,6 @@ const QuestTracker = () => {
               Begin Quest
             </Button>
           )}
-          <div className={`w-3 h-3 rounded-full ${getPriorityColor(quest.priority)}`} title={`${quest.priority} Priority`} />
         </div>
       </div>
     </div>
