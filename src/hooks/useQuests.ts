@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Database } from '@/integrations/supabase/types';
+import { useUser } from '@/contexts/UserContext';
 
 type DbQuest = Database['public']['Tables']['quests']['Row'];
 
@@ -46,6 +47,7 @@ export const useQuests = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
+  const { addXP, subtractXP, addGold, subtractGold } = useUser();
 
   // Fetch all quests for the current user
   const fetchQuests = async () => {
@@ -112,6 +114,29 @@ export const useQuests = () => {
   const updateQuestStatus = async (questId: string, status: Quest['status']) => {
     if (!user) return false;
 
+    const quest = quests.find(q => q.id === questId);
+    if (!quest) return false;
+
+    const previousStatus = quest.status;
+    
+    // Optimistic UI updates for immediate feedback
+    if (status === 'Completed' && previousStatus !== 'Completed') {
+      // Quest is being completed - add rewards
+      addXP(quest.xp_reward);
+      addGold(quest.gold_reward);
+    } else if (status !== 'Completed' && previousStatus === 'Completed') {
+      // Quest is being unchecked - subtract rewards
+      subtractXP(quest.xp_reward);
+      subtractGold(quest.gold_reward);
+    }
+
+    // Update quest status in local state immediately
+    setQuests(prev => 
+      prev.map(q => 
+        q.id === questId ? { ...q, status } : q
+      )
+    );
+
     try {
       const { data, error } = await supabase
         .from('quests')
@@ -123,26 +148,47 @@ export const useQuests = () => {
 
       if (error) throw error;
 
+      // Update with the actual data from the database
       const transformedQuest = transformDbQuest(data);
       setQuests(prev => 
-        prev.map(quest => 
-          quest.id === questId ? transformedQuest : quest
+        prev.map(q => 
+          q.id === questId ? transformedQuest : q
         )
       );
 
+      // Show success message
       if (status === 'Completed') {
-        const quest = quests.find(q => q.id === questId);
-        if (quest) {
-          toast({
-            title: 'Quest Completed! ✨',
-            description: `You earned ${quest.xp_reward} XP and ${quest.gold_reward} Gold!`,
-          });
-        }
+        toast({
+          title: 'Quest Completed! ✨',
+          description: `You earned ${quest.xp_reward} XP and ${quest.gold_reward} Gold!`,
+        });
+      } else if (previousStatus === 'Completed') {
+        toast({
+          title: 'Quest Unchecked',
+          description: `${quest.xp_reward} XP and ${quest.gold_reward} Gold have been subtracted.`,
+        });
       }
 
       return true;
     } catch (error) {
       console.error('Error updating quest status:', error);
+      
+      // Revert optimistic updates on error
+      if (status === 'Completed' && previousStatus !== 'Completed') {
+        subtractXP(quest.xp_reward);
+        subtractGold(quest.gold_reward);
+      } else if (previousStatus === 'Completed') {
+        addXP(quest.xp_reward);
+        addGold(quest.gold_reward);
+      }
+
+      // Revert quest status in local state
+      setQuests(prev => 
+        prev.map(q => 
+          q.id === questId ? { ...q, status: previousStatus } : q
+        )
+      );
+
       toast({
         title: 'Error',
         description: 'Failed to update quest status. Please try again.',
