@@ -55,16 +55,26 @@ export const useQuests = () => {
     if (!user) return;
 
     try {
-      const today = new Date().toISOString().split('T')[0];
+      // Use the same timezone logic as the server
+      const now = new Date()
+      const cutoffTime = new Date()
+      cutoffTime.setUTCHours(6, 0, 0, 0) // 6 AM UTC cutoff
       
-      // Find completed quests from previous days that should be archived
+      // If it's before 6 AM UTC, use yesterday's 6 AM UTC as cutoff
+      if (now.getUTCHours() < 6) {
+        cutoffTime.setUTCDate(cutoffTime.getUTCDate() - 1)
+      }
+      
+      const cutoffTimestamp = cutoffTime.toISOString()
+      
+      // Find completed quests from before the cutoff time that should be archived
       const { data: oldCompletedQuests, error } = await supabase
         .from('quests')
         .select('*')
         .eq('user_id', user.id)
         .eq('status', 'Completed')
         .not('completed_at', 'is', null)
-        .lt('completed_at', today + 'T00:00:00.000Z');
+        .lt('completed_at', cutoffTimestamp);
 
       if (error) {
         console.error('Error checking for old completed quests:', error);
@@ -77,21 +87,25 @@ export const useQuests = () => {
         // Get current focus quests to determine which were in focus
         const focusQuests = JSON.parse(localStorage.getItem('lifequest-focus-quests') || '[]');
         
-        // Prepare archive records
-        const archiveRecords = oldCompletedQuests.map(quest => ({
-          user_id: quest.user_id,
-          original_quest_id: quest.id,
-          quest_name: quest.quest_name,
-          description: quest.description,
-          quest_type: quest.quest_type,
-          priority: quest.priority,
-          xp_reward: quest.xp_reward,
-          gold_reward: quest.gold_reward,
-          tags: quest.tags,
-          completed_date: new Date(quest.completed_at).toISOString().split('T')[0],
-          completed_at: quest.completed_at,
-          was_in_focus: focusQuests.includes(quest.id)
-        }));
+        // Prepare archive records - process ALL quests in the array
+        const archiveRecords = oldCompletedQuests.map((quest, index) => {
+          console.log(`Client archiving quest ${index + 1}/${oldCompletedQuests.length}: "${quest.quest_name}"`);
+          
+          return {
+            user_id: quest.user_id,
+            original_quest_id: quest.id,
+            quest_name: quest.quest_name,
+            description: quest.description,
+            quest_type: quest.quest_type,
+            priority: quest.priority,
+            xp_reward: quest.xp_reward,
+            gold_reward: quest.gold_reward,
+            tags: quest.tags,
+            completed_date: new Date(quest.completed_at).toISOString().split('T')[0],
+            completed_at: quest.completed_at,
+            was_in_focus: focusQuests.includes(quest.id)
+          };
+        });
 
         // Archive the quests
         const { error: archiveError } = await supabase
@@ -103,8 +117,10 @@ export const useQuests = () => {
           return;
         }
 
-        // Delete the original quests
+        // Delete the original quests - make sure we delete ALL quests
         const questIdsToDelete = oldCompletedQuests.map(q => q.id);
+        console.log(`Client deleting ${questIdsToDelete.length} quests:`, questIdsToDelete);
+        
         const { error: deleteError } = await supabase
           .from('quests')
           .delete()
@@ -115,7 +131,7 @@ export const useQuests = () => {
         } else {
           console.log(`Successfully archived and removed ${oldCompletedQuests.length} old completed quests`);
           
-          // Update focus quests to remove archived ones
+          // Update focus quests to remove archived ones - process ALL archived quests
           const updatedFocusQuests = focusQuests.filter(id => !questIdsToDelete.includes(id));
           localStorage.setItem('lifequest-focus-quests', JSON.stringify(updatedFocusQuests));
         }

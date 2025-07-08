@@ -68,28 +68,21 @@ serve(async (req) => {
     const userArchiveCounts = new Map<string, number>()
 
     if (completedQuests && completedQuests.length > 0) {
-      // Get focus quests to determine which were in focus
-      const { data: focusQuests } = await supabase
-        .from('user_settings')
-        .select('focus_quests')
-        .not('focus_quests', 'is', null)
+      console.log(`Processing ${completedQuests.length} completed quests for archiving`)
       
-      const allFocusQuestIds = new Set<string>()
-      if (focusQuests) {
-        focusQuests.forEach(user => {
-          if (user.focus_quests && Array.isArray(user.focus_quests)) {
-            user.focus_quests.forEach(id => allFocusQuestIds.add(id))
-          }
-        })
-      }
+      // Since focus quests are stored client-side in localStorage, we can't access them
+      // from the server. We'll default to false for was_in_focus and let the client-side
+      // archiving handle focus quest detection if needed
 
-      // Prepare archive records
-      const archiveRecords = completedQuests.map(quest => {
+      // Prepare archive records - process ALL quests in the array
+      const archiveRecords = completedQuests.map((quest, index) => {
         const completedDate = new Date(quest.completed_at!).toISOString().split('T')[0]
         
         // Count per user
         const count = userArchiveCounts.get(quest.user_id) || 0
         userArchiveCounts.set(quest.user_id, count + 1)
+        
+        console.log(`Processing quest ${index + 1}/${completedQuests.length}: "${quest.quest_name}" for user ${quest.user_id}`)
         
         return {
           user_id: quest.user_id,
@@ -104,9 +97,11 @@ serve(async (req) => {
           completed_date: completedDate,
           completed_at: quest.completed_at,
           archived_at: archiveTimestamp,
-          was_in_focus: allFocusQuestIds.has(quest.id)
+          was_in_focus: false // Default to false since we can't access localStorage from server
         }
       })
+      
+      console.log(`Prepared ${archiveRecords.length} archive records`)
 
       // Insert into archived_quests table
       const { data: archivedQuests, error: archiveError } = await supabase
@@ -122,8 +117,10 @@ serve(async (req) => {
       totalArchivedCount = archivedQuests?.length || 0
       console.log(`Successfully archived ${totalArchivedCount} quests`)
 
-      // Delete the original completed quests
+      // Delete the original completed quests - make sure we delete ALL quests
       const questIdsToDelete = completedQuests.map(quest => quest.id)
+      console.log(`Deleting ${questIdsToDelete.length} original quests:`, questIdsToDelete)
+      
       const { error: deleteError } = await supabase
         .from('quests')
         .delete()
@@ -136,32 +133,8 @@ serve(async (req) => {
         console.log(`Successfully deleted ${questIdsToDelete.length} original quests`)
       }
 
-      // Remove archived quest IDs from user focus lists
-      if (allFocusQuestIds.size > 0) {
-        const { data: userSettings, error: settingsError } = await supabase
-          .from('user_settings')
-          .select('id, user_id, focus_quests')
-          .not('focus_quests', 'is', null)
-
-        if (!settingsError && userSettings) {
-          for (const settings of userSettings) {
-            if (settings.focus_quests && Array.isArray(settings.focus_quests)) {
-              const updatedFocusQuests = settings.focus_quests.filter(
-                id => !questIdsToDelete.includes(id)
-              )
-              
-              if (updatedFocusQuests.length !== settings.focus_quests.length) {
-                await supabase
-                  .from('user_settings')
-                  .update({ focus_quests: updatedFocusQuests })
-                  .eq('id', settings.id)
-                
-                console.log(`Updated focus quests for user ${settings.user_id}`)
-              }
-            }
-          }
-        }
-      }
+      // Since we can't access localStorage focus quests from server,
+      // skip the focus quest cleanup - this will be handled client-side
     }
 
     // Log the archiving operation
