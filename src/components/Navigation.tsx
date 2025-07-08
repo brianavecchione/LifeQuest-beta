@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Target, Trophy, Sword, Settings, Users, LogOut, Coins, Menu, X, Crown, Zap } from 'lucide-react';
+import { Home, Target, Trophy, Sword, Settings, Users, LogOut, Coins, Menu, X, Crown, Zap, User, Bell, Palette } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/contexts/UserContext';
@@ -11,8 +11,10 @@ const Navigation = () => {
   const location = useLocation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const { user: userContext, isLoading } = useUser();
   const { signOut } = useAuth();
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
   
   // Debug log for XP recalculation
   React.useEffect(() => {
@@ -25,6 +27,18 @@ const Navigation = () => {
       });
     }
   }, [userContext, isLoading]);
+
+  // Handle click outside to close profile dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Hide navigation on auth page
   const isAuthPage = location.pathname === '/auth';
@@ -41,6 +55,14 @@ const Navigation = () => {
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
+  };
+
+  const toggleProfileDropdown = () => {
+    setIsProfileDropdownOpen(!isProfileDropdownOpen);
+  };
+
+  const closeProfileDropdown = () => {
+    setIsProfileDropdownOpen(false);
   };
   
   const navItems = [
@@ -110,28 +132,82 @@ const Navigation = () => {
               );
             })}
             
-            {/* Desktop Log Out Button */}
-            <div className="ml-3 pl-3 border-l border-slate-700">
+            {/* Desktop Profile Dropdown */}
+            <div className="ml-3 pl-3 border-l border-slate-700 relative" ref={profileDropdownRef}>
               <Button
-                onClick={handleLogout}
-                disabled={isLoggingOut}
+                onClick={toggleProfileDropdown}
+                variant="ghost"
                 size="sm"
-                className={`flex items-center gap-2 text-sm font-medium transition-all duration-300 ${
-                  isLoggingOut 
-                    ? 'bg-slate-600 text-slate-400 opacity-50' 
-                    : 'bg-red-600 hover:bg-red-700 text-white hover:scale-105'
-                }`}
+                className="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+                aria-label="Profile menu"
               >
-                <LogOut className={`w-4 h-4 ${isLoggingOut ? 'animate-spin' : ''}`} />
-                <span className="hidden lg:inline">
-                  {isLoggingOut ? 'Logging Out...' : 'Log Out'}
-                </span>
+                <User className="w-4 h-4" />
               </Button>
+
+              {/* Profile Dropdown Menu */}
+              {isProfileDropdownOpen && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-lg z-50">
+                  <div className="py-1">
+                    <button
+                      onClick={closeProfileDropdown}
+                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                    >
+                      <Bell className="w-4 h-4" />
+                      <span>Notifications</span>
+                    </button>
+                    
+                    <Link
+                      to="/settings"
+                      onClick={closeProfileDropdown}
+                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                    >
+                      <Settings className="w-4 h-4" />
+                      <span>Settings</span>
+                    </Link>
+                    
+                    <button
+                      onClick={closeProfileDropdown}
+                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                    >
+                      <Palette className="w-4 h-4" />
+                      <span>Customization</span>
+                    </button>
+                    
+                    <div className="border-t border-slate-700 my-1"></div>
+                    
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        closeProfileDropdown();
+                      }}
+                      disabled={isLoggingOut}
+                      className={`flex items-center gap-3 w-full px-4 py-2 text-sm transition-colors ${
+                        isLoggingOut 
+                          ? 'text-slate-500 cursor-not-allowed' 
+                          : 'text-red-400 hover:bg-red-600/20 hover:text-red-300'
+                      }`}
+                    >
+                      <LogOut className={`w-4 h-4 ${isLoggingOut ? 'animate-spin' : ''}`} />
+                      <span>{isLoggingOut ? 'Logging Out...' : 'Logout'}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          {/* Mobile Menu Button and Profile */}
+          <div className="md:hidden flex items-center gap-2">
+            <Button
+              onClick={toggleProfileDropdown}
+              variant="ghost"
+              size="sm"
+              className="p-2 text-slate-300 hover:text-white hover:bg-slate-700"
+              aria-label="Profile menu"
+            >
+              <User className="w-5 h-5" />
+            </Button>
+            
             <Button
               variant="ghost"
               size="sm"
@@ -147,6 +223,56 @@ const Navigation = () => {
             </Button>
           </div>
         </div>
+
+        {/* Mobile Profile Dropdown */}
+        {isProfileDropdownOpen && (
+          <div className="md:hidden absolute right-4 top-full mt-2 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-lg z-50">
+            <div className="py-1">
+              <button
+                onClick={closeProfileDropdown}
+                className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+              >
+                <Bell className="w-4 h-4" />
+                <span>Notifications</span>
+              </button>
+              
+              <Link
+                to="/settings"
+                onClick={closeProfileDropdown}
+                className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+              >
+                <Settings className="w-4 h-4" />
+                <span>Settings</span>
+              </Link>
+              
+              <button
+                onClick={closeProfileDropdown}
+                className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+              >
+                <Palette className="w-4 h-4" />
+                <span>Customization</span>
+              </button>
+              
+              <div className="border-t border-slate-700 my-1"></div>
+              
+              <button
+                onClick={() => {
+                  handleLogout();
+                  closeProfileDropdown();
+                }}
+                disabled={isLoggingOut}
+                className={`flex items-center gap-3 w-full px-4 py-2 text-sm transition-colors ${
+                  isLoggingOut 
+                    ? 'text-slate-500 cursor-not-allowed' 
+                    : 'text-red-400 hover:bg-red-600/20 hover:text-red-300'
+                }`}
+              >
+                <LogOut className={`w-4 h-4 ${isLoggingOut ? 'animate-spin' : ''}`} />
+                <span>{isLoggingOut ? 'Logging Out...' : 'Logout'}</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
@@ -200,8 +326,24 @@ const Navigation = () => {
                 );
               })}
               
-              {/* Mobile Log Out Button */}
-              <div className="pt-3 mt-3 border-t border-slate-700">
+              {/* Mobile Profile Menu */}
+              <div className="pt-3 mt-3 border-t border-slate-700 space-y-1">
+                <button
+                  onClick={closeMobileMenu}
+                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                >
+                  <Bell className="w-5 h-5" />
+                  <span>Notifications</span>
+                </button>
+                
+                <button
+                  onClick={closeMobileMenu}
+                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                >
+                  <Palette className="w-5 h-5" />
+                  <span>Customization</span>
+                </button>
+                
                 <Button
                   onClick={() => {
                     handleLogout();
