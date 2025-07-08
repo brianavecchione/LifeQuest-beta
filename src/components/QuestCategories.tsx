@@ -208,11 +208,23 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
   };
 
   const handleAddToFocus = (questId: string) => {
-    // Get current focus count from localStorage or Today page
+    // Get current focus count from localStorage AND verify quests still exist
     const savedFocus = localStorage.getItem('lifequest-todays-focus');
-    const currentFocus = savedFocus ? JSON.parse(savedFocus) : [];
+    const currentFocusIds = savedFocus ? JSON.parse(savedFocus) : [];
     
-    if (currentFocus.length >= maxFocusQuests) {
+    // Filter to only include quest IDs that still exist in the current quest list
+    const validFocusIds = currentFocusIds.filter(id => 
+      quests.some(quest => quest.id === id)
+    );
+    
+    // If the localStorage list doesn't match valid quests, clean it up
+    if (validFocusIds.length !== currentFocusIds.length) {
+      localStorage.setItem('lifequest-todays-focus', JSON.stringify(validFocusIds));
+      window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
+      console.log(`Cleaned up focus list: removed ${currentFocusIds.length - validFocusIds.length} invalid quest IDs`);
+    }
+    
+    if (validFocusIds.length >= maxFocusQuests) {
       toast({
         title: "Focus List Full",
         description: `You can only have ${maxFocusQuests} quests in your Today's Focus. Complete some first!`,
@@ -221,7 +233,7 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
       return;
     }
 
-    if (currentFocus.includes(questId)) {
+    if (validFocusIds.includes(questId)) {
       toast({
         title: "Already Added",
         description: "This quest is already in your Today's Focus!",
@@ -231,7 +243,7 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
     }
 
     // Add quest to focus list
-    const newFocus = [...currentFocus, questId];
+    const newFocus = [...validFocusIds, questId];
     localStorage.setItem('lifequest-todays-focus', JSON.stringify(newFocus));
     
     // Dispatch custom event to notify other components

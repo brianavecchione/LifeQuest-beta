@@ -59,6 +59,22 @@ const QuestTracker = () => {
       window.removeEventListener('todaysFocusUpdated', handleLocalUpdate);
     };
   }, []);
+
+  // Clean up todaysFocus to remove quest IDs that no longer exist
+  useEffect(() => {
+    if (todaysFocus.length > 0 && quests.length > 0) {
+      const validFocusIds = todaysFocus.filter(id => 
+        quests.some(quest => quest.id === id)
+      );
+      
+      if (validFocusIds.length !== todaysFocus.length) {
+        console.log(`QuestTracker: Cleaning up focus list - removing ${todaysFocus.length - validFocusIds.length} invalid quest IDs`);
+        setTodaysFocus(validFocusIds);
+        localStorage.setItem('lifequest-todays-focus', JSON.stringify(validFocusIds));
+        window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
+      }
+    }
+  }, [quests, todaysFocus]);
   const [showAddMoreQuests, setShowAddMoreQuests] = useState(false);
 
   // Pomodoro Timer States
