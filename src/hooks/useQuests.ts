@@ -456,7 +456,7 @@ export const useQuests = () => {
     });
   };
 
-  // Get quest statistics
+  // Get quest statistics including archived quests
   const getQuestStats = () => {
     const completed = quests.filter(q => q.status === 'Completed').length;
     const inProgress = quests.filter(q => q.status === 'In Progress').length;
@@ -474,6 +474,32 @@ export const useQuests = () => {
     };
   };
 
+  // Get total completed quests across all time (including archived)
+  const getTotalCompletedQuests = async () => {
+    if (!user) return 0;
+    
+    try {
+      // Count current completed quests
+      const currentCompleted = quests.filter(q => q.status === 'Completed').length;
+      
+      // Count archived quests (all archived quests were completed)
+      const { count: archivedCount, error } = await supabase
+        .from('archived_quests')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+      
+      if (error) {
+        console.error('Error counting archived quests:', error);
+        return currentCompleted; // Return current completed if archived count fails
+      }
+      
+      return currentCompleted + (archivedCount || 0);
+    } catch (error) {
+      console.error('Error getting total completed quests:', error);
+      return quests.filter(q => q.status === 'Completed').length;
+    }
+  };
+
   useEffect(() => {
     fetchQuests();
   }, [user]);
@@ -486,6 +512,7 @@ export const useQuests = () => {
     deleteQuest,
     getQuestsByFilter,
     getQuestStats,
+    getTotalCompletedQuests,
     refetchQuests: fetchQuests,
   };
 };

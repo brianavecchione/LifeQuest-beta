@@ -41,7 +41,13 @@ const AchievementsSection = () => {
   const { forceProfileRefresh } = useUser();
   const { toast } = useToast();
   const { getQuestStats } = useQuests();
-  const { streaks: streakData, getBestStreak, loading: streaksLoading } = useStreaks();
+  const { 
+    streaks: streakData, 
+    getBestStreak, 
+    getLongestStreak, 
+    getTotalCompleted, 
+    loading: streaksLoading 
+  } = useStreaks();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [streaks, setStreaks] = useState<Streak[]>([]);
   const [loading, setLoading] = useState(true);
@@ -398,11 +404,9 @@ const AchievementsSection = () => {
   const unlockableCount = achievements.filter(a => a.is_unlockable && !a.is_completed).length;
   const totalCount = achievements.length;
   const questStats = getQuestStats();
-  const totalQuestsCompleted = questStats.completed;
+  const totalQuestsCompleted = getTotalCompleted(); // Use calculated total from streaks hook
   const bestStreak = getBestStreak();
-  const longestStreak = streakData.reduce((max, streak) => 
-    streak.best_streak > max ? streak.best_streak : max, 0
-  );
+  const longestStreak = getLongestStreak(); // Use calculated longest streak
 
   return (
     <div className="space-y-8">
