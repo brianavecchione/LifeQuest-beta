@@ -188,10 +188,7 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
                         <span className="text-purple-400 text-sm font-medium">Streak</span>
                       </div>
                       <div className="text-xl font-bold text-white">
-                        {streaksLoading ? '...' : bestStreak.current_streak}
-                      </div>
-                      <div className="text-xs text-purple-300">
-                        {streaksLoading ? '' : bestStreak.current_streak === 1 ? 'Day' : 'Days'}
+                        {streaksLoading ? '...' : `${bestStreak.current_streak} ${bestStreak.current_streak === 1 ? 'Day' : 'Days'}`}
                       </div>
                     </div>
                   </TooltipTrigger>

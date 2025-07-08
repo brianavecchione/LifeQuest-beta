@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, Target, Flame, TrendingUp, Users, Sparkles, Zap, Filter, Star } from 'lucide-react';
+import { Trophy, Target, Flame, TrendingUp, Users, Sparkles, Zap, Filter, Star, CheckCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
+import { useQuests } from '@/hooks/useQuests';
 import confetti from 'canvas-confetti';
 
 interface Achievement {
@@ -38,6 +39,7 @@ const AchievementsSection = () => {
   const { user: authUser } = useAuth();
   const { forceProfileRefresh } = useUser();
   const { toast } = useToast();
+  const { getQuestStats } = useQuests();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [streaks, setStreaks] = useState<Streak[]>([]);
   const [loading, setLoading] = useState(true);
@@ -393,10 +395,25 @@ const AchievementsSection = () => {
   const earnedCount = achievements.filter(a => a.is_completed).length;
   const unlockableCount = achievements.filter(a => a.is_unlockable && !a.is_completed).length;
   const totalCount = achievements.length;
+  const questStats = getQuestStats();
+  const totalQuestsCompleted = questStats.completed;
 
   return (
     <div className="space-y-8">
       <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-emerald-600/30 shadow-2xl">
+        {/* Stats Overview */}
+        <div className="mb-6">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-blue-500/30">
+              <div className="flex items-center justify-center mb-1">
+                <CheckCircle className="w-4 h-4 text-blue-400 mr-1" />
+                <span className="text-blue-400 text-sm font-medium">Quests Completed</span>
+              </div>
+              <div className="text-xl font-bold text-white">{totalQuestsCompleted}</div>
+            </div>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
