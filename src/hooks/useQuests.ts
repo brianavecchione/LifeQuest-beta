@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Database } from '@/integrations/supabase/types';
 import { useUser } from '@/contexts/UserContext';
+import { testMedicationCase, testResetLogic } from '@/utils/dailyResetTest';
 
 type DbQuest = Database['public']['Tables']['quests']['Row'];
 
@@ -56,23 +57,26 @@ export const useQuests = () => {
     try {
       const today = new Date().toISOString().split('T')[0];
       
-      // Check if any daily quests are completed but have a due_date before today
+      // Check if any daily quests need to be reset:
+      // 1. Completed quests with due_date before today
+      // 2. Completed quests with NULL due_date (legacy quests)
+      // 3. In Progress quests with due_date before today (incomplete from previous day)
       const { data: outdatedQuests, error } = await supabase
         .from('quests')
-        .select('id, quest_name, due_date')
+        .select('id, quest_name, due_date, status, completed_at')
         .eq('user_id', user.id)
         .eq('quest_type', 'Daily')
-        .eq('status', 'Completed')
-        .lt('due_date', today);
+        .or(`and(status.eq.Completed,due_date.lt.${today}),and(status.eq.Completed,due_date.is.null),and(status.eq.In Progress,due_date.lt.${today})`);
 
       if (error) {
         console.error('Error checking for outdated daily quests:', error);
         return;
       }
 
-      // If we found outdated completed dailies, reset them
+      // If we found outdated dailies, reset them
       if (outdatedQuests && outdatedQuests.length > 0) {
-        console.log(`Found ${outdatedQuests.length} outdated daily quests, resetting...`);
+        console.log(`Found ${outdatedQuests.length} outdated daily quests, resetting:`, 
+          outdatedQuests.map(q => `${q.quest_name} (${q.status}, due: ${q.due_date})`));
         
         const { error: resetError } = await supabase
           .from('quests')
@@ -84,8 +88,7 @@ export const useQuests = () => {
           })
           .eq('user_id', user.id)
           .eq('quest_type', 'Daily')
-          .eq('status', 'Completed')
-          .lt('due_date', today);
+          .or(`and(status.eq.Completed,due_date.lt.${today}),and(status.eq.Completed,due_date.is.null),and(status.eq.In Progress,due_date.lt.${today})`);
 
         if (resetError) {
           console.error('Error resetting outdated daily quests:', resetError);
@@ -118,6 +121,12 @@ export const useQuests = () => {
 
     try {
       setLoading(true);
+      
+      // Run reset logic tests in development
+      if (process.env.NODE_ENV === 'development') {
+        testResetLogic();
+        testMedicationCase();
+      }
       
       // First check for daily resets
       await checkDailyReset();

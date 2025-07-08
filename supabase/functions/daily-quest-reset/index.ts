@@ -24,6 +24,7 @@ serve(async (req) => {
     const resetTimestamp = new Date().toISOString()
     
     // Find all daily quests that need to be reset (only completed ones to avoid unnecessary updates)
+    // Include quests with NULL due_date or due_date before today
     const { data: dailyQuests, error: fetchError } = await supabase
       .from('quests')
       .select('user_id, id, quest_name')
