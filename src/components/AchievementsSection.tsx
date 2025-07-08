@@ -316,9 +316,9 @@ const AchievementsSection = () => {
 
   const getStreakIcon = (name: string) => {
     const icons: Record<string, string> = {
-      'Daily Habit Streak': '🔥',
-      'Reading Streak': '📖',
-      'Exercise Streak': '💪'
+      'Daily Completion Streak': '🎯',
+      'Daily Focus Streak': '🔥',
+      'Daily Habits Streak': '💪'
     };
     return icons[name] || '⭐';
   };
@@ -590,10 +590,10 @@ const AchievementsSection = () => {
           <div className="mt-8 pt-6 border-t border-slate-600/30">
             <h4 className="text-lg font-semibold text-orange-400 flex items-center gap-2 mb-4">
               <Flame className="w-5 h-5" />
-              Active Streaks
+              Current Streaks
             </h4>
             {streaks.length > 0 ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 {streaks.map((streak) => (
                   <div 
                     key={streak.id} 
@@ -604,29 +604,32 @@ const AchievementsSection = () => {
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`text-2xl ${streak.status === 'Active' ? '' : 'opacity-50'}`}>
+                      <div className={`text-3xl ${streak.status === 'Active' ? '' : 'opacity-50'}`}>
                         {getStreakIcon(streak.streak_name)}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h4 className="text-white font-bold">{streak.streak_name}</h4>
+                          <h4 className="text-white font-bold text-sm">{streak.streak_name}</h4>
                           {streak.status === 'Active' && (
                             <Badge className="bg-orange-600 text-white text-xs">
-                              Active
+                              Live
                             </Badge>
                           )}
                         </div>
-                        <p className="text-slate-300 text-sm mb-2">{streak.description}</p>
-                        <div className="flex gap-4 text-sm">
+                        <p className="text-slate-300 text-xs mb-3">{streak.description}</p>
+                        <div className="flex gap-3 text-sm">
                           <div className="flex items-center gap-1">
                             <Flame className="w-4 h-4 text-orange-400" />
-                            <span className="text-orange-400 font-medium">
-                              Current: {streak.current_streak}
+                            <span className="text-orange-400 font-bold">
+                              {streak.current_streak}
+                            </span>
+                            <span className="text-orange-300 text-xs">
+                              {streak.current_streak === 1 ? 'day' : 'days'}
                             </span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Star className="w-4 h-4 text-yellow-400" />
-                            <span className="text-yellow-400 font-medium">
+                            <span className="text-yellow-400 font-medium text-xs">
                               Best: {streak.best_streak}
                             </span>
                           </div>
@@ -640,7 +643,7 @@ const AchievementsSection = () => {
               <div className="text-center py-6">
                 <Flame className="w-10 h-10 text-orange-400 mx-auto mb-3 opacity-50" />
                 <p className="text-orange-400 font-medium mb-1">No streaks started yet</p>
-                <p className="text-orange-300 text-sm">Build consistency to unlock powerful streak bonuses!</p>
+                <p className="text-orange-300 text-sm">Complete quests consistently to build your streaks!</p>
               </div>
             )}
           </div>

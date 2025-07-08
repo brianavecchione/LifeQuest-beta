@@ -786,6 +786,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_current_streaks: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       calculate_level_from_xp: {
         Args: { total_xp: number }
         Returns: number

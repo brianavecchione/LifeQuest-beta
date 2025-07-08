@@ -1,12 +1,14 @@
 
 import React, { useState } from 'react';
-import { Crown, Trophy, Star, TrendingUp, Calendar, Loader2 } from 'lucide-react';
+import { Crown, Trophy, Star, TrendingUp, Calendar, Loader2, Flame } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useUser } from '@/contexts/UserContext';
+import { useStreaks } from '@/hooks/useStreaks';
 
 interface CharacterStatsProps {
   character: {
@@ -22,8 +24,11 @@ interface CharacterStatsProps {
 
 const CharacterStats = ({ character }: CharacterStatsProps) => {
   const { getDailyXpData, getWeeklyXpData, isLoading } = useUser();
+  const { getBestStreak, loading: streaksLoading } = useStreaks();
   const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
   const xpProgress = (character.xp / character.xpToNext) * 100;
+  
+  const bestStreak = getBestStreak();
 
   // Get real XP data with fallback for safety - MUST call hooks before any conditional returns
   const weeklyXpData = React.useMemo(() => {
@@ -174,13 +179,32 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
                 <div className="text-xl font-bold text-white">{character.gold}</div>
               </div>
 
-              <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-purple-500/30">
-                <div className="flex items-center justify-center mb-1">
-                  <Trophy className="w-4 h-4 text-purple-400 mr-1" />
-                  <span className="text-purple-400 text-sm font-medium">Rank</span>
-                </div>
-                <div className="text-xl font-bold text-white">1</div>
-              </div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-purple-500/30 cursor-help">
+                      <div className="flex items-center justify-center mb-1">
+                        <Flame className="w-4 h-4 text-purple-400 mr-1" />
+                        <span className="text-purple-400 text-sm font-medium">Streak</span>
+                      </div>
+                      <div className="text-xl font-bold text-white">
+                        {streaksLoading ? '...' : bestStreak.current_streak}
+                      </div>
+                      <div className="text-xs text-purple-300">
+                        {streaksLoading ? '' : bestStreak.current_streak === 1 ? 'Day' : 'Days'}
+                      </div>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="bg-slate-800 border-purple-500/30">
+                    <p className="text-sm">
+                      {bestStreak.current_streak > 0 
+                        ? `You've completed at least one quest every day for the past ${bestStreak.current_streak} ${bestStreak.current_streak === 1 ? 'day' : 'days'}!`
+                        : 'Complete a quest to start your streak!'
+                      }
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
         </div>
