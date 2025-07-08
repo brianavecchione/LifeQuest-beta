@@ -96,9 +96,9 @@ const Auth = () => {
       </div>
 
       {/* Content Container */}
-      <div className="relative z-10 min-h-screen flex">
+      <div className="relative z-10 min-h-screen flex items-center justify-center max-w-7xl mx-auto px-8">
         {/* Left Side - Promotional Content */}
-        <div className="flex-1 flex flex-col justify-center px-8 lg:px-16">
+        <div className="flex-1 flex flex-col justify-center max-w-2xl pr-8 lg:pr-16">
           {/* Logo & Hero Section */}
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-8">
@@ -153,7 +153,7 @@ const Auth = () => {
         </div>
 
         {/* Right Side - Login Form */}
-        <div className="w-full max-w-md flex flex-col justify-center px-8 lg:px-12">
+        <div className="flex-1 flex flex-col justify-center max-w-md pl-8 lg:pl-16">
           <Card className="bg-slate-800/90 border-slate-700 backdrop-blur-sm shadow-2xl">
             <CardHeader className="space-y-1">
               <CardTitle className="text-xl text-white text-center">
