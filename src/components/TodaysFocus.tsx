@@ -62,8 +62,11 @@ const TodaysFocus: React.FC<TodaysFocusProps> = ({
         <div className="flex items-center gap-2">
           <Target className="w-6 h-6 text-amber-400" />
           <h4 className="text-lg font-bold text-amber-400">Today's Focus</h4>
+          <span className="text-slate-400 text-sm">
+            ({focusQuests.filter(q => q.status !== 'Completed').length} active)
+          </span>
         </div>
-        {(showAddMoreQuests || todaysFocus.length < 5) && (
+        {(showAddMoreQuests || focusQuests.filter(q => q.status !== 'Completed').length < 5) && (
           <Button 
             size="sm" 
             onClick={onSetupModalOpen}

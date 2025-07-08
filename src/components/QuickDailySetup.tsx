@@ -30,13 +30,17 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
     !currentFocusQuests.includes(quest.id) // Exclude quests already in Today's Focus
   );
 
-  const currentFocusCount = currentFocusQuests.length;
+  // Count only active (non-completed) focus quests
+  const activeFocusQuests = quests.filter(q => 
+    currentFocusQuests.includes(q.id) && q.status !== 'Completed'
+  );
+  const currentFocusCount = activeFocusQuests.length;
   const maxFocusQuests = 5;
   const minFocusQuests = 3;
   const spotsAvailable = maxFocusQuests - currentFocusCount;
   const needToSelect = Math.max(0, minFocusQuests - currentFocusCount);
 
-  console.log('QuickDailySetup - currentFocusCount:', currentFocusCount, 'spotsAvailable:', spotsAvailable, 'currentFocusQuests:', currentFocusQuests);
+  console.log('QuickDailySetup - activeFocusCount:', currentFocusCount, 'spotsAvailable:', spotsAvailable, 'activeFocusQuests:', activeFocusQuests.map(q => q.id));
 
   const getTypeIcon = (type: Quest['quest_type']) => {
     switch (type) {

@@ -68,6 +68,11 @@ const QuestTracker = () => {
       const belowMinimum = activeQuests.length < 3;
       
       setShowAddMoreQuests(allCompleted || belowMinimum);
+      
+      // Auto-open modal if active focus drops below minimum
+      if (belowMinimum && activeQuests.length > 0) {
+        setIsSetupModalOpen(true);
+      }
     } else {
       setShowAddMoreQuests(false);
     }
