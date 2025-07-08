@@ -97,12 +97,17 @@ const QuestTracker = () => {
   const [goldEarned, setGoldEarned] = useState(0);
   const [previousQuests, setPreviousQuests] = useState<Quest[]>([]);
 
-  // Check if all focused quests are completed
+  // Check if all focused quests are completed OR if active quests drop below minimum
   useEffect(() => {
     if (todaysFocus.length > 0) {
       const focusedQuests = quests.filter(q => todaysFocus.includes(q.id));
+      const activeQuests = focusedQuests.filter(q => q.status !== 'Completed');
       const allCompleted = focusedQuests.every(q => q.status === 'Completed');
-      setShowAddMoreQuests(allCompleted);
+      const belowMinimum = activeQuests.length < 3;
+      
+      setShowAddMoreQuests(allCompleted || belowMinimum);
+    } else {
+      setShowAddMoreQuests(false);
     }
   }, [quests, todaysFocus]);
 
