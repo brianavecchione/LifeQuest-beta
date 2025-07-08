@@ -20,7 +20,7 @@ const Auth = () => {
     confirmPassword: ''
   });
   
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, user, loading } = useAuth();
   const navigate = useNavigate();
 
   // Redirect if already logged in
@@ -29,6 +29,18 @@ const Auth = () => {
       navigate('/');
     }
   }, [user, navigate]);
+
+  // Show loading state if auth is loading
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin text-4xl mb-4">⚔️</div>
+          <p className="text-white text-lg">Loading your adventure...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
