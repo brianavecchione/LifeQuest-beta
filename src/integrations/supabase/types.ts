@@ -806,6 +806,10 @@ export type Database = {
         Args: { p_user_id: string; p_streak_name: string }
         Returns: undefined
       }
+      recalculate_badge_eligibility: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       recalculate_badge_progress: {
         Args: { p_user_id: string }
         Returns: undefined
