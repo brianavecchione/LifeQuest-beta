@@ -71,7 +71,6 @@ const Navigation = () => {
     { path: '/achievements', label: 'Achievements', icon: Trophy },
     { path: '/inventory', label: 'Inventory', icon: Sword },
     { path: '/parties', label: 'Parties', icon: Users },
-    { path: '/settings', label: 'Settings', icon: Settings },
   ];
 
   return (
@@ -138,7 +137,7 @@ const Navigation = () => {
                 onClick={toggleProfileDropdown}
                 variant="ghost"
                 size="sm"
-                className="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+                className="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors border border-slate-600 hover:border-slate-500"
                 aria-label="Profile menu"
               >
                 <User className="w-4 h-4" />
@@ -202,7 +201,7 @@ const Navigation = () => {
               onClick={toggleProfileDropdown}
               variant="ghost"
               size="sm"
-              className="p-2 text-slate-300 hover:text-white hover:bg-slate-700"
+              className="p-2 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-600 hover:border-slate-500"
               aria-label="Profile menu"
             >
               <User className="w-5 h-5" />
