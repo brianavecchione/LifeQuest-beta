@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
 import { useQuests } from '@/hooks/useQuests';
+import { useStreaks } from '@/hooks/useStreaks';
 import confetti from 'canvas-confetti';
 
 interface Achievement {
@@ -40,6 +41,7 @@ const AchievementsSection = () => {
   const { forceProfileRefresh } = useUser();
   const { toast } = useToast();
   const { getQuestStats } = useQuests();
+  const { streaks: streakData, getBestStreak, loading: streaksLoading } = useStreaks();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [streaks, setStreaks] = useState<Streak[]>([]);
   const [loading, setLoading] = useState(true);
@@ -397,19 +399,46 @@ const AchievementsSection = () => {
   const totalCount = achievements.length;
   const questStats = getQuestStats();
   const totalQuestsCompleted = questStats.completed;
+  const bestStreak = getBestStreak();
+  const longestStreak = streakData.reduce((max, streak) => 
+    streak.best_streak > max ? streak.best_streak : max, 0
+  );
 
   return (
     <div className="space-y-8">
       <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-emerald-600/30 shadow-2xl">
         {/* Stats Overview */}
-        <div className="mb-6">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-blue-500/30">
-              <div className="flex items-center justify-center mb-1">
-                <CheckCircle className="w-4 h-4 text-blue-400 mr-1" />
+        <div className="mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+            {/* Quests Completed */}
+            <div className="bg-slate-700/50 rounded-lg p-4 text-center border border-blue-500/30 hover:border-blue-400/50 transition-colors">
+              <div className="flex items-center justify-center mb-2">
+                <CheckCircle className="w-5 h-5 text-blue-400 mr-2" />
                 <span className="text-blue-400 text-sm font-medium">Quests Completed</span>
               </div>
-              <div className="text-xl font-bold text-white">{totalQuestsCompleted}</div>
+              <div className="text-2xl font-bold text-white">{totalQuestsCompleted}</div>
+            </div>
+
+            {/* Current Streak */}
+            <div className="bg-slate-700/50 rounded-lg p-4 text-center border border-orange-500/30 hover:border-orange-400/50 transition-colors">
+              <div className="flex items-center justify-center mb-2">
+                <Flame className="w-5 h-5 text-orange-400 mr-2" />
+                <span className="text-orange-400 text-sm font-medium">Current Streak</span>
+              </div>
+              <div className="text-2xl font-bold text-white">
+                {streaksLoading ? '...' : `${bestStreak.current_streak} ${bestStreak.current_streak === 1 ? 'Day' : 'Days'}`}
+              </div>
+            </div>
+
+            {/* Longest Streak */}
+            <div className="bg-slate-700/50 rounded-lg p-4 text-center border border-yellow-500/30 hover:border-yellow-400/50 transition-colors">
+              <div className="flex items-center justify-center mb-2">
+                <Star className="w-5 h-5 text-yellow-400 mr-2" />
+                <span className="text-yellow-400 text-sm font-medium">Longest Streak</span>
+              </div>
+              <div className="text-2xl font-bold text-white">
+                {streaksLoading ? '...' : `${longestStreak} ${longestStreak === 1 ? 'Day' : 'Days'}`}
+              </div>
             </div>
           </div>
         </div>
