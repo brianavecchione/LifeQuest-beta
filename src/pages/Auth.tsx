@@ -72,168 +72,224 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-      {/* Fantasy background pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
+    <div className="min-h-screen bg-slate-900 relative overflow-hidden">
+      {/* Adventure Background */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(/lovable-uploads/5e50c92f-4f13-42d9-b22c-d8696342579e.png)`,
+        }}
+      >
+        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px]" />
       </div>
 
-      <div className="relative z-10 w-full max-w-md">
-        {/* Logo & Hero Section */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <span className="text-4xl">⚔️</span>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
-              LifeQuest
-            </h1>
+      {/* Content Container */}
+      <div className="relative z-10 min-h-screen flex">
+        {/* Left Side - Promotional Content */}
+        <div className="flex-1 flex flex-col justify-center px-8 lg:px-16">
+          {/* Logo & Hero Section */}
+          <div className="mb-12">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="flex items-center gap-2">
+                <span className="text-3xl">⚔️</span>
+                <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
+                  LifeQuest
+                </h1>
+              </div>
+            </div>
+            
+            <h2 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+              Your Adventure<br />
+              Awaits
+            </h2>
+            
+            <p className="text-xl text-slate-300 mb-12">
+              Join the quest to level up your life!
+            </p>
+            
+            {/* Feature List */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-amber-600/20 flex items-center justify-center">
+                  <span className="text-2xl">🎯</span>
+                </div>
+                <span className="text-lg text-white">Set daily quests to stay on track</span>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-amber-600/20 flex items-center justify-center">
+                  <span className="text-2xl">⭐</span>
+                </div>
+                <span className="text-lg text-white">Earn XP and badges for your progress</span>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-amber-600/20 flex items-center justify-center">
+                  <span className="text-2xl">🔥</span>
+                </div>
+                <span className="text-lg text-white">Build habits with streak tracking</span>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-amber-600/20 flex items-center justify-center">
+                  <span className="text-2xl">🏆</span>
+                </div>
+                <span className="text-lg text-white">Redeem your achievements for real-life rewards</span>
+              </div>
+            </div>
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">
-            Your Adventure Awaits
-          </h2>
-          <p className="text-slate-300">
-            Join the quest to level up your life!
-          </p>
         </div>
 
-        {/* Auth Card */}
-        <Card className="bg-slate-800/90 border-slate-700 backdrop-blur-sm shadow-2xl">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-xl text-white text-center">
-              Welcome, Adventurer
-            </CardTitle>
-            <CardDescription className="text-slate-400 text-center">
-              Sign in to continue your quest or create a new account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-slate-700">
-                <TabsTrigger value="login" className="data-[state=active]:bg-amber-600">
-                  Sign In
-                </TabsTrigger>
-                <TabsTrigger value="signup" className="data-[state=active]:bg-amber-600">
-                  Sign Up
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="login" className="space-y-4 mt-4">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="login-email" className="text-slate-300">Email</Label>
-                    <Input
-                      id="login-email"
-                      type="email"
-                      placeholder="adventurer@questmaster.com"
-                      value={loginData.email}
-                      onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
-                      className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-amber-500"
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="login-password" className="text-slate-300">Password</Label>
-                    <div className="relative">
+        {/* Right Side - Login Form */}
+        <div className="w-full max-w-md flex flex-col justify-center px-8 lg:px-12">
+          <Card className="bg-slate-800/90 border-slate-700 backdrop-blur-sm shadow-2xl">
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-xl text-white text-center">
+                Welcome, Adventurer
+              </CardTitle>
+              <CardDescription className="text-slate-400 text-center">
+                Sign in to continue your quest or create a new account
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="login" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 bg-slate-700">
+                  <TabsTrigger value="login" className="data-[state=active]:bg-amber-600">
+                    Sign In
+                  </TabsTrigger>
+                  <TabsTrigger value="signup" className="data-[state=active]:bg-amber-600">
+                    Sign Up
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="login" className="space-y-4 mt-4">
+                  <form onSubmit={handleLogin} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="login-email" className="text-slate-300">Email</Label>
                       <Input
-                        id="login-password"
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="Enter your password"
-                        value={loginData.password}
-                        onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
-                        className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-amber-500 pr-10"
+                        id="login-email"
+                        type="email"
+                        placeholder="adventurer@questmaster.com"
+                        value={loginData.email}
+                        onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
+                        className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-amber-500"
                         required
                       />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 text-slate-400 hover:text-white"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </Button>
                     </div>
-                  </div>
 
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white font-medium"
-                  >
-                    <LogIn className="w-4 h-4 mr-2" />
-                    {isLoading ? 'Signing In...' : 'Begin Quest'}
-                  </Button>
-                </form>
-              </TabsContent>
+                    <div className="space-y-2">
+                      <Label htmlFor="login-password" className="text-slate-300">Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="login-password"
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Enter your password"
+                          value={loginData.password}
+                          onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
+                          className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-amber-500 pr-10"
+                          required
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3 text-slate-400 hover:text-white"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </Button>
+                      </div>
+                    </div>
 
-              <TabsContent value="signup" className="space-y-4 mt-4">
-                <form onSubmit={handleSignup} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-name" className="text-slate-300">Display Name</Label>
-                    <Input
-                      id="signup-name"
-                      type="text"
-                      placeholder="Your adventurer name"
-                      value={signupData.displayName}
-                      onChange={(e) => setSignupData(prev => ({ ...prev, displayName: e.target.value }))}
-                      className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-amber-500"
-                    />
-                  </div>
+                    <Button
+                      type="submit"
+                      disabled={isLoading}
+                      className="w-full bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white font-medium"
+                    >
+                      <LogIn className="w-4 h-4 mr-2" />
+                      {isLoading ? 'Signing In...' : 'Begin Quest'}
+                    </Button>
+                  </form>
+                </TabsContent>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email" className="text-slate-300">Email</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      placeholder="adventurer@questmaster.com"
-                      value={signupData.email}
-                      onChange={(e) => setSignupData(prev => ({ ...prev, email: e.target.value }))}
-                      className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-amber-500"
-                      required
-                    />
-                  </div>
+                <TabsContent value="signup" className="space-y-4 mt-4">
+                  <form onSubmit={handleSignup} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-name" className="text-slate-300">Display Name</Label>
+                      <Input
+                        id="signup-name"
+                        type="text"
+                        placeholder="Your adventurer name"
+                        value={signupData.displayName}
+                        onChange={(e) => setSignupData(prev => ({ ...prev, displayName: e.target.value }))}
+                        className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-amber-500"
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password" className="text-slate-300">Password</Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      placeholder="Create a secure password"
-                      value={signupData.password}
-                      onChange={(e) => setSignupData(prev => ({ ...prev, password: e.target.value }))}
-                      className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-amber-500"
-                      required
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-email" className="text-slate-300">Email</Label>
+                      <Input
+                        id="signup-email"
+                        type="email"
+                        placeholder="adventurer@questmaster.com"
+                        value={signupData.email}
+                        onChange={(e) => setSignupData(prev => ({ ...prev, email: e.target.value }))}
+                        className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-amber-500"
+                        required
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-confirm" className="text-slate-300">Confirm Password</Label>
-                    <Input
-                      id="signup-confirm"
-                      type="password"
-                      placeholder="Confirm your password"
-                      value={signupData.confirmPassword}
-                      onChange={(e) => setSignupData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                      className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-amber-500"
-                      required
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-password" className="text-slate-300">Password</Label>
+                      <Input
+                        id="signup-password"
+                        type="password"
+                        placeholder="Create a secure password"
+                        value={signupData.password}
+                        onChange={(e) => setSignupData(prev => ({ ...prev, password: e.target.value }))}
+                        className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-amber-500"
+                        required
+                      />
+                    </div>
 
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-medium"
-                  >
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    {isLoading ? 'Creating Account...' : 'Start Adventure'}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-confirm" className="text-slate-300">Confirm Password</Label>
+                      <Input
+                        id="signup-confirm"
+                        type="password"
+                        placeholder="Confirm your password"
+                        value={signupData.confirmPassword}
+                        onChange={(e) => setSignupData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                        className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-amber-500"
+                        required
+                      />
+                    </div>
+
+                    <Button
+                      type="submit"
+                      disabled={isLoading}
+                      className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-medium"
+                    >
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      {isLoading ? 'Creating Account...' : 'Start Adventure'}
+                    </Button>
+                  </form>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Preview as Guest Button - Bottom Right */}
+      <div className="absolute bottom-6 right-6 z-20">
+        <Button
+          variant="outline"
+          className="border-slate-600 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:text-white backdrop-blur-sm"
+          onClick={() => navigate('/')}
+        >
+          Preview as Guest
+        </Button>
       </div>
     </div>
   );
