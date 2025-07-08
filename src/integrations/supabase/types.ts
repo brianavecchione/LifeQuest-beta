@@ -71,6 +71,33 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_reset_logs: {
+        Row: {
+          created_at: string
+          id: string
+          quests_reset_count: number
+          reset_date: string
+          reset_timestamp: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          quests_reset_count?: number
+          reset_date: string
+          reset_timestamp?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          quests_reset_count?: number
+          reset_date?: string
+          reset_timestamp?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       daily_xp_history: {
         Row: {
           created_at: string

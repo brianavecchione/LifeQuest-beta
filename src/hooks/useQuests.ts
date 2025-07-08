@@ -49,12 +49,79 @@ export const useQuests = () => {
   const { toast } = useToast();
   const { user: currentUser, updateUser, refetchUserProfile, refetchDailyXp } = useUser();
 
+  // Check and handle daily quest reset on app load
+  const checkDailyReset = async () => {
+    if (!user) return;
+
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Check if any daily quests are completed but have a due_date before today
+      const { data: outdatedQuests, error } = await supabase
+        .from('quests')
+        .select('id, quest_name, due_date')
+        .eq('user_id', user.id)
+        .eq('quest_type', 'Daily')
+        .eq('status', 'Completed')
+        .lt('due_date', today);
+
+      if (error) {
+        console.error('Error checking for outdated daily quests:', error);
+        return;
+      }
+
+      // If we found outdated completed dailies, reset them
+      if (outdatedQuests && outdatedQuests.length > 0) {
+        console.log(`Found ${outdatedQuests.length} outdated daily quests, resetting...`);
+        
+        const { error: resetError } = await supabase
+          .from('quests')
+          .update({
+            status: 'Not started',
+            due_date: today,
+            completed_at: null,
+            updated_at: new Date().toISOString()
+          })
+          .eq('user_id', user.id)
+          .eq('quest_type', 'Daily')
+          .eq('status', 'Completed')
+          .lt('due_date', today);
+
+        if (resetError) {
+          console.error('Error resetting outdated daily quests:', resetError);
+        } else {
+          console.log('Successfully reset outdated daily quests');
+          
+          // Log the client-side reset
+          try {
+            await supabase
+              .from('daily_reset_logs')
+              .insert({
+                user_id: user.id,
+                reset_date: today,
+                reset_timestamp: new Date().toISOString(),
+                quests_reset_count: outdatedQuests.length
+              });
+          } catch (logError) {
+            console.error('Error logging client-side reset:', logError);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error in daily reset check:', error);
+    }
+  };
+
   // Fetch all quests for the current user
   const fetchQuests = async () => {
     if (!user) return;
 
     try {
       setLoading(true);
+      
+      // First check for daily resets
+      await checkDailyReset();
+      
       const { data, error } = await supabase
         .from('quests')
         .select('*')

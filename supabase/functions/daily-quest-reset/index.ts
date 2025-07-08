@@ -21,67 +21,125 @@ serve(async (req) => {
 
     // Get current date in YYYY-MM-DD format
     const today = new Date().toISOString().split('T')[0]
+    const resetTimestamp = new Date().toISOString()
     
-    // Find all daily quests that need to be reset
+    // Find all daily quests that need to be reset (only completed ones to avoid unnecessary updates)
     const { data: dailyQuests, error: fetchError } = await supabase
       .from('quests')
-      .select('*')
+      .select('user_id, id, quest_name')
       .eq('quest_type', 'Daily')
+      .eq('status', 'Completed')
 
     if (fetchError) {
       console.error('Error fetching daily quests:', fetchError)
       throw fetchError
     }
 
-    console.log(`Found ${dailyQuests?.length || 0} daily quests`)
+    console.log(`Found ${dailyQuests?.length || 0} completed daily quests to reset`)
+
+    let totalResetCount = 0
+    const userResetCounts = new Map<string, number>()
 
     if (dailyQuests && dailyQuests.length > 0) {
-      // Reset all daily quests to 'Not started' and update due date to today
+      // Count quests per user for logging
+      dailyQuests.forEach(quest => {
+        const count = userResetCounts.get(quest.user_id) || 0
+        userResetCounts.set(quest.user_id, count + 1)
+      })
+
+      // Reset all completed daily quests to 'Not started'
       const { data: updatedQuests, error: updateError } = await supabase
         .from('quests')
         .update({
           status: 'Not started',
           due_date: today,
           completed_at: null,
-          updated_at: new Date().toISOString()
+          updated_at: resetTimestamp
         })
         .eq('quest_type', 'Daily')
-        .select()
+        .eq('status', 'Completed')
+        .select('user_id')
 
       if (updateError) {
         console.error('Error updating daily quests:', updateError)
         throw updateError
       }
 
-      console.log(`Successfully reset ${updatedQuests?.length || 0} daily quests`)
+      totalResetCount = updatedQuests?.length || 0
+      console.log(`Successfully reset ${totalResetCount} daily quests`)
 
-      return new Response(
-        JSON.stringify({
-          success: true,
-          message: `Reset ${updatedQuests?.length || 0} daily quests for ${today}`,
-          resetCount: updatedQuests?.length || 0,
-          date: today
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      // Log the reset for each user
+      if (userResetCounts.size > 0) {
+        const resetLogs = Array.from(userResetCounts.entries()).map(([userId, count]) => ({
+          user_id: userId,
+          reset_date: today,
+          reset_timestamp: resetTimestamp,
+          quests_reset_count: count
+        }))
+
+        const { error: logError } = await supabase
+          .from('daily_reset_logs')
+          .insert(resetLogs)
+
+        if (logError) {
+          console.error('Error logging reset:', logError)
+          // Don't throw here, reset was successful even if logging failed
+        } else {
+          console.log(`Logged reset for ${userResetCounts.size} users`)
         }
-      )
-    } else {
-      console.log('No daily quests found to reset')
-      return new Response(
-        JSON.stringify({
-          success: true,
-          message: 'No daily quests found to reset',
-          resetCount: 0,
-          date: today
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
+      }
+
+      // Also log a global reset entry (user_id = null for system-wide tracking)
+      const { error: globalLogError } = await supabase
+        .from('daily_reset_logs')
+        .insert({
+          user_id: null,
+          reset_date: today,
+          reset_timestamp: resetTimestamp,
+          quests_reset_count: totalResetCount
+        })
+
+      if (globalLogError) {
+        console.error('Error logging global reset:', globalLogError)
+      }
     }
+
+    // Always log that a reset attempt was made, even if no quests were found
+    if (totalResetCount === 0) {
+      const { error: globalLogError } = await supabase
+        .from('daily_reset_logs')
+        .insert({
+          user_id: null,
+          reset_date: today,
+          reset_timestamp: resetTimestamp,
+          quests_reset_count: 0
+        })
+
+      if (globalLogError) {
+        console.error('Error logging empty reset:', globalLogError)
+      }
+    }
+
+    const message = totalResetCount > 0 
+      ? `Reset ${totalResetCount} daily quests for ${today}`
+      : 'No completed daily quests found to reset'
+
+    console.log(message)
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message,
+        resetCount: totalResetCount,
+        affectedUsers: userResetCounts.size,
+        date: today,
+        timestamp: resetTimestamp
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    )
 
   } catch (error) {
     console.error('Error in daily quest reset:', error)
