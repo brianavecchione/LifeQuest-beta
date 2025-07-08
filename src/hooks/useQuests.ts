@@ -153,26 +153,53 @@ export const useQuests = () => {
     try {
       const today = new Date().toISOString().split('T')[0];
       
-      // Check if any daily quests need to be reset:
+      // More conservative reset logic - only reset quests that are clearly from previous days
       // 1. Completed quests with due_date before today
-      // 2. Completed quests with NULL due_date (legacy quests)
-      // 3. In Progress quests with due_date before today (incomplete from previous day)
+      // 2. In Progress quests with due_date before today (incomplete from previous day)  
+      // 3. Legacy completed quests with NULL due_date BUT only if completed_at is from yesterday or earlier
       const { data: outdatedQuests, error } = await supabase
         .from('quests')
         .select('id, quest_name, due_date, status, completed_at')
         .eq('user_id', user.id)
         .eq('quest_type', 'Daily')
-        .or(`and(status.eq.Completed,due_date.lt.${today}),and(status.eq.Completed,due_date.is.null),and(status.eq.In Progress,due_date.lt.${today})`);
+        .or(`and(status.eq.Completed,due_date.lt.${today}),and(status.eq.In Progress,due_date.lt.${today})`);
 
       if (error) {
         console.error('Error checking for outdated daily quests:', error);
         return;
       }
 
-      // If we found outdated dailies, reset them
-      if (outdatedQuests && outdatedQuests.length > 0) {
-        console.log(`Found ${outdatedQuests.length} outdated daily quests, resetting:`, 
-          outdatedQuests.map(q => `${q.quest_name} (${q.status}, due: ${q.due_date})`));
+      // Also check for legacy quests (NULL due_date) that were completed before today
+      const { data: legacyQuests, error: legacyError } = await supabase
+        .from('quests')
+        .select('id, quest_name, due_date, status, completed_at')
+        .eq('user_id', user.id)
+        .eq('quest_type', 'Daily')
+        .eq('status', 'Completed')
+        .is('due_date', null)
+        .not('completed_at', 'is', null);
+
+      if (legacyError) {
+        console.error('Error checking for legacy daily quests:', legacyError);
+        return;
+      }
+
+      // Filter legacy quests to only include those completed before today
+      const legacyQuestsToReset = legacyQuests?.filter(quest => {
+        if (!quest.completed_at) return false;
+        const completedDate = new Date(quest.completed_at).toISOString().split('T')[0];
+        return completedDate < today;
+      }) || [];
+
+      // Combine outdated and legacy quests that need reset
+      const allQuestsToReset = [...(outdatedQuests || []), ...legacyQuestsToReset];
+
+      // If we found quests that need reset, update them
+      if (allQuestsToReset.length > 0) {
+        console.log(`Found ${allQuestsToReset.length} daily quests that need reset:`, 
+          allQuestsToReset.map(q => `${q.quest_name} (${q.status}, due: ${q.due_date || 'NULL'}, completed: ${q.completed_at})`));
+        
+        const questIdsToReset = allQuestsToReset.map(q => q.id);
         
         const { error: resetError } = await supabase
           .from('quests')
@@ -182,14 +209,12 @@ export const useQuests = () => {
             completed_at: null,
             updated_at: new Date().toISOString()
           })
-          .eq('user_id', user.id)
-          .eq('quest_type', 'Daily')
-          .or(`and(status.eq.Completed,due_date.lt.${today}),and(status.eq.Completed,due_date.is.null),and(status.eq.In Progress,due_date.lt.${today})`);
+          .in('id', questIdsToReset);
 
         if (resetError) {
-          console.error('Error resetting outdated daily quests:', resetError);
+          console.error('Error resetting daily quests:', resetError);
         } else {
-          console.log('Successfully reset outdated daily quests');
+          console.log('Successfully reset daily quests');
           
           // Log the client-side reset
           try {
@@ -199,7 +224,7 @@ export const useQuests = () => {
                 user_id: user.id,
                 reset_date: today,
                 reset_timestamp: new Date().toISOString(),
-                quests_reset_count: outdatedQuests.length
+                quests_reset_count: allQuestsToReset.length
               });
           } catch (logError) {
             console.error('Error logging client-side reset:', logError);
