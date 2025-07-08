@@ -19,13 +19,25 @@ serve(async (req) => {
 
     console.log('Starting daily quest archiving...')
 
-    // Get current date in YYYY-MM-DD format
-    const today = new Date().toISOString().split('T')[0]
-    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-    const archiveTimestamp = new Date().toISOString()
+    // Get current UTC time and calculate cutoff for archiving
+    const now = new Date()
+    const archiveTimestamp = now.toISOString()
+    
+    // Archive quests completed before today (using a reasonable cutoff time)
+    // This handles timezone differences by using a cutoff time instead of strict midnight
+    const cutoffTime = new Date()
+    cutoffTime.setUTCHours(6, 0, 0, 0) // 6 AM UTC cutoff
+    
+    // If it's before 6 AM UTC, use yesterday's 6 AM UTC as cutoff
+    if (now.getUTCHours() < 6) {
+      cutoffTime.setUTCDate(cutoffTime.getUTCDate() - 1)
+    }
+    
+    const cutoffTimestamp = cutoffTime.toISOString()
+    
+    console.log(`Archiving quests completed before: ${cutoffTimestamp}`)
     
     // Find all completed quests that should be archived
-    // This includes quests completed yesterday or earlier
     const { data: completedQuests, error: fetchError } = await supabase
       .from('quests')
       .select(`
@@ -43,7 +55,7 @@ serve(async (req) => {
       `)
       .eq('status', 'Completed')
       .not('completed_at', 'is', null)
-      .lt('completed_at', today + 'T00:00:00.000Z')
+      .lt('completed_at', cutoffTimestamp)
 
     if (fetchError) {
       console.error('Error fetching completed quests:', fetchError)
@@ -157,7 +169,7 @@ serve(async (req) => {
       .from('daily_reset_logs')
       .insert({
         user_id: null, // Global log entry
-        reset_date: today,
+        reset_date: cutoffTime.toISOString().split('T')[0],
         reset_timestamp: archiveTimestamp,
         quests_reset_count: totalArchivedCount // Using this field to track archived count
       })
@@ -178,7 +190,7 @@ serve(async (req) => {
         message,
         archivedCount: totalArchivedCount,
         affectedUsers: userArchiveCounts.size,
-        date: today,
+        cutoffTime: cutoffTimestamp,
         timestamp: archiveTimestamp
       }),
       {
