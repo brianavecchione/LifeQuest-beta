@@ -71,6 +71,63 @@ export type Database = {
         }
         Relationships: []
       }
+      archived_quests: {
+        Row: {
+          archived_at: string
+          completed_at: string
+          completed_date: string
+          created_at: string
+          description: string | null
+          gold_reward: number
+          id: string
+          original_quest_id: string
+          priority: Database["public"]["Enums"]["quest_priority"]
+          quest_name: string
+          quest_type: Database["public"]["Enums"]["quest_type"]
+          tags: string[] | null
+          updated_at: string
+          user_id: string
+          was_in_focus: boolean
+          xp_reward: number
+        }
+        Insert: {
+          archived_at?: string
+          completed_at: string
+          completed_date: string
+          created_at?: string
+          description?: string | null
+          gold_reward?: number
+          id?: string
+          original_quest_id: string
+          priority: Database["public"]["Enums"]["quest_priority"]
+          quest_name: string
+          quest_type: Database["public"]["Enums"]["quest_type"]
+          tags?: string[] | null
+          updated_at?: string
+          user_id: string
+          was_in_focus?: boolean
+          xp_reward?: number
+        }
+        Update: {
+          archived_at?: string
+          completed_at?: string
+          completed_date?: string
+          created_at?: string
+          description?: string | null
+          gold_reward?: number
+          id?: string
+          original_quest_id?: string
+          priority?: Database["public"]["Enums"]["quest_priority"]
+          quest_name?: string
+          quest_type?: Database["public"]["Enums"]["quest_type"]
+          tags?: string[] | null
+          updated_at?: string
+          user_id?: string
+          was_in_focus?: boolean
+          xp_reward?: number
+        }
+        Relationships: []
+      }
       daily_reset_logs: {
         Row: {
           created_at: string

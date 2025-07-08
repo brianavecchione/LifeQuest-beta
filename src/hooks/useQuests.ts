@@ -50,6 +50,81 @@ export const useQuests = () => {
   const { toast } = useToast();
   const { user: currentUser, updateUser, refetchUserProfile, refetchDailyXp } = useUser();
 
+  // Archive completed quests from previous days
+  const archiveOldQuests = async () => {
+    if (!user) return;
+
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Find completed quests from previous days that should be archived
+      const { data: oldCompletedQuests, error } = await supabase
+        .from('quests')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'Completed')
+        .not('completed_at', 'is', null)
+        .lt('completed_at', today + 'T00:00:00.000Z');
+
+      if (error) {
+        console.error('Error checking for old completed quests:', error);
+        return;
+      }
+
+      if (oldCompletedQuests && oldCompletedQuests.length > 0) {
+        console.log(`Found ${oldCompletedQuests.length} old completed quests, archiving...`);
+        
+        // Get current focus quests to determine which were in focus
+        const focusQuests = JSON.parse(localStorage.getItem('lifequest-focus-quests') || '[]');
+        
+        // Prepare archive records
+        const archiveRecords = oldCompletedQuests.map(quest => ({
+          user_id: quest.user_id,
+          original_quest_id: quest.id,
+          quest_name: quest.quest_name,
+          description: quest.description,
+          quest_type: quest.quest_type,
+          priority: quest.priority,
+          xp_reward: quest.xp_reward,
+          gold_reward: quest.gold_reward,
+          tags: quest.tags,
+          completed_date: new Date(quest.completed_at).toISOString().split('T')[0],
+          completed_at: quest.completed_at,
+          was_in_focus: focusQuests.includes(quest.id)
+        }));
+
+        // Archive the quests
+        const { error: archiveError } = await supabase
+          .from('archived_quests')
+          .insert(archiveRecords);
+
+        if (archiveError) {
+          console.error('Error archiving old quests:', archiveError);
+          return;
+        }
+
+        // Delete the original quests
+        const questIdsToDelete = oldCompletedQuests.map(q => q.id);
+        const { error: deleteError } = await supabase
+          .from('quests')
+          .delete()
+          .in('id', questIdsToDelete);
+
+        if (deleteError) {
+          console.error('Error deleting original quests:', deleteError);
+        } else {
+          console.log(`Successfully archived and removed ${oldCompletedQuests.length} old completed quests`);
+          
+          // Update focus quests to remove archived ones
+          const updatedFocusQuests = focusQuests.filter(id => !questIdsToDelete.includes(id));
+          localStorage.setItem('lifequest-focus-quests', JSON.stringify(updatedFocusQuests));
+        }
+      }
+    } catch (error) {
+      console.error('Error in quest archiving:', error);
+    }
+  };
+
   // Check and handle daily quest reset on app load
   const checkDailyReset = async () => {
     if (!user) return;
@@ -128,7 +203,10 @@ export const useQuests = () => {
         testMedicationCase();
       }
       
-      // First check for daily resets
+      // First archive old completed quests
+      await archiveOldQuests();
+      
+      // Then check for daily resets
       await checkDailyReset();
       
       const { data, error } = await supabase
