@@ -96,65 +96,66 @@ const Auth = () => {
       </div>
 
       {/* Content Container */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center max-w-7xl mx-auto px-8">
-        {/* Left Side - Promotional Content */}
-        <div className="flex-1 flex flex-col justify-center max-w-2xl pr-8 lg:pr-16">
-          {/* Logo & Hero Section */}
-          <div className="mb-12">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="flex items-center gap-2">
-                <span className="text-3xl">⚔️</span>
-                <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
-                  LifeQuest
-                </h1>
-              </div>
-            </div>
-            
-            <h2 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Your Adventure<br />
-              Awaits
-            </h2>
-            
-            <p className="text-xl text-slate-300 mb-12">
-              Join the quest to level up your life!
-            </p>
-            
-            {/* Feature List */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-amber-600/20 flex items-center justify-center">
-                  <span className="text-2xl">🎯</span>
+      <div className="relative z-10 min-h-screen flex items-center justify-center max-w-7xl mx-auto px-4 sm:px-8">
+        <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0">
+          {/* Left Side - Promotional Content */}
+          <div className="flex-1 flex flex-col justify-center max-w-2xl lg:pr-8 xl:pr-16">
+            {/* Logo & Hero Section */}
+            <div className="mb-8 lg:mb-12 text-center lg:text-left">
+              <div className="flex items-center justify-center lg:justify-start gap-3 mb-6 lg:mb-8">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl sm:text-3xl">⚔️</span>
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
+                    LifeQuest
+                  </h1>
                 </div>
-                <span className="text-lg text-white">Set daily quests to stay on track</span>
               </div>
               
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-amber-600/20 flex items-center justify-center">
-                  <span className="text-2xl">⭐</span>
-                </div>
-                <span className="text-lg text-white">Earn XP and badges for your progress</span>
-              </div>
+              <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white mb-4 lg:mb-6 leading-tight">
+                Your Adventure<br />
+                Awaits
+              </h2>
               
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-amber-600/20 flex items-center justify-center">
-                  <span className="text-2xl">🔥</span>
-                </div>
-                <span className="text-lg text-white">Build habits with streak tracking</span>
-              </div>
+              <p className="text-lg sm:text-xl text-slate-300 mb-8 lg:mb-12">
+                Join the quest to level up your life!
+              </p>
               
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-amber-600/20 flex items-center justify-center">
-                  <span className="text-2xl">🏆</span>
+              {/* Feature List */}
+              <div className="space-y-4 lg:space-y-6 max-w-lg mx-auto lg:mx-0">
+                <div className="flex items-center gap-4 justify-center lg:justify-start">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl sm:text-2xl">🎯</span>
+                  </div>
+                  <span className="text-base sm:text-lg text-white">Set daily quests to stay on track</span>
                 </div>
-                <span className="text-lg text-white">Redeem your achievements for real-life rewards</span>
+                
+                <div className="flex items-center gap-4 justify-center lg:justify-start">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl sm:text-2xl">⭐</span>
+                  </div>
+                  <span className="text-base sm:text-lg text-white">Earn XP and badges for your progress</span>
+                </div>
+                
+                <div className="flex items-center gap-4 justify-center lg:justify-start">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl sm:text-2xl">🔥</span>
+                  </div>
+                  <span className="text-base sm:text-lg text-white">Build habits with streak tracking</span>
+                </div>
+                
+                <div className="flex items-center gap-4 justify-center lg:justify-start">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl sm:text-2xl">🏆</span>
+                  </div>
+                  <span className="text-base sm:text-lg text-white">Redeem your achievements for real-life rewards</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Right Side - Login Form */}
-        <div className="flex-1 flex flex-col justify-center max-w-md pl-8 lg:pl-16">
-          <Card className="bg-slate-800/90 border-slate-700 backdrop-blur-sm shadow-2xl">
+          {/* Right Side - Login Form */}
+          <div className="flex-1 flex flex-col justify-center max-w-md lg:pl-8 xl:pl-16 w-full">
+            <Card className="bg-slate-800/90 border-slate-700 backdrop-blur-sm shadow-2xl">
             <CardHeader className="space-y-1">
               <CardTitle className="text-xl text-white text-center">
                 Welcome, Adventurer
@@ -289,15 +290,16 @@ const Auth = () => {
                 </TabsContent>
               </Tabs>
             </CardContent>
-          </Card>
+            </Card>
+          </div>
         </div>
       </div>
 
-      {/* Preview as Guest Button - Bottom Right */}
-      <div className="absolute bottom-6 right-6 z-20">
+      {/* Preview as Guest Button - Mobile: Full width bottom, Desktop: Bottom right */}
+      <div className="absolute bottom-4 left-4 right-4 z-20 sm:bottom-6 sm:left-auto sm:right-6 sm:w-auto">
         <Button
           variant="outline"
-          className="border-slate-600 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:text-white backdrop-blur-sm"
+          className="w-full sm:w-auto border-slate-600 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:text-white backdrop-blur-sm"
           onClick={() => navigate('/')}
         >
           Preview as Guest
