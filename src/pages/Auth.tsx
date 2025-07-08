@@ -89,7 +89,7 @@ const Auth = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url(/lovable-uploads/5e50c92f-4f13-42d9-b22c-d8696342579e.png)`,
+          backgroundImage: `url(/lovable-uploads/5cdfbd1a-92af-4c5a-afaa-c301857355e4.png)`,
         }}
       >
         <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px]" />
