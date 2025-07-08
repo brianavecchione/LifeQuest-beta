@@ -85,7 +85,7 @@ export const useQuests = () => {
         console.log(`Found ${oldCompletedQuests.length} old completed quests, archiving...`);
         
         // Get current focus quests to determine which were in focus
-        const focusQuests = JSON.parse(localStorage.getItem('lifequest-focus-quests') || '[]');
+        const focusQuests = JSON.parse(localStorage.getItem('lifequest-todays-focus') || '[]');
         
         // Prepare archive records - process ALL quests in the array
         const archiveRecords = oldCompletedQuests.map((quest, index) => {
@@ -133,7 +133,12 @@ export const useQuests = () => {
           
           // Update focus quests to remove archived ones - process ALL archived quests
           const updatedFocusQuests = focusQuests.filter(id => !questIdsToDelete.includes(id));
-          localStorage.setItem('lifequest-focus-quests', JSON.stringify(updatedFocusQuests));
+          localStorage.setItem('lifequest-todays-focus', JSON.stringify(updatedFocusQuests));
+          
+          // Dispatch event to notify components that focus list has been updated
+          window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
+          
+          console.log(`Updated Today's Focus: removed ${questIdsToDelete.length} archived quests, ${updatedFocusQuests.length} remaining`);
         }
       }
     } catch (error) {
