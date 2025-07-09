@@ -177,8 +177,13 @@ export const useQuests = () => {
         const dailiesFromPreviousDays = completedDailies.filter(quest => {
           if (!quest.completed_at) return false;
           const completedLocalDate = getLocalDateFromUTC(quest.completed_at);
-          console.log(`🔍 Checking daily habit "${quest.quest_name}": completed on ${completedLocalDate}, today is ${todayLocal}, should archive: ${completedLocalDate !== todayLocal}`);
-          return completedLocalDate !== todayLocal;
+          const shouldArchive = completedLocalDate !== todayLocal;
+          console.log(`🔍 Checking daily habit "${quest.quest_name}": 
+            - Completed at (UTC): ${quest.completed_at}
+            - Completed local date: ${completedLocalDate} 
+            - Today local date: ${todayLocal}
+            - Should archive: ${shouldArchive}`);
+          return shouldArchive;
         });
 
         if (dailiesFromPreviousDays.length > 0) {
