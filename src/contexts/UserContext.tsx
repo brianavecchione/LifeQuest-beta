@@ -83,18 +83,25 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const settings = localSettings ? JSON.parse(localSettings) : {};
 
       if (profile) {
-        // Calculate current level XP with new progressive curve (Level N = N * 100 XP total)
-        const currentLevelMinXp = profile.user_level > 1 ? (profile.user_level - 1) * 100 : 0;
-        const nextLevelMinXp = (profile.user_level + 1) * 100; // XP required for NEXT level
-        const xpInCurrentLevel = profile.xp_balance - currentLevelMinXp;
+        // Calculate level and XP progress with corrected logic
+        const totalXp = profile.xp_balance;
+        const currentLevel = profile.user_level;
+        
+        // Calculate current level boundaries
+        const currentLevelMinXp = currentLevel > 1 ? (currentLevel - 1) * 100 : 0;
+        const nextLevelMinXp = currentLevel * 100;
+        
+        // Calculate XP progress within current level
+        const xpInCurrentLevel = totalXp - currentLevelMinXp;
+        const xpNeededForNextLevel = nextLevelMinXp - currentLevelMinXp; // Always 100 XP per level
         
         // Map Supabase profile to UserData format
         const userData: UserData = {
           name: profile.display_name || 'Adventurer',
-          level: profile.user_level,
+          level: currentLevel,
           xp: Math.max(0, xpInCurrentLevel), // XP progress within current level
-          xpToNext: nextLevelMinXp - currentLevelMinXp, // XP needed for next level (e.g., Level 3 needs 300 - 200 = 200 XP)
-          totalXp: profile.xp_balance, // Use database as source of truth
+          xpToNext: xpNeededForNextLevel, // XP needed for next level (always 100)
+          totalXp: totalXp, // Use database as source of truth
           gold: profile.gold_balance, // Use database as source of truth
           pomodoroCount: settings.pomodoroCount || 0,
           dailyXp: {}, // No longer used, keep for compatibility
