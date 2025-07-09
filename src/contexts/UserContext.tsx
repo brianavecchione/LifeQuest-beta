@@ -86,24 +86,33 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const settings = localSettings ? JSON.parse(localSettings) : {};
 
       if (profile) {
-        // Calculate level and XP progress with corrected logic
+        // Calculate level and XP progress using progressive formula
         const totalXp = profile.xp_balance;
-        const currentLevel = profile.user_level;
         
-        // Calculate current level boundaries
-        const currentLevelMinXp = currentLevel > 1 ? (currentLevel - 1) * 100 : 0;
-        const nextLevelMinXp = currentLevel * 100;
+        // Progressive XP formula: cumulative XP to reach level n = baseXP * (n * (n + 1)) / 2
+        const baseXP = 100;
+        
+        // Calculate current level based on total XP
+        let currentLevel = 1;
+        while (true) {
+          const xpForLevel = baseXP * (currentLevel * (currentLevel + 1)) / 2;
+          if (totalXp < xpForLevel) break;
+          currentLevel++;
+        }
         
         // Calculate XP progress within current level
-        const xpInCurrentLevel = totalXp - currentLevelMinXp;
-        const xpNeededForNextLevel = nextLevelMinXp - currentLevelMinXp; // Always 100 XP per level
+        const currentLevelXpThreshold = currentLevel > 1 ? baseXP * ((currentLevel - 1) * currentLevel) / 2 : 0;
+        const nextLevelXpThreshold = baseXP * (currentLevel * (currentLevel + 1)) / 2;
+        const xpInCurrentLevel = totalXp - currentLevelXpThreshold;
+        const xpRequiredForNextLevel = nextLevelXpThreshold - currentLevelXpThreshold;
+        const progressPercentage = (xpInCurrentLevel / xpRequiredForNextLevel) * 100;
         
         // Map Supabase profile to UserData format
         const userData: UserData = {
           name: profile.display_name || 'Adventurer',
           level: currentLevel,
-          xp: Math.max(0, xpInCurrentLevel), // XP progress within current level
-          xpToNext: xpNeededForNextLevel, // XP needed for next level (always 100)
+          xp: Math.max(0, progressPercentage), // Progress percentage toward next level
+          xpToNext: 100, // Always 100% for display purposes
           totalXp: totalXp, // Use database as source of truth
           gold: profile.gold_balance, // Use database as source of truth
           pomodoroCount: settings.pomodoroCount || 0,

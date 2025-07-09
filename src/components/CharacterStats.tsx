@@ -16,7 +16,7 @@ const CharacterStats = () => {
   const { user: character, getDailyXpData, getWeeklyXpData, isLoading } = useUser();
   const { getBestStreak, loading: streaksLoading } = useStreaks();
   const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
-  const xpProgress = (character.xp / character.xpToNext) * 100;
+  const xpProgress = character.xp; // character.xp now contains the percentage progress
   
   const bestStreak = getBestStreak();
 
@@ -147,7 +147,7 @@ const CharacterStats = () => {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-slate-300 font-medium">Level Progress</span>
-                <span className="text-amber-400 font-bold">{character.xp}/{character.xpToNext} XP</span>
+                <span className="text-amber-400 font-bold">{Math.round(character.xp)}%</span>
               </div>
               <Progress value={xpProgress} className="h-3 bg-slate-700">
                 <div className="h-full bg-gradient-to-r from-green-500 to-emerald-400 rounded-full transition-all duration-500" style={{ width: `${xpProgress}%` }} />
