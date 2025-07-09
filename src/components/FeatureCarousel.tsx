@@ -27,31 +27,31 @@ interface FeatureSlide {
 const features: FeatureSlide[] = [
   {
     id: 'dashboard',
-    title: 'Quest Dashboard',
-    description: 'Track your daily, main, and side quests all in one place. Watch your XP grow as you level up your life!',
+    title: 'Today\'s Focus',
+    description: 'Your daily command center. Track quests, monitor XP progress, and see your character stats at a glance.',
     image: mockupDashboard,
-    badge: 'Core Features',
+    badge: 'Daily Hub',
   },
   {
     id: 'tracking',
-    title: 'XP & Rewards',
-    description: 'Earn experience points and gold for completing tasks. Celebrate your wins with satisfying progress animations!',
+    title: 'Quest Management',
+    description: 'Organize your adventures by categories. From daily habits to legendary life goals - all in one place.',
     image: mockupQuestTracking,
-    badge: 'Gamification',
+    badge: 'Organization',
   },
   {
     id: 'achievements',
-    title: 'Streaks & Achievements',
-    description: 'Build consistent habits with streak tracking and unlock badges that showcase your dedication and growth.',
+    title: 'Achievements & Streaks',
+    description: 'Unlock badges, maintain streaks, and celebrate every victory on your personal growth journey.',
     image: mockupProfileAchievements,
-    badge: 'Progress Tracking',
+    badge: 'Progress',
   },
   {
     id: 'social',
-    title: 'Party System',
-    description: 'Join forces with friends! Create parties, compete on leaderboards, and tackle challenges together.',
+    title: 'Party Adventures',
+    description: 'Team up with friends, share goals, and compete on leaderboards. Everything is better together!',
     image: mockupPartySocial,
-    badge: 'Social Features',
+    badge: 'Social',
   },
 ];
 
