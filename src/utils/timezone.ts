@@ -26,9 +26,8 @@ export const getLocalToday = (): string => {
   const timezone = getUserTimezone();
   const now = new Date();
   
-  // Use toLocaleDateString with explicit timezone to get correct local date
-  const localDate = new Date(now.toLocaleString('en-US', { timeZone: timezone }));
-  return localDate.toISOString().split('T')[0];
+  // Use toLocaleDateString with timezone to get proper local date  
+  return now.toLocaleDateString('en-CA', { timeZone: timezone }); // en-CA gives YYYY-MM-DD format
 };
 
 /**
@@ -38,9 +37,9 @@ export const getLocalDateFromUTC = (utcTimestamp: string): string => {
   const timezone = getUserTimezone();
   const utcDate = new Date(utcTimestamp);
   
-  // Convert to local timezone and extract date
-  const localDate = new Date(utcDate.toLocaleString('en-US', { timeZone: timezone }));
-  return localDate.toISOString().split('T')[0];
+  // Use toLocaleDateString with timezone to get proper local date
+  const localDateStr = utcDate.toLocaleDateString('en-CA', { timeZone: timezone }); // en-CA gives YYYY-MM-DD format
+  return localDateStr;
 };
 
 /**
@@ -69,15 +68,14 @@ export const getLocalDayBoundariesUTC = (localDateStr: string) => {
 export const getLastNLocalDays = (n: number): string[] => {
   const timezone = getUserTimezone();
   const days: string[] = [];
-  const today = new Date();
   
   for (let i = n - 1; i >= 0; i--) {
-    const date = new Date(today);
+    const date = new Date();
     date.setDate(date.getDate() - i);
     
-    // Convert to local timezone and get date string
-    const localDate = new Date(date.toLocaleString('en-US', { timeZone: timezone }));
-    days.push(localDate.toISOString().split('T')[0]);
+    // Use toLocaleDateString with timezone to get proper local date
+    const localDateStr = date.toLocaleDateString('en-CA', { timeZone: timezone }); // en-CA gives YYYY-MM-DD format
+    days.push(localDateStr);
   }
   
   return days;
@@ -147,7 +145,7 @@ export const calculateLocalStreaks = (completedTimestamps: string[]) => {
   for (let i = 0; ; i++) {
     const checkDate = new Date();
     checkDate.setDate(checkDate.getDate() - i);
-    const checkDateStr = checkDate.toISOString().split('T')[0];
+    const checkDateStr = checkDate.toLocaleDateString('en-CA', { timeZone: getUserTimezone() });
     
     if (localDates.includes(checkDateStr)) {
       currentStreak++;
