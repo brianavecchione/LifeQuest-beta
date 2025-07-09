@@ -27,31 +27,31 @@ interface FeatureSlide {
 const features: FeatureSlide[] = [
   {
     id: 'dashboard',
-    title: 'Quest Dashboard',
-    description: 'Track your daily, main, and side quests all in one place. Watch your XP grow as you level up your life!',
+    title: 'Character Stats & Progress',
+    description: 'Track your character progression with XP charts, level advancement, and streak counters. Watch your stats grow as you complete quests!',
     image: mockupDashboard,
-    badge: 'Core Features',
+    badge: 'Character System',
   },
   {
     id: 'tracking',
-    title: 'XP & Rewards',
-    description: 'Earn experience points and gold for completing tasks. Celebrate your wins with satisfying progress animations!',
+    title: 'Quest Management',
+    description: 'Organize your tasks as RPG-style quests with different types: Daily habits, Main objectives, Side tasks, and Legendary challenges.',
     image: mockupQuestTracking,
-    badge: 'Gamification',
+    badge: 'Quest System',
   },
   {
     id: 'achievements',
-    title: 'Streaks & Achievements',
-    description: 'Build consistent habits with streak tracking and unlock badges that showcase your dedication and growth.',
+    title: 'Analytics & Achievements',
+    description: 'Visualize your productivity with XP charts, maintain streaks for consistent habits, and unlock achievement badges.',
     image: mockupProfileAchievements,
-    badge: 'Progress Tracking',
+    badge: 'Progress Analytics',
   },
   {
     id: 'social',
-    title: 'Party System',
-    description: 'Join forces with friends! Create parties, compete on leaderboards, and tackle challenges together.',
+    title: 'Party Collaboration',
+    description: 'Form adventuring parties with friends, share quests, compete on leaderboards, and achieve goals together.',
     image: mockupPartySocial,
-    badge: 'Social Features',
+    badge: 'Social Gaming',
   },
 ];
 
