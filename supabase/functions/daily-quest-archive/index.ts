@@ -38,6 +38,7 @@ serve(async (req) => {
     console.log(`Archiving quests completed before: ${cutoffTimestamp}`)
     
     // Find all completed quests that should be archived
+    // Exclude daily habits - they should reset instead of being archived
     const { data: completedQuests, error: fetchError } = await supabase
       .from('quests')
       .select(`
@@ -54,6 +55,7 @@ serve(async (req) => {
         created_at
       `)
       .eq('status', 'Completed')
+      .neq('quest_type', 'Daily') // Exclude daily habits from archiving
       .not('completed_at', 'is', null)
       .lt('completed_at', cutoffTimestamp)
 

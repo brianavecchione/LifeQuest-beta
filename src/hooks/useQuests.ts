@@ -69,11 +69,13 @@ export const useQuests = () => {
       const cutoffTimestamp = cutoffTime.toISOString()
       
       // Find completed quests from before the cutoff time that should be archived
+      // Exclude daily habits - they should reset instead of being archived
       const { data: oldCompletedQuests, error } = await supabase
         .from('quests')
         .select('*')
         .eq('user_id', user.id)
         .eq('status', 'Completed')
+        .neq('quest_type', 'Daily') // Exclude daily habits from archiving
         .not('completed_at', 'is', null)
         .lt('completed_at', cutoffTimestamp);
 
