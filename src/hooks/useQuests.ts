@@ -153,23 +153,27 @@ export const useQuests = () => {
     try {
       const today = new Date().toISOString().split('T')[0];
       
-      // More conservative reset logic - only reset quests that are clearly from previous days
-      // 1. Completed quests with due_date before today
-      // 2. In Progress quests with due_date before today (incomplete from previous day)  
-      // 3. Legacy completed quests with NULL due_date BUT only if completed_at is from yesterday or earlier
+      // MUCH more conservative reset logic - only reset quests that are definitely from previous days
+      // Only look for quests with explicit due_date set to previous days
       const { data: outdatedQuests, error } = await supabase
         .from('quests')
         .select('id, quest_name, due_date, status, completed_at')
         .eq('user_id', user.id)
         .eq('quest_type', 'Daily')
-        .or(`and(status.eq.Completed,due_date.lt.${today}),and(status.eq.In Progress,due_date.lt.${today})`);
+        .not('due_date', 'is', null) // Only consider quests with explicit due dates
+        .lt('due_date', today); // Only those explicitly dated before today
 
       if (error) {
         console.error('Error checking for outdated daily quests:', error);
         return;
       }
 
-      // Also check for legacy quests (NULL due_date) that were completed before today
+      // For legacy quests (NULL due_date), be EXTREMELY conservative
+      // Only reset if completed more than 24 hours ago to avoid timezone issues
+      const cutoffTime = new Date();
+      cutoffTime.setDate(cutoffTime.getDate() - 1); // 24 hours ago
+      cutoffTime.setHours(0, 0, 0, 0); // Start of yesterday
+      
       const { data: legacyQuests, error: legacyError } = await supabase
         .from('quests')
         .select('id, quest_name, due_date, status, completed_at')
@@ -177,22 +181,16 @@ export const useQuests = () => {
         .eq('quest_type', 'Daily')
         .eq('status', 'Completed')
         .is('due_date', null)
-        .not('completed_at', 'is', null);
+        .not('completed_at', 'is', null)
+        .lt('completed_at', cutoffTime.toISOString());
 
       if (legacyError) {
         console.error('Error checking for legacy daily quests:', legacyError);
         return;
       }
 
-      // Filter legacy quests to only include those completed before today
-      const legacyQuestsToReset = legacyQuests?.filter(quest => {
-        if (!quest.completed_at) return false;
-        const completedDate = new Date(quest.completed_at).toISOString().split('T')[0];
-        return completedDate < today;
-      }) || [];
-
       // Combine outdated and legacy quests that need reset
-      const allQuestsToReset = [...(outdatedQuests || []), ...legacyQuestsToReset];
+      const allQuestsToReset = [...(outdatedQuests || []), ...(legacyQuests || [])];
 
       // If we found quests that need reset, update them
       if (allQuestsToReset.length > 0) {
