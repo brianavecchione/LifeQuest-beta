@@ -67,10 +67,11 @@ export const useStreaks = () => {
       console.log('🎯 Calculated streak data:', streakData);
       console.log('🎯 Current streak should be:', streakData.currentStreak);
       console.log('🎯 Longest streak should be:', streakData.longestStreak);
+      console.log('🎯 Total completed quests:', allCompletedTimestamps.length);
 
       setCurrentStreak(streakData.currentStreak);
       setLongestStreak(streakData.longestStreak);
-      setTotalCompleted(streakData.totalCompletedDays);
+      setTotalCompleted(allCompletedTimestamps.length); // Use total count of all completed quests
       
     } catch (error) {
       console.error('❌ Error calculating streaks:', error);
