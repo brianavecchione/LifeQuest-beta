@@ -65,6 +65,8 @@ export const useStreaks = () => {
       const streakData = calculateLocalStreaks(allCompletedTimestamps);
       
       console.log('🎯 Calculated streak data:', streakData);
+      console.log('🎯 Current streak should be:', streakData.currentStreak);
+      console.log('🎯 Longest streak should be:', streakData.longestStreak);
 
       setCurrentStreak(streakData.currentStreak);
       setLongestStreak(streakData.longestStreak);

@@ -155,13 +155,23 @@ export const generateDailyXpData = (xpHistory: Array<{ date: string; xp_earned: 
  * Calculate streaks with proper timezone handling
  */
 export const calculateLocalStreaks = (completedTimestamps: string[]) => {
+  console.log('🔥 STREAK DEBUG - Input timestamps:', completedTimestamps);
+  
   // Convert all UTC timestamps to local dates
   const localDates = completedTimestamps
-    .map(timestamp => getLocalDateFromUTC(timestamp))
+    .map(timestamp => {
+      const localDate = getLocalDateFromUTC(timestamp);
+      console.log(`🔥 STREAK DEBUG - ${timestamp} -> ${localDate}`);
+      return localDate;
+    })
     .filter((date, index, array) => array.indexOf(date) === index) // Remove duplicates
     .sort((a, b) => new Date(b).getTime() - new Date(a).getTime()); // Sort descending
 
+  console.log('🔥 STREAK DEBUG - Unique local dates (sorted):', localDates);
+
   const todayLocal = getLocalToday();
+  console.log('🔥 STREAK DEBUG - Today local:', todayLocal);
+  
   let currentStreak = 0;
   let longestStreak = 0;
   let tempStreak = 0;
@@ -171,6 +181,8 @@ export const calculateLocalStreaks = (completedTimestamps: string[]) => {
     const checkDate = new Date();
     checkDate.setDate(checkDate.getDate() - i);
     const checkDateStr = checkDate.toLocaleDateString('en-CA', { timeZone: getUserTimezone() });
+    
+    console.log(`🔥 STREAK DEBUG - Checking day ${i}: ${checkDateStr}, found: ${localDates.includes(checkDateStr)}`);
     
     if (localDates.includes(checkDateStr)) {
       currentStreak++;
