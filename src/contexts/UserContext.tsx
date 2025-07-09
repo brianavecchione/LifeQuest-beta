@@ -223,16 +223,18 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const addXP = (amount: number) => {
     setUser(prev => {
       const newTotalXp = prev.totalXp + amount;
+      let newXp = prev.xp + amount;
+      let newLevel = prev.level;
+      let newXpToNext = prev.xpToNext;
       const originalLevel = prev.level;
-      
-      // Calculate new level based on total XP
-      const newLevel = Math.max(1, Math.floor(newTotalXp / 100) + 1);
-      
-      // Calculate XP progress within current level
-      const currentLevelMinXp = newLevel > 1 ? (newLevel - 1) * 100 : 0;
-      const xpInCurrentLevel = newTotalXp - currentLevelMinXp;
-      const xpNeededForNextLevel = 100; // Always 100 XP per level
-      
+
+      // Level up logic
+      while (newXp >= newXpToNext) {
+        newXp -= newXpToNext;
+        newLevel++;
+        newXpToNext = newLevel * 100; // Simple formula: each level needs level * 100 XP
+      }
+
       // Trigger celebration if level increased
       if (newLevel > originalLevel) {
         // Delay celebration to allow state update
@@ -249,9 +251,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       return {
         ...prev,
-        xp: Math.max(0, xpInCurrentLevel), // XP progress within current level
+        xp: newXp,
         level: newLevel,
-        xpToNext: xpNeededForNextLevel,
+        xpToNext: newXpToNext,
         totalXp: newTotalXp,
         dailyXp: updatedDailyXp,
       };
@@ -265,14 +267,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const subtractXP = (amount: number) => {
     setUser(prev => {
       const newTotalXp = Math.max(0, prev.totalXp - amount);
-      
-      // Calculate new level based on total XP
-      const newLevel = Math.max(1, Math.floor(newTotalXp / 100) + 1);
-      
-      // Calculate XP progress within current level
-      const currentLevelMinXp = newLevel > 1 ? (newLevel - 1) * 100 : 0;
-      const xpInCurrentLevel = newTotalXp - currentLevelMinXp;
-      const xpNeededForNextLevel = 100; // Always 100 XP per level
+      let newXp = Math.max(0, prev.xp - amount);
+      let newLevel = prev.level;
+      let newXpToNext = prev.xpToNext;
+
+      // Level down logic if necessary
+      while (newXp < 0 && newLevel > 1) {
+        newLevel--;
+        newXpToNext = newLevel * 100;
+        newXp += newXpToNext;
+      }
 
       // Track daily XP subtraction
       const today = new Date().toISOString().split('T')[0];
@@ -284,9 +288,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       return {
         ...prev,
-        xp: Math.max(0, xpInCurrentLevel),
+        xp: Math.max(0, newXp),
         level: newLevel,
-        xpToNext: xpNeededForNextLevel,
+        xpToNext: newXpToNext,
         totalXp: newTotalXp,
         dailyXp: updatedDailyXp,
       };
