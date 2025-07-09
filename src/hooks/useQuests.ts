@@ -156,6 +156,7 @@ export const useQuests = () => {
     try {
       const todayLocal = getLocalToday();
       console.log('🔄 Checking daily quest reset for local date:', todayLocal);
+      console.log('🔄 Current time:', new Date().toISOString());
       
       // First, archive completed daily habits from previous days to preserve streak/XP history
       const { data: completedDailies, error: dailyError } = await supabase
@@ -212,17 +213,25 @@ export const useQuests = () => {
       }
 
       // Now find ALL daily habits that need to be reset for today
-      const { data: dailyHabitsToReset, error: resetError } = await supabase
+      console.log(`🔍 Looking for daily habits to reset for today: ${todayLocal}`);
+      
+      const { data: allDailyHabits, error: resetError } = await supabase
         .from('quests')
         .select('id, quest_name, due_date, status, completed_at')
         .eq('user_id', user.id)
-        .eq('quest_type', 'Daily')
-        .or(`due_date.lt.${todayLocal},due_date.is.null,and(due_date.neq.${todayLocal})`);
+        .eq('quest_type', 'Daily');
 
       if (resetError) {
         console.error('❌ Error checking daily habits for reset:', resetError);
         return;
       }
+
+      // Filter daily habits that need to be reset
+      const dailyHabitsToReset = allDailyHabits?.filter(habit => {
+        const needsReset = !habit.due_date || habit.due_date !== todayLocal;
+        console.log(`📋 Habit "${habit.quest_name}": due_date=${habit.due_date}, status=${habit.status}, needsReset=${needsReset}`);
+        return needsReset;
+      }) || [];
 
       // Reset daily habits that are not already set for today
       if (dailyHabitsToReset && dailyHabitsToReset.length > 0) {
