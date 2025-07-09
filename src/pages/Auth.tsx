@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Eye, EyeOff, LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { FeatureCarousel } from '@/components/FeatureCarousel';
 
 const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -132,35 +133,9 @@ const Auth = () => {
                 Join the quest to level up your life!
               </p>
               
-              {/* Feature List */}
-              <div className="space-y-4 lg:space-y-6 max-w-lg mx-auto lg:mx-0">
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl sm:text-2xl">🎯</span>
-                  </div>
-                  <span className="text-base sm:text-lg text-white">Set daily quests to stay on track</span>
-                </div>
-                
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl sm:text-2xl">⭐</span>
-                  </div>
-                  <span className="text-base sm:text-lg text-white">Earn XP and badges for your progress</span>
-                </div>
-                
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl sm:text-2xl">🔥</span>
-                  </div>
-                  <span className="text-base sm:text-lg text-white">Build habits with streak tracking</span>
-                </div>
-                
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl sm:text-2xl">🏆</span>
-                  </div>
-                  <span className="text-base sm:text-lg text-white">Redeem your achievements for real-life rewards</span>
-                </div>
+              {/* Feature Carousel */}
+              <div className="max-w-lg mx-auto lg:mx-0">
+                <FeatureCarousel />
               </div>
             </div>
           </div>
