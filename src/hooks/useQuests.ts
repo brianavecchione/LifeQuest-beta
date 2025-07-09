@@ -5,6 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Database } from '@/integrations/supabase/types';
 import { useUser } from '@/contexts/UserContext';
 import { testMedicationCase, testResetLogic } from '@/utils/dailyResetTest';
+import { getLocalToday, getLocalDateFromUTC, getLocalDayBoundariesUTC } from '@/utils/timezone';
 
 type DbQuest = Database['public']['Tables']['quests']['Row'];
 
@@ -151,29 +152,26 @@ export const useQuests = () => {
     if (!user) return;
 
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const todayLocal = getLocalToday();
+      console.log('🔄 Checking daily quest reset for local date:', todayLocal);
       
       // MUCH more conservative reset logic - only reset quests that are definitely from previous days
-      // Only look for quests with explicit due_date set to previous days
+      // Only look for quests with explicit due_date set to previous local days
       const { data: outdatedQuests, error } = await supabase
         .from('quests')
         .select('id, quest_name, due_date, status, completed_at')
         .eq('user_id', user.id)
         .eq('quest_type', 'Daily')
         .not('due_date', 'is', null) // Only consider quests with explicit due dates
-        .lt('due_date', today); // Only those explicitly dated before today
+        .lt('due_date', todayLocal); // Only those explicitly dated before today (local)
 
       if (error) {
-        console.error('Error checking for outdated daily quests:', error);
+        console.error('❌ Error checking for outdated daily quests:', error);
         return;
       }
 
       // For legacy quests (NULL due_date), be EXTREMELY conservative
-      // Only reset if completed more than 24 hours ago to avoid timezone issues
-      const cutoffTime = new Date();
-      cutoffTime.setDate(cutoffTime.getDate() - 1); // 24 hours ago
-      cutoffTime.setHours(0, 0, 0, 0); // Start of yesterday
-      
+      // Only reset if completed in a different local day than today
       const { data: legacyQuests, error: legacyError } = await supabase
         .from('quests')
         .select('id, quest_name, due_date, status, completed_at')
@@ -181,20 +179,34 @@ export const useQuests = () => {
         .eq('quest_type', 'Daily')
         .eq('status', 'Completed')
         .is('due_date', null)
-        .not('completed_at', 'is', null)
-        .lt('completed_at', cutoffTime.toISOString());
+        .not('completed_at', 'is', null);
 
       if (legacyError) {
-        console.error('Error checking for legacy daily quests:', legacyError);
+        console.error('❌ Error checking for legacy daily quests:', legacyError);
         return;
       }
 
+      // Filter legacy quests to only include those completed on different local days
+      const legacyQuestsToReset = legacyQuests?.filter(quest => {
+        if (!quest.completed_at) return false;
+        const completedLocalDate = getLocalDateFromUTC(quest.completed_at);
+        const isDifferentDay = completedLocalDate !== todayLocal;
+        console.log('🔍 Legacy quest check:', {
+          questName: quest.quest_name,
+          completedUTC: quest.completed_at,
+          completedLocal: completedLocalDate,
+          todayLocal,
+          isDifferentDay
+        });
+        return isDifferentDay;
+      }) || [];
+
       // Combine outdated and legacy quests that need reset
-      const allQuestsToReset = [...(outdatedQuests || []), ...(legacyQuests || [])];
+      const allQuestsToReset = [...(outdatedQuests || []), ...legacyQuestsToReset];
 
       // If we found quests that need reset, update them
       if (allQuestsToReset.length > 0) {
-        console.log(`Found ${allQuestsToReset.length} daily quests that need reset:`, 
+        console.log(`⚡ Found ${allQuestsToReset.length} daily quests that need reset:`, 
           allQuestsToReset.map(q => `${q.quest_name} (${q.status}, due: ${q.due_date || 'NULL'}, completed: ${q.completed_at})`));
         
         const questIdsToReset = allQuestsToReset.map(q => q.id);
@@ -203,16 +215,16 @@ export const useQuests = () => {
           .from('quests')
           .update({
             status: 'Not started',
-            due_date: today,
+            due_date: todayLocal, // Set to today's local date
             completed_at: null,
             updated_at: new Date().toISOString()
           })
           .in('id', questIdsToReset);
 
         if (resetError) {
-          console.error('Error resetting daily quests:', resetError);
+          console.error('❌ Error resetting daily quests:', resetError);
         } else {
-          console.log('Successfully reset daily quests');
+          console.log('✅ Successfully reset daily quests');
           
           // Log the client-side reset
           try {
@@ -220,17 +232,17 @@ export const useQuests = () => {
               .from('daily_reset_logs')
               .insert({
                 user_id: user.id,
-                reset_date: today,
+                reset_date: todayLocal,
                 reset_timestamp: new Date().toISOString(),
                 quests_reset_count: allQuestsToReset.length
               });
           } catch (logError) {
-            console.error('Error logging client-side reset:', logError);
+            console.error('❌ Error logging client-side reset:', logError);
           }
         }
       }
     } catch (error) {
-      console.error('Error in daily reset check:', error);
+      console.error('❌ Error in daily reset check:', error);
     }
   };
 

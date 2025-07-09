@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { calculateLocalStreaks, debugTimezone, getLocalDateFromUTC } from '@/utils/timezone';
 
 interface Streak {
   id: string;
@@ -25,6 +26,10 @@ export const useStreaks = () => {
     if (!user) return;
     
     try {
+      // Debug timezone info
+      const tzInfo = debugTimezone();
+      console.log('🔥 Calculating streaks with timezone:', tzInfo);
+      
       // Get all completed quests (current + archived) with completion dates
       const [currentQuests, archivedQuests] = await Promise.all([
         supabase
@@ -43,62 +48,30 @@ export const useStreaks = () => {
         throw currentQuests.error || archivedQuests.error;
       }
 
-      // Combine all completion dates
-      const allCompletedDates = [
+      // Combine all completion timestamps (UTC)
+      const allCompletedTimestamps = [
         ...(currentQuests.data || []).map(q => q.completed_at),
         ...(archivedQuests.data || []).map(q => q.completed_at)
-      ].filter(date => date !== null);
+      ].filter(timestamp => timestamp !== null);
 
-      // Get unique dates (YYYY-MM-DD format)
-      const uniqueDates = [...new Set(
-        allCompletedDates.map(date => new Date(date!).toISOString().split('T')[0])
-      )].sort((a, b) => new Date(b).getTime() - new Date(a).getTime()); // Sort descending
+      console.log('📊 Found completed timestamps:', {
+        currentCount: currentQuests.data?.length || 0,
+        archivedCount: archivedQuests.data?.length || 0,
+        totalTimestamps: allCompletedTimestamps.length,
+        sampleTimestamps: allCompletedTimestamps.slice(0, 5)
+      });
 
-      // Calculate streaks
-      const today = new Date().toISOString().split('T')[0];
-      let current = 0;
-      let longest = 0;
-      let tempStreak = 0;
+      // Calculate streaks with proper timezone handling
+      const streakData = calculateLocalStreaks(allCompletedTimestamps);
+      
+      console.log('🎯 Calculated streak data:', streakData);
 
-      // Calculate current streak (consecutive days from today backwards)
-      for (let i = 0; i < uniqueDates.length; i++) {
-        const expectedDate = new Date();
-        expectedDate.setDate(expectedDate.getDate() - i);
-        const expectedDateStr = expectedDate.toISOString().split('T')[0];
-        
-        if (uniqueDates.includes(expectedDateStr)) {
-          current++;
-        } else {
-          break;
-        }
-      }
-
-      // Calculate longest streak ever
-      for (let i = 0; i < uniqueDates.length; i++) {
-        const currentDate = new Date(uniqueDates[i]);
-        
-        if (i === 0) {
-          tempStreak = 1;
-        } else {
-          const prevDate = new Date(uniqueDates[i - 1]);
-          const daysDiff = Math.abs((currentDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24));
-          
-          if (daysDiff === 1) {
-            tempStreak++;
-          } else {
-            longest = Math.max(longest, tempStreak);
-            tempStreak = 1;
-          }
-        }
-      }
-      longest = Math.max(longest, tempStreak);
-
-      setCurrentStreak(current);
-      setLongestStreak(longest);
-      setTotalCompleted(allCompletedDates.length);
+      setCurrentStreak(streakData.currentStreak);
+      setLongestStreak(streakData.longestStreak);
+      setTotalCompleted(streakData.totalCompletedDays);
       
     } catch (error) {
-      console.error('Error calculating streaks:', error);
+      console.error('❌ Error calculating streaks:', error);
       setError('Failed to calculate streaks');
     }
   };
@@ -117,10 +90,10 @@ export const useStreaks = () => {
       if (error) throw error;
       setStreaks(data || []);
       
-      // Also calculate streaks from quest data for more accurate results
+      // Calculate streaks from quest data for more accurate results
       await calculateStreaksFromQuests();
     } catch (error) {
-      console.error('Error fetching streaks:', error);
+      console.error('❌ Error fetching streaks:', error);
       setError('Failed to load streaks');
     } finally {
       setLoading(false);
@@ -140,7 +113,7 @@ export const useStreaks = () => {
       // Refresh streaks after recalculation
       await fetchStreaks();
     } catch (error) {
-      console.error('Error recalculating streaks:', error);
+      console.error('❌ Error recalculating streaks:', error);
       setError('Failed to recalculate streaks');
     }
   };
@@ -165,11 +138,29 @@ export const useStreaks = () => {
     fetchStreaks();
   }, [user]);
 
-  // Set up real-time subscription
+  // Set up real-time subscription for quest completions to update streaks
   useEffect(() => {
     if (!user) return;
 
-    const channel = supabase
+    const questChannel = supabase
+      .channel('quest-completions')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'quests',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('🔄 Quest updated, recalculating streaks:', payload);
+          // Recalculate streaks when quest status changes
+          calculateStreaksFromQuests();
+        }
+      )
+      .subscribe();
+
+    const streakChannel = supabase
       .channel('streaks-changes')
       .on(
         'postgres_changes',
@@ -186,7 +177,8 @@ export const useStreaks = () => {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(questChannel);
+      supabase.removeChannel(streakChannel);
     };
   }, [user]);
 
