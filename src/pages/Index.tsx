@@ -12,15 +12,6 @@ import AchievementsSection from '@/components/AchievementsSection';
 import InventorySystem from '@/components/InventorySystem';
 
 const Index = () => {
-  const character = {
-    name: 'Adventurer',
-    level: 2,
-    xp: 75,
-    xpToNext: 100,
-    totalXp: 333,
-    gold: 35,
-    avatar: 'A'
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -44,7 +35,7 @@ const Index = () => {
 
         {/* Character Stats */}
         <div className="mb-12">
-          <CharacterStats character={character} />
+          <CharacterStats />
         </div>
 
         {/* Quest Tracker */}

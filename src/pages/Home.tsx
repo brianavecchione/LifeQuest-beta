@@ -50,7 +50,7 @@ const Home = () => {
 
         {/* Character Stats */}
         <div className="mb-12">
-          <CharacterStats character={user} />
+          <CharacterStats />
         </div>
 
         {/* Quest Tracker */}

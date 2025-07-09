@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useDailyXp } from '@/hooks/useDailyXp';
+import { useToast } from '@/hooks/use-toast';
+import confetti from 'canvas-confetti';
 
 interface UserData {
   name: string;
@@ -53,6 +55,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<UserData>(emptyUser);
   const [isLoading, setIsLoading] = useState(true);
   const { dailyXpData, weeklyXpData, refetch: refetchDailyXp } = useDailyXp();
+  const { toast } = useToast();
 
   // Load user profile data from Supabase
   const loadUserProfile = async () => {
@@ -200,18 +203,42 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const triggerLevelUpCelebration = (newLevel: number) => {
+    // Confetti animation
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#fbbf24', '#f59e0b', '#d97706', '#92400e']
+    });
+
+    // Toast notification
+    toast({
+      title: "🎉 Level Up!",
+      description: `Congratulations! You've reached Level ${newLevel}!`,
+      duration: 5000,
+    });
+  };
+
   const addXP = (amount: number) => {
     setUser(prev => {
       const newTotalXp = prev.totalXp + amount;
       let newXp = prev.xp + amount;
       let newLevel = prev.level;
       let newXpToNext = prev.xpToNext;
+      const originalLevel = prev.level;
 
       // Level up logic
       while (newXp >= newXpToNext) {
         newXp -= newXpToNext;
         newLevel++;
         newXpToNext = newLevel * 100; // Simple formula: each level needs level * 100 XP
+      }
+
+      // Trigger celebration if level increased
+      if (newLevel > originalLevel) {
+        // Delay celebration to allow state update
+        setTimeout(() => triggerLevelUpCelebration(newLevel), 100);
       }
 
       // Track daily XP
