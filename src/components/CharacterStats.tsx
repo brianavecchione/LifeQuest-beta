@@ -155,7 +155,7 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-slate-300 font-medium">Level Progress</span>
-                <span className="text-amber-400 font-bold">{character.totalXp}/{(character.level + 1) * 100} XP</span>
+                <span className="text-amber-400 font-bold">{character.totalXp}/{(Math.floor(character.totalXp / 100) + 1) * 100} XP</span>
               </div>
               <Progress value={xpProgress} className="h-3 bg-slate-700">
                 <div className="h-full bg-gradient-to-r from-green-500 to-emerald-400 rounded-full transition-all duration-500" style={{ width: `${xpProgress}%` }} />
