@@ -106,24 +106,36 @@ export const daysBetweenLocalDates = (dateStr1: string, dateStr2: string): numbe
 export const generateDailyXpData = (xpHistory: Array<{ date: string; xp_earned: number }>) => {
   const last7LocalDays = getLastNLocalDays(7);
   
+  console.log('🔍 TIMEZONE DEBUG - Last 7 local days:', last7LocalDays);
+  console.log('🔍 TIMEZONE DEBUG - Raw XP history from DB:', xpHistory);
+  
   // Create lookup map from database data
   const xpLookup: Record<string, number> = {};
   xpHistory.forEach(entry => {
     xpLookup[entry.date] = entry.xp_earned;
+    console.log(`🔍 TIMEZONE DEBUG - Mapping ${entry.date} -> ${entry.xp_earned} XP`);
   });
   
-  return last7LocalDays.map((dateStr, index) => {
+  console.log('🔍 TIMEZONE DEBUG - XP lookup map:', xpLookup);
+  
+  const result = last7LocalDays.map((dateStr, index) => {
     const date = new Date(dateStr);
     const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
     const fullDayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+    const xpForDay = Math.max(0, xpLookup[dateStr] || 0);
+    
+    console.log(`🔍 TIMEZONE DEBUG - Day ${index}: ${dateStr} (${dayName}) -> ${xpForDay} XP`);
     
     return {
       date: dayName,
-      xp: Math.max(0, xpLookup[dateStr] || 0), // Ensure XP is never negative
+      xp: xpForDay,
       day: fullDayName,
       fullDate: dateStr // Add full date for debugging
     };
   });
+  
+  console.log('🔍 TIMEZONE DEBUG - Final daily XP data:', result);
+  return result;
 };
 
 /**

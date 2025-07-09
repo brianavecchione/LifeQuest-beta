@@ -33,7 +33,9 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
   // Get real XP data with fallback for safety - MUST call hooks before any conditional returns
   const weeklyXpData = React.useMemo(() => {
     try {
-      return getDailyXpData();
+      const data = getDailyXpData();
+      console.log('📊 CharacterStats - Received daily XP data:', data);
+      return data;
     } catch (error) {
       console.error('Error getting daily XP data:', error);
       // Fallback to empty data
