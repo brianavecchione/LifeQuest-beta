@@ -68,14 +68,14 @@ export const useQuests = () => {
       
       const cutoffTimestamp = cutoffTime.toISOString()
       
-      // Find completed quests from before the cutoff time that should be archived
-      // Exclude daily habits - they should reset instead of being archived
+      // Find completed NON-DAILY quests from before the cutoff time that should be archived
+      // Daily habits are handled separately in the reset logic to preserve streak history
       const { data: oldCompletedQuests, error } = await supabase
         .from('quests')
         .select('*')
         .eq('user_id', user.id)
         .eq('status', 'Completed')
-        .neq('quest_type', 'Daily') // Exclude daily habits from archiving
+        .neq('quest_type', 'Daily') // Exclude daily habits - they're handled in reset logic
         .not('completed_at', 'is', null)
         .lt('completed_at', cutoffTimestamp);
 
@@ -157,76 +157,94 @@ export const useQuests = () => {
       const todayLocal = getLocalToday();
       console.log('🔄 Checking daily quest reset for local date:', todayLocal);
       
-      // MUCH more conservative reset logic - only reset quests that are definitely from previous days
-      // Only look for quests with explicit due_date set to previous local days
-      const { data: outdatedQuests, error } = await supabase
+      // First, archive completed daily habits from previous days to preserve streak/XP history
+      const { data: completedDailies, error: dailyError } = await supabase
         .from('quests')
-        .select('id, quest_name, due_date, status, completed_at')
-        .eq('user_id', user.id)
-        .eq('quest_type', 'Daily')
-        .not('due_date', 'is', null) // Only consider quests with explicit due dates
-        .lt('due_date', todayLocal); // Only those explicitly dated before today (local)
-
-      if (error) {
-        console.error('❌ Error checking for outdated daily quests:', error);
-        return;
-      }
-
-      // For legacy quests (NULL due_date), be EXTREMELY conservative
-      // Only reset if completed in a different local day than today
-      const { data: legacyQuests, error: legacyError } = await supabase
-        .from('quests')
-        .select('id, quest_name, due_date, status, completed_at')
+        .select('*')
         .eq('user_id', user.id)
         .eq('quest_type', 'Daily')
         .eq('status', 'Completed')
-        .is('due_date', null)
         .not('completed_at', 'is', null);
 
-      if (legacyError) {
-        console.error('❌ Error checking for legacy daily quests:', legacyError);
+      if (dailyError) {
+        console.error('❌ Error checking completed daily habits:', dailyError);
         return;
       }
 
-      // Filter legacy quests to only include those completed on different local days
-      const legacyQuestsToReset = legacyQuests?.filter(quest => {
-        if (!quest.completed_at) return false;
-        const completedLocalDate = getLocalDateFromUTC(quest.completed_at);
-        const isDifferentDay = completedLocalDate !== todayLocal;
-        console.log('🔍 Legacy quest check:', {
-          questName: quest.quest_name,
-          completedUTC: quest.completed_at,
-          completedLocal: completedLocalDate,
-          todayLocal,
-          isDifferentDay
+      // Archive completed daily habits from previous days
+      if (completedDailies && completedDailies.length > 0) {
+        const dailiesFromPreviousDays = completedDailies.filter(quest => {
+          if (!quest.completed_at) return false;
+          const completedLocalDate = getLocalDateFromUTC(quest.completed_at);
+          return completedLocalDate !== todayLocal;
         });
-        return isDifferentDay;
-      }) || [];
 
-      // Combine outdated and legacy quests that need reset
-      const allQuestsToReset = [...(outdatedQuests || []), ...legacyQuestsToReset];
+        if (dailiesFromPreviousDays.length > 0) {
+          console.log(`📝 Archiving ${dailiesFromPreviousDays.length} completed daily habits from previous days`);
+          
+          const focusQuests = JSON.parse(localStorage.getItem('lifequest-todays-focus') || '[]');
+          
+          const archiveRecords = dailiesFromPreviousDays.map(quest => ({
+            user_id: quest.user_id,
+            original_quest_id: quest.id,
+            quest_name: quest.quest_name,
+            description: quest.description,
+            quest_type: quest.quest_type,
+            priority: quest.priority,
+            xp_reward: quest.xp_reward,
+            gold_reward: quest.gold_reward,
+            tags: quest.tags,
+            completed_date: new Date(quest.completed_at).toISOString().split('T')[0],
+            completed_at: quest.completed_at,
+            was_in_focus: focusQuests.includes(quest.id)
+          }));
 
-      // If we found quests that need reset, update them
-      if (allQuestsToReset.length > 0) {
-        console.log(`⚡ Found ${allQuestsToReset.length} daily quests that need reset:`, 
-          allQuestsToReset.map(q => `${q.quest_name} (${q.status}, due: ${q.due_date || 'NULL'}, completed: ${q.completed_at})`));
+          const { error: archiveError } = await supabase
+            .from('archived_quests')
+            .insert(archiveRecords);
+
+          if (archiveError) {
+            console.error('❌ Error archiving daily habits:', archiveError);
+          } else {
+            console.log('✅ Successfully archived completed daily habits');
+          }
+        }
+      }
+
+      // Now find ALL daily habits that need to be reset for today
+      const { data: dailyHabitsToReset, error: resetError } = await supabase
+        .from('quests')
+        .select('id, quest_name, due_date, status, completed_at')
+        .eq('user_id', user.id)
+        .eq('quest_type', 'Daily')
+        .or(`due_date.lt.${todayLocal},due_date.is.null,and(due_date.neq.${todayLocal})`);
+
+      if (resetError) {
+        console.error('❌ Error checking daily habits for reset:', resetError);
+        return;
+      }
+
+      // Reset daily habits that are not already set for today
+      if (dailyHabitsToReset && dailyHabitsToReset.length > 0) {
+        console.log(`⚡ Found ${dailyHabitsToReset.length} daily habits to reset for today:`, 
+          dailyHabitsToReset.map(q => `${q.quest_name} (${q.status}, due: ${q.due_date || 'NULL'})`));
         
-        const questIdsToReset = allQuestsToReset.map(q => q.id);
+        const questIdsToReset = dailyHabitsToReset.map(q => q.id);
         
-        const { error: resetError } = await supabase
+        const { error: updateError } = await supabase
           .from('quests')
           .update({
             status: 'Not started',
             due_date: todayLocal, // Set to today's local date
-            completed_at: null,
+            completed_at: null, // Reset completion timestamp for new day
             updated_at: new Date().toISOString()
           })
           .in('id', questIdsToReset);
 
-        if (resetError) {
-          console.error('❌ Error resetting daily quests:', resetError);
+        if (updateError) {
+          console.error('❌ Error resetting daily habits:', updateError);
         } else {
-          console.log('✅ Successfully reset daily quests');
+          console.log('✅ Successfully reset daily habits for today');
           
           // Log the client-side reset
           try {
@@ -236,11 +254,50 @@ export const useQuests = () => {
                 user_id: user.id,
                 reset_date: todayLocal,
                 reset_timestamp: new Date().toISOString(),
-                quests_reset_count: allQuestsToReset.length
+                quests_reset_count: dailyHabitsToReset.length
               });
           } catch (logError) {
             console.error('❌ Error logging client-side reset:', logError);
           }
+        }
+      } else {
+        console.log('✅ All daily habits are already set for today');
+      }
+
+      // Handle non-daily quests (separate logic)
+      const { data: outdatedQuests, error } = await supabase
+        .from('quests')
+        .select('id, quest_name, due_date, status, completed_at')
+        .eq('user_id', user.id)
+        .neq('quest_type', 'Daily') // Only non-daily quests
+        .not('due_date', 'is', null)
+        .lt('due_date', todayLocal);
+
+      if (error) {
+        console.error('❌ Error checking for outdated non-daily quests:', error);
+        return;
+      }
+
+      // Reset outdated non-daily quests if any
+      if (outdatedQuests && outdatedQuests.length > 0) {
+        console.log(`⚡ Found ${outdatedQuests.length} outdated non-daily quests to reset`);
+        
+        const questIdsToReset = outdatedQuests.map(q => q.id);
+        
+        const { error: resetError } = await supabase
+          .from('quests')
+          .update({
+            status: 'Not started',
+            due_date: todayLocal,
+            completed_at: null,
+            updated_at: new Date().toISOString()
+          })
+          .in('id', questIdsToReset);
+
+        if (resetError) {
+          console.error('❌ Error resetting non-daily quests:', resetError);
+        } else {
+          console.log('✅ Successfully reset non-daily quests');
         }
       }
     } catch (error) {
