@@ -254,6 +254,7 @@ const CharacterStats = ({ character }: CharacterStatsProps) => {
                       axisLine={false}
                       tickLine={false}
                       tick={{ fill: '#94a3b8', fontSize: 12 }}
+                      domain={[0, 'dataMax']}
                     />
                     <ChartTooltip 
                       content={<ChartTooltipContent />}

@@ -115,7 +115,7 @@ export const useDailyXp = () => {
       
       weeklyData.push({
         date: `Week ${4 - weekOffset}`,
-        xp: weeklyXp,
+        xp: Math.max(0, weeklyXp), // Ensure weekly XP is never negative
         period: `Week of ${weekStart.toLocaleDateString('en-US', { 
           month: 'short', 
           day: 'numeric',

@@ -121,7 +121,7 @@ export const generateDailyXpData = (xpHistory: Array<{ date: string; xp_earned: 
     
     return {
       date: dayName,
-      xp: xpLookup[dateStr] || 0,
+      xp: Math.max(0, xpLookup[dateStr] || 0), // Ensure XP is never negative
       day: fullDayName,
       fullDate: dateStr // Add full date for debugging
     };
