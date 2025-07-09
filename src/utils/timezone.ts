@@ -118,13 +118,26 @@ export const generateDailyXpData = (xpHistory: Array<{ date: string; xp_earned: 
   
   console.log('🔍 TIMEZONE DEBUG - XP lookup map:', xpLookup);
   
+  const timezone = getUserTimezone();
+  
   const result = last7LocalDays.map((dateStr, index) => {
-    const date = new Date(dateStr);
-    const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-    const fullDayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+    // Create date in local timezone to avoid UTC shifting issues
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const localDate = new Date(year, month - 1, day); // month is 0-indexed
+    
+    // Get day names in local timezone
+    const dayName = localDate.toLocaleDateString('en-US', { 
+      weekday: 'short',
+      timeZone: timezone 
+    });
+    const fullDayName = localDate.toLocaleDateString('en-US', { 
+      weekday: 'long',
+      timeZone: timezone 
+    });
+    
     const xpForDay = Math.max(0, xpLookup[dateStr] || 0);
     
-    console.log(`🔍 TIMEZONE DEBUG - Day ${index}: ${dateStr} (${dayName}) -> ${xpForDay} XP`);
+    console.log(`🔍 TIMEZONE DEBUG - Day ${index}: ${dateStr} -> ${dayName} (${fullDayName}) -> ${xpForDay} XP`);
     
     return {
       date: dayName,
