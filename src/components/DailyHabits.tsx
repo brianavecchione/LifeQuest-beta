@@ -66,6 +66,7 @@ const DailyHabits: React.FC<DailyHabitsProps> = ({
               onStatusChange={onStatusChange}
               onEditQuest={onEditQuest}
               onDeleteQuest={onDeleteQuest}
+              hideBadges={['gold', 'type']}
             />
           ))}
         </div>

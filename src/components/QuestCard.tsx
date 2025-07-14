@@ -15,6 +15,7 @@ interface QuestCardProps {
   onDeleteQuest: (quest: Quest) => void;
   onBeginQuest?: (quest: Quest) => void;
   activeTimerQuestId?: string;
+  hideBadges?: Array<'gold' | 'type'>;
 }
 
 const QuestCard: React.FC<QuestCardProps> = ({
@@ -26,7 +27,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
   onEditQuest,
   onDeleteQuest,
   onBeginQuest,
-  activeTimerQuestId
+  activeTimerQuestId,
+  hideBadges = []
 }) => {
   const getStatusColor = (status: Quest['status']) => {
     switch (status) {
@@ -80,13 +82,17 @@ const QuestCard: React.FC<QuestCardProps> = ({
               <Badge variant="outline" className="text-amber-400 border-amber-400/50">
                 {quest.xp_reward} XP
               </Badge>
-              <Badge variant="outline" className="text-yellow-400 border-yellow-400/50">
-                <Coins className="w-3 h-3 mr-1" />
-                {quest.gold_reward} Gold
-              </Badge>
-              <Badge variant="outline" className={`${getTypeColor(quest.quest_type)} border-current`}>
-                {quest.quest_type}
-              </Badge>
+              {!hideBadges.includes('gold') && (
+                <Badge variant="outline" className="text-yellow-400 border-yellow-400/50">
+                  <Coins className="w-3 h-3 mr-1" />
+                  {quest.gold_reward} Gold
+                </Badge>
+              )}
+              {!hideBadges.includes('type') && (
+                <Badge variant="outline" className={`${getTypeColor(quest.quest_type)} border-current`}>
+                  {quest.quest_type}
+                </Badge>
+              )}
             </div>
           </div>
         </div>
