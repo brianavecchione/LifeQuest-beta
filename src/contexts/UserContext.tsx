@@ -229,6 +229,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
+  // For bonus rewards (like Pomodoro bonuses) - these update the database
   const addXP = async (amount: number) => {
     // Update local state immediately for responsive UI
     setUser(prev => {
@@ -285,8 +286,22 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const addGold = (amount: number) => {
+  const addGold = async (amount: number) => {
+    // Update local state immediately
     setUser(prev => ({ ...prev, gold: prev.gold + amount }));
+    
+    // Update database for persistence
+    if (authUser && amount > 0) {
+      try {
+        await supabase.rpc('update_user_stats', {
+          p_user_id: authUser.id,
+          xp_gained: 0,
+          gold_gained: amount
+        });
+      } catch (error) {
+        console.error('Error updating gold in database:', error);
+      }
+    }
   };
 
   const subtractXP = async (amount: number) => {

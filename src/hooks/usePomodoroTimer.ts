@@ -99,7 +99,10 @@ export const usePomodoroTimer = (updateQuestStatus: (id: string, status: string)
     if (completedTimerQuest) {
       const { bonusXp, bonusGold } = calculateRewards(completedTimerQuest);
       
+      // Complete the quest - database trigger handles the base rewards
       updateQuestStatus(completedTimerQuest.id, 'Completed');
+      
+      // Only add the bonus rewards for using pomodoro technique
       addXP(bonusXp);
       addGold(bonusGold);
 
