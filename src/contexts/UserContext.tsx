@@ -230,7 +230,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // For bonus rewards (like Pomodoro bonuses) - these update the database
+  // IMPORTANT: Regular quest rewards are handled by database trigger, NOT these functions
   const addXP = async (amount: number) => {
+    console.log(`🎁 Adding bonus XP: ${amount} (not from regular quest completion)`);
+    
     // Update local state immediately for responsive UI
     setUser(prev => {
       const newTotalXp = prev.totalXp + amount;
@@ -262,7 +265,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
     });
 
-    // Update database for persistence and chart data
+    // Update database for persistence and chart data (bonus rewards only)
     if (authUser && amount > 0) {
       try {
         await supabase.rpc('update_user_stats', {
@@ -281,16 +284,18 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           await refetchDailyXp();
         }
       } catch (error) {
-        console.error('Error updating XP in database:', error);
+        console.error('Error updating bonus XP in database:', error);
       }
     }
   };
 
   const addGold = async (amount: number) => {
+    console.log(`🎁 Adding bonus Gold: ${amount} (not from regular quest completion)`);
+    
     // Update local state immediately
     setUser(prev => ({ ...prev, gold: prev.gold + amount }));
     
-    // Update database for persistence
+    // Update database for persistence (bonus rewards only)
     if (authUser && amount > 0) {
       try {
         await supabase.rpc('update_user_stats', {
@@ -299,7 +304,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           gold_gained: amount
         });
       } catch (error) {
-        console.error('Error updating gold in database:', error);
+        console.error('Error updating bonus gold in database:', error);
       }
     }
   };

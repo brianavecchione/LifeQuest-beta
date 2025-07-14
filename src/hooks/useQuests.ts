@@ -515,16 +515,16 @@ export const useQuests = () => {
         }, 100);
       }
 
-      // Show success message with context about balance limits
+      // Show success message - database trigger handles actual rewards
       if (status === 'Completed') {
         toast({
           title: 'Quest Completed! ✨',
-          description: `You earned ${quest.xp_reward} XP and ${quest.gold_reward} Gold!`,
+          description: `Great job! Check your XP and gold balance for rewards.`,
         });
       } else if (previousStatus === 'Completed') {
         toast({
           title: 'Quest Unchecked',
-          description: `${quest.xp_reward} XP and ${quest.gold_reward} Gold have been subtracted.`,
+          description: `Quest marked as incomplete. Rewards have been adjusted.`,
         });
       }
 
