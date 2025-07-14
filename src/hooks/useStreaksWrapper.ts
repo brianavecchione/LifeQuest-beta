@@ -48,6 +48,9 @@ export const useStreaks = () => {
     return {
       streaks: createGuestStreaks(),
       loading: false,
+      getBestStreak: () => ({ current_streak: 5, streak_name: 'Daily Habits Streak' }),
+      getLongestStreak: () => 7,
+      getTotalCompleted: () => 3,
       updateStreak: () => Promise.resolve(),
       createStreak: () => Promise.resolve(),
       deleteStreak: () => Promise.resolve(),

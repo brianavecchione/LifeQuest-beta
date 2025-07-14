@@ -9,7 +9,7 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Area, AreaChart } f
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useUser } from '@/contexts/UserContext';
 import { useGuest } from '@/contexts/GuestContext';
-import { useStreaks } from '@/hooks/useStreaks';
+import { useStreaks } from '@/hooks/useStreaksWrapper';
 
 // No props needed - we get data from UserContext
 
@@ -96,7 +96,7 @@ const CharacterStats = () => {
   const hasXpData = currentData.some(item => item.xp > 0);
 
   // Show loading state if user data is still loading or if user has no name yet
-  if (isLoading || !character.name) {
+  if (!isGuestMode && (isLoading || !character.name)) {
     return (
       <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-yellow-600/30 shadow-2xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
