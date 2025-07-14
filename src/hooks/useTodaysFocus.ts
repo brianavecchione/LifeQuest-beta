@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Quest } from '@/hooks/useQuests';
+import { useGuest } from '@/contexts/GuestContext';
 
 export const useTodaysFocus = (quests: Quest[]) => {
+  const { isGuestMode, guestTodaysFocus, updateGuestTodaysFocus } = useGuest();
+  
   const [todaysFocus, setTodaysFocus] = useState<string[]>(() => {
+    if (isGuestMode) return guestTodaysFocus;
     const savedFocus = localStorage.getItem('lifequest-todays-focus');
     return savedFocus ? JSON.parse(savedFocus) : [];
   });

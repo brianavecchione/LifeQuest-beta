@@ -32,6 +32,7 @@ interface GuestContextType {
   isGuestMode: boolean;
   guestUser: GuestUserData;
   guestQuests: GuestQuest[];
+  guestTodaysFocus: string[];
   enableGuestMode: () => void;
   disableGuestMode: () => void;
   updateGuestUser: (updates: Partial<GuestUserData>) => void;
@@ -39,53 +40,27 @@ interface GuestContextType {
   addGuestGold: (amount: number) => void;
   toggleGuestQuest: (questId: string) => void;
   addGuestQuest: (quest: Omit<GuestQuest, 'id' | 'created_at' | 'updated_at'>) => void;
+  updateGuestTodaysFocus: (questIds: string[]) => void;
 }
 
 const createDummyQuests = (): GuestQuest[] => [
+  // Daily quests
   {
     id: 'guest-1',
     quest_name: 'Morning Meditation',
-    status: 'pending',
+    status: 'completed',
     xp_reward: 15,
     gold_reward: 5,
     quest_type: 'Daily',
     priority: 'Medium',
     description: 'Take 10 minutes for mindful meditation',
     tags: ['wellness', 'mindfulness'],
-    completed_at: null,
+    completed_at: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 minutes ago
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   },
   {
     id: 'guest-2',
-    quest_name: 'Complete Project Proposal',
-    status: 'pending',
-    xp_reward: 50,
-    gold_reward: 25,
-    quest_type: 'Main',
-    priority: 'High',
-    description: 'Finish the quarterly project proposal for review',
-    tags: ['work', 'deadline'],
-    completed_at: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: 'guest-3',
-    quest_name: 'Read 20 Pages',
-    status: 'completed',
-    xp_reward: 20,
-    gold_reward: 10,
-    quest_type: 'Side',
-    priority: 'Low',
-    description: 'Continue reading "The Fellowship of the Ring"',
-    tags: ['reading', 'personal'],
-    completed_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: 'guest-4',
     quest_name: 'Drink 8 Glasses of Water',
     status: 'pending',
     xp_reward: 10,
@@ -99,21 +74,109 @@ const createDummyQuests = (): GuestQuest[] => [
     updated_at: new Date().toISOString(),
   },
   {
-    id: 'guest-5',
-    quest_name: 'Learn Quantum Computing',
+    id: 'guest-3',
+    quest_name: 'Exercise for 30 Minutes',
     status: 'pending',
-    xp_reward: 200,
-    gold_reward: 100,
-    quest_type: 'Legendary',
+    xp_reward: 25,
+    gold_reward: 8,
+    quest_type: 'Daily',
     priority: 'High',
-    description: 'Master the fundamentals of quantum computing',
-    tags: ['learning', 'technology', 'epic'],
+    description: 'Get your heart rate up with any form of exercise',
+    tags: ['fitness', 'health'],
+    completed_at: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'guest-4',
+    quest_name: 'Practice Gratitude',
+    status: 'pending',
+    xp_reward: 12,
+    gold_reward: 4,
+    quest_type: 'Daily',
+    priority: 'Low',
+    description: 'Write down 3 things you\'re grateful for today',
+    tags: ['mindfulness', 'journaling'],
+    completed_at: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  
+  // Main quests
+  {
+    id: 'guest-5',
+    quest_name: 'Complete Project Proposal',
+    status: 'pending',
+    xp_reward: 50,
+    gold_reward: 25,
+    quest_type: 'Main',
+    priority: 'High',
+    description: 'Finish the quarterly project proposal for review',
+    tags: ['work', 'deadline'],
     completed_at: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   },
   {
     id: 'guest-6',
+    quest_name: 'Launch Personal Website',
+    status: 'pending',
+    xp_reward: 75,
+    gold_reward: 40,
+    quest_type: 'Main',
+    priority: 'Medium',
+    description: 'Deploy and go live with your portfolio website',
+    tags: ['coding', 'portfolio', 'career'],
+    completed_at: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'guest-7',
+    quest_name: 'Plan Vacation Trip',
+    status: 'completed',
+    xp_reward: 40,
+    gold_reward: 20,
+    quest_type: 'Main',
+    priority: 'Medium',
+    description: 'Research and book flights and accommodation for summer vacation',
+    tags: ['travel', 'planning'],
+    completed_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  
+  // Side quests
+  {
+    id: 'guest-8',
+    quest_name: 'Read 20 Pages',
+    status: 'completed',
+    xp_reward: 20,
+    gold_reward: 10,
+    quest_type: 'Side',
+    priority: 'Low',
+    description: 'Continue reading "The Fellowship of the Ring"',
+    tags: ['reading', 'personal'],
+    completed_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'guest-9',
+    quest_name: 'Organize Desk Space',
+    status: 'pending',
+    xp_reward: 15,
+    gold_reward: 8,
+    quest_type: 'Side',
+    priority: 'Low',
+    description: 'Clean and organize your workspace for better productivity',
+    tags: ['organization', 'productivity'],
+    completed_at: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'guest-10',
     quest_name: 'Weekly Grocery Shopping',
     status: 'completed',
     xp_reward: 15,
@@ -123,6 +186,50 @@ const createDummyQuests = (): GuestQuest[] => [
     description: 'Get groceries for the week',
     tags: ['errands', 'life'],
     completed_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'guest-11',
+    quest_name: 'Call Mom',
+    status: 'pending',
+    xp_reward: 18,
+    gold_reward: 6,
+    quest_type: 'Side',
+    priority: 'Medium',
+    description: 'Catch up with family and see how Mom is doing',
+    tags: ['family', 'relationships'],
+    completed_at: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  
+  // Legendary quests
+  {
+    id: 'guest-12',
+    quest_name: 'Learn Quantum Computing',
+    status: 'pending',
+    xp_reward: 200,
+    gold_reward: 100,
+    quest_type: 'Legendary',
+    priority: 'High',
+    description: 'Master the fundamentals of quantum computing and implement a basic algorithm',
+    tags: ['learning', 'technology', 'epic'],
+    completed_at: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'guest-13',
+    quest_name: 'Complete Marathon Training',
+    status: 'pending',
+    xp_reward: 300,
+    gold_reward: 150,
+    quest_type: 'Legendary',
+    priority: 'High',
+    description: 'Train for and complete a full 26.2 mile marathon',
+    tags: ['fitness', 'endurance', 'challenge'],
+    completed_at: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   },
@@ -155,12 +262,14 @@ export const GuestProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [isGuestMode, setIsGuestMode] = useState(false);
   const [guestUser, setGuestUser] = useState<GuestUserData>(createDummyUser());
   const [guestQuests, setGuestQuests] = useState<GuestQuest[]>(createDummyQuests());
+  const [guestTodaysFocus, setGuestTodaysFocus] = useState<string[]>(['guest-2', 'guest-5', 'guest-9']);
 
   const enableGuestMode = () => {
     setIsGuestMode(true);
     // Reset to fresh dummy data when entering guest mode
     setGuestUser(createDummyUser());
     setGuestQuests(createDummyQuests());
+    setGuestTodaysFocus(['guest-2', 'guest-5', 'guest-9']);
   };
 
   const disableGuestMode = () => {
@@ -168,6 +277,7 @@ export const GuestProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     // Reset data when leaving guest mode
     setGuestUser(createDummyUser());
     setGuestQuests(createDummyQuests());
+    setGuestTodaysFocus([]);
   };
 
   const updateGuestUser = (updates: Partial<GuestUserData>) => {
@@ -253,10 +363,15 @@ export const GuestProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setGuestQuests(prev => [...prev, newQuest]);
   };
 
+  const updateGuestTodaysFocus = (questIds: string[]) => {
+    setGuestTodaysFocus(questIds);
+  };
+
   const value: GuestContextType = {
     isGuestMode,
     guestUser,
     guestQuests,
+    guestTodaysFocus,
     enableGuestMode,
     disableGuestMode,
     updateGuestUser,
@@ -264,6 +379,7 @@ export const GuestProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     addGuestGold,
     toggleGuestQuest,
     addGuestQuest,
+    updateGuestTodaysFocus,
   };
 
   return <GuestContext.Provider value={value}>{children}</GuestContext.Provider>;
