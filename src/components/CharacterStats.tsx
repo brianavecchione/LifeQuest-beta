@@ -44,9 +44,15 @@ const CharacterStats = () => {
     try {
       const data = getDailyXpData();
       console.log('📊 CharacterStats - Received daily XP data:', data);
+      
+      // Debug: Calculate total XP from chart data
+      const totalXpFromChart = data.reduce((sum, day) => sum + day.xp, 0);
+      console.log('📊 CharacterStats - Total XP from chart data:', totalXpFromChart);
+      console.log('📊 CharacterStats - User total XP:', activeUser.totalXp);
+      
       return data;
     } catch (error) {
-      console.error('Error getting daily XP data:', error);
+      console.error('❌ Error getting daily XP data:', error);
       // Fallback to empty data
       return Array.from({ length: 7 }, (_, i) => {
         const date = new Date();
@@ -58,7 +64,7 @@ const CharacterStats = () => {
         };
       });
     }
-  }, [isGuestMode, getDailyXpData]);
+  }, [isGuestMode, getDailyXpData, activeUser.totalXp]);
 
   const monthlyXpData = React.useMemo(() => {
     if (isGuestMode) {
@@ -71,9 +77,11 @@ const CharacterStats = () => {
     }
     
     try {
-      return getWeeklyXpData();
+      const data = getWeeklyXpData();
+      console.log('📊 CharacterStats - Received weekly XP data:', data);
+      return data;
     } catch (error) {
-      console.error('Error getting weekly XP data:', error);
+      console.error('❌ Error getting weekly XP data:', error);
       // Fallback to empty data
       return Array.from({ length: 4 }, (_, i) => ({
         date: `Week ${i + 1}`,

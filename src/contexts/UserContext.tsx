@@ -229,7 +229,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  const addXP = (amount: number) => {
+  const addXP = async (amount: number) => {
+    // Update local state immediately for responsive UI
     setUser(prev => {
       const newTotalXp = prev.totalXp + amount;
       let newXp = prev.xp + amount;
@@ -250,30 +251,46 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setTimeout(() => triggerLevelUpCelebration(newLevel), 100);
       }
 
-      // Track daily XP
-      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-      const currentDailyXp = prev.dailyXp || {};
-      const updatedDailyXp = {
-        ...currentDailyXp,
-        [today]: (currentDailyXp[today] || 0) + amount
-      };
-
       return {
         ...prev,
         xp: newXp,
         level: newLevel,
         xpToNext: newXpToNext,
         totalXp: newTotalXp,
-        dailyXp: updatedDailyXp,
+        dailyXp: {}, // Keep empty since we use database
       };
     });
+
+    // Update database for persistence and chart data
+    if (authUser && amount > 0) {
+      try {
+        await supabase.rpc('update_user_stats', {
+          p_user_id: authUser.id,
+          xp_gained: amount,
+          gold_gained: 0
+        });
+        
+        await supabase.rpc('update_daily_xp_history', {
+          p_user_id: authUser.id,
+          xp_gained: amount
+        });
+        
+        // Refresh XP data for charts
+        if (refetchDailyXp) {
+          await refetchDailyXp();
+        }
+      } catch (error) {
+        console.error('Error updating XP in database:', error);
+      }
+    }
   };
 
   const addGold = (amount: number) => {
     setUser(prev => ({ ...prev, gold: prev.gold + amount }));
   };
 
-  const subtractXP = (amount: number) => {
+  const subtractXP = async (amount: number) => {
+    // Update local state immediately
     setUser(prev => {
       const newTotalXp = Math.max(0, prev.totalXp - amount);
       let newXp = Math.max(0, prev.xp - amount);
@@ -287,23 +304,38 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         newXp += newXpToNext;
       }
 
-      // Track daily XP subtraction
-      const today = new Date().toISOString().split('T')[0];
-      const currentDailyXp = prev.dailyXp || {};
-      const updatedDailyXp = {
-        ...currentDailyXp,
-        [today]: Math.max(0, (currentDailyXp[today] || 0) - amount)
-      };
-
       return {
         ...prev,
         xp: Math.max(0, newXp),
         level: newLevel,
         xpToNext: newXpToNext,
         totalXp: newTotalXp,
-        dailyXp: updatedDailyXp,
+        dailyXp: {}, // Keep empty since we use database
       };
     });
+
+    // Update database for persistence
+    if (authUser && amount > 0) {
+      try {
+        await supabase.rpc('update_user_stats', {
+          p_user_id: authUser.id,
+          xp_gained: -amount,
+          gold_gained: 0
+        });
+        
+        await supabase.rpc('update_daily_xp_history', {
+          p_user_id: authUser.id,
+          xp_gained: -amount
+        });
+        
+        // Refresh XP data for charts
+        if (refetchDailyXp) {
+          await refetchDailyXp();
+        }
+      } catch (error) {
+        console.error('Error updating XP in database:', error);
+      }
+    }
   };
 
   const subtractGold = (amount: number) => {
