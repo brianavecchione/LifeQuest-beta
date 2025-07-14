@@ -8,20 +8,39 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useUser } from '@/contexts/UserContext';
+import { useGuest } from '@/contexts/GuestContext';
 import { useStreaks } from '@/hooks/useStreaks';
 
 // No props needed - we get data from UserContext
 
 const CharacterStats = () => {
   const { user: character, getDailyXpData, getWeeklyXpData, isLoading } = useUser();
+  const { isGuestMode, guestUser } = useGuest();
   const { getBestStreak, loading: streaksLoading } = useStreaks();
   const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
-  const xpProgress = character.xp; // character.xp now contains the percentage progress
   
-  const bestStreak = getBestStreak();
+  // Use guest data if in guest mode, otherwise use real user data
+  const activeUser = isGuestMode ? guestUser : character;
+  const xpProgress = activeUser.xp; // character.xp now contains the percentage progress
+  
+  const bestStreak = isGuestMode ? { current_streak: 5, streak_name: 'Daily Quests' } : getBestStreak(); // Mock streak for guest mode
 
-  // Get real XP data with fallback for safety - MUST call hooks before any conditional returns
+  // Get real or guest XP data with fallback for safety - MUST call hooks before any conditional returns
   const weeklyXpData = React.useMemo(() => {
+    if (isGuestMode) {
+      // Generate mock data for guest mode
+      return Array.from({ length: 7 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (6 - i));
+        const mockXp = Math.floor(Math.random() * 50) + 10; // Random XP between 10-60
+        return {
+          date: date.toLocaleDateString('en-US', { weekday: 'short' }),
+          xp: mockXp,
+          day: date.toLocaleDateString('en-US', { weekday: 'long' })
+        };
+      });
+    }
+    
     try {
       const data = getDailyXpData();
       console.log('📊 CharacterStats - Received daily XP data:', data);
@@ -39,9 +58,18 @@ const CharacterStats = () => {
         };
       });
     }
-  }, [getDailyXpData]);
+  }, [isGuestMode, getDailyXpData]);
 
   const monthlyXpData = React.useMemo(() => {
+    if (isGuestMode) {
+      // Generate mock weekly data for guest mode
+      return Array.from({ length: 4 }, (_, i) => ({
+        date: `Week ${4 - i}`,
+        xp: Math.floor(Math.random() * 200) + 100, // Random XP between 100-300
+        period: `Week ${4 - i}`
+      }));
+    }
+    
     try {
       return getWeeklyXpData();
     } catch (error) {

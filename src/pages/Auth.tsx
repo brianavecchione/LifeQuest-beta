@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Eye, EyeOff, LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useGuest } from '@/contexts/GuestContext';
 import { toast } from 'sonner';
 
 const Auth = () => {
@@ -21,6 +22,7 @@ const Auth = () => {
   });
   
   const { signIn, signUp, signInWithGoogle, user, loading } = useAuth();
+  const { enableGuestMode } = useGuest();
   const navigate = useNavigate();
 
   // Redirect if already logged in
@@ -93,6 +95,12 @@ const Auth = () => {
       setIsLoading(false);
     }
     // Don't set loading to false here since OAuth will redirect
+  };
+
+  const handleGuestPreview = () => {
+    enableGuestMode();
+    toast.success('Welcome to your preview adventure!');
+    navigate('/');
   };
 
   return (
@@ -328,21 +336,29 @@ const Auth = () => {
                   </form>
                 </TabsContent>
               </Tabs>
+              
+              {/* Guest Preview Section */}
+              <div className="mt-6 pt-6 border-t border-slate-600">
+                <div className="text-center space-y-3">
+                  <p className="text-slate-400 text-sm">
+                    Not ready to commit? Try it first!
+                  </p>
+                  <Button
+                    variant="outline"
+                    className="w-full border-slate-500 bg-slate-700/30 text-slate-200 hover:bg-slate-600/50 hover:text-white hover:border-slate-400 transition-all duration-200"
+                    onClick={handleGuestPreview}
+                  >
+                    🎮 Preview as Guest
+                  </Button>
+                  <p className="text-xs text-slate-500">
+                    Experience the full app with sample data
+                  </p>
+                </div>
+              </div>
             </CardContent>
             </Card>
           </div>
         </div>
-      </div>
-
-      {/* Preview as Guest Button - Mobile: Full width bottom, Desktop: Bottom right */}
-      <div className="absolute bottom-4 left-4 right-4 z-20 sm:bottom-6 sm:left-auto sm:right-6 sm:w-auto">
-        <Button
-          variant="outline"
-          className="w-full sm:w-auto border-slate-600 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:text-white backdrop-blur-sm"
-          onClick={() => navigate('/')}
-        >
-          Preview as Guest
-        </Button>
       </div>
     </div>
   );

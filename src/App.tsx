@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { UserProvider } from "./contexts/UserContext";
 import { QuestProvider } from "./contexts/QuestContext";
+import { GuestProvider } from "./contexts/GuestContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
@@ -13,6 +14,7 @@ import Home from "./pages/Home";
 import Quests from "./pages/Quests";
 import Achievements from "./pages/Achievements";
 import Inventory from "./pages/Inventory";
+import GoldShop from "./pages/GoldShop";
 import Parties from "./pages/Parties";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
@@ -23,32 +25,35 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <UserProvider>
-        <QuestProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <div className="min-h-screen flex flex-col">
-                <Navigation />
-                <main className="flex-1">
-                  <Routes>
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-                    <Route path="/quests" element={<ProtectedRoute><Quests /></ProtectedRoute>} />
-                    <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
-                    <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
-                    <Route path="/parties" element={<ProtectedRoute><Parties /></ProtectedRoute>} />
-                    <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </main>
-                <Footer />
-              </div>
-            </BrowserRouter>
-          </TooltipProvider>
-        </QuestProvider>
-      </UserProvider>
+      <GuestProvider>
+        <UserProvider>
+          <QuestProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <div className="min-h-screen flex flex-col">
+                  <Navigation />
+                  <main className="flex-1">
+                    <Routes>
+                      <Route path="/auth" element={<Auth />} />
+                      <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                      <Route path="/quests" element={<ProtectedRoute><Quests /></ProtectedRoute>} />
+                      <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
+                      <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
+                      <Route path="/gold-shop" element={<ProtectedRoute><GoldShop /></ProtectedRoute>} />
+                      <Route path="/parties" element={<ProtectedRoute><Parties /></ProtectedRoute>} />
+                      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </main>
+                  <Footer />
+                </div>
+              </BrowserRouter>
+            </TooltipProvider>
+          </QuestProvider>
+        </UserProvider>
+      </GuestProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

@@ -15,7 +15,8 @@ import {
   ActiveBreakTimer 
  } from './PomodoroTimer';
 import { useToast } from '@/hooks/use-toast';
-import { useQuests, Quest } from '@/hooks/useQuests';
+import { useQuests } from '@/hooks/useQuestsWrapper';
+import { Quest } from '@/hooks/useQuests';
 import { useTodaysFocus } from '@/hooks/useTodaysFocus';
 import { usePomodoroTimer } from '@/hooks/usePomodoroTimer';
 
