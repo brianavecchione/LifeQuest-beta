@@ -135,7 +135,8 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
 
   // Filtered quests
   const filteredQuests = quests.filter(quest => {
-    const priorityMatch = priorityFilter === 'all' || quest.priority === priorityFilter;
+    // Skip priority filtering for Daily quests since they don't use priority system
+    const priorityMatch = quest.quest_type === 'Daily' || priorityFilter === 'all' || quest.priority === priorityFilter;
     const typeMatch = typeFilter === 'all' || quest.quest_type === typeFilter;
     const xpMatch = quest.xp_reward <= xpRange[0];
     const questGold = quest.gold_reward;
@@ -369,9 +370,12 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
                 <Coins className="w-3 h-3 mr-1" />
                 {quest.gold_reward} Gold
               </Badge>
-              <Badge className={`${getPriorityColor(quest.priority)} text-xs px-1.5 py-0.5`}>
-                {quest.priority}
-              </Badge>
+              {/* Hide priority for Daily quests since they don't use priority system */}
+              {quest.quest_type !== 'Daily' && (
+                <Badge className={`${getPriorityColor(quest.priority)} text-xs px-1.5 py-0.5`}>
+                  {quest.priority}
+                </Badge>
+              )}
               <button
                 onClick={() => updateQuestStatus(quest.id, quest.status === 'Completed' ? 'Not started' : 'Completed')}
                 className={`px-2 py-1 rounded-full text-xs font-medium transition-colors ${getStatusColor(quest.status)} whitespace-nowrap`}

@@ -124,7 +124,7 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
           xp_reward: xpValue,
           gold_reward: goldValue,
           quest_type: formData.quest_type,
-          priority: formData.priority,
+          priority: formData.quest_type === 'Daily' ? 'Medium' : formData.priority, // Default Medium for Daily quests
           tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(Boolean) : null,
           due_date: finalDueDate,
         })
@@ -216,23 +216,25 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
               </Select>
             </div>
 
-            {/* Priority */}
-            <div>
-              <Label className="text-slate-300 font-medium mb-2 block">Priority</Label>
-              <Select 
-                value={formData.priority} 
-                onValueChange={(value: Quest['priority']) => setFormData(prev => ({ ...prev, priority: value }))}
-              >
-                <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700 text-white">
-                  <SelectItem value="High">High Priority</SelectItem>
-                  <SelectItem value="Medium">Medium Priority</SelectItem>
-                  <SelectItem value="Low">Low Priority</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            {/* Priority - Hidden for Daily quests */}
+            {formData.quest_type !== 'Daily' && (
+              <div>
+                <Label className="text-slate-300 font-medium mb-2 block">Priority</Label>
+                <Select 
+                  value={formData.priority} 
+                  onValueChange={(value: Quest['priority']) => setFormData(prev => ({ ...prev, priority: value }))}
+                >
+                  <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-800 border-slate-700 text-white">
+                    <SelectItem value="High">High Priority</SelectItem>
+                    <SelectItem value="Medium">Medium Priority</SelectItem>
+                    <SelectItem value="Low">Low Priority</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -347,9 +349,11 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
                     <Badge variant="outline" className="text-yellow-500 border-yellow-500/50 text-xs">
                       {formData.gold_reward || 0} Gold
                     </Badge>
-                    <Badge className={`${formData.priority === 'High' ? 'bg-red-600' : formData.priority === 'Medium' ? 'bg-yellow-600' : 'bg-green-600'} text-white text-xs`}>
-                      {formData.priority}
-                    </Badge>
+                    {formData.quest_type !== 'Daily' && (
+                      <Badge className={`${formData.priority === 'High' ? 'bg-red-600' : formData.priority === 'Medium' ? 'bg-yellow-600' : 'bg-green-600'} text-white text-xs`}>
+                        {formData.priority}
+                      </Badge>
+                    )}
                     <Badge variant="outline" className={`${getTypeColor(formData.quest_type)} border-current text-xs`}>
                       {formData.quest_type}
                     </Badge>
