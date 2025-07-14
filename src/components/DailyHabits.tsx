@@ -1,5 +1,5 @@
-import React from 'react';
-import { Calendar } from 'lucide-react';
+import React, { useState } from 'react';
+import { Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import { Quest } from '@/hooks/useQuests';
 import QuestCard from './QuestCard';
 
@@ -16,12 +16,17 @@ const DailyHabits: React.FC<DailyHabitsProps> = ({
   onEditQuest,
   onDeleteQuest
 }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  
   const allDailies = quests.filter(quest => quest.quest_type === 'Daily');
   const sortedDailies = [...allDailies].sort((a, b) => {
     if (a.status === 'Completed' && b.status !== 'Completed') return 1;
     if (a.status !== 'Completed' && b.status === 'Completed') return -1;
     return 0;
   });
+
+  const completedCount = sortedDailies.filter(q => q.status === 'Completed').length;
+  const totalCount = sortedDailies.length;
 
   if (sortedDailies.length === 0) {
     return (
@@ -35,26 +40,36 @@ const DailyHabits: React.FC<DailyHabitsProps> = ({
 
   return (
     <div className="bg-slate-700/30 rounded-lg p-4 border border-yellow-600/30">
-      <div className="flex items-center gap-2 mb-4">
+      <div 
+        className="flex items-center gap-2 mb-4 cursor-pointer hover:bg-yellow-600/10 rounded-lg p-2 -m-2 transition-colors"
+        onClick={() => setIsCollapsed(!isCollapsed)}
+      >
         <Calendar className="w-5 h-5 text-yellow-400" />
-        <h4 className="text-lg font-bold text-yellow-400">Daily Habits</h4>
+        <h4 className="text-lg font-bold text-yellow-400 flex-1">Daily Habits</h4>
         <span className="text-yellow-300/70 text-sm">
-          ({sortedDailies.filter(q => q.status === 'Completed').length}/{sortedDailies.length})
+          ({completedCount}/{totalCount})
         </span>
+        {isCollapsed ? (
+          <ChevronDown className="w-4 h-4 text-yellow-400" />
+        ) : (
+          <ChevronUp className="w-4 h-4 text-yellow-400" />
+        )}
       </div>
       
-      <div className="space-y-3">
-        {sortedDailies.map((quest) => (
-          <QuestCard 
-            key={quest.id}
-            quest={quest}
-            showCompleteIcon={true}
-            onStatusChange={onStatusChange}
-            onEditQuest={onEditQuest}
-            onDeleteQuest={onDeleteQuest}
-          />
-        ))}
-      </div>
+      {!isCollapsed && (
+        <div className="space-y-3">
+          {sortedDailies.map((quest) => (
+            <QuestCard 
+              key={quest.id}
+              quest={quest}
+              showCompleteIcon={true}
+              onStatusChange={onStatusChange}
+              onEditQuest={onEditQuest}
+              onDeleteQuest={onDeleteQuest}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
