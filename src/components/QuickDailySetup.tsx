@@ -194,19 +194,16 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
           <div className="flex gap-3 pt-4">
             <Button 
               onClick={handleNoMoreQuests}
-              variant="outline" 
-              className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700"
+              variant="brand-secondary"
+              className="flex-1"
             >
               No More Quests Today
             </Button>
             <Button 
               onClick={handleSetupComplete}
               disabled={!isValidSelection || spotsAvailable === 0}
-              className={`flex-1 ${
-                isValidSelection && spotsAvailable > 0
-                  ? 'bg-amber-600 hover:bg-amber-700 text-white' 
-                  : 'bg-slate-600 text-slate-400 cursor-not-allowed'
-              }`}
+              variant={isValidSelection && spotsAvailable > 0 ? "brand-primary" : "secondary"}
+              className="flex-1"
             >
               {spotsAvailable === 0 ? 'Focus is Full' : 'Add to Today\'s Focus'}
             </Button>

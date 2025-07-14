@@ -18,6 +18,10 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        // LifeQuest brand variants
+        "brand-primary": "bg-brand-primary text-brand-primary-foreground hover:bg-brand-primary/90 shadow-lg",
+        "brand-secondary": "bg-brand-secondary text-brand-secondary-foreground hover:bg-brand-secondary/90 shadow-md",
+        "brand-tertiary": "bg-brand-tertiary text-brand-tertiary-foreground hover:bg-brand-tertiary/90 shadow-md",
       },
       size: {
         default: "h-10 px-4 py-2",
