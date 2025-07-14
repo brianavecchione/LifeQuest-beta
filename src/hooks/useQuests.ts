@@ -427,14 +427,16 @@ export const useQuests = () => {
 
     const previousStatus = quest.status;
     
-    // Debug XP tracking
-    console.log(`🎯 Quest Status Update Debug:
+    // Debug XP tracking - ADD TIMESTAMP AND CALL STACK
+    const timestamp = new Date().toISOString();
+    console.log(`🎯 Quest Status Update Debug [${timestamp}]:
       - Quest: "${quest.quest_name}"
       - Type: ${quest.quest_type}
       - Previous Status: ${previousStatus}
       - New Status: ${status}
       - XP Reward: ${quest.xp_reward}
-      - Gold Reward: ${quest.gold_reward}`);
+      - Gold Reward: ${quest.gold_reward}
+      - Call Stack:`, new Error().stack);
 
     // Update quest status in local state immediately
     setQuests(prev => 
