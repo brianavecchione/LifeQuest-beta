@@ -11,6 +11,7 @@ interface QuickDailySetupProps {
   isOpen: boolean;
   onClose: () => void;
   onSetupComplete: (selectedQuests: string[]) => void;
+  onNoMoreQuests: () => void; // New callback for "No More Quests Today"
   currentFocusQuests: string[]; // Track current focus tasks
 }
 
@@ -18,6 +19,7 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
   isOpen,
   onClose,
   onSetupComplete,
+  onNoMoreQuests,
   currentFocusQuests
 }) => {
   const [selectedQuests, setSelectedQuests] = useState<string[]>([]);
@@ -77,6 +79,12 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
       onClose();
       setSelectedQuests([]);
     }
+  };
+
+  const handleNoMoreQuests = () => {
+    onNoMoreQuests();
+    onClose();
+    setSelectedQuests([]);
   };
 
   const isValidSelection = selectedQuests.length >= needToSelect;
@@ -185,11 +193,11 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
           {/* Action Buttons */}
           <div className="flex gap-3 pt-4">
             <Button 
-              onClick={onClose}
+              onClick={handleNoMoreQuests}
               variant="outline" 
               className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700"
             >
-              Skip for Now
+              No More Quests Today
             </Button>
             <Button 
               onClick={handleSetupComplete}

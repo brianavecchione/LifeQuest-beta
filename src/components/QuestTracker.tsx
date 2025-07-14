@@ -61,6 +61,10 @@ const QuestTracker = () => {
 
   // Check if all focused quests are completed OR if active quests drop below minimum
   useEffect(() => {
+    const today = new Date().toDateString();
+    const noMoreQuestsToday = localStorage.getItem('lifequest-no-more-quests-today');
+    const userDeclinedToday = noMoreQuestsToday === today;
+
     if (todaysFocus.length > 0) {
       const focusedQuests = quests.filter(q => todaysFocus.includes(q.id));
       const activeQuests = focusedQuests.filter(q => q.status !== 'Completed');
@@ -69,8 +73,8 @@ const QuestTracker = () => {
       
       setShowAddMoreQuests(allCompleted || belowMinimum);
       
-      // Auto-open modal if active focus drops below minimum
-      if (belowMinimum && activeQuests.length > 0) {
+      // Auto-open modal if active focus drops below minimum AND user hasn't declined today
+      if (belowMinimum && activeQuests.length > 0 && !userDeclinedToday) {
         setIsSetupModalOpen(true);
       }
     } else {
@@ -83,11 +87,22 @@ const QuestTracker = () => {
     setIsSetupModalOpen(false);
   };
 
+  const handleNoMoreQuests = () => {
+    // Set a flag to prevent auto-opening the modal today
+    const today = new Date().toDateString();
+    localStorage.setItem('lifequest-no-more-quests-today', today);
+    setIsSetupModalOpen(false);
+  };
+
   const handleRemoveFromFocusWithToast = (questId: string) => {
     handleRemoveFromFocus(questId);
     
     const remainingQuests = todaysFocus.filter(id => id !== questId).length;
-    if (remainingQuests < 3) {
+    const today = new Date().toDateString();
+    const noMoreQuestsToday = localStorage.getItem('lifequest-no-more-quests-today');
+    const userDeclinedToday = noMoreQuestsToday === today;
+
+    if (remainingQuests < 3 && !userDeclinedToday) {
       toast({
         title: "Minimum Focus Required",
         description: "Today's Focus needs at least 3 quests. Please select replacement quests.",
@@ -208,6 +223,7 @@ const QuestTracker = () => {
         isOpen={isSetupModalOpen}
         onClose={() => setIsSetupModalOpen(false)}
         onSetupComplete={handleSetupComplete}
+        onNoMoreQuests={handleNoMoreQuests}
         currentFocusQuests={todaysFocus}
       />
 
