@@ -42,15 +42,27 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
     due_date: null as Date | null,
   });
 
-  // Update form state when defaultQuestType changes
+  // Update form state when defaultQuestType changes or when quest_type changes
   useEffect(() => {
     if (defaultQuestType && isOpen) {
       setFormData(prev => ({
         ...prev,
-        quest_type: defaultQuestType
+        quest_type: defaultQuestType,
+        // Set default XP reward based on quest type
+        xp_reward: defaultQuestType === 'Daily' ? '5' : prev.xp_reward
       }));
     }
   }, [defaultQuestType, isOpen]);
+
+  // Set default XP when quest type changes
+  useEffect(() => {
+    if (formData.quest_type === 'Daily' && !formData.xp_reward) {
+      setFormData(prev => ({
+        ...prev,
+        xp_reward: '5'
+      }));
+    }
+  }, [formData.quest_type]);
 
   const getTypeIcon = (type: Quest['quest_type']) => {
     switch (type) {
@@ -199,7 +211,14 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
               <Label className="text-slate-300 font-medium mb-2 block">Quest Type</Label>
               <Select 
                 value={formData.quest_type} 
-                onValueChange={(value: Quest['quest_type']) => setFormData(prev => ({ ...prev, quest_type: value }))}
+                onValueChange={(value: Quest['quest_type']) => {
+                  setFormData(prev => ({ 
+                    ...prev, 
+                    quest_type: value,
+                    // Auto-set default XP for Daily quests
+                    xp_reward: value === 'Daily' ? '5' : prev.xp_reward
+                  }));
+                }}
               >
                 <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
                   <SelectValue />
@@ -251,7 +270,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
                 max="1000"
               />
               <p className="text-xs text-slate-400 mt-1">
-                Suggested: Daily (10-30), Side (30-100), Main (100-300), Legendary (500+)
+                Suggested: Daily (5), Side (30-100), Main (100-300), Legendary (500+)
               </p>
             </div>
 

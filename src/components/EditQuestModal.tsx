@@ -202,7 +202,14 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
               <Label className="text-slate-300 font-medium mb-2 block">Quest Type</Label>
               <Select 
                 value={formData.quest_type} 
-                onValueChange={(value: Quest['quest_type']) => setFormData(prev => ({ ...prev, quest_type: value }))}
+                onValueChange={(value: Quest['quest_type']) => {
+                  setFormData(prev => ({ 
+                    ...prev, 
+                    quest_type: value,
+                    // Auto-set default XP for Daily quests if switching to Daily
+                    xp_reward: value === 'Daily' && !prev.xp_reward ? '5' : prev.xp_reward
+                  }));
+                }}
               >
                 <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
                   <SelectValue />

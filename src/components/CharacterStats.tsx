@@ -267,6 +267,7 @@ const CharacterStats = () => {
                 <ChartContainer config={chartConfig} className="h-[200px] w-full">
                   <AreaChart 
                     data={currentData}
+                    key={`chart-${chartPeriod}-${currentData.reduce((sum, item) => sum + item.xp, 0)}`}
                   >
                     <defs>
                       <linearGradient id="xpGradient" x1="0" y1="0" x2="0" y2="1">
@@ -295,8 +296,6 @@ const CharacterStats = () => {
                         border: '1px solid #10b981',
                         borderRadius: '8px'
                       }}
-                      animationDuration={200}
-                      animationEasing="ease-out"
                     />
                     <Area
                       type="monotone"
@@ -305,9 +304,8 @@ const CharacterStats = () => {
                       strokeWidth={2}
                       fill="url(#xpGradient)"
                       isAnimationActive={true}
-                      animationDuration={500}
+                      animationDuration={600}
                       animationEasing="ease-in-out"
-                      animationBegin={0}
                     />
                   </AreaChart>
                 </ChartContainer>
