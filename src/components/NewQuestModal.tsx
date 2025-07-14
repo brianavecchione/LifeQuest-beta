@@ -19,13 +19,15 @@ interface NewQuestModalProps {
   onClose: () => void;
   currentQuestCount?: number;
   maxQuests?: number;
+  defaultQuestType?: Quest['quest_type'];
 }
 
 const NewQuestModal: React.FC<NewQuestModalProps> = ({ 
   isOpen, 
   onClose, 
   currentQuestCount = 0,
-  maxQuests = 5
+  maxQuests = 5,
+  defaultQuestType
 }) => {
   const { toast } = useToast();
   const { createQuest } = useQuests();
@@ -34,7 +36,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
     description: '',
     xp_reward: '',
     gold_reward: '',
-    quest_type: 'Main' as Quest['quest_type'],
+    quest_type: defaultQuestType || 'Main' as Quest['quest_type'],
     priority: 'Medium' as Quest['priority'],
     tags: '',
     due_date: null as Date | null,
@@ -115,7 +117,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
         description: '',
         xp_reward: '',
         gold_reward: '',
-        quest_type: 'Main',
+        quest_type: defaultQuestType || 'Main',
         priority: 'Medium',
         tags: '',
         due_date: null,

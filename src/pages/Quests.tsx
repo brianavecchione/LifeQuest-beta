@@ -14,6 +14,7 @@ const Quests = () => {
   const [isNewQuestModalOpen, setIsNewQuestModalOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedQuestType, setSelectedQuestType] = useState<string | undefined>(undefined);
   
   // Filter states
   const [filters, setFilters] = useState({
@@ -43,6 +44,16 @@ const Quests = () => {
       goldRange: [0, 200],
       dueDateFilter: 'all'
     });
+  };
+
+  const handleOpenNewQuestModal = (questType?: string) => {
+    setSelectedQuestType(questType);
+    setIsNewQuestModalOpen(true);
+  };
+
+  const handleCloseNewQuestModal = () => {
+    setIsNewQuestModalOpen(false);
+    setSelectedQuestType(undefined);
   };
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -87,7 +98,7 @@ const Quests = () => {
                   <span className="hidden sm:inline">Filter</span>
                 </Button>
                 <Button 
-                  onClick={() => setIsNewQuestModalOpen(true)}
+                  onClick={() => handleOpenNewQuestModal()}
                   className="bg-blue-600 hover:bg-blue-700 flex-1 sm:flex-none h-10 text-sm"
                 >
                   <Plus className="w-4 h-4 sm:mr-2" />
@@ -105,7 +116,7 @@ const Quests = () => {
             onAddToFocus={handleAddToFocus} 
             searchQuery={searchQuery}
             filters={filters}
-            onOpenNewQuestModal={() => setIsNewQuestModalOpen(true)}
+            onOpenNewQuestModal={handleOpenNewQuestModal}
             maxFocusQuests={5}
           />
         </div>
@@ -118,7 +129,8 @@ const Quests = () => {
         {/* New Quest Modal */}
         <NewQuestModal
           isOpen={isNewQuestModalOpen}
-          onClose={() => setIsNewQuestModalOpen(false)}
+          onClose={handleCloseNewQuestModal}
+          defaultQuestType={selectedQuestType as any}
         />
 
         {/* Filter Modal */}

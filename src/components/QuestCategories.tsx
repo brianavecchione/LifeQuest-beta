@@ -24,7 +24,7 @@ interface QuestCategoriesProps {
     goldRange: number[];
     dueDateFilter: string;
   };
-  onOpenNewQuestModal?: () => void;
+  onOpenNewQuestModal?: (questType?: Quest['quest_type']) => void;
   maxFocusQuests?: number;
 }
 
@@ -443,7 +443,7 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
           </div>
           <Button 
             size="sm" 
-            onClick={onOpenNewQuestModal}
+            onClick={() => onOpenNewQuestModal?.(type)}
             className="bg-white/20 hover:bg-white/30 text-white border-white/30 shrink-0 h-8 sm:h-9 text-xs sm:text-sm px-3"
           >
             <Plus className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
