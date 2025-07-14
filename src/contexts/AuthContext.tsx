@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
   user: User | null;
@@ -75,16 +76,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
-      // Clear local state immediately
+      // Clear local state first to prevent auth listeners from interfering
       setSession(null);
       setUser(null);
-      // Redirect to auth page
-      window.location.href = '/auth';
+      setLoading(false);
+      
+      // Sign out from Supabase
+      await supabase.auth.signOut();
+      
+      // Use setTimeout to ensure state clearing completes before redirect
+      setTimeout(() => {
+        window.location.href = '/auth';
+      }, 100);
     } catch (error) {
       console.error('Error during signout:', error);
       // Force redirect even if signout fails
-      window.location.href = '/auth';
+      setTimeout(() => {
+        window.location.href = '/auth';
+      }, 100);
     }
   };
 
