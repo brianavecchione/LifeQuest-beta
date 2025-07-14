@@ -229,12 +229,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  // For bonus rewards (like Pomodoro bonuses) - these update the database
-  // IMPORTANT: Regular quest rewards are handled by database trigger, NOT these functions
+  // ONLY for bonus rewards (like Pomodoro bonuses) - LOCAL STATE ONLY
+  // Database trigger handles ALL regular quest rewards
   const addXP = async (amount: number) => {
-    console.log(`🎁 Adding bonus XP: ${amount} (not from regular quest completion)`);
+    console.log(`🎁 Adding bonus XP: ${amount} (LOCAL STATE ONLY - not calling database)`);
     
-    // Update local state immediately for responsive UI
+    // Update ONLY local state for immediate UI feedback
     setUser(prev => {
       const newTotalXp = prev.totalXp + amount;
       let newXp = prev.xp + amount;
@@ -265,52 +265,26 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
     });
 
-    // Update database for persistence and chart data (bonus rewards only)
-    if (authUser && amount > 0) {
-      try {
-        await supabase.rpc('update_user_stats', {
-          p_user_id: authUser.id,
-          xp_gained: amount,
-          gold_gained: 0
-        });
-        
-        await supabase.rpc('update_daily_xp_history', {
-          p_user_id: authUser.id,
-          xp_gained: amount
-        });
-        
-        // Refresh XP data for charts
-        if (refetchDailyXp) {
-          await refetchDailyXp();
-        }
-      } catch (error) {
-        console.error('Error updating bonus XP in database:', error);
-      }
-    }
+    // NO DATABASE CALLS - the database trigger handles quest rewards
+    // This function should only be used for immediate UI feedback for bonus rewards
+    // The database sync will happen through profile refresh
   };
 
   const addGold = async (amount: number) => {
-    console.log(`🎁 Adding bonus Gold: ${amount} (not from regular quest completion)`);
+    console.log(`🎁 Adding bonus Gold: ${amount} (LOCAL STATE ONLY - not calling database)`);
     
-    // Update local state immediately
+    // Update ONLY local state immediately
     setUser(prev => ({ ...prev, gold: prev.gold + amount }));
     
-    // Update database for persistence (bonus rewards only)
-    if (authUser && amount > 0) {
-      try {
-        await supabase.rpc('update_user_stats', {
-          p_user_id: authUser.id,
-          xp_gained: 0,
-          gold_gained: amount
-        });
-      } catch (error) {
-        console.error('Error updating bonus gold in database:', error);
-      }
-    }
+    // NO DATABASE CALLS - the database trigger handles quest rewards
+    // This function should only be used for immediate UI feedback for bonus rewards
+    // The database sync will happen through profile refresh
   };
 
   const subtractXP = async (amount: number) => {
-    // Update local state immediately
+    console.log(`📉 Subtracting XP: ${amount} (LOCAL STATE ONLY - not calling database)`);
+    
+    // Update ONLY local state immediately
     setUser(prev => {
       const newTotalXp = Math.max(0, prev.totalXp - amount);
       let newXp = Math.max(0, prev.xp - amount);
@@ -334,28 +308,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
     });
 
-    // Update database for persistence
-    if (authUser && amount > 0) {
-      try {
-        await supabase.rpc('update_user_stats', {
-          p_user_id: authUser.id,
-          xp_gained: -amount,
-          gold_gained: 0
-        });
-        
-        await supabase.rpc('update_daily_xp_history', {
-          p_user_id: authUser.id,
-          xp_gained: -amount
-        });
-        
-        // Refresh XP data for charts
-        if (refetchDailyXp) {
-          await refetchDailyXp();
-        }
-      } catch (error) {
-        console.error('Error updating XP in database:', error);
-      }
-    }
+    // NO DATABASE CALLS - the database trigger handles quest rewards
+    // This function should only be used for immediate UI feedback
+    // The database sync will happen through profile refresh
   };
 
   const subtractGold = (amount: number) => {
