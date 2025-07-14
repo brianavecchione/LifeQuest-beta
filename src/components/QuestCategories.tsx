@@ -218,6 +218,12 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
       quests.some(quest => quest.id === id)
     );
     
+    // Filter to only count ACTIVE (incomplete) focus quests for the limit check
+    const activeFocusIds = validFocusIds.filter(id => {
+      const quest = quests.find(q => q.id === id);
+      return quest && quest.status !== 'Completed';
+    });
+    
     // If the localStorage list doesn't match valid quests, clean it up
     if (validFocusIds.length !== currentFocusIds.length) {
       localStorage.setItem('lifequest-todays-focus', JSON.stringify(validFocusIds));
@@ -225,10 +231,11 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
       console.log(`Cleaned up focus list: removed ${currentFocusIds.length - validFocusIds.length} invalid quest IDs`);
     }
     
-    if (validFocusIds.length >= maxFocusQuests) {
+    // Only count active (incomplete) quests for the focus limit
+    if (activeFocusIds.length >= maxFocusQuests) {
       toast({
         title: "Focus List Full",
-        description: `You can only have ${maxFocusQuests} quests in your Today's Focus. Complete some first!`,
+        description: `You can only have ${maxFocusQuests} active quests in your Today's Focus. Complete some first!`,
         variant: "destructive"
       });
       return;
