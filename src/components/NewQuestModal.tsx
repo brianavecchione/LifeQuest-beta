@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,6 +41,16 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
     tags: '',
     due_date: null as Date | null,
   });
+
+  // Update form state when defaultQuestType changes
+  useEffect(() => {
+    if (defaultQuestType && isOpen) {
+      setFormData(prev => ({
+        ...prev,
+        quest_type: defaultQuestType
+      }));
+    }
+  }, [defaultQuestType, isOpen]);
 
   const getTypeIcon = (type: Quest['quest_type']) => {
     switch (type) {
