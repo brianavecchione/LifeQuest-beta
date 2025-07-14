@@ -24,6 +24,7 @@ export interface Quest {
   completed_at?: string;
   due_date?: string;
   user_id: string;
+  pomodoro_enabled: boolean;
 }
 
 // Helper function to transform database quest to our Quest interface
@@ -42,6 +43,7 @@ const transformDbQuest = (dbQuest: DbQuest): Quest => ({
   completed_at: dbQuest.completed_at || undefined,
   due_date: dbQuest.due_date || undefined,
   user_id: dbQuest.user_id,
+  pomodoro_enabled: dbQuest.pomodoro_enabled,
 });
 
 export const useQuests = () => {

@@ -543,6 +543,7 @@ export type Database = {
           due_date: string | null
           gold_reward: number
           id: string
+          pomodoro_enabled: boolean
           priority: Database["public"]["Enums"]["quest_priority"]
           quest_name: string
           quest_type: Database["public"]["Enums"]["quest_type"]
@@ -559,6 +560,7 @@ export type Database = {
           due_date?: string | null
           gold_reward?: number
           id?: string
+          pomodoro_enabled?: boolean
           priority?: Database["public"]["Enums"]["quest_priority"]
           quest_name: string
           quest_type?: Database["public"]["Enums"]["quest_type"]
@@ -575,6 +577,7 @@ export type Database = {
           due_date?: string | null
           gold_reward?: number
           id?: string
+          pomodoro_enabled?: boolean
           priority?: Database["public"]["Enums"]["quest_priority"]
           quest_name?: string
           quest_type?: Database["public"]["Enums"]["quest_type"]

@@ -135,7 +135,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          {quest.status !== 'Completed' && quest.quest_type !== 'Daily' && onBeginQuest && (
+          {quest.status !== 'Completed' && quest.quest_type !== 'Daily' && quest.pomodoro_enabled && onBeginQuest && (
             <Button
               size="sm"
               onClick={() => onBeginQuest(quest)}

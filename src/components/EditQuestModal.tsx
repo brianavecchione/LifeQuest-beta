@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Star, Trophy, Flag, Crown, CalendarIcon, Edit } from 'lucide-react';
@@ -40,6 +41,7 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
     priority: 'Medium' as Quest['priority'],
     tags: '',
     due_date: null as Date | null,
+    pomodoro_enabled: false,
   });
 
   // Initialize form data when quest changes
@@ -54,6 +56,7 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
         priority: quest.priority,
         tags: quest.tags ? quest.tags.join(', ') : '',
         due_date: quest.due_date ? new Date(quest.due_date) : null,
+        pomodoro_enabled: quest.pomodoro_enabled || false,
       });
     }
   }, [quest]);
@@ -127,6 +130,7 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
           priority: formData.quest_type === 'Daily' ? 'Medium' : formData.priority, // Default Medium for Daily quests
           tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(Boolean) : null,
           due_date: finalDueDate,
+          pomodoro_enabled: formData.pomodoro_enabled,
         })
         .eq('id', quest.id)
         .eq('user_id', user.id);
@@ -337,6 +341,26 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
                 </p>
               </div>
             )}
+          </div>
+
+          {/* Pomodoro Timer Option */}
+          <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <Label htmlFor="pomodoro-enabled" className="text-slate-300 font-medium text-sm">
+                  Enable Pomodoro Timer? 🍅
+                </Label>
+                <p className="text-slate-400 text-xs mt-1">
+                  Add focused work sessions with breaks to this quest
+                </p>
+              </div>
+              <Switch
+                id="pomodoro-enabled"
+                checked={formData.pomodoro_enabled}
+                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, pomodoro_enabled: checked }))}
+                className="ml-3"
+              />
+            </div>
           </div>
 
           {/* Quest Preview */}

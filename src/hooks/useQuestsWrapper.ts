@@ -23,6 +23,7 @@ export const useQuests = () => {
       completed_at: quest.completed_at,
       due_date: undefined,
       user_id: 'guest',
+      pomodoro_enabled: false, // Default to false for guest quests
     }));
 
     return {
@@ -44,6 +45,7 @@ export const useQuests = () => {
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
           user_id: 'guest',
+          pomodoro_enabled: questData.pomodoro_enabled || false,
         };
         
         addGuestQuest({
