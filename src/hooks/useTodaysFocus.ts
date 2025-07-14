@@ -58,22 +58,32 @@ export const useTodaysFocus = (quests: Quest[]) => {
   }, [todaysFocus]);
 
   const handleDailySetup = (selectedQuestIds: string[]) => {
-    const newFocus = [...todaysFocus, ...selectedQuestIds];
-    setTodaysFocus(newFocus);
-    localStorage.setItem('lifequest-todays-focus', JSON.stringify(newFocus));
-    window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
+    if (isGuestMode) {
+      const newFocus = [...guestTodaysFocus, ...selectedQuestIds];
+      updateGuestTodaysFocus(newFocus);
+    } else {
+      const newFocus = [...todaysFocus, ...selectedQuestIds];
+      setTodaysFocus(newFocus);
+      localStorage.setItem('lifequest-todays-focus', JSON.stringify(newFocus));
+      window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
+    }
   };
 
   const handleRemoveFromFocus = (questId: string) => {
-    const newFocus = todaysFocus.filter(id => id !== questId);
-    setTodaysFocus(newFocus);
-    localStorage.setItem('lifequest-todays-focus', JSON.stringify(newFocus));
-    window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
+    if (isGuestMode) {
+      const newFocus = guestTodaysFocus.filter(id => id !== questId);
+      updateGuestTodaysFocus(newFocus);
+    } else {
+      const newFocus = todaysFocus.filter(id => id !== questId);
+      setTodaysFocus(newFocus);
+      localStorage.setItem('lifequest-todays-focus', JSON.stringify(newFocus));
+      window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
+    }
   };
 
   return {
-    todaysFocus,
-    setTodaysFocus,
+    todaysFocus: isGuestMode ? guestTodaysFocus : todaysFocus,
+    setTodaysFocus: isGuestMode ? updateGuestTodaysFocus : setTodaysFocus,
     handleDailySetup,
     handleRemoveFromFocus
   };

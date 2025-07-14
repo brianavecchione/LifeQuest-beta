@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Sword, Shield, Crown, Gem, Package, Wand2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useInventory } from '@/hooks/useInventory';
+import { useInventory } from '@/hooks/useInventoryWrapper';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
