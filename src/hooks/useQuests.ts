@@ -420,14 +420,29 @@ export const useQuests = () => {
     }
   };
 
+  // Add debouncing to prevent duplicate calls
+  const [pendingUpdates, setPendingUpdates] = useState<Set<string>>(new Set());
+
   // Update quest status
   const updateQuestStatus = async (questId: string, status: Quest['status']) => {
     if (!user) return false;
+
+    // Prevent duplicate calls for the same quest
+    if (pendingUpdates.has(questId)) {
+      console.log(`🚫 Preventing duplicate update for quest: ${questId}`);
+      return false;
+    }
 
     const quest = quests.find(q => q.id === questId);
     if (!quest) return false;
 
     const previousStatus = quest.status;
+    
+    // Skip if status hasn't actually changed
+    if (previousStatus === status) {
+      console.log(`🚫 Status unchanged for quest: ${questId}`);
+      return false;
+    }
     
     // Debug XP tracking
     console.log(`🎯 Quest Status Update Debug:
@@ -437,6 +452,9 @@ export const useQuests = () => {
       - New Status: ${status}
       - XP Reward: ${quest.xp_reward}
       - Gold Reward: ${quest.gold_reward}`);
+
+    // Add to pending updates to prevent duplicates
+    setPendingUpdates(prev => new Set([...prev, questId]));
 
     // Update quest status in local state immediately
     setQuests(prev => 
@@ -510,6 +528,13 @@ export const useQuests = () => {
         });
       }
 
+      // Remove from pending updates
+      setPendingUpdates(prev => {
+        const next = new Set(prev);
+        next.delete(questId);
+        return next;
+      });
+
       return true;
     } catch (error) {
       console.error('Error updating quest status:', error);
@@ -531,6 +556,14 @@ export const useQuests = () => {
         description: errorMessage,
         variant: 'destructive',
       });
+
+      // Remove from pending updates on error
+      setPendingUpdates(prev => {
+        const next = new Set(prev);
+        next.delete(questId);
+        return next;
+      });
+
       return false;
     }
   };
