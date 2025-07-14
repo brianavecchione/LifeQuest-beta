@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { Quest } from '@/hooks/useQuests';
 import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@/contexts/UserContext';
-import { supabase } from '@/integrations/supabase/client';
 
 interface ActiveTimer {
   questId: string;
@@ -96,24 +95,13 @@ export const usePomodoroTimer = (updateQuestStatus: (id: string, status: string)
     setActiveTimer(null);
   }, [activeTimer]);
 
-  const handleQuestComplete = useCallback(async () => {
+  const handleQuestComplete = useCallback(() => {
     if (completedTimerQuest) {
       const { bonusXp, bonusGold } = calculateRewards(completedTimerQuest);
       
-      // First update the quest's rewards to include the Pomodoro bonus
-      // before marking it complete so the database trigger awards the correct amount
-      const updatedXp = completedTimerQuest.xp_reward + bonusXp;
-      const updatedGold = completedTimerQuest.gold_reward + bonusGold;
-      
-      // Update quest rewards and status in one transaction
-      await supabase
-        .from('quests')
-        .update({ 
-          xp_reward: updatedXp,
-          gold_reward: updatedGold,
-          status: 'Completed'
-        })
-        .eq('id', completedTimerQuest.id);
+      updateQuestStatus(completedTimerQuest.id, 'Completed');
+      addXP(bonusXp);
+      addGold(bonusGold);
 
       toast({
         title: "Pomodoro Bonus! 🍅",
@@ -124,7 +112,7 @@ export const usePomodoroTimer = (updateQuestStatus: (id: string, status: string)
       setCompletedTimerQuest(null);
       setIsBreakModalOpen(true);
     }
-  }, [completedTimerQuest, toast]);
+  }, [completedTimerQuest, toast, updateQuestStatus, addXP, addGold]);
 
   const handleBreakAccept = useCallback(() => {
     setActiveBreakTimer({
