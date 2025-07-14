@@ -427,7 +427,14 @@ export const useQuests = () => {
 
     const previousStatus = quest.status;
     
-    // No need to track daily XP locally anymore - database handles it
+    // Debug XP tracking
+    console.log(`🎯 Quest Status Update Debug:
+      - Quest: "${quest.quest_name}"
+      - Type: ${quest.quest_type}
+      - Previous Status: ${previousStatus}
+      - New Status: ${status}
+      - XP Reward: ${quest.xp_reward}
+      - Gold Reward: ${quest.gold_reward}`);
 
     // Update quest status in local state immediately
     setQuests(prev => 
@@ -455,14 +462,20 @@ export const useQuests = () => {
         )
       );
 
+      console.log(`✅ Quest status updated in database:
+        - Quest completed_at: ${transformedQuest.completed_at}
+        - Database trigger should award XP: ${transformedQuest.xp_reward}`);
+
       // Manually refresh user profile to sync XP/Gold balances
       // This ensures immediate UI updates while real-time subscriptions catch up
       if (refetchUserProfile) {
+        console.log('🔄 Refreshing user profile for XP/Gold sync...');
         await refetchUserProfile();
       }
 
       // Also refresh daily XP data for chart updates
       if (refetchDailyXp) {
+        console.log('📊 Refreshing daily XP data for chart update...');
         await refetchDailyXp();
       }
 
