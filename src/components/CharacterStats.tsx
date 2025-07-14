@@ -265,7 +265,9 @@ const CharacterStats = () => {
             {hasXpData ? (
               <>
                 <ChartContainer config={chartConfig} className="h-[200px] w-full">
-                  <AreaChart data={currentData}>
+                  <AreaChart 
+                    data={currentData}
+                  >
                     <defs>
                       <linearGradient id="xpGradient" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
@@ -283,6 +285,7 @@ const CharacterStats = () => {
                       tickLine={false}
                       tick={{ fill: '#94a3b8', fontSize: 12 }}
                       domain={[0, 'dataMax']}
+                      allowDataOverflow={false}
                     />
                     <ChartTooltip 
                       content={<ChartTooltipContent />}
@@ -292,6 +295,8 @@ const CharacterStats = () => {
                         border: '1px solid #10b981',
                         borderRadius: '8px'
                       }}
+                      animationDuration={200}
+                      animationEasing="ease-out"
                     />
                     <Area
                       type="monotone"
@@ -299,6 +304,10 @@ const CharacterStats = () => {
                       stroke="#10b981"
                       strokeWidth={2}
                       fill="url(#xpGradient)"
+                      isAnimationActive={true}
+                      animationDuration={500}
+                      animationEasing="ease-in-out"
+                      animationBegin={0}
                     />
                   </AreaChart>
                 </ChartContainer>
