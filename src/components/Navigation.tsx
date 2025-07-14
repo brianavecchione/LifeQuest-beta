@@ -6,14 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/contexts/UserContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useGuest } from '@/contexts/GuestContext';
+import { useNavigate } from 'react-router-dom';
 
 const Navigation = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const { user: userContext, isLoading } = useUser();
   const { signOut } = useAuth();
+  const { isGuestMode, disableGuestMode } = useGuest();
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   
   // Debug log for XP recalculation
@@ -49,8 +53,20 @@ const Navigation = () => {
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
-    await signOut();
-    setIsLoggingOut(false);
+    
+    if (isGuestMode) {
+      // Handle guest mode logout
+      disableGuestMode();
+      // Add small delay to ensure state is cleared
+      setTimeout(() => {
+        navigate('/auth', { replace: true });
+        setIsLoggingOut(false);
+      }, 250);
+    } else {
+      // Handle regular user logout
+      await signOut();
+      setIsLoggingOut(false);
+    }
   };
 
   const closeMobileMenu = () => {
