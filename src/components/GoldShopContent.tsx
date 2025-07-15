@@ -9,9 +9,9 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Coins, Gift, Plus, Clock, Star, Crown, Gem } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useGoldShop } from '@/hooks/useGoldShop';
-import { useRewards } from '@/hooks/useRewards';
-import { useUserBalance } from '@/hooks/useUserBalance';
+import { useGoldShop } from '@/hooks/useGoldShopWrapper';
+import { useRewards } from '@/hooks/useRewardsWrapper';
+import { useUserBalance } from '@/hooks/useUserBalanceWrapper';
 
 const GoldShopContent = () => {
   const { toast } = useToast();
@@ -86,7 +86,7 @@ const GoldShopContent = () => {
     } else {
       toast({
         title: "Purchase Failed",
-        description: result.error,
+        description: result.error || "Unknown error occurred",
         variant: "destructive"
       });
     }
@@ -111,7 +111,7 @@ const GoldShopContent = () => {
       } else {
         toast({
           title: "Unlock Failed",
-          description: result.error,
+          description: result.error || "Unknown error occurred",
           variant: "destructive"
         });
       }
