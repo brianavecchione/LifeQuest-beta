@@ -11,8 +11,17 @@ export const useTodaysFocus = (quests: Quest[]) => {
     return savedFocus ? JSON.parse(savedFocus) : [];
   });
 
-  // Listen for localStorage changes to sync Today's Focus across pages
+  // Update local state when guest mode changes
   useEffect(() => {
+    if (isGuestMode) {
+      setTodaysFocus(guestTodaysFocus);
+    }
+  }, [isGuestMode, guestTodaysFocus]);
+
+  // Listen for localStorage changes to sync Today's Focus across pages (not in guest mode)
+  useEffect(() => {
+    if (isGuestMode) return;
+    
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'lifequest-todays-focus' && e.newValue) {
         setTodaysFocus(JSON.parse(e.newValue));
@@ -34,11 +43,11 @@ export const useTodaysFocus = (quests: Quest[]) => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('todaysFocusUpdated', handleLocalUpdate);
     };
-  }, []);
+  }, [isGuestMode]);
 
-  // Clean up todaysFocus to remove quest IDs that no longer exist
+  // Clean up todaysFocus to remove quest IDs that no longer exist (not in guest mode)
   useEffect(() => {
-    if (todaysFocus.length > 0 && quests.length > 0) {
+    if (!isGuestMode && todaysFocus.length > 0 && quests.length > 0) {
       const validFocusIds = todaysFocus.filter(id => 
         quests.some(quest => quest.id === id)
       );
@@ -50,17 +59,20 @@ export const useTodaysFocus = (quests: Quest[]) => {
         window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
       }
     }
-  }, [quests, todaysFocus]);
+  }, [quests, todaysFocus, isGuestMode]);
 
-  // Save todaysFocus to localStorage whenever it changes
+  // Save todaysFocus to localStorage whenever it changes (not in guest mode)
   useEffect(() => {
-    localStorage.setItem('lifequest-todays-focus', JSON.stringify(todaysFocus));
-  }, [todaysFocus]);
+    if (!isGuestMode) {
+      localStorage.setItem('lifequest-todays-focus', JSON.stringify(todaysFocus));
+    }
+  }, [todaysFocus, isGuestMode]);
 
   const handleDailySetup = (selectedQuestIds: string[]) => {
     if (isGuestMode) {
       const newFocus = [...guestTodaysFocus, ...selectedQuestIds];
       updateGuestTodaysFocus(newFocus);
+      setTodaysFocus(newFocus); // Update local state immediately
     } else {
       const newFocus = [...todaysFocus, ...selectedQuestIds];
       setTodaysFocus(newFocus);
@@ -73,6 +85,7 @@ export const useTodaysFocus = (quests: Quest[]) => {
     if (isGuestMode) {
       const newFocus = guestTodaysFocus.filter(id => id !== questId);
       updateGuestTodaysFocus(newFocus);
+      setTodaysFocus(newFocus); // Update local state immediately
     } else {
       const newFocus = todaysFocus.filter(id => id !== questId);
       setTodaysFocus(newFocus);

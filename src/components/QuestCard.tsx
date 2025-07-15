@@ -117,7 +117,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent 
               align="end" 
-              className="bg-slate-800 border-slate-700 text-white z-50"
+              sideOffset={5}
+              className="bg-slate-800 border-slate-700 text-white z-[9999]"
             >
               <DropdownMenuItem 
                 onClick={() => onEditQuest(quest)}

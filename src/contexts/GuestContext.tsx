@@ -262,14 +262,14 @@ export const GuestProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [isGuestMode, setIsGuestMode] = useState(false);
   const [guestUser, setGuestUser] = useState<GuestUserData>(createDummyUser());
   const [guestQuests, setGuestQuests] = useState<GuestQuest[]>(createDummyQuests());
-  const [guestTodaysFocus, setGuestTodaysFocus] = useState<string[]>(['guest-2', 'guest-5', 'guest-9']);
+  const [guestTodaysFocus, setGuestTodaysFocus] = useState<string[]>(['guest-5', 'guest-6', 'guest-9']); // Main and Side quests only
 
   const enableGuestMode = () => {
     setIsGuestMode(true);
     // Reset to fresh dummy data when entering guest mode
     setGuestUser(createDummyUser());
     setGuestQuests(createDummyQuests());
-    setGuestTodaysFocus(['guest-2', 'guest-5', 'guest-9']);
+    setGuestTodaysFocus(['guest-5', 'guest-6', 'guest-9']); // Main and Side quests only
   };
 
   const disableGuestMode = () => {
