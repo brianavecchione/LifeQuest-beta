@@ -118,9 +118,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
             <DropdownMenuContent 
               align="end" 
               sideOffset={5}
-              className="bg-slate-800 border-slate-700 text-white z-[9999]"
-              onCloseAutoFocus={(e) => e.preventDefault()}
-              forceMount
+              className="bg-slate-800 border-slate-700 text-white z-[10000] min-w-[8rem] overflow-hidden rounded-md p-1 shadow-md animate-none"
+              avoidCollisions={false}
             >
               <DropdownMenuItem 
                 onClick={() => onEditQuest(quest)}
