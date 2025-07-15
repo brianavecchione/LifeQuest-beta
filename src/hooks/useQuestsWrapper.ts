@@ -1,6 +1,8 @@
 import { useGuest } from '@/contexts/GuestContext';
 import { useQuests as useRealQuests, Quest } from '@/hooks/useQuests';
 
+export type { Quest };
+
 // Wrapper hook that provides quests from either real database or guest context
 export const useQuests = () => {
   const { isGuestMode, guestQuests, toggleGuestQuest, addGuestQuest } = useGuest();

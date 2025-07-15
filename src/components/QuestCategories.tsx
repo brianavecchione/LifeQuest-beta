@@ -8,7 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { useQuests, Quest } from '@/hooks/useQuests';
+import { useQuests, Quest } from '@/hooks/useQuestsWrapper';
 import { useToast } from '@/hooks/use-toast';
 import { format, isToday, isBefore, isAfter, endOfWeek, startOfDay } from 'date-fns';
 import EditQuestModal from './EditQuestModal';

@@ -7,8 +7,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
-import { useQuests } from '@/hooks/useQuests';
+import { useQuests } from '@/hooks/useQuestsWrapper';
+import { useAchievements } from '@/hooks/useAchievementsWrapper';
 import { useStreaks } from '@/hooks/useStreaks';
+import { useGuest } from '@/contexts/GuestContext';
 import confetti from 'canvas-confetti';
 
 interface Achievement {
@@ -37,10 +39,12 @@ interface Streak {
 }
 
 const AchievementsSection = () => {
+  const { isGuestMode } = useGuest();
   const { user: authUser } = useAuth();
   const { forceProfileRefresh } = useUser();
   const { toast } = useToast();
-  const { getQuestStats } = useQuests();
+  const { quests } = useQuests();
+  const { achievements, loading: achievementsLoading, claimAchievement } = useAchievements();
   const { 
     streaks: streakData, 
     getBestStreak, 
@@ -48,21 +52,22 @@ const AchievementsSection = () => {
     getTotalCompleted, 
     loading: streaksLoading 
   } = useStreaks();
-  const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [streaks, setStreaks] = useState<Streak[]>([]);
-  const [loading, setLoading] = useState(true);
   const [claiming, setClaiming] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'earned' | 'locked'>('all');
   const [showStreaks, setShowStreaks] = useState(false);
 
+  // Use achievements from wrapper hook instead of managing state
+  const loading = achievementsLoading || streaksLoading;
+
   useEffect(() => {
-    if (authUser) {
+    if (authUser && !isGuestMode) {
       initializeUserAchievements();
     }
-  }, [authUser]);
+  }, [authUser, isGuestMode]);
 
   const recalculateBadgeProgress = async () => {
-    if (!authUser) return;
+    if (!authUser || isGuestMode) return;
     
     try {
       console.log('🔄 Recalculating badge progress for user:', authUser.id);
@@ -102,7 +107,7 @@ const AchievementsSection = () => {
 
   // Set up real-time subscription for achievements
   useEffect(() => {
-    if (!authUser) return;
+    if (!authUser || isGuestMode) return;
 
     const channel = supabase
       .channel('achievements-changes')
@@ -128,6 +133,8 @@ const AchievementsSection = () => {
   }, [authUser]);
 
   const initializeUserAchievements = async () => {
+    if (isGuestMode) return;
+    
     try {
       // First check if user has any achievements
       const { data: existingAchievements } = await supabase
@@ -174,32 +181,22 @@ const AchievementsSection = () => {
       // Recalculate badge progress after seeding to ensure accurate states
       await recalculateBadgeProgress();
       
-      // Fetch achievements and streaks
-      await Promise.all([fetchAchievements(), fetchStreaks()]);
+      // Fetch streaks (achievements are handled by the wrapper hook)
+      await fetchStreaks();
     } catch (error) {
       console.error('Error initializing achievements:', error);
-      setLoading(false);
     }
   };
 
+  // Achievements are now handled by the wrapper hook
+  // This function is kept for backward compatibility with existing code
   const fetchAchievements = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('achievements')
-        .select('*')
-        .eq('user_id', authUser?.id)
-        .order('is_completed', { ascending: false })
-        .order('quest_value', { ascending: true });
-
-      if (error) throw error;
-      console.log('Achievements fetched:', data);
-      setAchievements(data || []);
-    } catch (error) {
-      console.error('Error fetching achievements:', error);
-    }
+    // No-op since achievements are managed by the wrapper hook
   };
 
   const fetchStreaks = async () => {
+    if (isGuestMode) return;
+    
     try {
       const { data, error } = await supabase
         .from('streaks')
@@ -210,10 +207,8 @@ const AchievementsSection = () => {
 
       if (error) throw error;
       setStreaks(data || []);
-      setLoading(false);
     } catch (error) {
       console.error('Error fetching streaks:', error);
-      setLoading(false);
     }
   };
 
@@ -344,18 +339,13 @@ const AchievementsSection = () => {
   };
 
   const claimBadge = async (achievementId: string) => {
-    if (!authUser || claiming) return;
+    if (!authUser || claiming || isGuestMode) return;
     
     setClaiming(achievementId);
     try {
-      const { data, error } = await supabase.rpc('claim_achievement', {
-        p_achievement_id: achievementId,
-        p_user_id: authUser.id
-      });
+      const result = await claimAchievement(achievementId);
 
-      if (error) throw error;
-
-      if (data) {
+      if (result.success) {
         // Trigger celebration animation
         triggerCelebration();
         
@@ -372,10 +362,7 @@ const AchievementsSection = () => {
         });
 
         // Force profile refresh to sync XP/Gold balances immediately
-        await Promise.all([
-          fetchAchievements(),
-          forceProfileRefresh()
-        ]);
+        await forceProfileRefresh();
       } else {
         toast({
           title: "Unable to claim badge",
@@ -403,7 +390,6 @@ const AchievementsSection = () => {
   const earnedCount = achievements.filter(a => a.is_completed).length;
   const unlockableCount = achievements.filter(a => a.is_unlockable && !a.is_completed).length;
   const totalCount = achievements.length;
-  const questStats = getQuestStats();
   const totalQuestsCompleted = getTotalCompleted(); // Use calculated total from streaks hook
   const bestStreak = getBestStreak();
   const longestStreak = getLongestStreak(); // Use calculated longest streak
