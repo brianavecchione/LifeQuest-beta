@@ -72,11 +72,22 @@ const QuestTracker = () => {
       const allCompleted = focusedQuests.every(q => q.status === 'Completed');
       const belowMinimum = activeQuests.length < 3;
       
+      console.log('QuestTracker focus check:', {
+        totalFocusQuests: focusedQuests.length,
+        activeQuests: activeQuests.length,
+        allCompleted,
+        belowMinimum,
+        userDeclinedToday
+      });
+      
       setShowAddMoreQuests(allCompleted || belowMinimum);
       
       // Auto-open modal if active focus drops below minimum AND user hasn't declined today
+      // Add a small delay to ensure quest status updates are fully processed
       if (belowMinimum && activeQuests.length > 0 && !userDeclinedToday) {
-        setIsSetupModalOpen(true);
+        setTimeout(() => {
+          setIsSetupModalOpen(true);
+        }, 100);
       }
     } else {
       setShowAddMoreQuests(false);

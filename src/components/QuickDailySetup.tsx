@@ -42,7 +42,15 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
   const spotsAvailable = maxFocusQuests - currentFocusCount;
   const needToSelect = Math.max(0, minFocusQuests - currentFocusCount);
 
-  console.log('QuickDailySetup - activeFocusCount:', currentFocusCount, 'spotsAvailable:', spotsAvailable, 'activeFocusQuests:', activeFocusQuests.map(q => q.id));
+  console.log('QuickDailySetup - Modal opened with data:', {
+    isOpen,
+    currentFocusQuests,
+    totalQuests: quests.length,
+    activeFocusCount: currentFocusCount,
+    spotsAvailable,
+    activeFocusQuests: activeFocusQuests.map(q => ({id: q.id, name: q.quest_name, status: q.status})),
+    allFocusQuests: quests.filter(q => currentFocusQuests.includes(q.id)).map(q => ({id: q.id, name: q.quest_name, status: q.status}))
+  });
 
   const getTypeIcon = (type: Quest['quest_type']) => {
     switch (type) {
