@@ -166,22 +166,22 @@ const CharacterStats = () => {
         {/* Character Info Section */}
         <div>
           <div className="flex items-center gap-4 mb-6">
-            {character.avatar.startsWith('data:') || character.avatar.startsWith('http') ? (
+            {activeUser.avatar && (activeUser.avatar.startsWith('data:') || activeUser.avatar.startsWith('http')) ? (
               <img 
-                src={character.avatar} 
-                alt={character.name} 
+                src={activeUser.avatar} 
+                alt={activeUser.name} 
                 className="w-24 h-24 rounded-full object-cover shadow-lg border-4 border-amber-400/30"
               />
             ) : (
               <div className="w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-3xl font-bold text-slate-900 shadow-lg">
-                {character.avatar}
+                {activeUser.avatar}
               </div>
             )}
             <div>
-              <h2 className="text-2xl font-bold text-amber-400 mb-1">{character.name}</h2>
+              <h2 className="text-2xl font-bold text-amber-400 mb-1">{activeUser.name}</h2>
               <div className="flex items-center gap-2 text-yellow-300">
                 <Crown className="w-5 h-5" />
-                <span className="text-lg font-semibold">Level {character.level}</span>
+                <span className="text-lg font-semibold">Level {activeUser.level}</span>
               </div>
             </div>
           </div>
@@ -190,7 +190,7 @@ const CharacterStats = () => {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-slate-300 font-medium">Level Progress</span>
-                <span className="text-amber-400 font-bold">{Math.round(character.xp)}%</span>
+                <span className="text-amber-400 font-bold">{Math.round(activeUser.xp)}%</span>
               </div>
               <Progress value={xpProgress} className="h-3 bg-slate-700">
                 <div className="h-full bg-gradient-to-r from-green-500 to-emerald-400 rounded-full transition-all duration-500" style={{ width: `${xpProgress}%` }} />
@@ -203,7 +203,7 @@ const CharacterStats = () => {
                   <TrendingUp className="w-4 h-4 text-red-400 mr-1" />
                   <span className="text-red-400 text-sm font-medium">Total XP</span>
                 </div>
-                <div className="text-xl font-bold text-white">{character.totalXp}</div>
+                <div className="text-xl font-bold text-white">{activeUser.totalXp}</div>
               </div>
 
               <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-yellow-500/30">
@@ -211,7 +211,7 @@ const CharacterStats = () => {
                   <Star className="w-4 h-4 text-yellow-400 mr-1" />
                   <span className="text-yellow-400 text-sm font-medium">Gold</span>
                 </div>
-                <div className="text-xl font-bold text-white">{character.gold}</div>
+                <div className="text-xl font-bold text-white">{activeUser.gold}</div>
               </div>
 
               <TooltipProvider>
