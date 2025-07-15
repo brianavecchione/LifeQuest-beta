@@ -12,6 +12,7 @@ import { useQuests, Quest } from '@/hooks/useQuestsWrapper';
 import { useToast } from '@/hooks/use-toast';
 import { format, isToday, isBefore, isAfter, endOfWeek, startOfDay } from 'date-fns';
 import EditQuestModal from './EditQuestModal';
+import QuestCard from './QuestCard';
 
 interface QuestCategoriesProps {
   onAddToFocus?: (questId: string) => void;
@@ -280,153 +281,6 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
     }
   };
 
-  const QuestCard: React.FC<{ quest: Quest }> = ({ quest }) => {
-    const isOverdue = isQuestOverdue(quest);
-    const isInTodaysFocus = todaysFocusQuests.includes(quest.id);
-    
-    return (
-      <div className="bg-slate-700/50 rounded-lg p-3 sm:p-4 border border-slate-600/50 hover:border-slate-500/70 transition-all group">
-        <div className="flex items-start gap-3 mb-3">
-          <button
-            onClick={() => updateQuestStatus(quest.id, quest.status === 'Completed' ? 'Not started' : 'Completed')}
-            className="shrink-0 mt-0.5"
-          >
-            {quest.status === 'Completed' ? (
-              <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
-            ) : (
-              <Circle className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 hover:text-blue-400 transition-colors" />
-            )}
-          </button>
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <h4 className={`font-medium text-sm sm:text-base leading-tight ${quest.status === 'Completed' ? 'line-through text-slate-400' : 'text-white'}`}>
-                  {quest.quest_name}
-                </h4>
-                {isInTodaysFocus && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Badge 
-                          variant="outline" 
-                          className="shrink-0 bg-orange-500/20 border-orange-500/50 text-orange-300 hover:bg-orange-500/30 text-xs px-2 py-0.5 font-medium flex items-center gap-1"
-                        >
-                          <Flame className="w-3 h-3" />
-                          Today's Focus
-                        </Badge>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-slate-800 border-slate-600 text-white">
-                        <p>This quest is part of your daily focus</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-                {isOverdue && (
-                  <div 
-                    className="shrink-0 flex items-center text-red-400"
-                    title="Quest is overdue"
-                    aria-label="Quest is overdue"
-                  >
-                    <AlertTriangle className="w-4 h-4" />
-                    <span className="sr-only">Overdue</span>
-                  </div>
-                )}
-              </div>
-              
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 shrink-0">
-                    <MoreVertical className="w-3 h-3" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent 
-                  align="end" 
-                  className="bg-slate-800 border-slate-700 text-white z-50"
-                >
-                  <DropdownMenuItem 
-                    onClick={() => handleAddToFocus(quest.id)}
-                    className="hover:bg-slate-700 focus:bg-slate-700 text-sm"
-                  >
-                    <Target className="w-4 h-4 mr-2" />
-                    Add to Today's Focus
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => handleEditQuest(quest)}
-                    className="hover:bg-slate-700 focus:bg-slate-700 text-sm"
-                  >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit Quest
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => setDeletingQuest(quest)}
-                    className="hover:bg-slate-700 focus:bg-slate-700 text-red-400 text-sm"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete Quest
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-            
-            <div className="flex items-center gap-1 sm:gap-2 mb-2 flex-wrap">
-              <Badge variant="outline" className="text-amber-400 border-amber-400/50 text-xs px-1.5 py-0.5">
-                {quest.xp_reward} XP
-              </Badge>
-              <Badge variant="outline" className="text-yellow-400 border-yellow-400/50 text-xs px-1.5 py-0.5">
-                <Coins className="w-3 h-3 mr-1" />
-                {quest.gold_reward} Gold
-              </Badge>
-              {/* Hide priority for Daily quests since they don't use priority system */}
-              {quest.quest_type !== 'Daily' && (
-                <Badge className={`${getPriorityColor(quest.priority)} text-xs px-1.5 py-0.5`}>
-                  {quest.priority}
-                </Badge>
-              )}
-              <button
-                onClick={() => updateQuestStatus(quest.id, quest.status === 'Completed' ? 'Not started' : 'Completed')}
-                className={`px-2 py-1 rounded-full text-xs font-medium transition-colors ${getStatusColor(quest.status)} whitespace-nowrap`}
-              >
-                {quest.status}
-              </button>
-            </div>
-
-            {/* Due Date Display - Hide for Daily quests */}
-            {quest.due_date && quest.quest_type !== 'Daily' && (
-              <div className="flex items-center gap-1 mb-2">
-                <Calendar className="w-3 h-3 text-slate-400" />
-                <span className={`text-xs ${isOverdue ? 'text-red-400 font-medium' : 'text-slate-400'}`}>
-                  {(() => {
-                    const [year, month, day] = quest.due_date.split('-').map(Number);
-                    const dueDate = new Date(year, month - 1, day);
-                    if (isToday(dueDate)) {
-                      return 'Due Today';
-                    }
-                    return `Due ${format(dueDate, 'MMM dd, yyyy')}`;
-                  })()}
-                  {isOverdue && ' (Overdue)'}
-                </span>
-              </div>
-            )}
-            
-            {quest.tags && quest.tags.length > 0 && (
-              <div className="flex items-center gap-1 flex-wrap">
-                {quest.tags.slice(0, 2).map((tag, index) => (
-                  <span key={index} className="text-xs text-slate-400 bg-slate-600/50 px-2 py-1 rounded-full flex items-center gap-1 whitespace-nowrap">
-                    <Tag className="w-3 h-3" />
-                    #{tag}
-                  </span>
-                ))}
-                {quest.tags.length > 2 && (
-                  <span className="text-xs text-slate-400">+{quest.tags.length - 2}</span>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   const CategorySection: React.FC<{ 
     type: keyof typeof groupedQuests; 
@@ -480,7 +334,13 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
             </div>
           ) : (
             categoryQuests.map((quest) => (
-              <QuestCard key={quest.id} quest={quest} />
+              <QuestCard 
+                key={quest.id} 
+                quest={quest}
+                onStatusChange={updateQuestStatus}
+                onEditQuest={setEditingQuest}
+                onDeleteQuest={setDeletingQuest}
+              />
             ))
           )}
         </div>
