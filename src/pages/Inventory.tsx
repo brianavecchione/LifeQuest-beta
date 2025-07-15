@@ -5,10 +5,15 @@ import InventorySystem from '@/components/InventorySystem';
 import GoldShopContent from '@/components/GoldShopContent';
 import { Coins } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
+import { useGuest } from '@/contexts/GuestContext';
 
 const Inventory = () => {
   const [activeTab, setActiveTab] = useState("inventory");
   const { user } = useUser();
+  const { isGuestMode, guestUser } = useGuest();
+  
+  // Use guest data if in guest mode, otherwise use real user data
+  const activeUser = isGuestMode ? guestUser : user;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -35,7 +40,7 @@ const Inventory = () => {
           <div className="bg-gradient-to-r from-yellow-600/20 to-amber-600/20 border border-yellow-500/30 rounded-lg p-4">
             <div className="flex items-center gap-3">
               <Coins className="w-6 h-6 text-yellow-400" />
-              <div className="text-2xl font-bold text-yellow-400">{user.gold.toLocaleString()}</div>
+              <div className="text-2xl font-bold text-yellow-400">{activeUser.gold.toLocaleString()}</div>
               <div className="text-lg text-slate-300">Gold</div>
             </div>
           </div>

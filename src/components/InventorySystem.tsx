@@ -335,9 +335,8 @@ const InventorySystem = () => {
                       <p className="text-slate-300 text-xs mb-2">{item.effect_description || item.description}</p>
                       <Button 
                         size="sm" 
-                        variant="outline"
                         onClick={() => handleEquip(item.item_id, true)}
-                        className="text-xs"
+                        className="text-xs bg-red-600 hover:bg-red-700 text-white border-red-600"
                       >
                         Unequip
                       </Button>
