@@ -1,8 +1,9 @@
 import React from 'react';
-import { Target, Plus, CheckCircle2 } from 'lucide-react';
+import { Target, Plus, CheckCircle2, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Quest } from '@/hooks/useQuests';
 import QuestCard from './QuestCard';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 interface TodaysFocusProps {
   todaysFocus: string[];
@@ -31,11 +32,10 @@ const TodaysFocus: React.FC<TodaysFocusProps> = ({
 }) => {
   const focusQuests = quests.filter(quest => 
     todaysFocus.includes(quest.id) && quest.quest_type !== 'Daily'
-  ).sort((a, b) => {
-    if (a.status === 'Completed' && b.status !== 'Completed') return 1;
-    if (a.status !== 'Completed' && b.status === 'Completed') return -1;
-    return 0;
-  });
+  );
+  
+  const incompleteQuests = focusQuests.filter(q => q.status !== 'Completed');
+  const completedQuests = focusQuests.filter(q => q.status === 'Completed');
 
   if (todaysFocus.length === 0) {
     return (
@@ -63,10 +63,10 @@ const TodaysFocus: React.FC<TodaysFocusProps> = ({
           <Target className="w-6 h-6 text-amber-400" />
           <h4 className="text-lg font-bold text-amber-400">Today's Focus</h4>
           <span className="text-slate-400 text-sm">
-            ({focusQuests.filter(q => q.status !== 'Completed').length} active)
+            ({incompleteQuests.length} active)
           </span>
         </div>
-        {(showAddMoreQuests || focusQuests.filter(q => q.status !== 'Completed').length < 5) && (
+        {(showAddMoreQuests || incompleteQuests.length < 5) && (
           <Button 
             size="sm" 
             onClick={onSetupModalOpen}
@@ -79,7 +79,8 @@ const TodaysFocus: React.FC<TodaysFocusProps> = ({
       </div>
       
       <div className="space-y-3">
-        {focusQuests.map((quest) => (
+        {/* Incomplete Quests */}
+        {incompleteQuests.map((quest) => (
           <QuestCard 
             key={quest.id}
             quest={quest}
@@ -93,6 +94,36 @@ const TodaysFocus: React.FC<TodaysFocusProps> = ({
             activeTimerQuestId={activeTimerQuestId}
           />
         ))}
+        
+        {/* Completed Quests - Collapsible Section */}
+        {completedQuests.length > 0 && (
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="completed-quests" className="border-green-600/30">
+              <AccordionTrigger className="text-green-400 hover:text-green-300 py-3">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Completed ({completedQuests.length})</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="space-y-3 pt-3">
+                {completedQuests.map((quest) => (
+                  <QuestCard 
+                    key={quest.id}
+                    quest={quest}
+                    showCompleteIcon={true}
+                    showDeleteButton={true}
+                    onStatusChange={onStatusChange}
+                    onRemoveFromFocus={onRemoveFromFocus}
+                    onEditQuest={onEditQuest}
+                    onDeleteQuest={onDeleteQuest}
+                    onBeginQuest={onBeginQuest}
+                    activeTimerQuestId={activeTimerQuestId}
+                  />
+                ))}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        )}
       </div>
       
       {showAddMoreQuests && (
