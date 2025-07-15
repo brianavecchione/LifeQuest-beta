@@ -20,6 +20,13 @@ const CharacterStats = () => {
   const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
   
   // Use guest data if in guest mode, otherwise use real user data
+  console.log('🔍 CharacterStats Debug:', {
+    isGuestMode,
+    guestUser,
+    character,
+    activeUserName: isGuestMode ? guestUser?.name : character?.name
+  });
+  
   const activeUser = isGuestMode ? guestUser : character;
   const xpProgress = activeUser.xp; // character.xp now contains the percentage progress
   
