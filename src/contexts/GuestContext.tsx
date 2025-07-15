@@ -240,19 +240,19 @@ const createDummyUser = (): GuestUserData => {
   const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
   
   return {
-    name: 'Guest Adventurer',
-    level: 5,
-    xp: 45, // 45% progress to next level
+    name: 'Adventurer',
+    level: 2,
+    xp: 60, // 60% progress to next level
     xpToNext: 100,
-    totalXp: 1280,
-    gold: 185,
+    totalXp: 160, // Total XP earned (100 for level 1 + 60 towards level 2)
+    gold: 250,
     pomodoroCount: 12,
     dailyXp: {
       [today]: 35,
       [yesterday]: 60,
     },
     reduceAnimations: false,
-    avatar: 'G',
+    avatar: 'A', // Show "A" for Adventurer
   };
 };
 
