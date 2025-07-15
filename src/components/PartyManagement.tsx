@@ -5,13 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { usePartyData } from '@/hooks/usePartyDataWrapper';
 
 const PartyManagement = () => {
   const [inviteCode] = useState('DS-7X4K9');
   const [showInvite, setShowInvite] = useState(false);
-  
-  // Empty array - all data should come from database
-  const partyMembers: any[] = [];
+  const { partyMembers, membersLoading } = usePartyData();
 
   const copyInviteCode = () => {
     navigator.clipboard.writeText(inviteCode);
@@ -75,34 +74,41 @@ const PartyManagement = () => {
           <h3 className="text-xl font-bold text-red-400">Member Management</h3>
         </div>
 
-        {partyMembers.length > 0 ? (
+        {membersLoading ? (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-400 mx-auto mb-4"></div>
+            <p className="text-slate-400">Loading party members...</p>
+          </div>
+        ) : partyMembers.length > 0 ? (
           <>
             <div className="space-y-3">
               {partyMembers.map((member) => (
                 <div key={member.id} className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg border border-slate-600/50">
                   <Avatar className="w-10 h-10">
-                    <AvatarImage src={member.avatar} />
                     <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-600 text-white font-bold">
-                      {member.name.charAt(0)}
+                      {member.username.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                   
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-white font-medium">{member.name}</span>
-                      {member.isLeader && (
+                      <span className="text-white font-medium">{member.username}</span>
+                      {member.role === 'Leader' && (
                         <Badge className="bg-yellow-600 hover:bg-yellow-700 text-xs">Leader</Badge>
                       )}
-                      {member.isCoLeader && (
+                      {member.role === 'Co-Leader' && (
                         <Badge className="bg-orange-600 hover:bg-orange-700 text-xs">Co-Leader</Badge>
+                      )}
+                      {!member.is_active && (
+                        <Badge variant="outline" className="text-xs text-slate-400 border-slate-500">Inactive</Badge>
                       )}
                     </div>
                     <div className="text-slate-400 text-sm">Level {member.level}</div>
                   </div>
                   
-                  {!member.isLeader && (
+                  {member.role !== 'Leader' && (
                     <div className="flex gap-1">
-                      {!member.isCoLeader && (
+                      {member.role !== 'Co-Leader' && (
                         <Button
                           size="sm"
                           variant="outline"
