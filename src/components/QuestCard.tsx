@@ -119,6 +119,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
               align="end" 
               sideOffset={5}
               className="bg-slate-800 border-slate-700 text-white z-[9999]"
+              onCloseAutoFocus={(e) => e.preventDefault()}
+              onInteractOutside={(e) => e.preventDefault()}
             >
               <DropdownMenuItem 
                 onClick={() => onEditQuest(quest)}

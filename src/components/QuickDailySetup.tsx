@@ -5,7 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Trophy, Flag, Crown, Target } from 'lucide-react';
 
-import { useQuests, Quest } from '@/hooks/useQuests';
+import { useQuests, Quest } from '@/hooks/useQuestsWrapper';
 
 interface QuickDailySetupProps {
   isOpen: boolean;
