@@ -484,18 +484,18 @@ export const useQuests = () => {
 
       console.log(`✅ Quest status updated in database:
         - Quest completed_at: ${transformedQuest.completed_at}
-        - Database trigger should award XP: ${transformedQuest.xp_reward}`);
+        - Database trigger awards XP: ${transformedQuest.xp_reward}`);
 
-      // Manually refresh user profile to sync XP/Gold balances
-      // This ensures immediate UI updates while real-time subscriptions catch up
+      // The database trigger handles ALL XP/Gold rewards automatically
+      // We just need to refresh the profile to sync the UI with the database
       if (refetchUserProfile) {
-        console.log('🔄 Refreshing user profile for XP/Gold sync...');
+        console.log('🔄 Refreshing user profile to sync with database...');
         await refetchUserProfile();
       }
 
-      // Also refresh daily XP data for chart updates
+      // Also refresh daily XP data to update charts
       if (refetchDailyXp) {
-        console.log('📊 Refreshing daily XP data for chart update...');
+        console.log('📊 Refreshing daily XP data for charts...');
         await refetchDailyXp();
       }
 
