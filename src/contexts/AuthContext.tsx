@@ -76,24 +76,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
-      // Clear local state first to prevent auth listeners from interfering
+      // Sign out from Supabase first
+      await supabase.auth.signOut();
+      
+      // Clear local state completely
       setSession(null);
       setUser(null);
       setLoading(false);
       
-      // Sign out from Supabase
-      await supabase.auth.signOut();
+      // Clear any stored auth data
+      localStorage.removeItem('sb-iiivtylfvnntjxzyximw-auth-token');
       
-      // Use setTimeout to ensure state clearing completes before redirect
-      setTimeout(() => {
-        window.location.href = '/auth';
-      }, 100);
+      // Force navigation to auth page
+      window.location.href = '/auth';
     } catch (error) {
       console.error('Error during signout:', error);
-      // Force redirect even if signout fails
-      setTimeout(() => {
-        window.location.href = '/auth';
-      }, 100);
+      
+      // Force clear everything even if signout fails
+      setSession(null);
+      setUser(null);
+      setLoading(false);
+      localStorage.removeItem('sb-iiivtylfvnntjxzyximw-auth-token');
+      
+      // Force redirect
+      window.location.href = '/auth';
     }
   };
 
