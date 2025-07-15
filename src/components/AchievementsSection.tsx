@@ -9,7 +9,7 @@ import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
 import { useQuests } from '@/hooks/useQuestsWrapper';
 import { useAchievements } from '@/hooks/useAchievementsWrapper';
-import { useStreaks } from '@/hooks/useStreaks';
+import { useStreaks } from '@/hooks/useStreaksWrapper';
 import { useGuest } from '@/contexts/GuestContext';
 import confetti from 'canvas-confetti';
 
