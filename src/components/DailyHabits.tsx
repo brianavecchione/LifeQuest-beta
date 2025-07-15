@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Calendar, ChevronDown, ChevronUp } from 'lucide-react';
+import { Calendar, ChevronDown, ChevronUp, CheckCircle2 } from 'lucide-react';
 import { Quest } from '@/hooks/useQuests';
 import QuestCard from './QuestCard';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 interface DailyHabitsProps {
   quests: Quest[];
@@ -19,16 +20,14 @@ const DailyHabits: React.FC<DailyHabitsProps> = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   
   const allDailies = quests.filter(quest => quest.quest_type === 'Daily');
-  const sortedDailies = [...allDailies].sort((a, b) => {
-    if (a.status === 'Completed' && b.status !== 'Completed') return 1;
-    if (a.status !== 'Completed' && b.status === 'Completed') return -1;
-    return 0;
-  });
+  
+  const incompleteHabits = allDailies.filter(q => q.status !== 'Completed');
+  const completedHabits = allDailies.filter(q => q.status === 'Completed');
+  
+  const completedCount = completedHabits.length;
+  const totalCount = allDailies.length;
 
-  const completedCount = sortedDailies.filter(q => q.status === 'Completed').length;
-  const totalCount = sortedDailies.length;
-
-  if (sortedDailies.length === 0) {
+  if (allDailies.length === 0) {
     return (
       <div className="bg-slate-700/30 rounded-lg p-4 border border-yellow-600/30 text-center">
         <Calendar className="w-8 h-8 text-yellow-400 mx-auto mb-2 opacity-50" />
@@ -58,7 +57,8 @@ const DailyHabits: React.FC<DailyHabitsProps> = ({
       
       {!isCollapsed && (
         <div className="space-y-3">
-          {sortedDailies.map((quest) => (
+          {/* Incomplete Habits */}
+          {incompleteHabits.map((quest) => (
             <QuestCard 
               key={quest.id}
               quest={quest}
@@ -69,6 +69,33 @@ const DailyHabits: React.FC<DailyHabitsProps> = ({
               hideBadges={['gold', 'type']}
             />
           ))}
+          
+          {/* Completed Habits - Collapsible Section */}
+          {completedHabits.length > 0 && (
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="completed-habits" className="border-green-600/30">
+                <AccordionTrigger className="text-green-400 hover:text-green-300 py-3">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>Completed ({completedHabits.length})</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="space-y-3 pt-3">
+                  {completedHabits.map((quest) => (
+                    <QuestCard 
+                      key={quest.id}
+                      quest={quest}
+                      showCompleteIcon={true}
+                      onStatusChange={onStatusChange}
+                      onEditQuest={onEditQuest}
+                      onDeleteQuest={onDeleteQuest}
+                      hideBadges={['gold', 'type']}
+                    />
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          )}
         </div>
       )}
     </div>
