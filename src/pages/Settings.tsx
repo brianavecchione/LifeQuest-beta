@@ -2,7 +2,8 @@
 import React from 'react';
 import AISidekick from '@/components/AISidekick';
 import AvatarUpload from '@/components/AvatarUpload';
-import { User, Bell, Zap, Shield, Accessibility, Save } from 'lucide-react';
+import DeleteAccountModal from '@/components/DeleteAccountModal';
+import { User, Bell, Zap, Shield, Accessibility, Save, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -14,6 +15,7 @@ const Settings = () => {
   const { toast } = useToast();
   const [characterName, setCharacterName] = React.useState(user.name);
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
 
   const handleNameChange = (value: string) => {
     setCharacterName(value);
@@ -197,10 +199,43 @@ const Settings = () => {
           </div>
         </div>
 
+        {/* Danger Zone - Delete Account */}
+        <div className="mb-12">
+          <div className="bg-gradient-to-br from-red-900/10 to-red-800/10 rounded-xl p-6 border border-red-600/30 shadow-2xl">
+            <div className="flex items-center gap-2 mb-6">
+              <Trash2 className="w-6 h-6 text-red-400" />
+              <h3 className="text-xl font-bold text-red-400">Danger Zone</h3>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+                <h4 className="text-red-400 font-semibold mb-2">Delete Account</h4>
+                <p className="text-slate-300 text-sm mb-4">
+                  Permanently delete your LifeQuest account and all associated data. This action cannot be undone.
+                </p>
+                <Button
+                  onClick={() => setIsDeleteModalOpen(true)}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                  size="sm"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete Account
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       {/* AI Sidekick */}
       <AISidekick />
+      
+      {/* Delete Account Modal */}
+      <DeleteAccountModal 
+        isOpen={isDeleteModalOpen} 
+        onClose={() => setIsDeleteModalOpen(false)} 
+      />
     </div>
   );
 };
