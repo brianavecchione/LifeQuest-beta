@@ -177,6 +177,7 @@ export const calculateLocalStreaks = (completedTimestamps: string[]) => {
   let tempStreak = 0;
 
   // Calculate current streak (consecutive days from today backwards)
+  let streakBroken = false;
   for (let i = 0; ; i++) {
     const checkDate = new Date();
     checkDate.setDate(checkDate.getDate() - i);
@@ -186,8 +187,18 @@ export const calculateLocalStreaks = (completedTimestamps: string[]) => {
     
     if (localDates.includes(checkDateStr)) {
       currentStreak++;
+      streakBroken = false;
     } else {
-      break;
+      // If this is today (i === 0), don't break the streak yet
+      if (i === 0) {
+        console.log('🔥 STREAK DEBUG - No completion today, but continuing to check previous days');
+        continue;
+      }
+      // If we've already found some completions and now hit a gap, break
+      if (currentStreak > 0 || streakBroken) {
+        break;
+      }
+      streakBroken = true;
     }
   }
 
