@@ -847,6 +847,10 @@ export type Database = {
         Args: { p_achievement_id: string; p_user_id: string }
         Returns: boolean
       }
+      delete_user_account: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       get_unread_badge_count: {
         Args: { p_user_id: string }
         Returns: number

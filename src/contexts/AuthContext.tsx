@@ -110,8 +110,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { error: { message: 'No user to delete' } };
       }
 
-      // Delete the user account - this will trigger cascade deletes for all user data
-      const { error } = await supabase.auth.deleteUser();
+      // Call the edge function to handle account deletion
+      const { error } = await supabase.functions.invoke('delete-account', {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
       
       if (error) {
         console.error('Error deleting user account:', error);
