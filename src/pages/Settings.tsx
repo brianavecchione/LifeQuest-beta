@@ -204,10 +204,6 @@ const Settings = () => {
           <Soundtrack />
         </div>
 
-        {/* Customization Settings */}
-        <div className="mb-12">
-          <CustomizationPanel />
-        </div>
       </div>
 
       {/* AI Sidekick */}

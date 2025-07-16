@@ -17,6 +17,7 @@ import Inventory from "./pages/Inventory";
 import GoldShop from "./pages/GoldShop";
 import Parties from "./pages/Parties";
 import Settings from "./pages/Settings";
+import Customization from "./pages/Customization";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -44,6 +45,7 @@ const App = () => (
                       <Route path="/gold-shop" element={<ProtectedRoute><GoldShop /></ProtectedRoute>} />
                       <Route path="/parties" element={<ProtectedRoute><Parties /></ProtectedRoute>} />
                       <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                      <Route path="/customization" element={<ProtectedRoute><Customization /></ProtectedRoute>} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </main>

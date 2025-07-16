@@ -128,6 +128,41 @@ export type Database = {
         }
         Relationships: []
       }
+      badge_notifications: {
+        Row: {
+          achievement_id: string
+          created_at: string
+          id: string
+          is_read: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_badge_notifications_achievement"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_reset_logs: {
         Row: {
           created_at: string
@@ -812,6 +847,10 @@ export type Database = {
         Args: { p_achievement_id: string; p_user_id: string }
         Returns: boolean
       }
+      get_unread_badge_count: {
+        Args: { p_user_id: string }
+        Returns: number
+      }
       increment_streak: {
         Args: { p_user_id: string; p_streak_name: string }
         Returns: undefined
@@ -819,6 +858,10 @@ export type Database = {
       is_likely_recurring_habit: {
         Args: { quest_name: string }
         Returns: boolean
+      }
+      mark_badge_notifications_read: {
+        Args: { p_user_id: string }
+        Returns: undefined
       }
       recalculate_badge_eligibility: {
         Args: { p_user_id: string }
