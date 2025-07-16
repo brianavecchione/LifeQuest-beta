@@ -133,7 +133,7 @@ const BadgeSystem = () => {
   return (
     <div className="space-y-8">
       {/* Earned Badges by Category */}
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-green-600/30 shadow-2xl">
+      <div className="bg-component-background rounded-xl p-6 border border-green-600/30 shadow-2xl">
         <h2 className="text-2xl font-bold text-green-400 mb-6 flex items-center gap-2">
           🏆 Earned Badges ({earnedBadges.length})
         </h2>
@@ -164,7 +164,7 @@ const BadgeSystem = () => {
       </div>
 
       {/* Unearned Badges by Category */}
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-amber-600/30 shadow-2xl">
+      <div className="bg-component-background rounded-xl p-6 border border-amber-600/30 shadow-2xl">
         <h2 className="text-2xl font-bold text-amber-400 mb-6 flex items-center gap-2">
           🔒 Available Badges ({unearnedBadges.length})
         </h2>

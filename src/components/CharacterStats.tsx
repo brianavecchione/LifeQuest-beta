@@ -113,7 +113,7 @@ const CharacterStats = () => {
   // Show loading state if user data is still loading or if user has no name yet
   if (!isGuestMode && (isLoading || !character.name)) {
     return (
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-yellow-600/30 shadow-2xl">
+      <div className="bg-component-background rounded-xl p-6 border border-yellow-600/30 shadow-2xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Character Info Loading */}
           <div>
@@ -161,7 +161,7 @@ const CharacterStats = () => {
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-yellow-600/30 shadow-2xl">
+    <div className="bg-component-background rounded-xl p-6 border border-yellow-600/30 shadow-2xl">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Character Info Section */}
         <div>
