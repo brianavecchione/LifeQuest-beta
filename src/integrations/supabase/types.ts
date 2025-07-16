@@ -774,6 +774,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_creation_errors: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          id: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_settings: {
         Row: {
           active_theme: Database["public"]["Enums"]["theme_choice"]
@@ -862,6 +883,10 @@ export type Database = {
       is_likely_recurring_habit: {
         Args: { quest_name: string }
         Returns: boolean
+      }
+      log_user_creation_error: {
+        Args: { p_user_id: string; p_error_message: string }
+        Returns: undefined
       }
       mark_badge_notifications_read: {
         Args: { p_user_id: string }

@@ -28,6 +28,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // Handle successful Google OAuth sign-in
+        if (event === 'SIGNED_IN' && session?.user && window.location.pathname === '/auth') {
+          window.location.href = '/';
+        }
       }
     );
 
