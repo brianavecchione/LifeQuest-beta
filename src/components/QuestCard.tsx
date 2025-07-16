@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Star, Trophy, Flag, Crown, CheckCircle2, Coins, MoreVertical, Edit, Trash2, Play, X, ChevronDown, ChevronUp, Calendar, Clock, AlertCircle, Tag } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Quest } from '@/hooks/useQuests';
 import { format } from 'date-fns';
 
@@ -138,8 +138,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 <X className="w-4 h-4" />
               </Button>
             )}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+            <Dialog>
+              <DialogTrigger asChild>
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -148,29 +148,29 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 >
                   <MoreVertical className="w-3 h-3" />
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                align="end" 
-                sideOffset={5}
-                className="bg-slate-800 border-slate-700 text-white z-[10000] min-w-[8rem] overflow-hidden rounded-md p-1 shadow-md animate-none"
-                avoidCollisions={false}
-              >
-                <DropdownMenuItem 
-                  onClick={() => onEditQuest(quest)}
-                  className="hover:bg-slate-700 focus:bg-slate-700 text-sm"
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit Quest
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => onDeleteQuest(quest)}
-                  className="hover:bg-slate-700 focus:bg-slate-700 text-red-400 text-sm"
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete Quest
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              </DialogTrigger>
+              <DialogContent className="bg-slate-800 border-slate-700 text-white">
+                <DialogHeader>
+                  <DialogTitle>Quest Actions</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3">
+                  <Button 
+                    onClick={() => onEditQuest(quest)}
+                    className="w-full justify-start bg-slate-700 hover:bg-slate-600 text-white"
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit Quest
+                  </Button>
+                  <Button 
+                    onClick={() => onDeleteQuest(quest)}
+                    className="w-full justify-start bg-slate-700 hover:bg-red-600 text-red-400 hover:text-white"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Quest
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
             {quest.status !== 'Completed' && quest.quest_type !== 'Daily' && quest.pomodoro_enabled && onBeginQuest && (
               <Button
                 size="sm"
