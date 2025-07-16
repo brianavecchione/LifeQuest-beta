@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 0 0% 98%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -38,13 +38,17 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
-    /* LifeQuest Brand Colors */
+    /* LifeQuest Brand Colors - Light Mode */
     --brand-primary: 45 93% 47%;     /* Amber/Gold for primary actions */
     --brand-primary-foreground: 222 84% 5%;
     --brand-secondary: 217 91% 60%;   /* Blue for secondary actions */
     --brand-secondary-foreground: 210 40% 98%;
     --brand-tertiary: 142 76% 36%;    /* Green for success states */
     --brand-tertiary-foreground: 210 40% 98%;
+
+    /* Light Mode App Background */
+    --app-background: 0 0% 96%;
+    --app-foreground: 222.2 84% 4.9%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -92,6 +96,10 @@ All colors MUST be HSL.
     --brand-secondary-foreground: 210 40% 98%;
     --brand-tertiary: 142 76% 36%;    /* Green for success states */
     --brand-tertiary-foreground: 210 40% 98%;
+
+    /* Dark Mode App Background */
+    --app-background: 222.2 84% 4.9%;
+    --app-foreground: 210 40% 98%;
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;

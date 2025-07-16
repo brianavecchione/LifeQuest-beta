@@ -7,6 +7,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { UserProvider } from "./contexts/UserContext";
 import { QuestProvider } from "./contexts/QuestContext";
 import { GuestProvider } from "./contexts/GuestContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
@@ -30,9 +31,10 @@ const App = () => (
       <GuestProvider>
         <UserProvider>
           <QuestProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
+            <ThemeProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
               <BrowserRouter>
                 <div className="min-h-screen flex flex-col">
                   <Navigation />
@@ -53,8 +55,9 @@ const App = () => (
                   </main>
                   <Footer />
                 </div>
-              </BrowserRouter>
-            </TooltipProvider>
+                </BrowserRouter>
+              </TooltipProvider>
+            </ThemeProvider>
           </QuestProvider>
         </UserProvider>
       </GuestProvider>

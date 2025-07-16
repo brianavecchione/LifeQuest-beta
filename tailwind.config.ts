@@ -70,7 +70,10 @@ export default {
 					'secondary-foreground': 'hsl(var(--brand-secondary-foreground))',
 					tertiary: 'hsl(var(--brand-tertiary))',
 					'tertiary-foreground': 'hsl(var(--brand-tertiary-foreground))'
-				}
+				},
+				// App-specific colors for theme switching
+				'app-background': 'hsl(var(--app-background))',
+				'app-foreground': 'hsl(var(--app-foreground))',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
