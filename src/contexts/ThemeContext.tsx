@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'dark-mode' | 'light-mode';
+type Theme = 'dark-mode' | 'light-mode' | 'fantasy';
 
 interface ThemeContextType {
   theme: Theme;
@@ -28,8 +28,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const applyTheme = (newTheme: Theme) => {
     const root = document.documentElement;
     
+    // Remove all theme classes first
+    root.classList.remove('dark', 'fantasy');
+    
     if (newTheme === 'light-mode') {
-      root.classList.remove('dark');
+      // Light mode is default, no classes needed
+    } else if (newTheme === 'fantasy') {
+      root.classList.add('fantasy');
     } else {
       root.classList.add('dark');
     }

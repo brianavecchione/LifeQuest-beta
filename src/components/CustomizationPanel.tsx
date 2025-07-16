@@ -28,6 +28,14 @@ const CustomizationPanel = () => {
       colors: ['from-slate-50', 'to-slate-100'],
       accent: 'primary',
       preview: '☀️'
+    },
+    {
+      id: 'fantasy',
+      name: 'Fantasy Adventure',
+      description: 'Immersive fantasy realm with magical landscapes and enchanted styling',
+      colors: ['from-blue-400', 'to-purple-600'],
+      accent: 'fantasy',
+      preview: '🏰'
     }
   ];
 
@@ -71,7 +79,7 @@ const CustomizationPanel = () => {
   ];
 
   const handleApplyTheme = () => {
-    applyTheme(selectedTheme as 'dark-mode' | 'light-mode');
+    applyTheme(selectedTheme as 'dark-mode' | 'light-mode' | 'fantasy');
     toast({
       title: "Theme Applied!",
       description: `Switched to ${themes.find(t => t.id === selectedTheme)?.name}`,
@@ -122,7 +130,7 @@ const CustomizationPanel = () => {
             {themes.map((themeOption) => (
               <div
                 key={themeOption.id}
-                onClick={() => setSelectedTheme(themeOption.id as 'dark-mode' | 'light-mode')}
+                onClick={() => setSelectedTheme(themeOption.id as 'dark-mode' | 'light-mode' | 'fantasy')}
                 className={`cursor-pointer rounded-lg p-4 border-2 transition-all hover:scale-105 ${
                   selectedTheme === themeOption.id 
                     ? 'border-pink-500 bg-pink-900/20' 

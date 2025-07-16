@@ -7,7 +7,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { UserProvider } from "./contexts/UserContext";
 import { QuestProvider } from "./contexts/QuestContext";
 import { GuestProvider } from "./contexts/GuestContext";
-import { ThemeProvider } from "./contexts/ThemeContext";
+import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
@@ -25,6 +25,40 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const AppContent = () => {
+  const { theme } = useTheme();
+  
+  return (
+    <div className="min-h-screen flex flex-col">
+      {/* Fantasy background - only show when fantasy theme is active */}
+      {theme === 'fantasy' && (
+        <>
+          <div className="fantasy-background" />
+          <div className="fantasy-overlay" />
+        </>
+      )}
+      
+      <Navigation />
+      <main className="flex-1 relative">
+        <Routes>
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="/quests" element={<ProtectedRoute><Quests /></ProtectedRoute>} />
+          <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
+          <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
+          <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
+          <Route path="/gold-shop" element={<ProtectedRoute><GoldShop /></ProtectedRoute>} />
+          <Route path="/parties" element={<ProtectedRoute><Parties /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route path="/customization" element={<ProtectedRoute><Customization /></ProtectedRoute>} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
@@ -36,25 +70,7 @@ const App = () => (
                 <Toaster />
                 <Sonner />
                 <BrowserRouter>
-                <div className="min-h-screen flex flex-col">
-                  <Navigation />
-                  <main className="flex-1">
-                    <Routes>
-                      <Route path="/auth" element={<Auth />} />
-                      <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-                      <Route path="/quests" element={<ProtectedRoute><Quests /></ProtectedRoute>} />
-                      <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
-                      <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
-                      <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
-                      <Route path="/gold-shop" element={<ProtectedRoute><GoldShop /></ProtectedRoute>} />
-                      <Route path="/parties" element={<ProtectedRoute><Parties /></ProtectedRoute>} />
-                      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                      <Route path="/customization" element={<ProtectedRoute><Customization /></ProtectedRoute>} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </main>
-                  <Footer />
-                </div>
+                  <AppContent />
                 </BrowserRouter>
               </TooltipProvider>
             </QuestProvider>
