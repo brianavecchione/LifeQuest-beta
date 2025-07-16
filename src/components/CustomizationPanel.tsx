@@ -6,40 +6,16 @@ import { Badge } from '@/components/ui/badge';
 
 const CustomizationPanel = () => {
   const [currentTab, setCurrentTab] = useState<'themes' | 'avatar'>('themes');
-  const [selectedTheme, setSelectedTheme] = useState('dark-forest');
+  const [selectedTheme, setSelectedTheme] = useState('dark-mode');
 
   const themes = [
     {
-      id: 'dark-forest',
-      name: 'Dark Forest',
-      description: 'Mysterious woodland adventure',
-      colors: ['from-green-900', 'to-slate-900'],
-      accent: 'emerald',
-      preview: '🌲'
-    },
-    {
-      id: 'fiery-dungeon',
-      name: 'Fiery Dungeon',
-      description: 'Blazing underground realm',
-      colors: ['from-red-900', 'to-orange-900'],
-      accent: 'red-orange',
-      preview: '🔥'
-    },
-    {
-      id: 'icy-mountains',
-      name: 'Icy Mountains',
-      description: 'Frozen peaks and glaciers',
-      colors: ['from-blue-900', 'to-cyan-900'],
-      accent: 'blue-cyan',
-      preview: '🏔️'
-    },
-    {
-      id: 'mystical-void',
-      name: 'Mystical Void',
-      description: 'Cosmic magical realm',
-      colors: ['from-purple-900', 'to-indigo-900'],
-      accent: 'purple',
-      preview: '✨'
+      id: 'dark-mode',
+      name: 'Dark Mode',
+      description: 'Classic LifeQuest theme with a dark interface',
+      colors: ['from-slate-900', 'to-slate-800'],
+      accent: 'primary',
+      preview: '🌙'
     }
   ];
 
@@ -118,8 +94,8 @@ const CustomizationPanel = () => {
       {currentTab === 'themes' && (
         <div className="space-y-4">
           <div className="mb-4">
-            <h4 className="text-lg font-semibold text-pink-300 mb-2">Choose Your Realm</h4>
-            <p className="text-slate-400 text-sm">Transform your dashboard with different fantasy themes</p>
+            <h4 className="text-lg font-semibold text-pink-300 mb-2">Choose Your Theme</h4>
+            <p className="text-slate-400 text-sm">Customize your LifeQuest experience</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
