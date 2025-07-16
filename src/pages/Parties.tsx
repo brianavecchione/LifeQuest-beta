@@ -27,6 +27,20 @@ const Parties = () => {
           </p>
         </div>
 
+        {/* Coming Soon Banner */}
+        <div className="mb-12">
+          <div className="bg-gradient-to-r from-amber-900/20 via-yellow-900/20 to-amber-900/20 border border-amber-500/30 rounded-lg p-6 backdrop-blur-sm">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-amber-400 mb-2">
+                🚀 Coming Soon: Party Mode 1.0
+              </h2>
+              <p className="text-slate-300 text-lg leading-relaxed">
+                We're building the next evolution of collaborative questing! Party quests, chat, leaderboards, and more will roll out in future updates. Stay tuned!
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           {/* Left Column - Party Dashboard & Quests */}
           <div className="xl:col-span-2 space-y-8">
