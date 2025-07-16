@@ -12,9 +12,8 @@ const BackgroundImage: React.FC = () => {
     <div 
       className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
       style={{ 
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundAttachment: 'fixed',
-        opacity: backgroundOpacity
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, ${1 - backgroundOpacity}), rgba(0, 0, 0, ${1 - backgroundOpacity})), url(${backgroundImage})`,
+        backgroundAttachment: 'fixed'
       }}
     />
   );
