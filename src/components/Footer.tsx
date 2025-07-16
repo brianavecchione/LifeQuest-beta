@@ -4,7 +4,7 @@ import { Mail } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-slate-900 border-t border-slate-700 mt-auto">
+    <footer className="bg-slate-900 border-t border-slate-700 mt-auto relative z-10">
       <div className="container mx-auto px-4 py-8">
         {/* Contact Section */}
         <div className="text-center">
