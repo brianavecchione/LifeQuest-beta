@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Target, Trophy, Sword, Settings, Users, LogOut, Coins, Menu, X, Crown, Zap, User, Bell, Palette } from 'lucide-react';
+import { Home, Target, Trophy, Sword, Settings, Users, LogOut, Coins, Menu, X, Crown, Zap, User, Bell, Palette, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/contexts/UserContext';
@@ -190,6 +190,15 @@ const Navigation = () => {
                       <span>Customization</span>
                     </Link>
                     
+                    <Link
+                      to="/help"
+                      onClick={closeProfileDropdown}
+                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                    >
+                      <HelpCircle className="w-4 h-4" />
+                      <span>Help & FAQ</span>
+                    </Link>
+                    
                     <div className="border-t border-slate-700 my-1"></div>
                     
                     <button
@@ -262,16 +271,25 @@ const Navigation = () => {
                 <span>Settings</span>
               </Link>
               
-              <Link
-                to="/customization"
-                onClick={closeProfileDropdown}
-                className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
-              >
-                <Palette className="w-4 h-4" />
-                <span>Customization</span>
-              </Link>
-              
-              <div className="border-t border-slate-700 my-1"></div>
+                <Link
+                  to="/customization"
+                  onClick={closeProfileDropdown}
+                  className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                >
+                  <Palette className="w-4 h-4" />
+                  <span>Customization</span>
+                </Link>
+                
+                <Link
+                  to="/help"
+                  onClick={closeProfileDropdown}
+                  className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                >
+                  <HelpCircle className="w-4 h-4" />
+                  <span>Help & FAQ</span>
+                </Link>
+                
+                <div className="border-t border-slate-700 my-1"></div>
               
               <button
                 onClick={() => {
@@ -370,6 +388,15 @@ const Navigation = () => {
                 >
                   <Palette className="w-5 h-5" />
                   <span>Customization</span>
+                </Link>
+                
+                <Link
+                  to="/help"
+                  onClick={closeMobileMenu}
+                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                >
+                  <HelpCircle className="w-5 h-5" />
+                  <span>Help & FAQ</span>
                 </Link>
                 
                 <Button
