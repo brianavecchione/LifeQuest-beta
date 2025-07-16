@@ -2,7 +2,6 @@
 import React from 'react';
 import AISidekick from '@/components/AISidekick';
 import AvatarUpload from '@/components/AvatarUpload';
-import Soundtrack from '@/components/Soundtrack';
 import { User, Bell, Zap, Shield, Accessibility, Save, AlertTriangle, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -255,10 +254,6 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* Soundtrack & Atmosphere Settings */}
-        <div className="mb-12">
-          <Soundtrack />
-        </div>
 
         {/* Danger Zone - Account Deletion */}
         <div className="mb-12">
