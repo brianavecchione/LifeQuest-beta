@@ -87,6 +87,7 @@ const Navigation = () => {
     { path: '/achievements', label: 'Achievements', icon: Trophy },
     { path: '/inventory', label: 'Inventory', icon: Sword },
     { path: '/parties', label: 'Parties', icon: Users },
+    { path: '/challenges', label: 'Challenges', icon: Zap },
   ];
 
   return (
@@ -352,6 +353,15 @@ const Navigation = () => {
                   <Bell className="w-5 h-5" />
                   <span>Notifications</span>
                 </button>
+                
+                <Link
+                  to="/settings"
+                  onClick={closeMobileMenu}
+                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                >
+                  <Settings className="w-5 h-5" />
+                  <span>Settings</span>
+                </Link>
                 
                 <Link
                   to="/customization"
