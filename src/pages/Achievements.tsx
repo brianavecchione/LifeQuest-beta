@@ -1,8 +1,17 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import AchievementsSection from '@/components/AchievementsSection';
+import BadgeNotificationTest from '@/components/BadgeNotificationTest';
+import { useBadgeNotifications } from '@/hooks/useBadgeNotifications';
 
 const Achievements = () => {
+  const { markAllAsRead } = useBadgeNotifications();
+  
+  // Mark all badge notifications as read when user visits achievements page
+  useEffect(() => {
+    markAllAsRead();
+  }, [markAllAsRead]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* Fantasy background pattern */}
@@ -22,6 +31,9 @@ const Achievements = () => {
             Badges and Streaks
           </p>
         </div>
+
+        {/* Badge Notification Test Component */}
+        <BadgeNotificationTest />
 
         {/* Achievements and Streaks with Integrated Badges */}
         <div className="mb-12">

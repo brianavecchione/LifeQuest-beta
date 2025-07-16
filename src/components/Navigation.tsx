@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/contexts/UserContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGuest } from '@/contexts/GuestContext';
+import { useBadgeNotifications } from '@/hooks/useBadgeNotifications';
 import { useNavigate } from 'react-router-dom';
 
 const Navigation = () => {
@@ -18,6 +19,7 @@ const Navigation = () => {
   const { user: userContext, isLoading } = useUser();
   const { signOut } = useAuth();
   const { isGuestMode, disableGuestMode } = useGuest();
+  const { unreadCount, markAllAsRead } = useBadgeNotifications();
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   
   // Debug log for XP recalculation
@@ -81,6 +83,13 @@ const Navigation = () => {
     setIsProfileDropdownOpen(false);
   };
   
+  const handleAchievementsClick = () => {
+    // Mark badge notifications as read when user clicks achievements
+    if (unreadCount > 0) {
+      markAllAsRead();
+    }
+  };
+  
   const navItems = [
     { path: '/', label: 'Today', icon: Home },
     { path: '/quests', label: 'Quests', icon: Target },
@@ -127,15 +136,17 @@ const Navigation = () => {
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => {
+           {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
+              const isAchievements = item.path === '/achievements';
               
               return (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  onClick={isAchievements ? handleAchievementsClick : undefined}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative ${
                     isActive 
                       ? 'bg-amber-600 text-white' 
                       : 'text-slate-300 hover:bg-slate-700 hover:text-white'
@@ -143,6 +154,13 @@ const Navigation = () => {
                 >
                   <Icon className="w-4 h-4" />
                   <span className="hidden lg:inline">{item.label}</span>
+                  {isAchievements && unreadCount > 0 && (
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center">
+                      <span className="text-xs text-white font-bold leading-none">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    </div>
+                  )}
                 </Link>
               );
             })}
@@ -325,13 +343,19 @@ const Navigation = () => {
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
+                const isAchievements = item.path === '/achievements';
                 
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    onClick={closeMobileMenu}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors ${
+                    onClick={() => {
+                      if (isAchievements) {
+                        handleAchievementsClick();
+                      }
+                      closeMobileMenu();
+                    }}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors relative ${
                       isActive 
                         ? 'bg-amber-600 text-white' 
                         : 'text-slate-300 hover:bg-slate-700 hover:text-white'
@@ -339,6 +363,13 @@ const Navigation = () => {
                   >
                     <Icon className="w-5 h-5" />
                     <span>{item.label}</span>
+                    {isAchievements && unreadCount > 0 && (
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center">
+                        <span className="text-xs text-white font-bold leading-none">
+                          {unreadCount > 9 ? '9+' : unreadCount}
+                        </span>
+                      </div>
+                    )}
                   </Link>
                 );
               })}
