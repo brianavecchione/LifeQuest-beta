@@ -22,7 +22,7 @@ const PartyDashboard = () => {
     return (
       <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-8 border border-purple-600/30 shadow-2xl text-center">
         <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-foreground mb-2">No Party Yet</h2>
+        <h2 className="text-2xl font-bold text-muted-foreground mb-2">No Party Yet</h2>
         <p className="text-muted-foreground">Join or create a party to start collaborating with other adventurers!</p>
       </div>
     );
