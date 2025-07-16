@@ -543,6 +543,7 @@ export type Database = {
           due_date: string | null
           gold_reward: number
           id: string
+          is_recurring: boolean | null
           pomodoro_enabled: boolean
           priority: Database["public"]["Enums"]["quest_priority"]
           quest_name: string
@@ -560,6 +561,7 @@ export type Database = {
           due_date?: string | null
           gold_reward?: number
           id?: string
+          is_recurring?: boolean | null
           pomodoro_enabled?: boolean
           priority?: Database["public"]["Enums"]["quest_priority"]
           quest_name: string
@@ -577,6 +579,7 @@ export type Database = {
           due_date?: string | null
           gold_reward?: number
           id?: string
+          is_recurring?: boolean | null
           pomodoro_enabled?: boolean
           priority?: Database["public"]["Enums"]["quest_priority"]
           quest_name?: string
@@ -812,6 +815,10 @@ export type Database = {
       increment_streak: {
         Args: { p_user_id: string; p_streak_name: string }
         Returns: undefined
+      }
+      is_likely_recurring_habit: {
+        Args: { quest_name: string }
+        Returns: boolean
       }
       recalculate_badge_eligibility: {
         Args: { p_user_id: string }

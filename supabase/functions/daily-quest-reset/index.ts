@@ -23,20 +23,21 @@ serve(async (req) => {
     const today = new Date().toISOString().split('T')[0]
     const resetTimestamp = new Date().toISOString()
     
-    // Find all daily quests that need to be reset (only completed ones to avoid unnecessary updates)
-    // Include quests with NULL due_date or due_date before today
+    // Find only recurring daily habits that need to be reset (not one-time daily tasks)
+    // Only reset completed recurring habits to avoid resetting one-time completed tasks
     const { data: dailyQuests, error: fetchError } = await supabase
       .from('quests')
       .select('user_id, id, quest_name')
       .eq('quest_type', 'Daily')
       .eq('status', 'Completed')
+      .eq('is_recurring', true)
 
     if (fetchError) {
       console.error('Error fetching daily quests:', fetchError)
       throw fetchError
     }
 
-    console.log(`Found ${dailyQuests?.length || 0} completed daily quests to reset`)
+    console.log(`Found ${dailyQuests?.length || 0} completed recurring daily habits to reset`)
 
     let totalResetCount = 0
     const userResetCounts = new Map<string, number>()
@@ -48,7 +49,7 @@ serve(async (req) => {
         userResetCounts.set(quest.user_id, count + 1)
       })
 
-      // Reset all completed daily quests to 'Not started'
+      // Reset only completed recurring daily habits to 'Not started'
       const { data: updatedQuests, error: updateError } = await supabase
         .from('quests')
         .update({
@@ -59,6 +60,7 @@ serve(async (req) => {
         })
         .eq('quest_type', 'Daily')
         .eq('status', 'Completed')
+        .eq('is_recurring', true)
         .select('user_id')
 
       if (updateError) {
@@ -67,7 +69,7 @@ serve(async (req) => {
       }
 
       totalResetCount = updatedQuests?.length || 0
-      console.log(`Successfully reset ${totalResetCount} daily quests`)
+      console.log(`Successfully reset ${totalResetCount} recurring daily habits`)
 
       // Log the reset for each user
       if (userResetCounts.size > 0) {
@@ -122,8 +124,8 @@ serve(async (req) => {
     }
 
     const message = totalResetCount > 0 
-      ? `Reset ${totalResetCount} daily quests for ${today}`
-      : 'No completed daily quests found to reset'
+      ? `Reset ${totalResetCount} recurring daily habits for ${today}`
+      : 'No completed recurring daily habits found to reset'
 
     console.log(message)
 

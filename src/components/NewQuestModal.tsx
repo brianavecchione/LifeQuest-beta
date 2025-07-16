@@ -42,6 +42,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
     tags: '',
     due_date: null as Date | null,
     pomodoro_enabled: false,
+    is_recurring: false,
   });
 
   // Update form state when defaultQuestType changes or when quest_type changes
@@ -132,6 +133,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
       tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(Boolean) : undefined,
       due_date: finalDueDate,
       pomodoro_enabled: formData.pomodoro_enabled,
+      is_recurring: formData.quest_type === 'Daily' ? formData.is_recurring : false,
     };
 
     const success = await createQuest(questData);
@@ -147,6 +149,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
         tags: '',
         due_date: null,
         pomodoro_enabled: false,
+        is_recurring: false,
       });
 
       onClose();
@@ -363,6 +366,28 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
               </div>
             )}
           </div>
+
+          {/* Recurring Toggle - Only for Daily quests */}
+          {formData.quest_type === 'Daily' && (
+            <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <Label htmlFor="is-recurring" className="text-slate-300 font-medium text-sm">
+                    Is this a recurring habit? 🔄
+                  </Label>
+                  <p className="text-slate-400 text-xs mt-1">
+                    Recurring habits reset daily. One-time tasks stay completed once done.
+                  </p>
+                </div>
+                <Switch
+                  id="is-recurring"
+                  checked={formData.is_recurring}
+                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_recurring: checked }))}
+                  className="ml-3"
+                />
+              </div>
+            </div>
+          )}
 
           {/* Pomodoro Timer Option */}
           <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">

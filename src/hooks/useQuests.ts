@@ -25,6 +25,7 @@ export interface Quest {
   due_date?: string;
   user_id: string;
   pomodoro_enabled: boolean;
+  is_recurring?: boolean;
 }
 
 // Helper function to transform database quest to our Quest interface
@@ -44,6 +45,7 @@ const transformDbQuest = (dbQuest: DbQuest): Quest => ({
   due_date: dbQuest.due_date || undefined,
   user_id: dbQuest.user_id,
   pomodoro_enabled: dbQuest.pomodoro_enabled,
+  is_recurring: dbQuest.is_recurring || false,
 });
 
 export const useQuests = () => {
@@ -161,12 +163,14 @@ export const useQuests = () => {
       console.log('🔄 Current time:', new Date().toISOString());
       
       // First, archive completed daily habits from previous days to preserve streak/XP history
+      // Only archive recurring habits, not one-time daily tasks
       const { data: completedDailies, error: dailyError } = await supabase
         .from('quests')
         .select('*')
         .eq('user_id', user.id)
         .eq('quest_type', 'Daily')
         .eq('status', 'Completed')
+        .eq('is_recurring', true)
         .not('completed_at', 'is', null);
 
       if (dailyError) {
@@ -220,30 +224,31 @@ export const useQuests = () => {
         }
       }
 
-      // Now find ALL daily habits that need to be reset for today
-      console.log(`🔍 Looking for daily habits to reset for today: ${todayLocal}`);
+      // Now find recurring daily habits that need to be reset for today
+      console.log(`🔍 Looking for recurring daily habits to reset for today: ${todayLocal}`);
       
       const { data: allDailyHabits, error: resetError } = await supabase
         .from('quests')
-        .select('id, quest_name, due_date, status, completed_at')
+        .select('id, quest_name, due_date, status, completed_at, is_recurring')
         .eq('user_id', user.id)
-        .eq('quest_type', 'Daily');
+        .eq('quest_type', 'Daily')
+        .eq('is_recurring', true);
 
       if (resetError) {
         console.error('❌ Error checking daily habits for reset:', resetError);
         return;
       }
 
-      // Filter daily habits that need to be reset
+      // Filter recurring daily habits that need to be reset
       const dailyHabitsToReset = allDailyHabits?.filter(habit => {
         const needsReset = !habit.due_date || habit.due_date !== todayLocal;
-        console.log(`📋 Habit "${habit.quest_name}": due_date=${habit.due_date}, status=${habit.status}, needsReset=${needsReset}`);
+        console.log(`📋 Recurring habit "${habit.quest_name}": due_date=${habit.due_date}, status=${habit.status}, needsReset=${needsReset}`);
         return needsReset;
       }) || [];
 
-      // Reset daily habits that are not already set for today
+      // Reset recurring daily habits that are not already set for today
       if (dailyHabitsToReset && dailyHabitsToReset.length > 0) {
-        console.log(`⚡ Found ${dailyHabitsToReset.length} daily habits to reset for today:`, 
+        console.log(`⚡ Found ${dailyHabitsToReset.length} recurring daily habits to reset for today:`, 
           dailyHabitsToReset.map(q => `${q.quest_name} (${q.status}, due: ${q.due_date || 'NULL'})`));
         
         const questIdsToReset = dailyHabitsToReset.map(q => q.id);
@@ -259,9 +264,9 @@ export const useQuests = () => {
           .in('id', questIdsToReset);
 
         if (updateError) {
-          console.error('❌ Error resetting daily habits:', updateError);
+          console.error('❌ Error resetting recurring daily habits:', updateError);
         } else {
-          console.log('✅ Successfully reset daily habits for today');
+          console.log('✅ Successfully reset recurring daily habits for today');
           
           // Log the client-side reset
           try {
@@ -278,7 +283,7 @@ export const useQuests = () => {
           }
         }
       } else {
-        console.log('✅ All daily habits are already set for today');
+        console.log('✅ All recurring daily habits are already set for today');
       }
 
       // Handle non-daily quests (separate logic)
