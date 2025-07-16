@@ -51,18 +51,20 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
       setFormData(prev => ({
         ...prev,
         quest_type: defaultQuestType,
-        // Set default XP reward based on quest type
-        xp_reward: defaultQuestType === 'Daily' ? '5' : prev.xp_reward
+        // Set fixed rewards for Daily quests
+        xp_reward: defaultQuestType === 'Daily' ? '5' : prev.xp_reward,
+        gold_reward: defaultQuestType === 'Daily' ? '0' : prev.gold_reward
       }));
     }
   }, [defaultQuestType, isOpen]);
 
-  // Set default XP when quest type changes
+  // Set fixed rewards when quest type changes to Daily
   useEffect(() => {
-    if (formData.quest_type === 'Daily' && !formData.xp_reward) {
+    if (formData.quest_type === 'Daily') {
       setFormData(prev => ({
         ...prev,
-        xp_reward: '5'
+        xp_reward: '5',
+        gold_reward: '0'
       }));
     }
   }, [formData.quest_type]);
@@ -88,34 +90,50 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.quest_name.trim() || !formData.xp_reward || !formData.gold_reward) {
+    if (!formData.quest_name.trim()) {
       toast({
         title: "Missing Information",
-        description: "Please fill in the quest name, XP value, and Gold reward.",
+        description: "Please fill in the quest name.",
         variant: "destructive"
       });
       return;
     }
 
-    const xpValue = parseInt(formData.xp_reward);
-    if (isNaN(xpValue) || xpValue < 1) {
-      toast({
-        title: "Invalid XP Value",
-        description: "XP must be a positive number.",
-        variant: "destructive"
-      });
-      return;
+    // For non-Daily quests, check XP and Gold values
+    if (formData.quest_type !== 'Daily') {
+      if (!formData.xp_reward || !formData.gold_reward) {
+        toast({
+          title: "Missing Information",
+          description: "Please fill in the XP value and Gold reward.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const xpValue = parseInt(formData.xp_reward);
+      if (isNaN(xpValue) || xpValue < 1) {
+        toast({
+          title: "Invalid XP Value",
+          description: "XP must be a positive number.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const goldValue = parseInt(formData.gold_reward);
+      if (isNaN(goldValue) || goldValue < 0) {
+        toast({
+          title: "Invalid Gold Value",
+          description: "Gold must be a non-negative number.",
+          variant: "destructive"
+        });
+        return;
+      }
     }
 
-    const goldValue = parseInt(formData.gold_reward);
-    if (isNaN(goldValue) || goldValue < 0) {
-      toast({
-        title: "Invalid Gold Value",
-        description: "Gold must be a non-negative number.",
-        variant: "destructive"
-      });
-      return;
-    }
+    // Calculate XP and Gold rewards based on quest type
+    const xpValue = formData.quest_type === 'Daily' ? 5 : parseInt(formData.xp_reward);
+    const goldValue = formData.quest_type === 'Daily' ? 0 : parseInt(formData.gold_reward);
 
     // Auto-assign due date for Daily quests to today
     const finalDueDate = formData.quest_type === 'Daily' 
@@ -138,12 +156,12 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
 
     const success = await createQuest(questData);
     if (success) {
-      // Reset form
+      // Reset form with proper defaults for Daily quests
       setFormData({
         quest_name: '',
         description: '',
-        xp_reward: '',
-        gold_reward: '',
+        xp_reward: (defaultQuestType || 'Main') === 'Daily' ? '5' : '',
+        gold_reward: (defaultQuestType || 'Main') === 'Daily' ? '0' : '',
         quest_type: defaultQuestType || 'Main',
         priority: 'Medium',
         tags: '',
@@ -222,8 +240,9 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
                   setFormData(prev => ({ 
                     ...prev, 
                     quest_type: value,
-                    // Auto-set default XP for Daily quests
-                    xp_reward: value === 'Daily' ? '5' : prev.xp_reward
+                    // Auto-set fixed rewards for Daily quests
+                    xp_reward: value === 'Daily' ? '5' : prev.xp_reward,
+                    gold_reward: value === 'Daily' ? '0' : prev.gold_reward
                   }));
                 }}
               >
@@ -272,13 +291,24 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
                 value={formData.xp_reward}
                 onChange={(e) => setFormData(prev => ({ ...prev, xp_reward: e.target.value }))}
                 placeholder="e.g., 50"
-                className="bg-slate-700 border-slate-600 text-white mt-1"
+                className={`mt-1 ${
+                  formData.quest_type === 'Daily' 
+                    ? 'bg-slate-600 border-slate-500 text-slate-300 cursor-not-allowed' 
+                    : 'bg-slate-700 border-slate-600 text-white'
+                }`}
                 min="1"
                 max="1000"
+                disabled={formData.quest_type === 'Daily'}
               />
-              <p className="text-xs text-slate-400 mt-1">
-                Suggested: Daily (5), Side (30-100), Main (100-300), Legendary (500+)
-              </p>
+              {formData.quest_type === 'Daily' ? (
+                <p className="text-xs text-yellow-400 mt-1">
+                  ⚡ Daily habits have a fixed 5 XP reward
+                </p>
+              ) : (
+                <p className="text-xs text-slate-400 mt-1">
+                  Suggested: Side (30-100), Main (100-300), Legendary (500+)
+                </p>
+              )}
             </div>
 
             {/* Gold Value */}
@@ -292,13 +322,24 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
                 value={formData.gold_reward}
                 onChange={(e) => setFormData(prev => ({ ...prev, gold_reward: e.target.value }))}
                 placeholder="e.g., 25"
-                className="bg-slate-700 border-slate-600 text-white mt-1"
+                className={`mt-1 ${
+                  formData.quest_type === 'Daily' 
+                    ? 'bg-slate-600 border-slate-500 text-slate-300 cursor-not-allowed' 
+                    : 'bg-slate-700 border-slate-600 text-white'
+                }`}
                 min="0"
                 max="1000"
+                disabled={formData.quest_type === 'Daily'}
               />
-              <p className="text-xs text-slate-400 mt-1">
-                Suggested: Daily (5-15), Side (15-50), Main (50-150), Legendary (200+)
-              </p>
+              {formData.quest_type === 'Daily' ? (
+                <p className="text-xs text-yellow-400 mt-1">
+                  🏆 Daily habits have a fixed 0 Gold reward
+                </p>
+              ) : (
+                <p className="text-xs text-slate-400 mt-1">
+                  Suggested: Side (15-50), Main (50-150), Legendary (200+)
+                </p>
+              )}
             </div>
 
             {/* Tags */}
