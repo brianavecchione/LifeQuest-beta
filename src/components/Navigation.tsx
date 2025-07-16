@@ -84,10 +84,10 @@ const Navigation = () => {
   const navItems = [
     { path: '/', label: 'Today', icon: Home },
     { path: '/quests', label: 'Quests', icon: Target },
+    { path: '/challenges', label: 'Challenges', icon: Zap },
     { path: '/achievements', label: 'Achievements', icon: Trophy },
     { path: '/inventory', label: 'Inventory', icon: Sword },
     { path: '/parties', label: 'Parties', icon: Users },
-    { path: '/challenges', label: 'Challenges', icon: Zap },
   ];
 
   return (
