@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import AchievementsSection from '@/components/AchievementsSection';
-import BadgeNotificationTest from '@/components/BadgeNotificationTest';
 import { useBadgeNotifications } from '@/hooks/useBadgeNotifications';
 
 const Achievements = () => {
@@ -30,9 +29,6 @@ const Achievements = () => {
             Badges and Streaks
           </p>
         </div>
-
-        {/* Badge Notification Test Component */}
-        <BadgeNotificationTest />
 
         {/* Achievements and Streaks with Integrated Badges */}
         <div className="mb-12">
