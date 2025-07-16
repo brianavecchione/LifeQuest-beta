@@ -209,6 +209,7 @@ All colors MUST be HSL.
     background-repeat: no-repeat;
     background-attachment: fixed;
   }
+}
 
 /* Accessibility: Reduce animations when user prefers reduced motion */
 .reduce-animations *,
