@@ -1,29 +1,24 @@
 import { useGuest } from '@/contexts/GuestContext';
 import { useDailyXp as useRealDailyXp } from '@/hooks/useDailyXp';
 
-const createGuestDailyXpData = () => {
-  // Generate realistic looking XP data for the last 7 days
+const createGuestDailyXpData = (guestDailyXp: Record<string, number>) => {
+  // Generate XP data for the last 7 days based on actual guest XP tracking
   const data = [];
   const today = new Date();
   
   for (let i = 6; i >= 0; i--) {
     const date = new Date(today);
     date.setDate(today.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
     
-    // Vary XP between 0-80 to simulate realistic usage
-    const xp = i === 0 ? 35 : // Today
-              i === 1 ? 60 : // Yesterday  
-              i === 2 ? 0 :  // Day before (missed day)
-              i === 3 ? 45 : // 3 days ago
-              i === 4 ? 25 : // 4 days ago
-              i === 5 ? 50 : // 5 days ago
-              30; // 6 days ago
+    // Use actual guest XP data or 0 if no data for that day
+    const xp = guestDailyXp[dateStr] || 0;
     
     data.push({
       date: date.toLocaleDateString('en-US', { weekday: 'short' }),
       xp: xp,
       day: date.toLocaleDateString('en-US', { weekday: 'long' }),
-      fullDate: date.toISOString().split('T')[0]
+      fullDate: dateStr
     });
   }
   
@@ -40,12 +35,12 @@ const createGuestWeeklyXpData = () => {
 };
 
 export const useDailyXp = () => {
-  const { isGuestMode } = useGuest();
+  const { isGuestMode, guestUser } = useGuest();
   const realDailyXp = useRealDailyXp();
 
   if (isGuestMode) {
     return {
-      dailyXpData: createGuestDailyXpData(),
+      dailyXpData: createGuestDailyXpData(guestUser.dailyXp),
       weeklyXpData: createGuestWeeklyXpData(),
       loading: false,
       refetch: () => Promise.resolve(),
