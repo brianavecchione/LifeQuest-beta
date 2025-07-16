@@ -14,14 +14,6 @@ const Footer = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            {/* Email Link */}
-            <a 
-              href="mailto:contact@getlifequest.com"
-              className="text-blue-400 hover:text-blue-300 transition-colors underline underline-offset-4"
-            >
-              contact@getlifequest.com
-            </a>
-            
             {/* Email Button */}
             <Button
               asChild
@@ -32,6 +24,30 @@ const Footer = () => {
               <a href="mailto:contact@getlifequest.com">
                 <Mail className="w-4 h-4 mr-2" />
                 Email Us
+              </a>
+            </Button>
+            
+            {/* Request Feature Button */}
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="border-amber-500/30 bg-amber-600/10 text-amber-400 hover:bg-amber-600/20 hover:text-amber-300"
+            >
+              <a href="https://tally.so/r/m66jGA" target="_blank" rel="noopener noreferrer">
+                🔧 Request a Feature
+              </a>
+            </Button>
+            
+            {/* Contact Support Button */}
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="border-amber-500/30 bg-amber-600/10 text-amber-400 hover:bg-amber-600/20 hover:text-amber-300"
+            >
+              <a href="https://tally.so/r/wb1jM6" target="_blank" rel="noopener noreferrer">
+                📩 Contact Support
               </a>
             </Button>
           </div>
