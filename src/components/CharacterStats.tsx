@@ -193,7 +193,7 @@ const CharacterStats = () => {
                 <span className="text-amber-400 font-bold">{Math.round(activeUser.xp)}%</span>
               </div>
               <Progress value={xpProgress} className="h-3 bg-slate-700">
-                <div className="h-full bg-white rounded-full transition-all duration-500" style={{ width: `${xpProgress}%` }} />
+                <div className="h-full bg-gradient-to-r from-green-500 to-emerald-400 rounded-full transition-all duration-500" style={{ width: `${xpProgress}%` }} />
               </Progress>
             </div>
 
