@@ -109,7 +109,7 @@ All colors MUST be HSL.
     /* Dark Mode App Background */
     --app-background: 222.2 84% 4.9%;
     --app-foreground: 210 40% 98%;
-    --app-gradient-from: 222.2 84% 4.9%;
+    --app-gradient-from: 222.2 47% 11%;
     --app-gradient-to: 222.2 84% 4.9%;
     --app-pattern: 210 40% 98%;
 
