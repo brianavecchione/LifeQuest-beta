@@ -29,6 +29,8 @@ export const BackgroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const loadBackgroundImage = async () => {
     if (!user) return;
     
+    console.log('Loading background image for user:', user.id);
+    
     try {
       const { data: files } = await supabase.storage
         .from('backgrounds')
@@ -37,11 +39,14 @@ export const BackgroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           sortBy: { column: 'created_at', order: 'desc' }
         });
 
+      console.log('Background files found:', files);
+
       if (files && files.length > 0) {
         const { data: { publicUrl } } = supabase.storage
           .from('backgrounds')
           .getPublicUrl(`${user.id}/${files[0].name}`);
         
+        console.log('Background image URL:', publicUrl);
         setBackgroundImageState(publicUrl);
       }
     } catch (error) {
