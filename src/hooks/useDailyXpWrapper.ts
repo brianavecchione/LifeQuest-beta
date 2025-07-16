@@ -38,6 +38,13 @@ export const useDailyXp = () => {
   const { isGuestMode, guestUser } = useGuest();
   const realDailyXp = useRealDailyXp();
 
+  console.log('🔍 useDailyXpWrapper Debug:', {
+    isGuestMode,
+    guestUserXp: guestUser?.dailyXp,
+    realDailyXpData: realDailyXp.dailyXpData,
+    realDailyXpLoading: realDailyXp.loading
+  });
+
   if (isGuestMode) {
     return {
       dailyXpData: createGuestDailyXpData(guestUser.dailyXp),
