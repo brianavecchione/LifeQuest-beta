@@ -179,7 +179,13 @@ const CustomizationPanel = () => {
             ))}
           </div>
 
-          <Button className="w-full bg-pink-600 hover:bg-pink-700 text-white">
+          <div className="bg-slate-700/50 rounded-lg p-6 text-center border border-slate-600/50 mt-4">
+            <div className="text-3xl mb-2">🎭</div>
+            <h6 className="text-white font-medium mb-1">Custom avatar styles coming soon!</h6>
+            <p className="text-slate-400 text-sm">We're working on bringing you more personalization options for your character.</p>
+          </div>
+
+          <Button className="w-full bg-pink-600 hover:bg-pink-700 text-white mt-4">
             <User className="w-4 h-4 mr-2" />
             Save Avatar
           </Button>
