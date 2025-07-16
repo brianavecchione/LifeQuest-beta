@@ -28,10 +28,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const applyTheme = (newTheme: Theme) => {
     const root = document.documentElement;
     
+    console.log('Applying theme:', newTheme);
+    
     if (newTheme === 'light-mode') {
       root.classList.remove('dark');
+      console.log('Removed dark class');
     } else {
       root.classList.add('dark');
+      console.log('Added dark class');
     }
     
     // Save to localStorage
