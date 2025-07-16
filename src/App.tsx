@@ -30,14 +30,6 @@ const AppContent = () => {
   
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Fantasy background - only show when fantasy theme is active */}
-      {theme === 'fantasy' && (
-        <>
-          <div className="fantasy-background" />
-          <div className="fantasy-overlay" />
-        </>
-      )}
-      
       <Navigation />
       <main className="flex-1 relative">
         <Routes>
