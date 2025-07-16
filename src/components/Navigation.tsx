@@ -180,13 +180,14 @@ const Navigation = () => {
                       <span>Settings</span>
                     </Link>
                     
-                    <button
+                    <Link
+                      to="/customization"
                       onClick={closeProfileDropdown}
                       className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
                     >
                       <Palette className="w-4 h-4" />
                       <span>Customization</span>
-                    </button>
+                    </Link>
                     
                     <div className="border-t border-slate-700 my-1"></div>
                     
@@ -260,13 +261,14 @@ const Navigation = () => {
                 <span>Settings</span>
               </Link>
               
-              <button
+              <Link
+                to="/customization"
                 onClick={closeProfileDropdown}
                 className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
               >
                 <Palette className="w-4 h-4" />
                 <span>Customization</span>
-              </button>
+              </Link>
               
               <div className="border-t border-slate-700 my-1"></div>
               
@@ -351,13 +353,14 @@ const Navigation = () => {
                   <span>Notifications</span>
                 </button>
                 
-                <button
+                <Link
+                  to="/customization"
                   onClick={closeMobileMenu}
                   className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
                 >
                   <Palette className="w-5 h-5" />
                   <span>Customization</span>
-                </button>
+                </Link>
                 
                 <Button
                   onClick={() => {

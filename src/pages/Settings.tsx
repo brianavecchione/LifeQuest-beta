@@ -2,8 +2,6 @@
 import React from 'react';
 import AISidekick from '@/components/AISidekick';
 import AvatarUpload from '@/components/AvatarUpload';
-import Soundtrack from '@/components/Soundtrack';
-import CustomizationPanel from '@/components/CustomizationPanel';
 import { User, Bell, Zap, Shield, Accessibility, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -199,15 +197,6 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* Soundtrack & Atmosphere Settings */}
-        <div className="mb-12">
-          <Soundtrack />
-        </div>
-
-        {/* Customization Settings */}
-        <div className="mb-12">
-          <CustomizationPanel />
-        </div>
       </div>
 
       {/* AI Sidekick */}
