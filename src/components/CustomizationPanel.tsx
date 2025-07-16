@@ -173,19 +173,19 @@ const CustomizationPanel = () => {
               </div>
             ) : (
               <>
-                {userSettings?.avatar_image_url ? (
+                {userProfile?.avatar_url ? (
                   <img 
-                    src={userSettings.avatar_image_url} 
+                    src={userProfile.avatar_url} 
                     alt="Current avatar"
                     className="w-20 h-20 rounded-full object-cover mx-auto mb-3 shadow-lg"
                   />
                 ) : (
                   <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-3xl font-bold text-slate-900 shadow-lg mx-auto mb-3">
-                    {userSettings?.character_name ? userSettings.character_name[0].toUpperCase() : 'A'}
+                    {userProfile?.display_name ? userProfile.display_name[0].toUpperCase() : 'A'}
                   </div>
                 )}
                 <h5 className="text-white font-bold">Current Avatar</h5>
-                <p className="text-slate-400 text-sm">{userSettings?.character_name || 'Adventurer'}</p>
+                <p className="text-slate-400 text-sm">{userProfile?.display_name || 'Adventurer'}</p>
               </>
             )}
           </div>
