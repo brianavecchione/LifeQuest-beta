@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import AchievementsSection from '@/components/AchievementsSection';
 import BadgeNotificationTest from '@/components/BadgeNotificationTest';
