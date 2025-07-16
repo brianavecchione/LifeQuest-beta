@@ -135,7 +135,7 @@ export const generateDailyXpData = (xpHistory: Array<{ date: string; xp_earned: 
       timeZone: timezone 
     });
     
-    const xpForDay = Math.max(0, xpLookup[dateStr] || 0);
+    const xpForDay = xpLookup[dateStr] || 0;
     
     console.log(`🔍 TIMEZONE DEBUG - Day ${index}: ${dateStr} -> ${dayName} (${fullDayName}) -> ${xpForDay} XP`);
     

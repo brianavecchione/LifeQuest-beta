@@ -57,14 +57,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { dailyXpData, weeklyXpData, refetch: refetchDailyXp } = useDailyXp();
   const { toast } = useToast();
 
-  console.log('🔍 UserProvider Debug:', {
-    authUser: authUser?.email,
-    dailyXpDataLength: dailyXpData?.length,
-    weeklyXpDataLength: weeklyXpData?.length,
-    isLoading,
-    userDailyXp: user.dailyXp
-  });
-
   // Load user profile data from Supabase
   const loadUserProfile = async () => {
     if (!authUser) {
