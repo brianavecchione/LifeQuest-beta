@@ -46,7 +46,7 @@ const PartyChat = () => {
 
   if (chatLoading) {
     return (
-      <div className="bg-component-background rounded-xl p-6 border border-green-600/30 shadow-2xl h-[500px] flex flex-col">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-green-600/30 shadow-2xl h-[500px] flex flex-col">
         <div className="flex items-center gap-2 mb-4">
           <MessageCircle className="w-6 h-6 text-green-400" />
           <h3 className="text-xl font-bold text-green-400">Party Chat</h3>
@@ -59,7 +59,7 @@ const PartyChat = () => {
   }
 
   return (
-    <div className="bg-component-background rounded-xl p-6 border border-green-600/30 shadow-2xl h-[500px] flex flex-col">
+    <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-green-600/30 shadow-2xl h-[500px] flex flex-col">
       <div className="flex items-center gap-2 mb-4">
         <MessageCircle className="w-6 h-6 text-green-400" />
         <h3 className="text-xl font-bold text-green-400">Party Chat</h3>

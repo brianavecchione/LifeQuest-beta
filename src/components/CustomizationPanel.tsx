@@ -3,31 +3,43 @@ import React, { useState } from 'react';
 import { Palette, User, Eye, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useTheme } from '@/contexts/ThemeContext';
-import { useToast } from '@/hooks/use-toast';
 
 const CustomizationPanel = () => {
-  const { theme, applyTheme } = useTheme();
-  const { toast } = useToast();
   const [currentTab, setCurrentTab] = useState<'themes' | 'avatar'>('themes');
-  const [selectedTheme, setSelectedTheme] = useState(theme);
+  const [selectedTheme, setSelectedTheme] = useState('dark-forest');
 
   const themes = [
     {
-      id: 'dark-mode',
-      name: 'Dark Mode',
-      description: 'Classic LifeQuest theme with a dark interface',
-      colors: ['from-slate-900', 'to-slate-800'],
-      accent: 'primary',
-      preview: '🌙'
+      id: 'dark-forest',
+      name: 'Dark Forest',
+      description: 'Mysterious woodland adventure',
+      colors: ['from-green-900', 'to-slate-900'],
+      accent: 'emerald',
+      preview: '🌲'
     },
     {
-      id: 'light-mode',
-      name: 'Light Mode',
-      description: 'A clean, minimal interface for those who prefer a brighter look',
-      colors: ['from-slate-50', 'to-slate-100'],
-      accent: 'primary',
-      preview: '☀️'
+      id: 'fiery-dungeon',
+      name: 'Fiery Dungeon',
+      description: 'Blazing underground realm',
+      colors: ['from-red-900', 'to-orange-900'],
+      accent: 'red-orange',
+      preview: '🔥'
+    },
+    {
+      id: 'icy-mountains',
+      name: 'Icy Mountains',
+      description: 'Frozen peaks and glaciers',
+      colors: ['from-blue-900', 'to-cyan-900'],
+      accent: 'blue-cyan',
+      preview: '🏔️'
+    },
+    {
+      id: 'mystical-void',
+      name: 'Mystical Void',
+      description: 'Cosmic magical realm',
+      colors: ['from-purple-900', 'to-indigo-900'],
+      accent: 'purple',
+      preview: '✨'
     }
   ];
 
@@ -70,16 +82,8 @@ const CustomizationPanel = () => {
     }
   ];
 
-  const handleApplyTheme = () => {
-    applyTheme(selectedTheme as 'dark-mode' | 'light-mode');
-    toast({
-      title: "Theme Applied!",
-      description: `Switched to ${themes.find(t => t.id === selectedTheme)?.name}`,
-    });
-  };
-
   return (
-    <div className="bg-card border rounded-xl p-6 shadow-2xl">
+    <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-pink-600/30 shadow-2xl">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Palette className="w-6 h-6 text-pink-400" />
@@ -91,7 +95,7 @@ const CustomizationPanel = () => {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               currentTab === 'themes' 
                 ? 'bg-pink-600 text-white' 
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
             }`}
           >
             <Eye className="w-4 h-4 mr-1 inline" />
@@ -102,7 +106,7 @@ const CustomizationPanel = () => {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               currentTab === 'avatar' 
                 ? 'bg-pink-600 text-white' 
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
             }`}
           >
             <User className="w-4 h-4 mr-1 inline" />
@@ -114,37 +118,32 @@ const CustomizationPanel = () => {
       {currentTab === 'themes' && (
         <div className="space-y-4">
           <div className="mb-4">
-            <h4 className="text-lg font-semibold text-pink-300 mb-2">Choose Your Theme</h4>
-            <p className="text-muted-foreground text-sm">Customize your LifeQuest experience</p>
+            <h4 className="text-lg font-semibold text-pink-300 mb-2">Choose Your Realm</h4>
+            <p className="text-slate-400 text-sm">Transform your dashboard with different fantasy themes</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {themes.map((themeOption) => (
+            {themes.map((theme) => (
               <div
-                key={themeOption.id}
-                onClick={() => setSelectedTheme(themeOption.id as 'dark-mode' | 'light-mode')}
+                key={theme.id}
+                onClick={() => setSelectedTheme(theme.id)}
                 className={`cursor-pointer rounded-lg p-4 border-2 transition-all hover:scale-105 ${
-                  selectedTheme === themeOption.id 
+                  selectedTheme === theme.id 
                     ? 'border-pink-500 bg-pink-900/20' 
-                    : 'border-border bg-muted/50 hover:border-muted-foreground/50'
+                    : 'border-slate-600 bg-slate-700/50 hover:border-slate-500'
                 }`}
               >
                 <div className="text-center">
-                  <div className="text-4xl mb-2">{themeOption.preview}</div>
-                  <h5 className="text-foreground font-bold mb-1">{themeOption.name}</h5>
-                  <p className="text-muted-foreground text-sm mb-3">{themeOption.description}</p>
+                  <div className="text-4xl mb-2">{theme.preview}</div>
+                  <h5 className="text-white font-bold mb-1">{theme.name}</h5>
+                  <p className="text-slate-300 text-sm mb-3">{theme.description}</p>
                   
                   {/* Theme Preview */}
-                  <div className={`h-8 rounded-lg bg-gradient-to-r ${themeOption.colors[0]} ${themeOption.colors[1]} mb-3`} />
+                  <div className={`h-8 rounded-lg bg-gradient-to-r ${theme.colors[0]} ${theme.colors[1]} mb-3`} />
                   
-                  {theme === themeOption.id && (
-                    <Badge className="bg-green-600 text-white">
-                      Active
-                    </Badge>
-                  )}
-                  {selectedTheme === themeOption.id && theme !== themeOption.id && (
+                  {selectedTheme === theme.id && (
                     <Badge className="bg-pink-600 text-white">
-                      Selected
+                      Active
                     </Badge>
                   )}
                 </div>
@@ -152,10 +151,7 @@ const CustomizationPanel = () => {
             ))}
           </div>
           
-          <Button 
-            onClick={handleApplyTheme}
-            className="w-full bg-pink-600 hover:bg-pink-700 text-white"
-          >
+          <Button className="w-full bg-pink-600 hover:bg-pink-700 text-white">
             <Settings className="w-4 h-4 mr-2" />
             Apply Theme
           </Button>
@@ -166,28 +162,28 @@ const CustomizationPanel = () => {
         <div className="space-y-4">
           <div className="mb-4">
             <h4 className="text-lg font-semibold text-pink-300 mb-2">Character Avatar</h4>
-            <p className="text-muted-foreground text-sm">Choose your character's appearance and style</p>
+            <p className="text-slate-400 text-sm">Choose your character's appearance and style</p>
           </div>
 
           {/* Current Avatar Preview */}
-          <div className="bg-muted/50 rounded-lg p-6 text-center border mb-6">
+          <div className="bg-slate-700/50 rounded-lg p-6 text-center border border-slate-600/50 mb-6">
             <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-3xl font-bold text-slate-900 shadow-lg mx-auto mb-3">
               A
             </div>
-            <h5 className="text-foreground font-bold">Current Avatar</h5>
-            <p className="text-muted-foreground text-sm">Adventurer</p>
+            <h5 className="text-white font-bold">Current Avatar</h5>
+            <p className="text-slate-400 text-sm">Adventurer</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {avatarStyles.map((style) => (
               <div
                 key={style.id}
-                className="bg-muted/50 rounded-lg p-4 border hover:border-pink-500/50 transition-all cursor-pointer hover:scale-105"
+                className="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50 hover:border-pink-500/50 transition-all cursor-pointer hover:scale-105"
               >
                 <div className="text-center">
                   <div className="text-3xl mb-2">{style.icon}</div>
-                  <h6 className="text-foreground font-medium text-sm mb-1">{style.name}</h6>
-                  <p className="text-muted-foreground text-xs">{style.description}</p>
+                  <h6 className="text-white font-medium text-sm mb-1">{style.name}</h6>
+                  <p className="text-slate-400 text-xs">{style.description}</p>
                 </div>
               </div>
             ))}

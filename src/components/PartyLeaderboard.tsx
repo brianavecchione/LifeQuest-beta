@@ -20,7 +20,7 @@ const PartyLeaderboard = () => {
 
   if (leaderboardLoading) {
     return (
-      <div className="bg-component-background rounded-xl p-6 border border-yellow-600/30 shadow-2xl">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-yellow-600/30 shadow-2xl">
         <div className="flex items-center gap-2 mb-6">
           <Trophy className="w-6 h-6 text-yellow-400" />
           <h3 className="text-xl font-bold text-yellow-400">Party Leaderboard</h3>
@@ -44,15 +44,15 @@ const PartyLeaderboard = () => {
 
   const getRankColor = (rank: number) => {
     switch (rank) {
-      case 1: return 'border-yellow-500/50 bg-yellow-500/10';
-      case 2: return 'border-gray-400/50 bg-gray-400/10';
-      case 3: return 'border-amber-600/50 bg-amber-600/10';
-      default: return 'border-component-border bg-component-muted/50';
+      case 1: return 'border-yellow-500/50 bg-yellow-900/20';
+      case 2: return 'border-gray-400/50 bg-gray-900/20';
+      case 3: return 'border-amber-600/50 bg-amber-900/20';
+      default: return 'border-slate-500/50 bg-slate-900/20';
     }
   };
 
   return (
-    <div className="bg-component-background rounded-xl p-6 border border-yellow-600/30 shadow-2xl">
+    <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-yellow-600/30 shadow-2xl">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Trophy className="w-6 h-6 text-yellow-400" />

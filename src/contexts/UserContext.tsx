@@ -54,7 +54,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { user: authUser } = useAuth();
   const [user, setUser] = useState<UserData>(emptyUser);
   const [isLoading, setIsLoading] = useState(true);
-  const [previousLevel, setPreviousLevel] = useState<number | null>(null);
   const { dailyXpData, weeklyXpData, refetch: refetchDailyXp } = useDailyXp();
   const { toast } = useToast();
 
@@ -63,7 +62,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!authUser) {
       // Clear user data and localStorage when logged out
       setUser(emptyUser);
-      setPreviousLevel(null);
       localStorage.removeItem('lifequest-user');
       setIsLoading(false);
       return;
@@ -124,31 +122,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         
         // Update state with database values as source of truth
-        setUser(prev => {
-          const newUserData = {
-            ...userData,
-            // Only preserve local-only settings, use database for XP/gold
-            pomodoroCount: prev.pomodoroCount || userData.pomodoroCount,
-            reduceAnimations: prev.reduceAnimations || userData.reduceAnimations,
-            // Keep empty dailyXp since we're using database now
-            dailyXp: {},
-          };
-          
-          // Check for level up and trigger celebration
-          if (previousLevel !== null && currentLevel > previousLevel && !prev.reduceAnimations) {
-            // Delay celebration to allow state update and avoid multiple triggers
-            setTimeout(() => triggerLevelUpCelebration(currentLevel), 200);
-          }
-          
-          // Update previous level tracking
-          if (previousLevel === null) {
-            setPreviousLevel(currentLevel);
-          } else if (currentLevel !== previousLevel) {
-            setPreviousLevel(currentLevel);
-          }
-          
-          return newUserData;
-        });
+        setUser(prev => ({
+          ...userData,
+          // Only preserve local-only settings, use database for XP/gold
+          pomodoroCount: prev.pomodoroCount || userData.pomodoroCount,
+          reduceAnimations: prev.reduceAnimations || userData.reduceAnimations,
+          // Keep empty dailyXp since we're using database now
+          dailyXp: {},
+        }));
       } else {
         // Use default user data if no profile found
         setUser({
@@ -361,7 +342,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     // Clear any cached values
     setUser(emptyUser);
-    setPreviousLevel(null);
     setIsLoading(true);
     
     // Force reload from database

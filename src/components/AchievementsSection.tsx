@@ -396,7 +396,7 @@ const AchievementsSection = () => {
 
   return (
     <div className="space-y-8">
-      <div className="bg-component-background rounded-xl p-6 border border-emerald-600/30 shadow-2xl">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-emerald-600/30 shadow-2xl">
         {/* Stats Overview */}
         <div className="mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">

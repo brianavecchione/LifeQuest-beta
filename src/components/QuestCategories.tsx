@@ -340,7 +340,6 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
                 onStatusChange={updateQuestStatus}
                 onEditQuest={setEditingQuest}
                 onDeleteQuest={setDeletingQuest}
-                hideBadges={['type']}
               />
             ))
           )}

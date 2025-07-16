@@ -18,7 +18,7 @@ const NarrativeJournal = () => {
   };
 
   return (
-    <div className="bg-component-background rounded-xl p-6 border border-amber-600/30 shadow-2xl">
+    <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-amber-600/30 shadow-2xl">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <BookOpen className="w-6 h-6 text-amber-400" />

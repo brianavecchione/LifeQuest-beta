@@ -119,7 +119,7 @@ const InventorySystem = () => {
   if (authUser && authUser.email && authUser.email === 'contact@lifequest.com') {
     console.log('Rendering OLD LAYOUT for dummy account:', authUser.email); // Debug log
     return (
-      <div className="bg-component-background rounded-xl p-6 border border-blue-600/30 shadow-2xl">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-blue-600/30 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <Package className="w-6 h-6 text-blue-400" />
@@ -273,7 +273,7 @@ const InventorySystem = () => {
   // For all other accounts, show the new database-driven layout
   if (loading) {
     return (
-      <div className="bg-component-background rounded-xl p-6 border border-blue-600/30 shadow-2xl">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-blue-600/30 shadow-2xl">
         <div className="text-center text-slate-300">Loading inventory...</div>
       </div>
     );
@@ -285,7 +285,7 @@ const InventorySystem = () => {
   const companionItems = unequippedItems.filter(item => item.category === 'Companion');
 
   return (
-    <div className="bg-component-background rounded-xl p-6 border border-blue-600/30 shadow-2xl">
+    <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-blue-600/30 shadow-2xl">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Package className="w-6 h-6 text-blue-400" />

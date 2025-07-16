@@ -36,7 +36,7 @@ const QuestTimer = () => {
   const progress = ((initialTime - time) / initialTime) * 100;
 
   return (
-    <div className="bg-component-background rounded-xl p-6 border border-purple-600/30 shadow-2xl">
+    <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-purple-600/30 shadow-2xl">
       <div className="flex items-center gap-2 mb-4">
         <Timer className="w-6 h-6 text-purple-400" />
         <h3 className="text-xl font-bold text-purple-400">Quest Timer</h3>

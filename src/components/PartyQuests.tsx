@@ -25,15 +25,15 @@ const PartyQuests = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Completed': return 'border-green-500/50 bg-green-500/10';
-      case 'In Progress': return 'border-blue-500/50 bg-blue-500/10';
-      default: return 'border-component-border bg-component-muted/50';
+      case 'Completed': return 'border-green-500/50 bg-green-900/20';
+      case 'In Progress': return 'border-blue-500/50 bg-blue-900/20';
+      default: return 'border-slate-500/50 bg-slate-900/20';
     }
   };
 
   if (questsLoading) {
     return (
-      <div className="bg-component-background rounded-xl p-6 border border-blue-600/30 shadow-2xl">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-blue-600/30 shadow-2xl">
         <div className="flex items-center gap-2 mb-6">
           <Target className="w-6 h-6 text-blue-400" />
           <h3 className="text-xl font-bold text-blue-400">Party Quests</h3>
@@ -47,7 +47,7 @@ const PartyQuests = () => {
   }
 
   return (
-    <div className="bg-component-background rounded-xl p-6 border border-blue-600/30 shadow-2xl">
+    <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-blue-600/30 shadow-2xl">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Target className="w-6 h-6 text-blue-400" />
