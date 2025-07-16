@@ -39,10 +39,10 @@ const TodaysFocus: React.FC<TodaysFocusProps> = ({
 
   if (todaysFocus.length === 0) {
     return (
-      <div className="bg-slate-700/30 rounded-lg p-6 border border-amber-600/30 text-center mb-6">
+      <div className="bg-component-background rounded-lg p-6 border border-amber-600/30 text-center mb-6">
         <Target className="w-12 h-12 text-amber-400 mx-auto mb-4 opacity-50" />
         <h4 className="text-lg font-semibold text-amber-400 mb-2">You haven't added any quests yet</h4>
-        <p className="text-slate-300 mb-4">
+        <p className="text-muted-foreground mb-4">
           Use the 'New Quest' button to start your adventure!
         </p>
         <Button 
@@ -57,12 +57,12 @@ const TodaysFocus: React.FC<TodaysFocusProps> = ({
   }
 
   return (
-    <div className="bg-gradient-to-br from-amber-900/30 to-amber-800/30 rounded-lg p-6 border border-amber-600/50 mb-6">
+    <div className="bg-component-background rounded-lg p-6 border border-amber-600/50 mb-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Target className="w-6 h-6 text-amber-400" />
           <h4 className="text-lg font-bold text-amber-400">Today's Focus</h4>
-          <span className="text-slate-400 text-sm">
+          <span className="text-muted-foreground text-sm">
             ({incompleteQuests.length} active)
           </span>
         </div>

@@ -4,12 +4,12 @@ import { Mail, Wrench, HelpCircle } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-slate-900 border-t border-slate-700 mt-auto">
+    <footer className="bg-component-background border-t border-component-border mt-auto">
       <div className="container mx-auto px-4 py-8">
         {/* Contact Section */}
         <div className="text-center">
           <h3 className="text-xl font-bold text-amber-400 mb-4">Get in Touch</h3>
-          <p className="text-slate-300 mb-6 max-w-md mx-auto">
+          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
             Questions or feedback? We'd love to hear from you!
           </p>
           
@@ -56,8 +56,8 @@ const Footer = () => {
         </div>
         
         {/* Copyright or additional info */}
-        <div className="text-center mt-8 pt-6 border-t border-slate-800">
-          <p className="text-slate-500 text-sm">
+        <div className="text-center mt-8 pt-6 border-t border-component-border">
+          <p className="text-muted-foreground text-sm">
             © 2025 LifeQuest. Turn your daily tasks into epic adventures.
           </p>
         </div>

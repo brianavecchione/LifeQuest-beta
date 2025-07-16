@@ -29,7 +29,7 @@ const PartyManagement = () => {
   return (
     <div className="space-y-6">
       {/* Invite Management */}
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-indigo-600/30 shadow-2xl">
+      <div className="bg-component-background rounded-xl p-6 border border-indigo-600/30 shadow-2xl">
         <div className="flex items-center gap-2 mb-4">
           <UserPlus className="w-6 h-6 text-indigo-400" />
           <h3 className="text-xl font-bold text-indigo-400">Invite Members</h3>
@@ -68,7 +68,7 @@ const PartyManagement = () => {
       </div>
 
       {/* Member Management */}
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-red-600/30 shadow-2xl">
+      <div className="bg-component-background rounded-xl p-6 border border-red-600/30 shadow-2xl">
         <div className="flex items-center gap-2 mb-4">
           <Settings className="w-6 h-6 text-red-400" />
           <h3 className="text-xl font-bold text-red-400">Member Management</h3>

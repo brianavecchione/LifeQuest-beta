@@ -11,7 +11,7 @@ const PartyDashboard = () => {
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-8 border border-purple-600/30 shadow-2xl text-center">
+      <div className="bg-component-background rounded-xl p-8 border border-purple-600/30 shadow-2xl text-center">
         <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-400 mx-auto mb-4"></div>
         <p className="text-muted-foreground">Loading party data...</p>
       </div>
@@ -20,7 +20,7 @@ const PartyDashboard = () => {
 
   if (!isInParty || !userParty) {
     return (
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-8 border border-purple-600/30 shadow-2xl text-center">
+      <div className="bg-component-background rounded-xl p-8 border border-purple-600/30 shadow-2xl text-center">
         <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
         <h2 className="text-2xl font-bold text-muted-foreground mb-2">No Party Yet</h2>
         <p className="text-muted-foreground">Join or create a party to start collaborating with other adventurers!</p>
@@ -31,7 +31,7 @@ const PartyDashboard = () => {
   const progressPercentage = (userParty.total_xp / userParty.party_goal_xp) * 100;
 
   return (
-    <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-purple-600/30 shadow-2xl">
+    <div className="bg-component-background rounded-xl p-6 border border-purple-600/30 shadow-2xl">
       <div className="flex items-center gap-4 mb-6">
         <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
           <Users className="w-8 h-8 text-white" />
