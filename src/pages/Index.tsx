@@ -7,7 +7,6 @@ import QuestCategories from '@/components/QuestCategories';
 
 import BadgeSystem from '@/components/BadgeSystem';
 import AISidekick from '@/components/AISidekick';
-import NarrativeJournal from '@/components/NarrativeJournal';
 import AchievementsSection from '@/components/AchievementsSection';
 import InventorySystem from '@/components/InventorySystem';
 
@@ -49,10 +48,6 @@ const Index = () => {
           <QuestCategories />
         </div>
 
-        {/* Narrative Journal */}
-        <div className="mb-12">
-          <NarrativeJournal />
-        </div>
 
         {/* Achievements and Streaks */}
         <div className="mb-12">

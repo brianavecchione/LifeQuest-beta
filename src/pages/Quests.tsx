@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import QuestCategories from '@/components/QuestCategories';
-import NarrativeJournal from '@/components/NarrativeJournal';
 import NewQuestModal from '@/components/NewQuestModal';
 import FilterModal from '@/components/FilterModal';
 import { Search, Filter, Plus } from 'lucide-react';
@@ -125,10 +124,6 @@ const Quests = () => {
           />
         </div>
 
-        {/* Narrative Journal */}
-        <div className="mb-12">
-          <NarrativeJournal />
-        </div>
 
         {/* New Quest Modal */}
         <NewQuestModal
