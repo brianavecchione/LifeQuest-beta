@@ -1,17 +1,54 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Palette, User, Eye, Image, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { useBackground } from '@/contexts/BackgroundContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const CustomizationPanel = () => {
   const [currentTab, setCurrentTab] = useState<'themes' | 'avatar' | 'background'>('background');
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [userSettings, setUserSettings] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { backgroundImage, backgroundOpacity, uploadBackgroundImage, removeBackgroundImage, setBackgroundOpacity, loading } = useBackground();
+  const { backgroundImage, backgroundOpacity, uploadBackgroundImage, removeBackgroundImage, setBackgroundOpacity, loading: backgroundLoading } = useBackground();
+  const { user } = useAuth();
+
+  // Fetch user profile and settings data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!user) return;
+      
+      try {
+        // Fetch profile data
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+        
+        // Fetch settings data
+        const { data: settings } = await supabase
+          .from('user_settings')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+        
+        setUserProfile(profile);
+        setUserSettings(settings);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -119,11 +156,29 @@ const CustomizationPanel = () => {
 
           {/* Current Avatar Preview */}
           <div className="bg-slate-700/50 rounded-lg p-6 text-center border border-slate-600/50 mb-6">
-            <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-3xl font-bold text-slate-900 shadow-lg mx-auto mb-3">
-              A
-            </div>
-            <h5 className="text-white font-bold">Current Avatar</h5>
-            <p className="text-slate-400 text-sm">Adventurer</p>
+            {loading ? (
+              <div className="animate-pulse">
+                <div className="w-20 h-20 bg-slate-600 rounded-full mx-auto mb-3"></div>
+                <div className="h-4 bg-slate-600 rounded w-24 mx-auto mb-1"></div>
+                <div className="h-3 bg-slate-600 rounded w-16 mx-auto"></div>
+              </div>
+            ) : (
+              <>
+                {userSettings?.avatar_image_url ? (
+                  <img 
+                    src={userSettings.avatar_image_url} 
+                    alt="Current avatar"
+                    className="w-20 h-20 rounded-full object-cover mx-auto mb-3 shadow-lg"
+                  />
+                ) : (
+                  <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-3xl font-bold text-slate-900 shadow-lg mx-auto mb-3">
+                    {userSettings?.character_name ? userSettings.character_name[0].toUpperCase() : 'A'}
+                  </div>
+                )}
+                <h5 className="text-white font-bold">Current Avatar</h5>
+                <p className="text-slate-400 text-sm">{userSettings?.character_name || 'Adventurer'}</p>
+              </>
+            )}
           </div>
 
           <div className="bg-slate-700/50 rounded-lg p-12 text-center border border-slate-600/50">
@@ -207,17 +262,17 @@ const CustomizationPanel = () => {
             
             <Button 
               onClick={() => fileInputRef.current?.click()}
-              disabled={loading}
+              disabled={backgroundLoading}
               className="w-full bg-pink-600 hover:bg-pink-700 text-white"
             >
               <Upload className="w-4 h-4 mr-2" />
-              {loading ? 'Uploading...' : 'Upload Background Image'}
+              {backgroundLoading ? 'Uploading...' : 'Upload Background Image'}
             </Button>
 
             {backgroundImage && (
               <Button 
                 onClick={handleRemoveBackground}
-                disabled={loading}
+                disabled={backgroundLoading}
                 variant="outline"
                 className="w-full border-red-600 text-red-400 hover:bg-red-600/10"
               >
