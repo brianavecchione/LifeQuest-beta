@@ -12,6 +12,7 @@ import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Quests from "./pages/Quests";
+import Challenges from "./pages/Challenges";
 import Achievements from "./pages/Achievements";
 import Inventory from "./pages/Inventory";
 import GoldShop from "./pages/GoldShop";
@@ -40,6 +41,7 @@ const App = () => (
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
                       <Route path="/quests" element={<ProtectedRoute><Quests /></ProtectedRoute>} />
+                      <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
                       <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
                       <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
                       <Route path="/gold-shop" element={<ProtectedRoute><GoldShop /></ProtectedRoute>} />

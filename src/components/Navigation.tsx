@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Target, Trophy, Sword, Settings, Users, LogOut, Coins, Menu, X, Crown, Zap, User, Bell, Palette } from 'lucide-react';
+import { Home, Target, Trophy, Sword, Settings, Users, LogOut, Coins, Menu, X, Crown, Zap, User, Bell, Palette, Flag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/contexts/UserContext';
@@ -93,6 +93,7 @@ const Navigation = () => {
   const navItems = [
     { path: '/', label: 'Today', icon: Home },
     { path: '/quests', label: 'Quests', icon: Target },
+    { path: '/challenges', label: 'Challenges', icon: Flag },
     { path: '/achievements', label: 'Achievements', icon: Trophy },
     { path: '/inventory', label: 'Inventory', icon: Sword },
     { path: '/parties', label: 'Parties', icon: Users },
