@@ -24,10 +24,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // Seed user data after successful signup
+        if (event === 'SIGNED_IN' && session?.user) {
+          // Use setTimeout to avoid blocking the auth flow
+          setTimeout(async () => {
+            try {
+              await supabase.functions.invoke('seed-user-data', {
+                body: { user_id: session.user.id }
+              });
+            } catch (error) {
+              console.error('Error seeding user data:', error);
+            }
+          }, 100);
+        }
       }
     );
 

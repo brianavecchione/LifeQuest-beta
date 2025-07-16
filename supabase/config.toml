@@ -1,1 +1,39 @@
 project_id = "iiivtylfvnntjxzyximw"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[auth]
+enabled = true
+port = 54324
+external_url = "http://localhost:54324"
+additional_redirect_urls = ["https://localhost:3000"]
+jwt_expiry = 3600
+refresh_token_rotation_enabled = true
+refresh_token_reuse_interval = 10
+enable_signup = true
+enable_confirmations = false
+
+[auth.external.google]
+enabled = true
+client_id = "env(GOOGLE_CLIENT_ID)"
+secret = "env(GOOGLE_CLIENT_SECRET)"
+
+[db]
+port = 54322
+
+[functions.seed-user-data]
+verify_jwt = false
+
+[functions.daily-quest-reset]
+verify_jwt = false
+
+[functions.daily-quest-archive]
+verify_jwt = false
+
+[functions.delete-account]
+verify_jwt = true

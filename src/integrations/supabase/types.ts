@@ -924,6 +924,10 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: undefined
       }
+      seed_new_user_data: {
+        Args: { user_id: string }
+        Returns: undefined
+      }
       update_daily_xp_history: {
         Args: { p_user_id: string; xp_gained: number }
         Returns: undefined
