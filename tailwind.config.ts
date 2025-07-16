@@ -74,6 +74,13 @@ export default {
 				// App-specific colors for theme switching
 				'app-background': 'hsl(var(--app-background))',
 				'app-foreground': 'hsl(var(--app-foreground))',
+				'app-gradient-from': 'hsl(var(--app-gradient-from))',
+				'app-gradient-to': 'hsl(var(--app-gradient-to))',
+				'app-pattern': 'hsl(var(--app-pattern))',
+				'component-background': 'hsl(var(--component-background))',
+				'component-foreground': 'hsl(var(--component-foreground))',
+				'component-muted': 'hsl(var(--component-muted))',
+				'component-border': 'hsl(var(--component-border))',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

@@ -49,6 +49,15 @@ All colors MUST be HSL.
     /* Light Mode App Background */
     --app-background: 0 0% 96%;
     --app-foreground: 222.2 84% 4.9%;
+    --app-gradient-from: 0 0% 98%;
+    --app-gradient-to: 0 0% 94%;
+    --app-pattern: 0 0% 0%;
+
+    /* Component backgrounds */
+    --component-background: 0 0% 100%;
+    --component-foreground: 222.2 84% 4.9%;
+    --component-muted: 210 40% 96.1%;
+    --component-border: 214.3 31.8% 91.4%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -100,6 +109,15 @@ All colors MUST be HSL.
     /* Dark Mode App Background */
     --app-background: 222.2 84% 4.9%;
     --app-foreground: 210 40% 98%;
+    --app-gradient-from: 222.2 84% 4.9%;
+    --app-gradient-to: 222.2 84% 4.9%;
+    --app-pattern: 210 40% 98%;
+
+    /* Component backgrounds */
+    --component-background: 217.2 32.6% 17.5%;
+    --component-foreground: 210 40% 98%;
+    --component-muted: 217.2 32.6% 17.5%;
+    --component-border: 217.2 32.6% 17.5%;
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;

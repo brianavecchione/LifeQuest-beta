@@ -39,7 +39,7 @@ const Soundtrack = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-indigo-600/30 shadow-2xl">
+    <div className="bg-component-background border-component-border rounded-xl p-6 border shadow-2xl">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Volume2 className="w-6 h-6 text-indigo-400" />
@@ -55,15 +55,15 @@ const Soundtrack = () => {
         {playlist.map((track, index) => (
           <div 
             key={index}
-            className={`bg-slate-700/50 rounded-lg p-4 border transition-all cursor-pointer hover:bg-slate-700/70 ${
-              currentTrack === index ? 'border-indigo-500/70 bg-indigo-900/20' : 'border-slate-600/50'
+            className={`bg-component-muted rounded-lg p-4 border transition-all cursor-pointer hover:bg-component-muted/80 ${
+              currentTrack === index ? 'border-indigo-500/70 bg-indigo-900/20' : 'border-component-border'
             }`}
             onClick={() => setCurrentTrack(index)}
           >
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <h4 className="text-white font-medium mb-1">{track.title}</h4>
-                <p className="text-slate-300 text-sm mb-2">{track.artist}</p>
+                <h4 className="text-component-foreground font-medium mb-1">{track.title}</h4>
+                <p className="text-muted-foreground text-sm mb-2">{track.artist}</p>
                 <div className="flex gap-1 flex-wrap">
                   {track.tags.map((tag, tagIndex) => (
                     <span key={tagIndex} className="text-xs text-indigo-300 bg-indigo-900/30 px-2 py-1 rounded">
@@ -72,7 +72,7 @@ const Soundtrack = () => {
                   ))}
                 </div>
               </div>
-              <div className="text-slate-400 text-sm ml-4">
+              <div className="text-muted-foreground text-sm ml-4">
                 {track.duration}
               </div>
             </div>
@@ -80,11 +80,11 @@ const Soundtrack = () => {
         ))}
       </div>
 
-      <div className="mt-6 p-4 bg-slate-700/30 rounded-lg">
+      <div className="mt-6 p-4 bg-component-muted rounded-lg">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <div className="text-white font-medium">{playlist[currentTrack].title}</div>
-            <div className="text-slate-300 text-sm">{playlist[currentTrack].artist}</div>
+            <div className="text-component-foreground font-medium">{playlist[currentTrack].title}</div>
+            <div className="text-muted-foreground text-sm">{playlist[currentTrack].artist}</div>
           </div>
           <Button
             onClick={togglePlayback}
@@ -95,7 +95,7 @@ const Soundtrack = () => {
           </Button>
         </div>
         
-        <div className="w-full bg-slate-600 rounded-full h-2">
+        <div className="w-full bg-muted rounded-full h-2">
           <div className="bg-indigo-400 h-full rounded-full transition-all duration-300" style={{ width: '35%' }} />
         </div>
       </div>
