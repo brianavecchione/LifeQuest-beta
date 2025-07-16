@@ -25,9 +25,9 @@ const PartyQuests = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Completed': return 'border-green-500/50 bg-green-900/20';
-      case 'In Progress': return 'border-blue-500/50 bg-blue-900/20';
-      default: return 'border-slate-500/50 bg-slate-900/20';
+      case 'Completed': return 'border-green-500/50 bg-green-500/10';
+      case 'In Progress': return 'border-blue-500/50 bg-blue-500/10';
+      default: return 'border-component-border bg-component-muted/50';
     }
   };
 

@@ -45,21 +45,21 @@ const PartyManagement = () => {
           </Button>
 
           {showInvite && (
-            <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50">
+            <div className="bg-component-muted/50 rounded-lg p-4 border border-component-border">
               <div className="mb-2">
-                <label className="text-slate-300 text-sm font-medium">Party Invite Code</label>
+                <label className="text-component-foreground text-sm font-medium">Party Invite Code</label>
               </div>
               <div className="flex gap-2">
                 <Input
                   value={inviteCode}
                   readOnly
-                  className="flex-1 bg-slate-800 border-slate-600 text-white"
+                  className="flex-1"
                 />
-                <Button size="sm" onClick={copyInviteCode} className="bg-slate-600 hover:bg-slate-700">
+                <Button size="sm" onClick={copyInviteCode} className="bg-component-muted hover:bg-component-muted/80">
                   <Copy className="w-4 h-4" />
                 </Button>
               </div>
-              <p className="text-slate-400 text-xs mt-2">
+              <p className="text-muted-foreground text-xs mt-2">
                 Share this code with friends to invite them to your party (Max: 10 members)
               </p>
             </div>
@@ -77,13 +77,13 @@ const PartyManagement = () => {
         {membersLoading ? (
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-400 mx-auto mb-4"></div>
-            <p className="text-slate-400">Loading party members...</p>
+            <p className="text-muted-foreground">Loading party members...</p>
           </div>
         ) : partyMembers.length > 0 ? (
           <>
             <div className="space-y-3">
               {partyMembers.map((member) => (
-                <div key={member.id} className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                <div key={member.id} className="flex items-center gap-3 p-3 bg-component-muted/30 rounded-lg border border-component-border">
                   <Avatar className="w-10 h-10">
                     <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-600 text-white font-bold">
                       {member.username.charAt(0)}
@@ -92,7 +92,7 @@ const PartyManagement = () => {
                   
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-white font-medium">{member.username}</span>
+                      <span className="text-component-foreground font-medium">{member.username}</span>
                       {member.role === 'Leader' && (
                         <Badge className="bg-yellow-600 hover:bg-yellow-700 text-xs">Leader</Badge>
                       )}
@@ -100,10 +100,10 @@ const PartyManagement = () => {
                         <Badge className="bg-orange-600 hover:bg-orange-700 text-xs">Co-Leader</Badge>
                       )}
                       {!member.is_active && (
-                        <Badge variant="outline" className="text-xs text-slate-400 border-slate-500">Inactive</Badge>
+                        <Badge variant="outline" className="text-xs text-muted-foreground border-component-border">Inactive</Badge>
                       )}
                     </div>
-                    <div className="text-slate-400 text-sm">Level {member.level}</div>
+                    <div className="text-muted-foreground text-sm">Level {member.level}</div>
                   </div>
                   
                   {member.role !== 'Leader' && (
@@ -133,17 +133,17 @@ const PartyManagement = () => {
               ))}
             </div>
 
-            <div className="mt-4 p-3 bg-slate-700/30 rounded-lg border border-slate-600/50">
-              <div className="text-center text-slate-300 text-sm">
+            <div className="mt-4 p-3 bg-component-muted/30 rounded-lg border border-component-border">
+              <div className="text-center text-component-foreground text-sm">
                 <strong>Party Size:</strong> {partyMembers.length}/10 members
               </div>
             </div>
           </>
         ) : (
           <div className="text-center py-8">
-            <Settings className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-            <p className="text-slate-400 text-lg mb-2">No party members</p>
-            <p className="text-slate-500 text-sm">Create or join a party to manage members here.</p>
+            <Settings className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <p className="text-muted-foreground text-lg mb-2">No party members</p>
+            <p className="text-muted-foreground text-sm">Create or join a party to manage members here.</p>
           </div>
         )}
       </div>

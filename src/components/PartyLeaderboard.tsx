@@ -44,10 +44,10 @@ const PartyLeaderboard = () => {
 
   const getRankColor = (rank: number) => {
     switch (rank) {
-      case 1: return 'border-yellow-500/50 bg-yellow-900/20';
-      case 2: return 'border-gray-400/50 bg-gray-900/20';
-      case 3: return 'border-amber-600/50 bg-amber-900/20';
-      default: return 'border-slate-500/50 bg-slate-900/20';
+      case 1: return 'border-yellow-500/50 bg-yellow-500/10';
+      case 2: return 'border-gray-400/50 bg-gray-400/10';
+      case 3: return 'border-amber-600/50 bg-amber-600/10';
+      default: return 'border-component-border bg-component-muted/50';
     }
   };
 

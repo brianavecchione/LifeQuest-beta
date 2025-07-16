@@ -29,23 +29,23 @@ const DailyHabits: React.FC<DailyHabitsProps> = ({
 
   if (allDailies.length === 0) {
     return (
-      <div className="bg-slate-700/30 rounded-lg p-4 border border-yellow-600/30 text-center">
+      <div className="bg-component-background rounded-lg p-4 border border-yellow-600/30 text-center">
         <Calendar className="w-8 h-8 text-yellow-400 mx-auto mb-2 opacity-50" />
         <p className="text-yellow-400 font-medium">No Daily Habits Created Yet</p>
-        <p className="text-yellow-300/70 text-sm">Create some daily habits to build consistency!</p>
+        <p className="text-muted-foreground text-sm">Create some daily habits to build consistency!</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-slate-700/30 rounded-lg p-4 border border-yellow-600/30">
+    <div className="bg-component-background rounded-lg p-4 border border-yellow-600/30">
       <div 
         className="flex items-center gap-2 mb-4 cursor-pointer hover:bg-yellow-600/10 rounded-lg p-2 -m-2 transition-colors"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         <Calendar className="w-5 h-5 text-yellow-400" />
         <h4 className="text-lg font-bold text-yellow-400 flex-1">Daily Habits</h4>
-        <span className="text-yellow-300/70 text-sm">
+        <span className="text-muted-foreground text-sm">
           ({completedCount}/{totalCount})
         </span>
         {isCollapsed ? (

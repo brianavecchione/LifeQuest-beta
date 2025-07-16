@@ -46,7 +46,7 @@ const AISidekick = () => {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 w-96 h-96 bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-purple-600/30 shadow-2xl z-50 flex flex-col">
+    <div className="fixed bottom-6 right-6 w-96 h-96 bg-component-background rounded-xl border border-purple-600/30 shadow-2xl z-50 flex flex-col">
       <div className="flex items-center justify-between p-4 border-b border-slate-700">
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-purple-400" />

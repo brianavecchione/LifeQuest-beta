@@ -174,7 +174,7 @@ const QuestTracker = () => {
       )}
 
       {/* Main Quest Tracker */}
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-emerald-600/30 shadow-2xl">
+      <div className="bg-component-background rounded-xl p-6 border border-emerald-600/30 shadow-2xl">
         <QuickActions
           pomodoroCount={pomodoroCount}
           onSetupModalOpen={() => setIsSetupModalOpen(true)}
