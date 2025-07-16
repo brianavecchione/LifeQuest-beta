@@ -1,13 +1,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Mail, Wrench, HelpCircle } from 'lucide-react';
-import { useTheme } from '@/contexts/ThemeContext';
 
 const Footer = () => {
-  const { theme } = useTheme();
-  
   return (
-    <footer className={`${theme === 'fantasy' ? 'fantasy-navbar' : 'bg-component-background'} border-t border-component-border mt-auto`}>
+    <footer className="bg-component-background border-t border-component-border mt-auto">
       <div className="container mx-auto px-4 py-8">
         {/* Contact Section */}
         <div className="text-center">

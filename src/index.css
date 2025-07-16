@@ -128,68 +128,6 @@ All colors MUST be HSL.
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
-
-  .fantasy {
-    /* Fantasy Theme - Magical Realm Colors */
-    --background: 0 0% 100%;
-    --foreground: 218 54% 20%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 218 54% 20%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 218 54% 20%;
-
-    --primary: 266 85% 58%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 60 100% 85%;
-    --secondary-foreground: 218 54% 20%;
-
-    --muted: 0 0% 96%;
-    --muted-foreground: 215 25% 27%;
-
-    --accent: 42 87% 55%;
-    --accent-foreground: 218 54% 20%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 213 27% 84%;
-    --input: 213 27% 84%;
-    --ring: 266 85% 58%;
-
-    /* Fantasy Brand Colors */
-    --brand-primary: 42 87% 55%;     /* Magical gold for primary actions */
-    --brand-primary-foreground: 218 54% 20%;
-    --brand-secondary: 266 85% 58%;   /* Mystical purple for secondary actions */
-    --brand-secondary-foreground: 0 0% 100%;
-    --brand-tertiary: 142 69% 58%;    /* Enchanted green for success states */
-    --brand-tertiary-foreground: 0 0% 100%;
-
-    /* Fantasy App Background - Transparent to show fantasy image */
-    --app-background: transparent;
-    --app-foreground: 218 54% 20%;
-    --app-gradient-from: transparent;
-    --app-gradient-to: transparent;
-    --app-pattern: 218 54% 20%;
-
-    /* Fantasy Component backgrounds - Semi-transparent parchment */
-    --component-background: rgba(252, 250, 242, 0.9);
-    --component-foreground: 218 54% 20%;
-    --component-muted: rgba(0, 0, 0, 0.05);
-    --component-border: rgba(218, 165, 32, 0.3);
-
-    /* Fantasy Sidebar */
-    --sidebar-background: rgba(252, 250, 242, 0.9);
-    --sidebar-foreground: 218 54% 20%;
-    --sidebar-primary: 266 85% 58%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: rgba(0, 0, 0, 0.05);
-    --sidebar-accent-foreground: 218 54% 20%;
-    --sidebar-border: rgba(218, 165, 32, 0.3);
-    --sidebar-ring: 266 85% 58%;
-  }
 }
 
 @layer base {
@@ -198,16 +136,7 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply text-foreground;
-  }
-  
-  /* Fantasy theme body background */
-  .fantasy body {
-    background-image: url('/lovable-uploads/af50b77a-17ab-430f-b0ad-cf366d0c986f.png');
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    @apply bg-background text-foreground;
   }
 }
 
@@ -219,43 +148,6 @@ All colors MUST be HSL.
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
   scroll-behavior: auto !important;
-}
-
-/* Fantasy Theme Background */
-.fantasy-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('/lovable-uploads/af50b77a-17ab-430f-b0ad-cf366d0c986f.png');
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  z-index: -1;
-}
-
-.fantasy-navbar {
-  background: rgba(135, 206, 235, 0.85) !important;
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-/* Fantasy component styling */
-.fantasy .fantasy-panel {
-  background: rgba(252, 250, 242, 0.95) !important;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(218, 165, 32, 0.4);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.fantasy .fantasy-card {
-  background: rgba(252, 250, 242, 0.95) !important;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(218, 165, 32, 0.3);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 /* Respect system preference for reduced motion */

@@ -9,7 +9,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useGuest } from '@/contexts/GuestContext';
 import { useBadgeNotifications } from '@/hooks/useBadgeNotifications';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '@/contexts/ThemeContext';
 
 const Navigation = () => {
   const location = useLocation();
@@ -21,7 +20,6 @@ const Navigation = () => {
   const { signOut } = useAuth();
   const { isGuestMode, disableGuestMode } = useGuest();
   const { unreadCount, markAllAsRead } = useBadgeNotifications();
-  const { theme } = useTheme();
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   
   // Debug log for XP recalculation
@@ -102,7 +100,7 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className={`${theme === 'fantasy' ? 'fantasy-navbar' : 'bg-component-background/90 backdrop-blur-sm'} border-b border-component-border sticky top-0 z-40`}>
+    <nav className="bg-component-background/90 backdrop-blur-sm border-b border-component-border sticky top-0 z-40">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo and Brand */}
