@@ -11,6 +11,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signInWithGoogle: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  deleteAccount: () => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -103,6 +104,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const deleteAccount = async () => {
+    try {
+      if (!user) {
+        return { error: { message: 'No user to delete' } };
+      }
+
+      // Delete the user account - this will trigger cascade deletes for all user data
+      const { error } = await supabase.auth.deleteUser();
+      
+      if (error) {
+        console.error('Error deleting user account:', error);
+        return { error };
+      }
+
+      // Clear local state
+      setSession(null);
+      setUser(null);
+      setLoading(false);
+      
+      // Clear any stored auth data
+      localStorage.removeItem('sb-iiivtylfvnntjxzyximw-auth-token');
+      
+      return { error: null };
+    } catch (error) {
+      console.error('Error during account deletion:', error);
+      return { error };
+    }
+  };
+
   const value: AuthContextType = {
     user,
     session,
@@ -111,6 +141,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signIn,
     signInWithGoogle,
     signOut,
+    deleteAccount,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

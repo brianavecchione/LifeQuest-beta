@@ -3,19 +3,34 @@ import React from 'react';
 import AISidekick from '@/components/AISidekick';
 import AvatarUpload from '@/components/AvatarUpload';
 import Soundtrack from '@/components/Soundtrack';
-import CustomizationPanel from '@/components/CustomizationPanel';
-import { User, Bell, Zap, Shield, Accessibility, Save } from 'lucide-react';
+import { User, Bell, Zap, Shield, Accessibility, Save, AlertTriangle, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 const Settings = () => {
   const { user, updateUser } = useUser();
   const { toast } = useToast();
+  const { deleteAccount } = useAuth();
+  const navigate = useNavigate();
   const [characterName, setCharacterName] = React.useState(user.name);
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
   const handleNameChange = (value: string) => {
     setCharacterName(value);
@@ -53,6 +68,43 @@ const Settings = () => {
       document.documentElement.classList.add('reduce-animations');
     }
   }, [user.reduceAnimations]);
+
+  const handleDeleteAccount = async () => {
+    try {
+      setIsDeleting(true);
+      
+      // Call the deleteAccount function
+      const { error } = await deleteAccount();
+      
+      if (error) {
+        toast({
+          title: "Error deleting account",
+          description: error.message || "There was an error deleting your account. Please try again or contact support.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Show success message
+      toast({
+        title: "Account deleted successfully",
+        description: "Your account and all associated data have been permanently deleted.",
+        variant: "destructive",
+      });
+      
+      // Redirect to auth page
+      navigate('/auth', { replace: true });
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      toast({
+        title: "Error deleting account",
+        description: "There was an error deleting your account. Please try again or contact support.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -202,6 +254,82 @@ const Settings = () => {
         {/* Soundtrack & Atmosphere Settings */}
         <div className="mb-12">
           <Soundtrack />
+        </div>
+
+        {/* Danger Zone - Account Deletion */}
+        <div className="mb-12">
+          <div className="bg-gradient-to-br from-red-900/20 to-red-800/20 rounded-xl p-6 border border-red-600/30 shadow-2xl">
+            <div className="flex items-center gap-2 mb-6">
+              <AlertTriangle className="w-6 h-6 text-red-400" />
+              <h3 className="text-xl font-bold text-red-400">Danger Zone</h3>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="bg-red-900/30 rounded-lg p-4 border border-red-700/50">
+                <h4 className="text-white font-medium mb-2">Delete Account</h4>
+                <p className="text-red-200 text-sm mb-4">
+                  Permanently delete your account and all associated data. This action cannot be undone.
+                </p>
+                <p className="text-red-300 text-xs mb-4">
+                  This will delete:
+                </p>
+                <ul className="text-red-300 text-xs mb-4 ml-4 space-y-1">
+                  <li>• All your quests and progress</li>
+                  <li>• Achievements and badges</li>
+                  <li>• Profile information</li>
+                  <li>• Inventory and rewards</li>
+                  <li>• All other personal data</li>
+                </ul>
+                
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button 
+                      variant="destructive"
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                      disabled={isDeleting}
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      {isDeleting ? 'Deleting...' : 'Delete Account'}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="bg-slate-800 border-red-600/30">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="text-red-400 flex items-center gap-2">
+                        <AlertTriangle className="w-5 h-5" />
+                        Delete Account Permanently
+                      </AlertDialogTitle>
+                      <AlertDialogDescription className="text-slate-300">
+                        Are you absolutely sure you want to delete your account? This action cannot be undone.
+                        <br /><br />
+                        <strong className="text-red-300">This will permanently delete:</strong>
+                        <ul className="mt-2 ml-4 space-y-1 text-sm">
+                          <li>• All your quests and progress</li>
+                          <li>• Achievements and badges</li>
+                          <li>• Profile information</li>
+                          <li>• Inventory and rewards</li>
+                          <li>• All other personal data</li>
+                        </ul>
+                        <br />
+                        <strong className="text-red-300">This action is irreversible.</strong>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel className="bg-slate-700 hover:bg-slate-600 text-white border-slate-600">
+                        Cancel
+                      </AlertDialogCancel>
+                      <AlertDialogAction 
+                        onClick={handleDeleteAccount}
+                        className="bg-red-600 hover:bg-red-700 text-white"
+                        disabled={isDeleting}
+                      >
+                        {isDeleting ? 'Deleting...' : 'Yes, Delete My Account'}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
