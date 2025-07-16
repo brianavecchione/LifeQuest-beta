@@ -50,44 +50,6 @@ const CustomizationPanel = () => {
   };
 
 
-  const avatarStyles = [
-    {
-      id: 'knight',
-      name: 'Noble Knight',
-      icon: '⚔️',
-      description: 'Classic warrior archetype'
-    },
-    {
-      id: 'mage',
-      name: 'Wise Mage',
-      icon: '🧙‍♂️',
-      description: 'Master of arcane arts'
-    },
-    {
-      id: 'rogue',
-      name: 'Shadow Rogue',
-      icon: '🥷',
-      description: 'Stealthy and cunning'
-    },
-    {
-      id: 'ranger',
-      name: 'Forest Ranger',
-      icon: '🏹',
-      description: 'Nature\'s guardian'
-    },
-    {
-      id: 'paladin',
-      name: 'Holy Paladin',
-      icon: '🛡️',
-      description: 'Divine protector'
-    },
-    {
-      id: 'custom',
-      name: 'Custom Avatar',
-      icon: '📷',
-      description: 'Upload your own image'
-    }
-  ];
 
   return (
     <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-pink-600/30 shadow-2xl">
@@ -164,31 +126,11 @@ const CustomizationPanel = () => {
             <p className="text-slate-400 text-sm">Adventurer</p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {avatarStyles.map((style) => (
-              <div
-                key={style.id}
-                className="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50 hover:border-pink-500/50 transition-all cursor-pointer hover:scale-105"
-              >
-                <div className="text-center">
-                  <div className="text-3xl mb-2">{style.icon}</div>
-                  <h6 className="text-white font-medium text-sm mb-1">{style.name}</h6>
-                  <p className="text-slate-400 text-xs">{style.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="bg-slate-700/50 rounded-lg p-6 text-center border border-slate-600/50 mt-4">
-            <div className="text-3xl mb-2">🎭</div>
-            <h6 className="text-white font-medium mb-1">Custom avatar styles coming soon!</h6>
+          <div className="bg-slate-700/50 rounded-lg p-12 text-center border border-slate-600/50">
+            <div className="text-6xl mb-4">🎭</div>
+            <h5 className="text-white font-bold text-xl mb-2">Custom avatar styles coming soon!</h5>
             <p className="text-slate-400 text-sm">We're working on bringing you more personalization options for your character.</p>
           </div>
-
-          <Button className="w-full bg-pink-600 hover:bg-pink-700 text-white mt-4">
-            <User className="w-4 h-4 mr-2" />
-            Save Avatar
-          </Button>
         </div>
       )}
 
