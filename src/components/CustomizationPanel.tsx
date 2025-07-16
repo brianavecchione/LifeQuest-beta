@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 import { Palette, User, Eye, Settings, Image, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Slider } from '@/components/ui/slider';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { toast } from 'sonner';
 
@@ -10,7 +11,7 @@ const CustomizationPanel = () => {
   const [currentTab, setCurrentTab] = useState<'themes' | 'avatar' | 'background'>('themes');
   const [selectedTheme, setSelectedTheme] = useState('dark-forest');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { backgroundImage, uploadBackgroundImage, removeBackgroundImage, loading } = useBackground();
+  const { backgroundImage, backgroundOpacity, uploadBackgroundImage, removeBackgroundImage, setBackgroundOpacity, loading } = useBackground();
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -285,6 +286,28 @@ const CustomizationPanel = () => {
               </div>
             )}
           </div>
+
+          {/* Background Opacity Control */}
+          {backgroundImage && (
+            <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/30 mb-4">
+              <div className="flex items-center justify-between mb-3">
+                <h6 className="text-pink-300 font-medium">Background Opacity</h6>
+                <span className="text-slate-400 text-sm">{Math.round(backgroundOpacity * 100)}%</span>
+              </div>
+              <Slider
+                value={[backgroundOpacity]}
+                onValueChange={(value) => setBackgroundOpacity(value[0])}
+                min={0}
+                max={1}
+                step={0.05}
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-slate-500 mt-1">
+                <span>0%</span>
+                <span>100%</span>
+              </div>
+            </div>
+          )}
 
           {/* Upload and Remove Controls */}
           <div className="space-y-3">

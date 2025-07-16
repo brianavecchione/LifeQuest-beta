@@ -4,7 +4,9 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface BackgroundContextType {
   backgroundImage: string | null;
+  backgroundOpacity: number;
   setBackgroundImage: (url: string | null) => void;
+  setBackgroundOpacity: (opacity: number) => void;
   uploadBackgroundImage: (file: File) => Promise<string>;
   removeBackgroundImage: () => Promise<void>;
   loading: boolean;
@@ -14,15 +16,18 @@ const BackgroundContext = createContext<BackgroundContextType | null>(null);
 
 export const BackgroundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [backgroundImage, setBackgroundImageState] = useState<string | null>(null);
+  const [backgroundOpacity, setBackgroundOpacityState] = useState<number>(1);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  // Load existing background image on mount
+  // Load existing background image and opacity on mount
   useEffect(() => {
     if (user) {
       loadBackgroundImage();
+      loadBackgroundOpacity();
     } else {
       setBackgroundImageState(null);
+      setBackgroundOpacityState(1);
     }
   }, [user]);
 
@@ -54,8 +59,20 @@ export const BackgroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   };
 
+  const loadBackgroundOpacity = () => {
+    const storedOpacity = localStorage.getItem('backgroundOpacity');
+    if (storedOpacity) {
+      setBackgroundOpacityState(parseFloat(storedOpacity));
+    }
+  };
+
   const setBackgroundImage = (url: string | null) => {
     setBackgroundImageState(url);
+  };
+
+  const setBackgroundOpacity = (opacity: number) => {
+    setBackgroundOpacityState(opacity);
+    localStorage.setItem('backgroundOpacity', opacity.toString());
   };
 
   const uploadBackgroundImage = async (file: File): Promise<string> => {
@@ -116,6 +133,8 @@ export const BackgroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     try {
       await removeExistingBackground();
       setBackgroundImageState(null);
+      setBackgroundOpacityState(1);
+      localStorage.removeItem('backgroundOpacity');
     } finally {
       setLoading(false);
     }
@@ -123,7 +142,9 @@ export const BackgroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const value: BackgroundContextType = {
     backgroundImage,
+    backgroundOpacity,
     setBackgroundImage,
+    setBackgroundOpacity,
     uploadBackgroundImage,
     removeBackgroundImage,
     loading,
