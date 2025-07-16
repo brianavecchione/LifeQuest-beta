@@ -1,64 +1,25 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Palette, User, Eye, Settings, Image, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useBackground } from '@/contexts/BackgroundContext';
 import { toast } from 'sonner';
 
 const CustomizationPanel = () => {
   const [currentTab, setCurrentTab] = useState<'themes' | 'avatar' | 'background'>('themes');
   const [selectedTheme, setSelectedTheme] = useState('dark-forest');
-  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { user } = useAuth();
-
-  // Load existing background image on component mount
-  useEffect(() => {
-    if (user) {
-      loadBackgroundImage();
-    }
-  }, [user]);
-
-  const loadBackgroundImage = async () => {
-    if (!user) return;
-    
-    try {
-      const { data: files } = await supabase.storage
-        .from('backgrounds')
-        .list(`${user.id}/`, {
-          limit: 1,
-          sortBy: { column: 'created_at', order: 'desc' }
-        });
-
-      if (files && files.length > 0) {
-        const { data: { publicUrl } } = supabase.storage
-          .from('backgrounds')
-          .getPublicUrl(`${user.id}/${files[0].name}`);
-        
-        setBackgroundImage(publicUrl);
-        
-        // Apply background image to body
-        document.body.style.backgroundImage = `url(${publicUrl})`;
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundPosition = 'center';
-        document.body.style.backgroundRepeat = 'no-repeat';
-        document.body.style.backgroundAttachment = 'fixed';
-      }
-    } catch (error) {
-      console.error('Error loading background image:', error);
-    }
-  };
+  const { backgroundImage, uploadBackgroundImage, removeBackgroundImage, loading } = useBackground();
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file || !user) return;
+    if (!file) return;
 
     // Validate file type
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      toast.error('Please select a valid image file (JPG, PNG, GIF, or WebP)');
       return;
     }
 
@@ -68,87 +29,22 @@ const CustomizationPanel = () => {
       return;
     }
 
-    setUploading(true);
-
     try {
-      // Remove existing background image first
-      await removeExistingBackground();
-
-      // Upload new image
-      const fileExt = file.name.split('.').pop();
-      const fileName = `background-${Date.now()}.${fileExt}`;
-      const filePath = `${user.id}/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('backgrounds')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('backgrounds')
-        .getPublicUrl(filePath);
-
-      setBackgroundImage(publicUrl);
-      
-      // Apply background image to body
-      document.body.style.backgroundImage = `url(${publicUrl})`;
-      document.body.style.backgroundSize = 'cover';
-      document.body.style.backgroundPosition = 'center';
-      document.body.style.backgroundRepeat = 'no-repeat';
-      document.body.style.backgroundAttachment = 'fixed';
-
+      await uploadBackgroundImage(file);
       toast.success('Background image uploaded successfully!');
     } catch (error) {
       console.error('Error uploading background image:', error);
       toast.error('Failed to upload background image');
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const removeExistingBackground = async () => {
-    if (!user) return;
-
-    try {
-      const { data: files } = await supabase.storage
-        .from('backgrounds')
-        .list(`${user.id}/`);
-
-      if (files && files.length > 0) {
-        const filePaths = files.map(file => `${user.id}/${file.name}`);
-        await supabase.storage
-          .from('backgrounds')
-          .remove(filePaths);
-      }
-    } catch (error) {
-      console.error('Error removing existing background:', error);
     }
   };
 
   const handleRemoveBackground = async () => {
-    if (!user) return;
-
-    setUploading(true);
-
     try {
-      await removeExistingBackground();
-      
-      setBackgroundImage(null);
-      
-      // Reset body background to default
-      document.body.style.backgroundImage = '';
-      document.body.style.backgroundSize = '';
-      document.body.style.backgroundPosition = '';
-      document.body.style.backgroundRepeat = '';
-      document.body.style.backgroundAttachment = '';
-
+      await removeBackgroundImage();
       toast.success('Background image removed successfully!');
     } catch (error) {
       console.error('Error removing background image:', error);
       toast.error('Failed to remove background image');
-    } finally {
-      setUploading(false);
     }
   };
 
@@ -402,17 +298,17 @@ const CustomizationPanel = () => {
             
             <Button 
               onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
+              disabled={loading}
               className="w-full bg-pink-600 hover:bg-pink-700 text-white"
             >
               <Upload className="w-4 h-4 mr-2" />
-              {uploading ? 'Uploading...' : 'Upload Background Image'}
+              {loading ? 'Uploading...' : 'Upload Background Image'}
             </Button>
 
             {backgroundImage && (
               <Button 
                 onClick={handleRemoveBackground}
-                disabled={uploading}
+                disabled={loading}
                 variant="outline"
                 className="w-full border-red-600 text-red-400 hover:bg-red-600/10"
               >

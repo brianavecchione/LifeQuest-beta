@@ -7,9 +7,11 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { UserProvider } from "./contexts/UserContext";
 import { QuestProvider } from "./contexts/QuestContext";
 import { GuestProvider } from "./contexts/GuestContext";
+import { BackgroundProvider } from "./contexts/BackgroundContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
+import BackgroundImage from "./components/BackgroundImage";
 import Home from "./pages/Home";
 import Quests from "./pages/Quests";
 import Achievements from "./pages/Achievements";
@@ -30,31 +32,34 @@ const App = () => (
       <GuestProvider>
         <UserProvider>
           <QuestProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <div className="min-h-screen flex flex-col">
-                  <Navigation />
-                  <main className="flex-1">
-                    <Routes>
-                      <Route path="/auth" element={<Auth />} />
-                      <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-                      <Route path="/quests" element={<ProtectedRoute><Quests /></ProtectedRoute>} />
-                      <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
-                      <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
-                      <Route path="/gold-shop" element={<ProtectedRoute><GoldShop /></ProtectedRoute>} />
-                      <Route path="/parties" element={<ProtectedRoute><Parties /></ProtectedRoute>} />
-                      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                      <Route path="/customization" element={<ProtectedRoute><Customization /></ProtectedRoute>} />
-                      <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </main>
-                  <Footer />
-                </div>
-              </BrowserRouter>
-            </TooltipProvider>
+            <BackgroundProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <div className="min-h-screen flex flex-col">
+                    <Navigation />
+                    <main className="flex-1 relative">
+                      <BackgroundImage />
+                      <Routes>
+                        <Route path="/auth" element={<Auth />} />
+                        <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                        <Route path="/quests" element={<ProtectedRoute><Quests /></ProtectedRoute>} />
+                        <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
+                        <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
+                        <Route path="/gold-shop" element={<ProtectedRoute><GoldShop /></ProtectedRoute>} />
+                        <Route path="/parties" element={<ProtectedRoute><Parties /></ProtectedRoute>} />
+                        <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                        <Route path="/customization" element={<ProtectedRoute><Customization /></ProtectedRoute>} />
+                        <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </main>
+                    <Footer />
+                  </div>
+                </BrowserRouter>
+              </TooltipProvider>
+            </BackgroundProvider>
           </QuestProvider>
         </UserProvider>
       </GuestProvider>
