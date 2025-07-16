@@ -29,11 +29,15 @@ export const useDailyXp = () => {
 
   const fetchDailyXpHistory = async () => {
     if (!user) {
+      console.log('⚠️ No user found in useDailyXp hook');
       setDailyXpData([]);
       setWeeklyXpData([]);
       setLoading(false);
       return;
     }
+
+    console.log('🔍 useDailyXp: User found:', user.id);
+    console.log('🔍 useDailyXp: User email:', user.email);
 
     try {
       setLoading(true);
