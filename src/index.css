@@ -137,12 +137,6 @@ All colors MUST be HSL.
 
   body {
     @apply text-foreground;
-    background: linear-gradient(135deg, hsl(var(--app-gradient-from)), hsl(var(--app-gradient-to)));
-    min-height: 100vh;
-  }
-  
-  .dark body {
-    background: linear-gradient(135deg, hsl(222.2 47% 11%), hsl(222.2 84% 4.9%));
   }
 }
 

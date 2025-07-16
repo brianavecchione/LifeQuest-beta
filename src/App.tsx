@@ -36,7 +36,7 @@ const App = () => (
                 <Toaster />
                 <Sonner />
                 <BrowserRouter>
-                <div className="min-h-screen flex flex-col">
+                <div className="min-h-screen flex flex-col bg-gradient-to-br from-app-gradient-from to-app-gradient-to">
                   <Navigation />
                   <main className="flex-1">
                     <Routes>
