@@ -21,22 +21,31 @@ const CustomizationPanel = () => {
   // Fetch user profile and settings data
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!user) return;
+      if (!user) {
+        console.log('No user found in auth context');
+        return;
+      }
+      
+      console.log('Fetching user data for:', user.id);
       
       try {
         // Fetch profile data
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('*')
           .eq('user_id', user.id)
           .single();
         
+        console.log('Profile data:', profile, 'Error:', profileError);
+        
         // Fetch settings data
-        const { data: settings } = await supabase
+        const { data: settings, error: settingsError } = await supabase
           .from('user_settings')
           .select('*')
           .eq('user_id', user.id)
           .single();
+        
+        console.log('Settings data:', settings, 'Error:', settingsError);
         
         setUserProfile(profile);
         setUserSettings(settings);
