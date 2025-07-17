@@ -11,7 +11,7 @@ body {
 
 /* Add specific padding for logged-in pages with fixed navbar */
 body.logged-in {
-  padding-top: 5rem; /* Increased for logged-in navbar */
+  padding-top: 7rem; /* Increased padding for logged-in navbar */
 }
 
 /* Landing page gets no top padding */
@@ -21,7 +21,7 @@ body.landing-page {
 
 /* Special handling for anchor links */
 html {
-  scroll-padding-top: 5rem;
+  scroll-padding-top: 7rem;
 }
 
 .logo {

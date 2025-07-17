@@ -67,7 +67,7 @@ const Quests = () => {
         </div>
       )}
 
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-16 lg:py-16">{/* Increased top padding for logged-in view */}
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-20 lg:py-20">{/* Further increased top padding for logged-in view */}
         {/* Header */}
         <div className="text-center mb-8 lg:mb-12">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent mb-4">
