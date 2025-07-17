@@ -208,7 +208,7 @@ const Auth = () => {
               </h2>
               
               <p className="text-lg sm:text-xl text-slate-300 mb-6 lg:mb-8" style={{ textShadow: '0 3px 6px rgba(0, 0, 0, 0.7)' }}>
-                A science-backed, gamified system that transforms your real-life goals into quests.
+                LifeQuest is a science-backed, gamified system that transforms your real-life goals into quests.
               </p>
               
               <h3 className="text-xl sm:text-2xl text-white font-semibold mb-6 lg:mb-8" style={{ textShadow: '0 3px 6px rgba(0, 0, 0, 0.7)' }}>
