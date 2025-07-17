@@ -104,7 +104,11 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo and Brand */}
           <div className="flex items-center gap-2 sm:gap-4">
-            <span className="text-xl sm:text-2xl">⚔️</span>
+            <img 
+              src="/lovable-uploads/cb8c4308-d603-4205-bacf-a30e3b1f5afa.png" 
+              alt="LifeQuest Logo" 
+              className="w-6 h-6 sm:w-8 sm:h-8"
+            />
             <h1 className="text-lg sm:text-xl font-bold text-amber-400">LifeQuest</h1>
             
             {/* User Stats - Hidden on smaller screens */}
