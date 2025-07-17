@@ -342,6 +342,7 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
                 onDeleteQuest={setDeletingQuest}
                 onAddToFocus={handleAddToFocus}
                 isInTodaysFocus={todaysFocusQuests.includes(quest.id)}
+                hideBadges={['type']}
               />
             ))
           )}
