@@ -16,6 +16,11 @@ const PageContentWrapper: React.FC<PageContentWrapperProps> = ({
 }) => {
   const { backgroundImage } = useBackground();
   
+  // Debug logging to verify component is rendered
+  React.useEffect(() => {
+    console.log('🔍 PageContentWrapper mounted with 14rem padding');
+  }, []);
+  
   return (
     <div className={`min-h-screen text-white relative z-10 ${!backgroundImage ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' : ''}`}>
       {/* Fantasy background pattern - only show if no custom background */}
@@ -27,7 +32,7 @@ const PageContentWrapper: React.FC<PageContentWrapperProps> = ({
         </div>
       )}
 
-      <div className={`relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 page-content-wrapper ${className}`}>
+      <div className={`relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 page-content-wrapper ${className}`} style={{ paddingTop: '14rem' }}>
         {children}
       </div>
     </div>
