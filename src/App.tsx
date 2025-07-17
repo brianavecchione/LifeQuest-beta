@@ -11,6 +11,7 @@ import { BackgroundProvider } from "./contexts/BackgroundContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
+import SpotifyPlayer from "./components/SpotifyPlayer";
 import BackgroundImage from "./components/BackgroundImage";
 import Home from "./pages/Home";
 import Quests from "./pages/Quests";
@@ -57,6 +58,7 @@ const App = () => (
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </main>
+                    <SpotifyPlayer />
                     <Footer />
                   </div>
                 </BrowserRouter>
