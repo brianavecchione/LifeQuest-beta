@@ -3,8 +3,13 @@ import React, { useState } from 'react';
 import { MessageSquare, Send, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { isFeatureEnabled } from '@/lib/featureFlags';
 
 const AISidekick = () => {
+  // Early return if feature is disabled
+  if (!isFeatureEnabled('ENABLE_AI_SIDEKICK')) {
+    return null;
+  }
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([
