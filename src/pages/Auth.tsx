@@ -160,22 +160,22 @@ const Auth = () => {
               <div className="flex items-center justify-center lg:justify-start gap-3 mb-6 lg:mb-8">
                 <div className="flex items-center gap-2">
                   <span className="text-2xl sm:text-3xl">⚔️</span>
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent" style={{ textShadow: '0px 2px 4px rgba(0, 0, 0, 0.5)' }}>
-                    LifeQuest
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
+                    <span className="text-white" style={{ textShadow: '0px 3px 6px rgba(0, 0, 0, 0.7)' }}>Life</span><span className="bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent" style={{ textShadow: '0px 3px 6px rgba(0, 0, 0, 0.7)' }}>Quest</span>
                   </h1>
                 </div>
               </div>
               
-              <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white mb-4 lg:mb-6 leading-tight" style={{ textShadow: '0px 2px 4px rgba(0, 0, 0, 0.5)' }}>
+              <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white mb-4 lg:mb-6 leading-tight" style={{ textShadow: '0px 3px 6px rgba(0, 0, 0, 0.7)' }}>
                 Your Adventure<br />
                 Awaits
               </h2>
               
-              <p className="text-lg sm:text-xl text-slate-300 mb-6 lg:mb-8" style={{ textShadow: '0px 2px 4px rgba(0, 0, 0, 0.5)' }}>
+              <p className="text-lg sm:text-xl text-slate-300 mb-6 lg:mb-8" style={{ textShadow: '0px 3px 6px rgba(0, 0, 0, 0.7)' }}>
                 A science-backed, gamified system that transforms your real-life goals into quests.
               </p>
               
-              <h3 className="text-xl sm:text-2xl text-white font-semibold mb-6 lg:mb-8" style={{ textShadow: '0px 2px 4px rgba(0, 0, 0, 0.5)' }}>
+              <h3 className="text-xl sm:text-2xl text-white font-semibold mb-6 lg:mb-8" style={{ textShadow: '0px 3px 6px rgba(0, 0, 0, 0.7)' }}>
                 Join the quest to level up your life!
               </h3>
               
@@ -185,35 +185,35 @@ const Auth = () => {
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
                     <span className="text-xl sm:text-2xl">🎯</span>
                   </div>
-                  <span className="text-base sm:text-lg text-white" style={{ textShadow: '0px 2px 4px rgba(0, 0, 0, 0.5)' }}>Create daily quests and track your progress</span>
+                  <span className="text-base sm:text-lg text-white" style={{ textShadow: '0px 3px 6px rgba(0, 0, 0, 0.7)' }}>Create daily quests and track your progress</span>
                 </div>
                 
                 <div className="flex items-center gap-4 justify-center lg:justify-start">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
                     <span className="text-xl sm:text-2xl">💰</span>
                   </div>
-                  <span className="text-base sm:text-lg text-white" style={{ textShadow: '0px 2px 4px rgba(0, 0, 0, 0.5)' }}>Earn XP, gold, and rewards to build momentum</span>
+                  <span className="text-base sm:text-lg text-white" style={{ textShadow: '0px 3px 6px rgba(0, 0, 0, 0.7)' }}>Earn XP, gold, and rewards to build momentum</span>
                 </div>
                 
                 <div className="flex items-center gap-4 justify-center lg:justify-start">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
                     <span className="text-xl sm:text-2xl">🔥</span>
                   </div>
-                  <span className="text-base sm:text-lg text-white" style={{ textShadow: '0px 2px 4px rgba(0, 0, 0, 0.5)' }}>Strengthen habits with streaks, milestones, and badges</span>
+                  <span className="text-base sm:text-lg text-white" style={{ textShadow: '0px 3px 6px rgba(0, 0, 0, 0.7)' }}>Strengthen habits with streaks, milestones, and badges</span>
                 </div>
                 
                 <div className="flex items-center gap-4 justify-center lg:justify-start">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
                     <span className="text-xl sm:text-2xl">🏆</span>
                   </div>
-                  <span className="text-base sm:text-lg text-white" style={{ textShadow: '0px 2px 4px rgba(0, 0, 0, 0.5)' }}>Redeem your achievements for meaningful real-world rewards</span>
+                  <span className="text-base sm:text-lg text-white" style={{ textShadow: '0px 3px 6px rgba(0, 0, 0, 0.7)' }}>Redeem your achievements for meaningful real-world rewards</span>
                 </div>
                 
                 <div className="flex items-center gap-4 justify-center lg:justify-start">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
                     <span className="text-xl sm:text-2xl">🧠</span>
                   </div>
-                  <span className="text-base sm:text-lg text-white" style={{ textShadow: '0px 2px 4px rgba(0, 0, 0, 0.5)' }}>Designed with behavioral science to support motivation, focus, and consistent follow-through</span>
+                  <span className="text-base sm:text-lg text-white" style={{ textShadow: '0px 3px 6px rgba(0, 0, 0, 0.7)' }}>Designed with behavioral science to support motivation, focus, and consistent follow-through</span>
                 </div>
               </div>
             </div>
