@@ -25,7 +25,7 @@ const TermsConditions = () => {
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-8 space-y-8">
             <div>
               <p className="text-slate-300 mb-6">
-                <strong>Effective Date:</strong> January 17, 2025
+                <strong>Effective Date:</strong> July 17, 2025
               </p>
               <p className="text-slate-300 mb-6">
                 Welcome to LifeQuest. These Terms & Conditions ("Terms") govern your use of our productivity platform and services. By accessing or using LifeQuest, you agree to be bound by these Terms.
