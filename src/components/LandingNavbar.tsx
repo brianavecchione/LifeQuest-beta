@@ -68,7 +68,7 @@ const LandingNavbar = () => {
               Features
             </button>
             <button
-              onClick={() => handleNavigation('/help')}
+              onClick={() => window.location.href = '/help'}
               className="text-[#F0F4FF] hover:text-amber-400 transition-all duration-300 font-medium hover:scale-105"
               style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
             >
@@ -127,7 +127,7 @@ const LandingNavbar = () => {
                 Features
               </button>
               <button
-                onClick={() => handleNavigation('/help')}
+                onClick={() => window.location.href = '/help'}
                 className="block w-full text-left text-[#F0F4FF] hover:text-amber-400 py-2 font-medium transition-colors"
               >
                 FAQ
