@@ -25,7 +25,6 @@ import Challenges from "./pages/Challenges";
 import Help from "./pages/Help";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
-import About from "./pages/About";
 
 const queryClient = new QueryClient();
 
@@ -55,8 +54,7 @@ const App = () => (
                         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                         <Route path="/customization" element={<ProtectedRoute><Customization /></ProtectedRoute>} />
                         <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
-                        <Route path="/help" element={<Help />} />
-                        <Route path="/about" element={<About />} />
+                        <Route path="/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                       <YouTubePlayer />
