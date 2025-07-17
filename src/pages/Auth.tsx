@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,6 +29,7 @@ const Auth = () => {
   const { enableGuestMode } = useGuest();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
 
   // Redirect if already logged in
   useEffect(() => {
@@ -43,6 +44,33 @@ const Auth = () => {
       toast.success('Password reset email sent! Check your inbox and follow the instructions.');
     }
   }, [searchParams]);
+  
+  // Handle hash navigation for anchor links
+  useEffect(() => {
+    // Check if location has a hash
+    if (location.hash) {
+      const sectionId = location.hash.substring(1);
+      const element = document.getElementById(sectionId);
+      
+      if (element) {
+        // Get CSS variables for navbar offset
+        const navbarHeight = getComputedStyle(document.documentElement).getPropertyValue('--navbar-height').trim();
+        const navbarOffset = getComputedStyle(document.documentElement).getPropertyValue('--navbar-top-offset').trim();
+        
+        // Calculate scroll position with offset
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition - (parseFloat(navbarHeight) + parseFloat(navbarOffset) + 16);
+        
+        // Use a slight delay to ensure the page is fully loaded
+        setTimeout(() => {
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }, 100);
+      }
+    }
+  }, [location.hash]);
 
   // Show loading state if auth is loading
   if (loading) {
@@ -139,7 +167,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-900 relative overflow-hidden auth-container">
       {/* Adventure Background */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"

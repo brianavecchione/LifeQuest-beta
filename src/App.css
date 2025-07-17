@@ -4,9 +4,26 @@
   text-align: center;
 }
 
-/* Add top padding to all pages to account for the fixed navbar */
-body {
-  padding-top: 5rem;
+/* Dynamic padding for pages to account for fixed navbar */
+:root {
+  --navbar-height: 5rem;
+  --navbar-top-offset: 1rem; /* For the floating navbar design */
+}
+
+/* Base padding for all main content */
+main.flex-1 {
+  padding-top: calc(var(--navbar-height) + var(--navbar-top-offset));
+  min-height: 100vh;
+}
+
+/* Adjust Auth page which has its own padding requirements */
+.auth-container {
+  padding-top: calc(var(--navbar-height) + var(--navbar-top-offset));
+}
+
+/* Special handling for anchor links to prevent content being hidden under navbar */
+html {
+  scroll-padding-top: calc(var(--navbar-height) + var(--navbar-top-offset) + 1rem);
 }
 
 .logo {

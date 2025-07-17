@@ -14,10 +14,21 @@ const LandingNavbar = () => {
       return;
     }
     
-    // If we're on the landing page, smooth scroll
+    // If we're on the landing page, smooth scroll with navbar offset
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const navbarHeight = getComputedStyle(document.documentElement).getPropertyValue('--navbar-height').trim();
+      const navbarOffset = getComputedStyle(document.documentElement).getPropertyValue('--navbar-top-offset').trim();
+      
+      // Calculate scroll position with offset
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - (parseFloat(navbarHeight) + parseFloat(navbarOffset) + 16); // 16px extra space
+      
+      // Scroll to the position
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
     setIsMobileMenuOpen(false);
   };
