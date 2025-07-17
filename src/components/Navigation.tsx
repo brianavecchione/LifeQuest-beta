@@ -107,7 +107,7 @@ const Navigation = () => {
             <img 
               src="/lovable-uploads/cb8c4308-d603-4205-bacf-a30e3b1f5afa.png" 
               alt="LifeQuest Logo" 
-              className="w-6 h-6 sm:w-8 sm:h-8"
+              className="w-10 h-10 sm:w-12 sm:h-12"
             />
             <h1 className="text-lg sm:text-xl font-bold text-amber-400">LifeQuest</h1>
             

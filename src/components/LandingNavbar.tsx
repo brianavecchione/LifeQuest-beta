@@ -44,7 +44,7 @@ const LandingNavbar = () => {
               <img 
                 src="/lovable-uploads/cb8c4308-d603-4205-bacf-a30e3b1f5afa.png" 
                 alt="LifeQuest Logo" 
-                className="w-8 h-8"
+                className="w-12 h-12"
               />
               <span 
                 className="text-xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent"
