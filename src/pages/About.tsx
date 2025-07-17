@@ -16,7 +16,7 @@ const About = () => {
 
         {/* Content */}
         <div className="space-y-8 text-slate-300">
-          <section>
+          <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
             <h2 className="text-2xl font-bold text-amber-400 mb-4">Our Mission</h2>
             <p className="mb-4">
               LifeQuest was created to help people with ADHD, motivation challenges, and productivity struggles 
@@ -28,7 +28,7 @@ const About = () => {
             </p>
           </section>
 
-          <section>
+          <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
             <h2 className="text-2xl font-bold text-amber-400 mb-4">Built on Science</h2>
             <p className="mb-4">
               LifeQuest is built on established principles from behavioral psychology, gamification research, 
@@ -43,7 +43,7 @@ const About = () => {
             </ul>
           </section>
 
-          <section>
+          <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
             <h2 className="text-2xl font-bold text-amber-400 mb-4">Our Team</h2>
             <p className="mb-4">
               LifeQuest was created by a small, passionate team with personal experience in ADHD, executive 
@@ -52,7 +52,7 @@ const About = () => {
             </p>
           </section>
 
-          <section>
+          <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
             <h2 className="text-2xl font-bold text-amber-400 mb-4">Join the Adventure</h2>
             <p className="mb-4">
               LifeQuest is more than just a productivity app—it's a community of people supporting each other 
