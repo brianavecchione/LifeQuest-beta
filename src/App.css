@@ -9,9 +9,9 @@ body {
   padding-top: 0; /* No padding by default for logged-out pages with floating navbar */
 }
 
-/* Add specific padding for logged-in pages with fixed navbar */
+/* No body padding needed since PageContentWrapper handles it */
 body.logged-in {
-  padding-top: 11rem; /* Increased padding for logged-in navbar to prevent content being cut off */
+  padding-top: 0; /* Remove body padding - handled by .page-content-wrapper */
 }
 
 /* Landing page gets no top padding */
@@ -21,12 +21,12 @@ body.landing-page {
 
 /* Special handling for anchor links */
 html {
-  scroll-padding-top: 11rem;
+  scroll-padding-top: 14rem;
 }
 
 /* Common spacing for all page content in logged-in pages */
 .page-content-wrapper {
-  padding-top: 3rem; /* Increased spacing above page content to better clear navbar */
+  padding-top: 14rem; /* Spacing above page content to clear the fixed navbar (top-4 + navbar height) */
 }
 
 .logo {
