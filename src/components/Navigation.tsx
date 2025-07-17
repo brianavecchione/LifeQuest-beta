@@ -22,6 +22,20 @@ const Navigation = () => {
   const { isGuestMode, disableGuestMode } = useGuest();
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   
+  // Add logged-in class to body for proper padding
+  useEffect(() => {
+    if (!loading && (user || isGuestMode)) {
+      document.body.classList.add('logged-in');
+    } else {
+      document.body.classList.remove('logged-in');
+    }
+    
+    // Cleanup when component unmounts
+    return () => {
+      document.body.classList.remove('logged-in');
+    };
+  }, [user, loading, isGuestMode]);
+  
   // Debug log for XP recalculation
   React.useEffect(() => {
     if (!isLoading && userContext) {

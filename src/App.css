@@ -4,14 +4,14 @@
   text-align: center;
 }
 
-/* Direct approach to padding for all pages */
+/* Different padding approach for logged-in vs logged-out pages */
 body {
-  padding-top: 7rem; /* Increased padding to ensure no content is cut off */
+  padding-top: 0; /* No padding by default for logged-out pages */
 }
 
-/* Additional space for the landing page which has a floating navbar */
-body.landing-page {
-  padding-top: 8rem;
+/* Add padding only for logged-in pages */
+body.logged-in {
+  padding-top: 7rem;
 }
 
 /* Special handling for anchor links to prevent content being hidden under navbar */
