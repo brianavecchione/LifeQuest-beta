@@ -59,10 +59,14 @@ const Quests = () => {
     <PageContentWrapper>
       {/* Header */}
       <div className="text-center mb-8 lg:mb-12">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent mb-4">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent mb-4"
+            style={{ 
+              filter: 'drop-shadow(0 0 8px rgba(251, 191, 36, 0.5))',
+              textShadow: '0 0 20px rgba(251, 191, 36, 0.3)'
+            }}>
           🎯 Quests
         </h1>
-        <p className="text-lg sm:text-xl text-slate-300 px-4">
+        <p className="text-lg sm:text-xl text-slate-300 px-4" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.6)' }}>
           Organize and manage your adventures
         </p>
       </div>

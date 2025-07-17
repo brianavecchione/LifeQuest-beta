@@ -12,10 +12,14 @@ const Parties = () => {
     <PageContentWrapper>
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent mb-4">
+        <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent mb-4"
+            style={{ 
+              filter: 'drop-shadow(0 0 8px rgba(251, 191, 36, 0.5))',
+              textShadow: '0 0 20px rgba(251, 191, 36, 0.3)'
+            }}>
           👥 Parties & Social Questing
         </h1>
-        <p className="text-xl text-slate-300">
+        <p className="text-xl text-slate-300" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.6)' }}>
           Team up with friends for epic adventures and friendly competition
         </p>
       </div>
@@ -27,10 +31,10 @@ const Parties = () => {
             <Users className="w-6 h-6 text-blue-400" />
             <Clock className="w-6 h-6 text-purple-400" />
           </div>
-          <h2 className="text-2xl font-bold text-blue-300 text-center mb-2">
+          <h2 className="text-2xl font-bold text-blue-300 text-center mb-2" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.6)' }}>
             Parties Coming Soon!
           </h2>
-          <p className="text-slate-300 text-center leading-relaxed">
+          <p className="text-slate-300 text-center leading-relaxed" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.6)' }}>
             You'll soon be able to team up with others to complete social quests, track collective progress, and support each other's journeys.
           </p>
         </div>

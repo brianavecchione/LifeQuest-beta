@@ -8,10 +8,14 @@ const Challenges = () => {
     <PageContentWrapper>
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 via-orange-500 to-red-600 bg-clip-text text-transparent mb-4">
+        <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 via-orange-500 to-red-600 bg-clip-text text-transparent mb-4"
+            style={{ 
+              filter: 'drop-shadow(0 0 8px rgba(251, 191, 36, 0.5))',
+              textShadow: '0 0 20px rgba(251, 191, 36, 0.3)'
+            }}>
           ⚡ Challenges
         </h1>
-        <p className="text-xl text-slate-300 max-w-2xl mx-auto">
+        <p className="text-xl text-slate-300 max-w-2xl mx-auto" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.6)' }}>
           Epic adventures await those brave enough to accept the call
         </p>
       </div>
