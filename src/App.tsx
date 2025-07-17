@@ -42,10 +42,10 @@ const App = () => (
                 <Toaster />
                 <Sonner />
                 <BrowserRouter>
-                  <div className="min-h-screen flex flex-col">
+                  <div className="min-h-screen flex flex-col relative">
+                    <BackgroundImage />
                     <Navigation />
                     <main className="flex-1 relative">{/* Removed default padding, now controlled by body classes */}
-                      <BackgroundImage />
                       <Routes>
                         <Route path="/auth" element={<Auth />} />
                         <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
