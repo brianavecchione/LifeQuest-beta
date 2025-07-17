@@ -63,7 +63,10 @@ const LandingNavbar = () => {
         <div className="flex items-center justify-between h-16 px-6">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
+            <button 
+              onClick={() => navigate('/auth')}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            >
               <img 
                 src="/lovable-uploads/cb8c4308-d603-4205-bacf-a30e3b1f5afa.png" 
                 alt="LifeQuest Logo" 
@@ -78,8 +81,8 @@ const LandingNavbar = () => {
               >
                 LifeQuest
               </span>
+            </button>
             </div>
-          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
