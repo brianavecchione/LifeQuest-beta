@@ -59,7 +59,7 @@ const Quests = () => {
     <PageContentWrapper>
       {/* Header */}
       <div className="text-center mb-8 lg:mb-12">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent mb-4"
+        <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent mb-4"
             style={{ 
               filter: 'drop-shadow(0 0 8px rgba(251, 191, 36, 0.5))',
               textShadow: '0 0 20px rgba(251, 191, 36, 0.3)'
