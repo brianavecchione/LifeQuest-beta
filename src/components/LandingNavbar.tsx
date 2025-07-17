@@ -32,7 +32,7 @@ const LandingNavbar = () => {
   return (
     <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-6xl mx-auto px-4">
       <div 
-        className="bg-[#1F2C40]/90 backdrop-blur-md rounded-full border border-white/10 shadow-2xl"
+        className="bg-[#1F2C40]/90 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl"
         style={{
           boxShadow: '0 8px 32px rgba(31, 44, 64, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1)'
         }}
@@ -114,7 +114,7 @@ const LandingNavbar = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-white/10 bg-[#1F2C40]/95 backdrop-blur-md rounded-b-3xl">
+          <div className="md:hidden border-t border-white/10 bg-[#1F2C40]/95 backdrop-blur-md rounded-b-2xl">
             <div className="px-6 py-4 space-y-3">
               <button
                 onClick={() => handleNavigation('#features')}
