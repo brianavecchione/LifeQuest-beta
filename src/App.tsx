@@ -54,7 +54,7 @@ const App = () => (
                         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                         <Route path="/customization" element={<ProtectedRoute><Customization /></ProtectedRoute>} />
                         <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
-                        <Route path="/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
+                        <Route path="/help" element={<Help />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                       <YouTubePlayer />
