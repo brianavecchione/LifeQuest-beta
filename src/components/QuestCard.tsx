@@ -132,20 +132,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
               </div>
               
               <div className="flex items-center gap-2">
-                {showDeleteButton && onRemoveFromFocus && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onRemoveFromFocus(quest.id);
-                    }}
-                    className="border-red-500 text-red-400 hover:bg-red-600 hover:text-white p-2"
-                    title="Remove from Today's Focus"
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
-                )}
                 {quest.status !== 'Completed' && quest.quest_type !== 'Daily' && quest.pomodoro_enabled && onBeginQuest && (
                   <Button
                     size="sm"
@@ -301,6 +287,17 @@ const QuestCard: React.FC<QuestCardProps> = ({
               >
                 <Target className="w-4 h-4 mr-2" />
                 Add to Focus
+              </Button>
+            )}
+            {/* Remove from Today's Focus Button */}
+            {onRemoveFromFocus && isInTodaysFocus && quest.quest_type !== 'Daily' && (
+              <Button
+                onClick={() => onRemoveFromFocus(quest.id)}
+                variant="outline"
+                className="text-red-400 border-red-500 hover:bg-red-600 hover:text-white"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Remove from Today's Focus
               </Button>
             )}
             <Button
