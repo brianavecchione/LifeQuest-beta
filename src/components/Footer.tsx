@@ -60,11 +60,25 @@ const Footer = () => {
               </div>
             </div>
             
-            {/* Copyright or additional info */}
+            {/* Copyright and Legal Links */}
             <div className="text-center mt-8 pt-6 border-t border-slate-800">
-              <p className="text-slate-500 text-sm">
-                © 2025 LifeQuest. Turn your daily tasks into epic adventures.
+              <p className="text-slate-500 text-sm mb-3">
+                © 2025 LifeQuest. All rights reserved.
               </p>
+              <div className="flex items-center justify-center gap-6">
+                <a 
+                  href="/privacy-policy" 
+                  className="text-slate-400 hover:text-amber-400 text-sm transition-colors duration-200"
+                >
+                  Privacy Policy
+                </a>
+                <a 
+                  href="/terms-conditions" 
+                  className="text-slate-400 hover:text-amber-400 text-sm transition-colors duration-200"
+                >
+                  Terms & Conditions
+                </a>
+              </div>
             </div>
           </div>
         </div>

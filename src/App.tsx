@@ -24,6 +24,8 @@ import Customization from "./pages/Customization";
 import Challenges from "./pages/Challenges";
 import Help from "./pages/Help";
 import About from "./pages/About";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -57,6 +59,8 @@ const App = () => (
                         <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
                         <Route path="/help" element={<Help />} />
                         <Route path="/about" element={<About />} />
+                        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                        <Route path="/terms-conditions" element={<TermsConditions />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                       <YouTubePlayer />
