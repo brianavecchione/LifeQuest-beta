@@ -8,7 +8,13 @@ export const useTodaysFocus = (quests: Quest[]) => {
   const [todaysFocus, setTodaysFocus] = useState<string[]>(() => {
     if (isGuestMode) return guestTodaysFocus;
     const savedFocus = localStorage.getItem('lifequest-todays-focus');
-    return savedFocus ? JSON.parse(savedFocus) : [];
+    
+    // TEMPORARY: Add a completed quest to test the UI
+    const baseFocus = savedFocus ? JSON.parse(savedFocus) : [];
+    const testWithCompleted = [...baseFocus, "e9df0754-4969-45e1-af6d-2c90be193c88"]; // "test" quest
+    console.log('🧪 TEMPORARY: Adding completed quest to focus for testing:', testWithCompleted);
+    
+    return testWithCompleted;
   });
 
   // Update local state when guest mode changes
