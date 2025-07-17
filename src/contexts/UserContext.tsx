@@ -86,10 +86,26 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const settings = localSettings ? JSON.parse(localSettings) : {};
 
       if (profile) {
-        // Use database level and progress directly (database handles level calculation)
+        // Calculate level and XP progress using progressive formula
         const totalXp = profile.xp_balance;
-        const currentLevel = profile.user_level; // Use database level as source of truth
-        const progressPercentage = profile.level_progress; // Use database progress as source of truth
+        
+        // Progressive XP formula: cumulative XP to reach level n = baseXP * (n * (n + 1)) / 2
+        const baseXP = 100;
+        
+        // Calculate current level based on total XP
+        let currentLevel = 1;
+        while (true) {
+          const xpForLevel = baseXP * (currentLevel * (currentLevel + 1)) / 2;
+          if (totalXp < xpForLevel) break;
+          currentLevel++;
+        }
+        
+        // Calculate XP progress within current level
+        const currentLevelXpThreshold = currentLevel > 1 ? baseXP * ((currentLevel - 1) * currentLevel) / 2 : 0;
+        const nextLevelXpThreshold = baseXP * (currentLevel * (currentLevel + 1)) / 2;
+        const xpInCurrentLevel = totalXp - currentLevelXpThreshold;
+        const xpRequiredForNextLevel = nextLevelXpThreshold - currentLevelXpThreshold;
+        const progressPercentage = (xpInCurrentLevel / xpRequiredForNextLevel) * 100;
         
         // Map Supabase profile to UserData format
         const userData: UserData = {
