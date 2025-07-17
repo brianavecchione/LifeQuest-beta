@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import LandingNavbar from '@/components/LandingNavbar';
-import Footer from '@/components/Footer';
 
 const TermsConditions = () => {
   // Add landing-page class to body for proper spacing
@@ -177,8 +176,6 @@ const TermsConditions = () => {
           </div>
         </div>
       </div>
-      
-      <Footer />
     </div>
   );
 };

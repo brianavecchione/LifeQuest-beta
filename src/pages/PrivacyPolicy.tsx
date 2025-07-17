@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import LandingNavbar from '@/components/LandingNavbar';
-import Footer from '@/components/Footer';
 
 const PrivacyPolicy = () => {
   // Add landing-page class to body for proper spacing
@@ -142,8 +141,6 @@ const PrivacyPolicy = () => {
           </div>
         </div>
       </div>
-      
-      <Footer />
     </div>
   );
 };
