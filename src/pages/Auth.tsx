@@ -36,6 +36,14 @@ const Auth = () => {
     if (!loading && user) {
       navigate('/');
     }
+    
+    // Add landing-page class to body for proper spacing
+    document.body.classList.add('landing-page');
+    
+    // Cleanup when component unmounts
+    return () => {
+      document.body.classList.remove('landing-page');
+    };
   }, [user, loading, navigate]);
 
   // Check for reset confirmation

@@ -12,7 +12,7 @@ const Help = () => {
       {/* Solid background overlay to override any custom background images */}
       <div className="absolute inset-0 bg-slate-900 z-0"></div>
       
-      <div className="relative z-10 max-w-4xl mx-auto px-4 py-8">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 py-12">{/* Added more padding at the top */}
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">

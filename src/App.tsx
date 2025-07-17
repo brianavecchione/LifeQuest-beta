@@ -42,7 +42,7 @@ const App = () => (
                 <BrowserRouter>
                   <div className="min-h-screen flex flex-col">
                     <Navigation />
-                    <main className="flex-1 relative">
+                    <main className="flex-1 relative pt-24">{/* Added consistent top padding for all pages */}
                       <BackgroundImage />
                       <Routes>
                         <Route path="/auth" element={<Auth />} />

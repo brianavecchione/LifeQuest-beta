@@ -4,27 +4,21 @@
   text-align: center;
 }
 
-/* Dynamic padding for pages to account for fixed navbar */
-:root {
-  --navbar-height: 5rem;
-  --navbar-top-offset: 1rem; /* For the floating navbar design */
+/* Direct approach to padding for all pages */
+body {
+  padding-top: 7rem; /* Increased padding to ensure no content is cut off */
 }
 
-/* Base padding for all main content */
-main.flex-1 {
-  padding-top: calc(var(--navbar-height) + var(--navbar-top-offset));
-  min-height: 100vh;
-}
-
-/* Adjust Auth page which has its own padding requirements */
-.auth-container {
-  padding-top: calc(var(--navbar-height) + var(--navbar-top-offset));
+/* Additional space for the landing page which has a floating navbar */
+body.landing-page {
+  padding-top: 8rem;
 }
 
 /* Special handling for anchor links to prevent content being hidden under navbar */
 html {
-  scroll-padding-top: calc(var(--navbar-height) + var(--navbar-top-offset) + 1rem);
+  scroll-padding-top: 7rem;
 }
+
 
 .logo {
   height: 6em;
