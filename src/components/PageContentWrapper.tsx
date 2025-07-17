@@ -32,7 +32,7 @@ const PageContentWrapper: React.FC<PageContentWrapperProps> = ({
         </div>
       )}
 
-      <div className={`relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 page-content-wrapper ${className}`} style={{ paddingTop: '6rem' }}>
+      <div className={`relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 page-content-wrapper ${className}`} style={{ paddingTop: '11rem' }}>
         {children}
       </div>
     </div>
