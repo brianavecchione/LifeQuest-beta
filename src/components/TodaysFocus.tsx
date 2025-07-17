@@ -36,6 +36,15 @@ const TodaysFocus: React.FC<TodaysFocusProps> = ({
   
   const incompleteQuests = focusQuests.filter(q => q.status !== 'Completed');
   const completedQuests = focusQuests.filter(q => q.status === 'Completed');
+  
+  // Debug logging
+  console.log('🎯 TodaysFocus Debug:', {
+    todaysFocusIds: todaysFocus,
+    allQuests: quests.map(q => ({ id: q.id, name: q.quest_name, status: q.status, type: q.quest_type })),
+    focusQuests: focusQuests.map(q => ({ id: q.id, name: q.quest_name, status: q.status })),
+    incompleteQuests: incompleteQuests.map(q => ({ id: q.id, name: q.quest_name, status: q.status })),
+    completedQuests: completedQuests.map(q => ({ id: q.id, name: q.quest_name, status: q.status }))
+  });
 
   if (todaysFocus.length === 0) {
     return (

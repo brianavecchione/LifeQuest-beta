@@ -50,28 +50,55 @@ export const useTodaysFocus = (quests: Quest[]) => {
     if (!isGuestMode && todaysFocus.length > 0 && quests.length > 0) {
       const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
       
+      console.log('🧹 TodaysFocus Cleanup Debug:', {
+        today,
+        todaysFocusIds: todaysFocus,
+        questsData: quests.map(q => ({ 
+          id: q.id, 
+          name: q.quest_name, 
+          status: q.status, 
+          type: q.quest_type, 
+          completed_at: q.completed_at,
+          is_recurring: q.is_recurring
+        }))
+      });
+      
       const validFocusIds = todaysFocus.filter(id => {
         const quest = quests.find(q => q.id === id);
-        if (!quest) return false; // Quest no longer exists
+        if (!quest) {
+          console.log(`❌ Quest ${id} no longer exists`);
+          return false; // Quest no longer exists
+        }
         
         // Keep incomplete quests (any type)
-        if (quest.status !== 'Completed') return true;
+        if (quest.status !== 'Completed') {
+          console.log(`✅ Keeping incomplete quest: ${quest.quest_name} (${quest.status})`);
+          return true;
+        }
         
         // Keep completed recurring Daily habits (they reset daily)
-        if (quest.quest_type === 'Daily' && quest.is_recurring) return true;
+        if (quest.quest_type === 'Daily' && quest.is_recurring) {
+          console.log(`✅ Keeping completed recurring daily: ${quest.quest_name}`);
+          return true;
+        }
         
         // Keep completed non-recurring quests if they were completed today
         if (quest.status === 'Completed' && quest.completed_at) {
           const completedDate = new Date(quest.completed_at).toISOString().split('T')[0];
-          return completedDate === today;
+          const keepQuest = completedDate === today;
+          console.log(`${keepQuest ? '✅' : '❌'} Completed quest: ${quest.quest_name} (completed: ${completedDate}, today: ${today})`);
+          return keepQuest;
         }
         
         // Remove completed non-recurring quests from previous days
+        console.log(`❌ Removing completed quest without completed_at: ${quest.quest_name}`);
         return false;
       });
       
       if (validFocusIds.length !== todaysFocus.length) {
-        console.log(`Cleaning up focus list - removing ${todaysFocus.length - validFocusIds.length} invalid quest IDs`);
+        console.log(`🧹 Cleaning up focus list - removing ${todaysFocus.length - validFocusIds.length} invalid quest IDs`);
+        console.log('Before cleanup:', todaysFocus);
+        console.log('After cleanup:', validFocusIds);
         setTodaysFocus(validFocusIds);
         localStorage.setItem('lifequest-todays-focus', JSON.stringify(validFocusIds));
         window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
