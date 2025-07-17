@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link, useNavigate } from 'react-router-dom';
 
 const LandingNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const scrollToSection = (sectionId: string) => {
     // If we're not on the landing page, navigate there first
     if (window.location.pathname !== '/auth') {
-      window.location.href = `/auth#${sectionId}`;
+      navigate(`/auth#${sectionId}`);
       return;
     }
     
@@ -24,7 +26,7 @@ const LandingNavbar = () => {
     if (path.startsWith('#')) {
       scrollToSection(path.substring(1));
     } else {
-      window.location.href = path;
+      navigate(path);
     }
     setIsMobileMenuOpen(false);
   };
@@ -67,13 +69,13 @@ const LandingNavbar = () => {
             >
               Features
             </button>
-            <button
-              onClick={() => window.location.href = '/help'}
+            <Link
+              to="/help"
               className="text-[#F0F4FF] hover:text-amber-400 transition-all duration-300 font-medium hover:scale-105"
               style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
             >
               FAQ
-            </button>
+            </Link>
             <button
               onClick={() => handleNavigation('#about')}
               className="text-[#F0F4FF] hover:text-amber-400 transition-all duration-300 font-medium hover:scale-105"
@@ -126,12 +128,12 @@ const LandingNavbar = () => {
               >
                 Features
               </button>
-              <button
-                onClick={() => window.location.href = '/help'}
+              <Link
+                to="/help"
                 className="block w-full text-left text-[#F0F4FF] hover:text-amber-400 py-2 font-medium transition-colors"
               >
                 FAQ
-              </button>
+              </Link>
               <button
                 onClick={() => handleNavigation('#about')}
                 className="block w-full text-left text-[#F0F4FF] hover:text-amber-400 py-2 font-medium transition-colors"
