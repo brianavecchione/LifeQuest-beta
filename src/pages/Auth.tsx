@@ -155,54 +155,57 @@ const Auth = () => {
         <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0">
           {/* Left Side - Promotional Content */}
           <div className="flex-1 flex flex-col justify-center max-w-2xl lg:pr-8 xl:pr-16">
-            {/* Logo & Hero Section */}
-            <div className="mb-8 lg:mb-12 text-center lg:text-left">
-              <div className="flex items-center justify-center lg:justify-start gap-3 mb-6 lg:mb-8">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl sm:text-3xl">⚔️</span>
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
-                    LifeQuest
-                  </h1>
-                </div>
-              </div>
-              
-              <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white mb-4 lg:mb-6 leading-tight">
-                Your Adventure<br />
-                Awaits
-              </h2>
-              
-              <p className="text-lg sm:text-xl text-slate-300 mb-8 lg:mb-12">
-                Join the quest to level up your life!
-              </p>
-              
-              {/* Feature List */}
-              <div className="space-y-4 lg:space-y-6 max-w-lg mx-auto lg:mx-0">
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl sm:text-2xl">🎯</span>
+            {/* Content Box with Background */}
+            <div className="bg-slate-900/70 backdrop-blur-sm rounded-2xl p-6 sm:p-8 lg:p-10 shadow-2xl border border-slate-700/50">
+              {/* Logo & Hero Section */}
+              <div className="mb-8 lg:mb-12 text-center lg:text-left">
+                <div className="flex items-center justify-center lg:justify-start gap-3 mb-6 lg:mb-8">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl sm:text-3xl drop-shadow-lg">⚔️</span>
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent drop-shadow-lg">
+                      LifeQuest
+                    </h1>
                   </div>
-                  <span className="text-base sm:text-lg text-white">Set daily quests to stay on track</span>
                 </div>
                 
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl sm:text-2xl">⭐</span>
-                  </div>
-                  <span className="text-base sm:text-lg text-white">Earn XP and badges for your progress</span>
-                </div>
+                <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white mb-4 lg:mb-6 leading-tight drop-shadow-lg">
+                  Your Adventure<br />
+                  Awaits
+                </h2>
                 
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl sm:text-2xl">🔥</span>
-                  </div>
-                  <span className="text-base sm:text-lg text-white">Build habits with streak tracking</span>
-                </div>
+                <p className="text-lg sm:text-xl text-slate-300 mb-8 lg:mb-12 drop-shadow-md">
+                  Join the quest to level up your life!
+                </p>
                 
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl sm:text-2xl">🏆</span>
+                {/* Feature List */}
+                <div className="space-y-4 lg:space-y-6 max-w-lg mx-auto lg:mx-0">
+                  <div className="flex items-center gap-4 justify-center lg:justify-start">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xl sm:text-2xl drop-shadow-md">🎯</span>
+                    </div>
+                    <span className="text-base sm:text-lg text-white drop-shadow-md">Set daily quests to stay on track</span>
                   </div>
-                  <span className="text-base sm:text-lg text-white">Redeem your achievements for real-life rewards</span>
+                  
+                  <div className="flex items-center gap-4 justify-center lg:justify-start">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xl sm:text-2xl drop-shadow-md">⭐</span>
+                    </div>
+                    <span className="text-base sm:text-lg text-white drop-shadow-md">Earn XP and badges for your progress</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-4 justify-center lg:justify-start">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xl sm:text-2xl drop-shadow-md">🔥</span>
+                    </div>
+                    <span className="text-base sm:text-lg text-white drop-shadow-md">Build habits with streak tracking</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-4 justify-center lg:justify-start">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xl sm:text-2xl drop-shadow-md">🏆</span>
+                    </div>
+                    <span className="text-base sm:text-lg text-white drop-shadow-md">Redeem your achievements for real-life rewards</span>
+                  </div>
                 </div>
               </div>
             </div>
