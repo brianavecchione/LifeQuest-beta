@@ -45,12 +45,22 @@ export const useTodaysFocus = (quests: Quest[]) => {
     };
   }, [isGuestMode]);
 
-  // Clean up todaysFocus to remove quest IDs that no longer exist (not in guest mode)
+  // Clean up todaysFocus to remove quest IDs that no longer exist or are completed non-recurring quests
   useEffect(() => {
     if (!isGuestMode && todaysFocus.length > 0 && quests.length > 0) {
-      const validFocusIds = todaysFocus.filter(id => 
-        quests.some(quest => quest.id === id)
-      );
+      const validFocusIds = todaysFocus.filter(id => {
+        const quest = quests.find(q => q.id === id);
+        if (!quest) return false; // Quest no longer exists
+        
+        // Keep incomplete quests (any type)
+        if (quest.status !== 'Completed') return true;
+        
+        // Keep completed recurring Daily habits (they reset daily)
+        if (quest.quest_type === 'Daily' && quest.is_recurring) return true;
+        
+        // Remove completed non-recurring quests
+        return false;
+      });
       
       if (validFocusIds.length !== todaysFocus.length) {
         console.log(`Cleaning up focus list - removing ${todaysFocus.length - validFocusIds.length} invalid quest IDs`);
