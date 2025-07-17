@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/contexts/AuthContext";
 import { Headphones, X, RefreshCw } from "lucide-react";
 
 // Default YouTube embed URL
@@ -20,6 +21,7 @@ const isValidYouTubeUrl = (url: string): boolean => {
 export const YouTubePlayer = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const isMobile = useIsMobile();
+  const { user } = useAuth();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeLoaded, setIframeLoaded] = useState(false);
   
@@ -39,7 +41,8 @@ export const YouTubePlayer = () => {
     }
   }, [currentEmbedUrl]);
   
-  if (isMobile) {
+  // Don't render if user is not authenticated or on mobile
+  if (!user || isMobile) {
     return null;
   }
 
