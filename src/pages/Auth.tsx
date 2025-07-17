@@ -175,7 +175,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 relative overflow-hidden">
+    <div className="relative overflow-hidden">
       {/* Adventure Background */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"

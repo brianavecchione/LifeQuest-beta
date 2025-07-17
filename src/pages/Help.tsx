@@ -8,7 +8,7 @@ import AISidekick from "@/components/AISidekick";
 
 const Help = () => {
   return (
-    <div className="min-h-screen bg-slate-900 relative">
+    <div className="relative">
       {/* Solid background overlay to override any custom background images */}
       <div className="absolute inset-0 bg-slate-900 z-0"></div>
       
