@@ -175,10 +175,10 @@ const Auth = () => {
   };
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden">
       {/* Adventure Background */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: `url(/lovable-uploads/68f36d26-b4e4-41b2-8f4f-f740c275bd38.png)`,
         }}

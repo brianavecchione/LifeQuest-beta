@@ -119,6 +119,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    background-color: #0F172A; /* Navy background for logged-out pages */
   }
 }
 
