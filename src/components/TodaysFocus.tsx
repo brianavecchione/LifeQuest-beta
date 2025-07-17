@@ -142,7 +142,7 @@ const TodaysFocus: React.FC<TodaysFocusProps> = ({
         <div className="mt-4 p-4 bg-green-900/20 rounded-lg border border-green-600/30 text-center">
           <CheckCircle2 className="w-8 h-8 text-green-400 mx-auto mb-2" />
           <p className="text-green-400 font-medium">🎉 Focus Complete!</p>
-          <p className="text-green-300 text-sm">Great job finishing your daily focus. Ready for more?</p>
+          <p className="text-green-300 text-sm">Great job finishing your daily focus.</p>
         </div>
       )}
     </div>
