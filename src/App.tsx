@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
 import BackgroundImage from "./components/BackgroundImage";
+import YouTubePlayer from "./components/YouTubePlayer";
 import Home from "./pages/Home";
 import Quests from "./pages/Quests";
 import Achievements from "./pages/Achievements";
@@ -56,6 +57,7 @@ const App = () => (
                         <Route path="/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
+                      <YouTubePlayer />
                     </main>
                     <Footer />
                   </div>
