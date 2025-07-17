@@ -9,7 +9,7 @@ import AISidekick from "@/components/AISidekick";
 const Help = () => {
   return (
     <div className="text-white">
-      <div className="relative z-10 max-w-4xl mx-auto px-4 py-12">{/* Added more padding at the top */}
+      <div className="relative z-10 max-w-4xl mx-auto px-4 pt-36 pb-12">{/* Added more padding at the top */}
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">
