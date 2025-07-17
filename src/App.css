@@ -1,8 +1,12 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
+}
+
+/* Add top padding to all pages to account for the fixed navbar */
+body {
+  padding-top: 5rem;
 }
 
 .logo {

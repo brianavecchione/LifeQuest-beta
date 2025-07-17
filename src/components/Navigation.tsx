@@ -100,9 +100,12 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="bg-slate-800/90 backdrop-blur-sm border-b border-slate-700 sticky top-0 z-40 relative">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+    <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-6xl mx-auto px-4">
+      <div className="bg-[#1F2C40]/90 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl"
+           style={{
+             boxShadow: '0 8px 32px rgba(31, 44, 64, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+           }}>
+        <div className="flex items-center justify-between h-16 px-6">
           {/* Logo and Brand */}
           <div className="flex items-center gap-2 sm:gap-4">
             <img 
@@ -110,7 +113,15 @@ const Navigation = () => {
               alt="LifeQuest Logo" 
               className="w-10 h-10 sm:w-12 sm:h-12"
             />
-            <h1 className="text-lg sm:text-xl font-bold text-amber-400">LifeQuest</h1>
+            <span 
+              className="text-lg sm:text-xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent"
+              style={{ 
+                filter: 'drop-shadow(0 0 8px rgba(251, 191, 36, 0.5))',
+                textShadow: '0 0 20px rgba(251, 191, 36, 0.3)'
+              }}
+            >
+              LifeQuest
+            </span>
             
             {/* User Stats - Hidden on smaller screens */}
             <div className="hidden xl:flex items-center gap-3 ml-6">
@@ -149,11 +160,12 @@ const Navigation = () => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                     isActive 
-                      ? 'bg-amber-600 text-white' 
-                      : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                      ? 'bg-gradient-to-r from-amber-600 to-yellow-600 text-white shadow-md' 
+                      : 'text-[#F0F4FF] hover:text-amber-400 hover:scale-105'
                   }`}
+                  style={isActive ? {} : { textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
                 >
                   <Icon className="w-4 h-4" />
                   <span className="hidden lg:inline">{item.label}</span>
@@ -167,7 +179,7 @@ const Navigation = () => {
                 onClick={toggleProfileDropdown}
                 variant="ghost"
                 size="sm"
-                className="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors border border-slate-600 hover:border-slate-500"
+                className="flex items-center gap-2 text-[#F0F4FF] hover:text-amber-400 hover:bg-white/10 transition-all duration-300 rounded-full p-2"
                 aria-label="Profile menu"
               >
                 <User className="w-4 h-4" />
@@ -175,11 +187,12 @@ const Navigation = () => {
 
               {/* Profile Dropdown Menu */}
               {isProfileDropdownOpen && (
-                <div className="absolute right-0 top-full mt-2 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-lg z-50">
+                <div className="absolute right-0 top-full mt-2 w-48 bg-[#1F2C40]/95 backdrop-blur-md border border-white/10 rounded-lg shadow-2xl z-50">
                   <div className="py-1">
                     <button
                       onClick={closeProfileDropdown}
-                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-[#F0F4FF] hover:text-amber-400 transition-all duration-300 hover:bg-white/5"
+                      style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
                     >
                       <Bell className="w-4 h-4" />
                       <span>Notifications</span>
@@ -188,7 +201,8 @@ const Navigation = () => {
                     <Link
                       to="/settings"
                       onClick={closeProfileDropdown}
-                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-[#F0F4FF] hover:text-amber-400 transition-all duration-300 hover:bg-white/5"
+                      style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
                     >
                       <Settings className="w-4 h-4" />
                       <span>Settings</span>
@@ -197,7 +211,8 @@ const Navigation = () => {
                     <Link
                       to="/customization"
                       onClick={closeProfileDropdown}
-                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-[#F0F4FF] hover:text-amber-400 transition-all duration-300 hover:bg-white/5"
+                      style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
                     >
                       <Palette className="w-4 h-4" />
                       <span>Customization</span>
@@ -206,7 +221,8 @@ const Navigation = () => {
                     <Link
                       to="/help"
                       onClick={closeProfileDropdown}
-                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-[#F0F4FF] hover:text-amber-400 transition-all duration-300 hover:bg-white/5"
+                      style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
                     >
                       <HelpCircle className="w-4 h-4" />
                       <span>Help & FAQ</span>
@@ -241,7 +257,7 @@ const Navigation = () => {
               onClick={toggleProfileDropdown}
               variant="ghost"
               size="sm"
-              className="p-2 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-600 hover:border-slate-500"
+              className="p-2 text-[#F0F4FF] hover:text-amber-400 hover:bg-white/10 transition-all duration-300 rounded-full"
               aria-label="Profile menu"
             >
               <User className="w-5 h-5" />
@@ -251,7 +267,7 @@ const Navigation = () => {
               variant="ghost"
               size="sm"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 text-slate-300 hover:text-white hover:bg-slate-700"
+              className="p-2 text-[#F0F4FF] hover:text-amber-400 hover:bg-white/10 transition-all duration-300 rounded-full"
               aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? (
@@ -265,11 +281,12 @@ const Navigation = () => {
 
         {/* Mobile Profile Dropdown */}
         {isProfileDropdownOpen && (
-          <div className="md:hidden absolute right-4 top-full mt-2 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-lg z-50">
+          <div className="md:hidden absolute right-4 top-full mt-2 w-48 bg-[#1F2C40]/95 backdrop-blur-md border border-white/10 rounded-lg shadow-2xl z-50">
             <div className="py-1">
               <button
                 onClick={closeProfileDropdown}
-                className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                className="flex items-center gap-3 w-full px-4 py-2 text-sm text-[#F0F4FF] hover:text-amber-400 transition-all duration-300 hover:bg-white/5"
+                style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
               >
                 <Bell className="w-4 h-4" />
                 <span>Notifications</span>
@@ -278,7 +295,8 @@ const Navigation = () => {
               <Link
                 to="/settings"
                 onClick={closeProfileDropdown}
-                className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                className="flex items-center gap-3 w-full px-4 py-2 text-sm text-[#F0F4FF] hover:text-amber-400 transition-all duration-300 hover:bg-white/5"
+                style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
               >
                 <Settings className="w-4 h-4" />
                 <span>Settings</span>
@@ -287,7 +305,8 @@ const Navigation = () => {
                 <Link
                   to="/customization"
                   onClick={closeProfileDropdown}
-                  className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                  className="flex items-center gap-3 w-full px-4 py-2 text-sm text-[#F0F4FF] hover:text-amber-400 transition-all duration-300 hover:bg-white/5"
+                  style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
                 >
                   <Palette className="w-4 h-4" />
                   <span>Customization</span>
@@ -296,7 +315,8 @@ const Navigation = () => {
                 <Link
                   to="/help"
                   onClick={closeProfileDropdown}
-                  className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                  className="flex items-center gap-3 w-full px-4 py-2 text-sm text-[#F0F4FF] hover:text-amber-400 transition-all duration-300 hover:bg-white/5"
+                  style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
                 >
                   <HelpCircle className="w-4 h-4" />
                   <span>Help & FAQ</span>
@@ -325,7 +345,7 @@ const Navigation = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-700 bg-slate-800/95 backdrop-blur-sm">
+          <div className="md:hidden border-t border-white/10 bg-[#1F2C40]/95 backdrop-blur-md rounded-b-2xl">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {/* Mobile User Stats */}
               <div className="flex items-center justify-center gap-3 py-3 mb-2 bg-slate-700/30 rounded-lg">
@@ -353,7 +373,7 @@ const Navigation = () => {
                 )}
               </div>
 
-              {/* Mobile Navigation Links */}
+          {/* Mobile Navigation Links */}
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
@@ -363,11 +383,12 @@ const Navigation = () => {
                     key={item.path}
                     to={item.path}
                     onClick={closeMobileMenu}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors ${
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all duration-300 ${
                       isActive 
-                        ? 'bg-amber-600 text-white' 
-                        : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                        ? 'bg-gradient-to-r from-amber-600 to-yellow-600 text-white shadow-md' 
+                        : 'text-[#F0F4FF] hover:text-amber-400 hover:bg-white/5'
                     }`}
+                    style={isActive ? {} : { textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
                   >
                     <Icon className="w-5 h-5" />
                     <span>{item.label}</span>
@@ -379,7 +400,8 @@ const Navigation = () => {
               <div className="pt-3 mt-3 border-t border-slate-700 space-y-1">
                 <button
                   onClick={closeMobileMenu}
-                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-base font-medium text-[#F0F4FF] hover:text-amber-400 hover:bg-white/5 transition-all duration-300"
+                  style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
                 >
                   <Bell className="w-5 h-5" />
                   <span>Notifications</span>
@@ -388,7 +410,8 @@ const Navigation = () => {
                 <Link
                   to="/settings"
                   onClick={closeMobileMenu}
-                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-base font-medium text-[#F0F4FF] hover:text-amber-400 hover:bg-white/5 transition-all duration-300"
+                  style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
                 >
                   <Settings className="w-5 h-5" />
                   <span>Settings</span>
@@ -397,7 +420,8 @@ const Navigation = () => {
                 <Link
                   to="/customization"
                   onClick={closeMobileMenu}
-                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-base font-medium text-[#F0F4FF] hover:text-amber-400 hover:bg-white/5 transition-all duration-300"
+                  style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
                 >
                   <Palette className="w-5 h-5" />
                   <span>Customization</span>
@@ -406,7 +430,8 @@ const Navigation = () => {
                 <Link
                   to="/help"
                   onClick={closeMobileMenu}
-                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-base font-medium text-[#F0F4FF] hover:text-amber-400 hover:bg-white/5 transition-all duration-300"
+                  style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.3)' }}
                 >
                   <HelpCircle className="w-5 h-5" />
                   <span>Help & FAQ</span>
