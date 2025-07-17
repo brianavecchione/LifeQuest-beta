@@ -220,7 +220,7 @@ const Auth = () => {
           </div>
 
           {/* Right Side - Login Form */}
-          <div className="flex-1 flex flex-col justify-center max-w-md lg:pl-8 xl:pl-16 w-full">
+          <div id="login" className="flex-1 flex flex-col justify-center max-w-md lg:pl-8 xl:pl-16 w-full">
             <Card className="bg-slate-800/90 border-slate-700 backdrop-blur-sm shadow-2xl">
             <CardHeader className="space-y-1">
               <CardTitle className="text-xl text-white text-center">

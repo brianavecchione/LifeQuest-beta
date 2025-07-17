@@ -8,6 +8,7 @@ import { useUser } from '@/contexts/UserContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGuest } from '@/contexts/GuestContext';
 import { useNavigate } from 'react-router-dom';
+import LandingNavbar from './LandingNavbar';
 
 const Navigation = () => {
   const location = useLocation();
@@ -16,6 +17,7 @@ const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const { user: userContext, isLoading } = useUser();
+  const { user, loading } = useAuth();
   const { signOut } = useAuth();
   const { isGuestMode, disableGuestMode } = useGuest();
   const profileDropdownRef = useRef<HTMLDivElement>(null);
@@ -44,9 +46,15 @@ const Navigation = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Hide navigation on auth page
+  // Show landing navbar for logged-out users
   const isAuthPage = location.pathname === '/auth';
+  const isLoggedOut = !loading && !user && !isGuestMode;
   
+  if (isAuthPage && isLoggedOut) {
+    return <LandingNavbar />;
+  }
+  
+  // Hide navigation completely on auth page for logged-in users
   if (isAuthPage) {
     return null;
   }
