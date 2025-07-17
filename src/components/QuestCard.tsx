@@ -19,6 +19,7 @@ interface QuestCardProps {
   onBeginQuest?: (quest: Quest) => void;
   activeTimerQuestId?: string;
   hideBadges?: Array<'gold' | 'type'>;
+  hideInFocusBadge?: boolean;
 }
 
 const QuestCard: React.FC<QuestCardProps> = ({
@@ -33,7 +34,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
   onDeleteQuest,
   onBeginQuest,
   activeTimerQuestId,
-  hideBadges = []
+  hideBadges = [],
+  hideInFocusBadge = false
 }) => {
   const getStatusColor = (status: Quest['status']) => {
     switch (status) {
@@ -121,7 +123,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
                       </Badge>
                     )}
                     {/* Today's Focus Indicator */}
-                    {isInTodaysFocus && (
+                    {isInTodaysFocus && !hideInFocusBadge && (
                       <Badge variant="outline" className="text-amber-400 border-amber-400/50 animate-pulse">
                         <Target className="w-3 h-3 mr-1" />
                         In Focus
