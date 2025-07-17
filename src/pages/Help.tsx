@@ -1,10 +1,11 @@
+import React from 'react';
 import { 
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import AISidekick from "@/components/AISidekick";
+  Accordion, 
+  AccordionContent, 
+  AccordionItem, 
+  AccordionTrigger 
+} from '@/components/ui/accordion';
+import AISidekick from '@/components/AISidekick';
 
 const Help = () => {
   return (
@@ -13,312 +14,288 @@ const Help = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">
-            LifeQuest Help & FAQ
+            Help & FAQ
           </h1>
           <p className="text-slate-300 text-lg max-w-2xl mx-auto">
-            Everything you need to know about transforming your goals into epic quests and building better habits.
+            Everything you need to know about using LifeQuest to level up your productivity and build better habits.
           </p>
         </div>
 
-        {/* FAQ Sections */}
-        <div className="space-y-6">
-          <Accordion type="multiple" className="w-full space-y-4">
-            {/* Getting Started */}
-            <AccordionItem value="getting-started" className="border border-slate-700 rounded-lg bg-slate-800/90 backdrop-blur-sm">
-              <AccordionTrigger className="px-6 py-4 text-xl font-semibold hover:no-underline text-white">
-                Getting Started
-              </AccordionTrigger>
-              <AccordionContent className="px-6 pb-6 space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">What is LifeQuest and how does it work?</h3>
-                  <p className="text-slate-300 mb-4">
-                    LifeQuest is a science-backed gamified productivity platform that transforms your real-life goals into quests. As you complete tasks, you earn XP, gold, and badges—leveling up your character and building better routines along the way.
-                  </p>
-                  <p className="text-slate-300 mb-4">LifeQuest is grounded in behavioral science:</p>
-                  <ul className="list-disc list-inside space-y-2 text-slate-300 ml-4">
-                    <li>Gamification activates your brain's reward system, using XP, streaks, and badges to encourage habit formation through small, achievable wins [1].</li>
-                    <li>Daily Focus tasks are limited to 3–5, aligning with working memory limits and reducing executive overload [2].</li>
-                    <li>Visual categories, filters, and clear feedback loops support attention and follow-through, especially for neurodivergent users [3].</li>
-                  </ul>
-                </div>
+        {/* FAQ Section */}
+        <div className="space-y-8">
+          {/* Getting Started */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
+            <h3 className="text-xl font-semibold text-amber-400 mb-4">Getting Started</h3>
+            <Accordion type="single" collapsible className="w-full space-y-3">
+              <AccordionItem value="first-quest" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  How do I create my first quest?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Click the "+" button on your dashboard or navigate to the Quests page. Fill in your quest name, choose a type (Daily, Main, Side, or Legendary), set priority, and add any description or tags you'd like. Then click "Create Quest" to add it to your adventure!
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="quest-types" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  What's the difference between quest types?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  <strong>Daily:</strong> Recurring tasks that reset each day (habits, routines)<br/>
+                  <strong>Main:</strong> Important, high-priority goals and projects<br/>
+                  <strong>Side:</strong> Smaller tasks and optional objectives<br/>
+                  <strong>Legendary:</strong> Major life goals and significant achievements
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="level-up" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  How do I level up and earn XP?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Complete quests to earn XP! Different quest types and priorities give different amounts of XP. Daily quests give 10-25 XP, Side quests 15-35 XP, Main quests 25-60 XP, and Legendary quests 50-150 XP. As you accumulate XP, you'll automatically level up.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">How do I set up my first quest or habit?</h3>
-                  <p className="text-slate-300">
-                    Go to the Quests page and click "Add Quest." To make it recurring, select the "Daily" option. You can also designate it as a Focus Task for extra rewards.
-                  </p>
-                </div>
+          {/* Game Mechanics */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
+            <h3 className="text-xl font-semibold text-amber-400 mb-4">Game Mechanics</h3>
+            <Accordion type="single" collapsible className="w-full space-y-3">
+              <AccordionItem value="xp-system" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  How does the XP and leveling system work?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  XP requirements increase as you level up using the formula: Level × 100. So Level 2 needs 200 total XP, Level 3 needs 300 total XP, etc. Your progress bar shows how close you are to your next level.
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="gold-shop" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  What can I buy with gold?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Visit the Gold Shop to purchase rewards, themes, and customization options. You can buy personal rewards (treats, breaks, activities) or LifeQuest themes and features. Gold is earned by completing quests alongside XP.
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="achievements" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  How do achievements and badges work?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Achievements unlock automatically as you hit milestones (completing quests, maintaining streaks, reaching levels). Check your Achievements page to see progress and claim rewards. Some achievements are hidden until discovered!
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">What's the difference between Quests, Daily Habits, and Focus Tasks?</h3>
-                  <ul className="list-disc list-inside space-y-2 text-slate-300 ml-4">
-                    <li><strong>Quests:</strong> One-time or recurring goals/tasks.</li>
-                    <li><strong>Daily Habits:</strong> Recurring actions like "take vitamins." Always reward 5 XP and 0 gold.</li>
-                    <li><strong>Focus Tasks:</strong> Your 3–5 most important goals for the day. Completing these earns bonus XP and gold and promotes intentionality and follow-through.</li>
-                  </ul>
-                </div>
+          {/* Task & Habit Management */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
+            <h3 className="text-xl font-semibold text-amber-400 mb-4">Task & Habit Management</h3>
+            <Accordion type="single" collapsible className="w-full space-y-3">
+              <AccordionItem value="daily-reset" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  How do daily quests reset?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Daily quests automatically reset at midnight in your local timezone. Incomplete daily quests are archived, and fresh copies are created for the new day. Your streaks are maintained if you complete them regularly.
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="edit-delete" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  Can I edit or delete quests?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Yes! Click on any quest to open the details modal, then use the edit or delete buttons. You can modify the name, description, priority, type, and tags. Completed quests are archived and can't be edited.
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="pomodoro" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  What's the Pomodoro timer feature?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Enable the Pomodoro timer on any quest to use focused work sessions. The timer follows the traditional 25-minute work / 5-minute break cycle, helping you maintain focus and track time spent on tasks.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">Why only 3–5 Focus Tasks?</h3>
-                  <p className="text-slate-300">
-                    This limit is based on cognitive science: most people can only hold about 4 items in working memory at once [2]. Keeping it simple improves consistency and reduces overwhelm.
-                  </p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
+          {/* Parties & Social */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
+            <h3 className="text-xl font-semibold text-amber-400 mb-4">Parties & Social</h3>
+            <Accordion type="single" collapsible className="w-full space-y-3">
+              <AccordionItem value="party-join" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  How do I create or join a party?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Go to the Parties page to create a new party or join an existing one with a party code. Parties allow you to share goals, compete on leaderboards, and support each other's progress.
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="party-quests" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  What are party quests?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Party quests are shared objectives that all party members can contribute to. They promote collaboration and group accountability. Party leaders can create quests for the entire group.
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="leaderboard" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  How does the party leaderboard work?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  The leaderboard tracks XP earned and quests completed by party members over weekly and monthly periods. It's designed to encourage friendly competition and celebrate everyone's progress.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
 
-            {/* Game Mechanics */}
-            <AccordionItem value="game-mechanics" className="border border-slate-700 rounded-lg bg-slate-800/90 backdrop-blur-sm">
-              <AccordionTrigger className="px-6 py-4 text-xl font-semibold hover:no-underline text-white">
-                Game Mechanics
-              </AccordionTrigger>
-              <AccordionContent className="px-6 pb-6 space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">How do I earn XP and gold?</h3>
-                  <ul className="list-disc list-inside space-y-2 text-slate-300 ml-4">
-                    <li>XP comes from completing any quest or habit.</li>
-                    <li>Gold is earned through quests (but not habits) and can be used to customize your experience.</li>
-                  </ul>
-                  <p className="text-slate-300 mt-2">
-                    Rewards provide immediate feedback, which reinforces habit formation through dopamine signaling [1].
-                  </p>
-                </div>
+          {/* Account & Settings */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
+            <h3 className="text-xl font-semibold text-amber-400 mb-4">Account & Settings</h3>
+            <Accordion type="single" collapsible className="w-full space-y-3">
+              <AccordionItem value="customization" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  How do I customize my avatar and theme?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Visit the Customization page to change your character name, avatar style, and background theme. Some themes may require gold to unlock, adding to the progression system.
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="data-export" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  Can I export my data?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Currently, data export isn't available, but we're working on this feature. Your progress is safely stored and backed up in our secure database.
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="delete-account" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  How do I delete my account?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Go to Settings and scroll to the bottom to find the "Delete Account" option. This action is permanent and will remove all your data, so please consider carefully before proceeding.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">What happens when I level up?</h3>
-                  <p className="text-slate-300">
-                    Leveling up unlocks new cosmetic rewards, titles, and (soon) access to exclusive quests and community features.
-                  </p>
-                </div>
+          {/* Troubleshooting & Bugs */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
+            <h3 className="text-xl font-semibold text-amber-400 mb-4">Troubleshooting & Bugs</h3>
+            <Accordion type="single" collapsible className="w-full space-y-3">
+              <AccordionItem value="save-issues" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  My quests aren't saving or loading properly
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Try refreshing the page first. If problems persist, check your internet connection and try logging out and back in. Contact support if issues continue.
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="performance" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  The app is running slowly or freezing
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Close other browser tabs, clear your browser cache, or try using a different browser. Some browser extensions can also interfere with the app's performance.
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="bug-report" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  I found a bug - how do I report it?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  We appreciate bug reports! Please email us at contact@getlifequest.com with details about what happened, what you expected, and steps to reproduce the issue.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">What are badges and how do I unlock them?</h3>
-                  <p className="text-slate-300">
-                    Badges are awarded when you hit milestones like completing 50 quests or keeping a 7-day streak. These milestones help reinforce progress through goal-setting theory [4].
-                  </p>
-                </div>
+          {/* Tips & Best Practices */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
+            <h3 className="text-xl font-semibold text-amber-400 mb-4">Tips & Best Practices</h3>
+            <Accordion type="single" collapsible className="w-full space-y-3">
+              <AccordionItem value="organize-quests" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  How should I organize my quests?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Use Daily quests for habits, Main quests for important projects, Side quests for smaller tasks, and Legendary quests for major life goals. Use tags to categorize by area (work, health, learning, etc.).
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="build-habits" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  What's the best way to build habits?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Start small with Daily quests for habits you want to build. Be consistent rather than perfect - the streak system rewards regular completion. Focus on 2-3 key habits at a time rather than overwhelming yourself.
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="stay-motivated" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  How can I stay motivated long-term?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Set meaningful rewards in the Gold Shop, celebrate achievements, and consider joining a party for social accountability. Remember that progress isn't always linear - focus on overall trends rather than daily perfection.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">What's the Daily Focus and how is it different from other tasks?</h3>
-                  <p className="text-slate-300">
-                    Your Daily Focus is a curated list of 3–5 key tasks you commit to finishing today. Completing them earns bonus rewards and promotes intentional behavior, avoiding decision fatigue and boosting motivation [5].
-                  </p>
-                </div>
+          {/* References */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
+            <h3 className="text-xl font-semibold text-amber-400 mb-4">References</h3>
+            <Accordion type="single" collapsible className="w-full space-y-3">
+              <AccordionItem value="scientific" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  Scientific foundations
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  LifeQuest is built on research from behavioral psychology, particularly the work on operant conditioning, habit formation, and gamification principles that leverage our brain's reward systems.
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="adhd-design" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  ADHD-friendly design
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Our interface incorporates design principles specifically helpful for ADHD and executive function challenges: clear visual hierarchy, minimal cognitive load, immediate feedback, and customizable organization systems.
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="privacy" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  Privacy and data security
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Your data is encrypted and stored securely. We never share personal information with third parties. See our Privacy Policy for complete details on data handling and your rights.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+        </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">How does the streak system work?</h3>
-                  <p className="text-slate-300">
-                    Complete at least one Daily Habit or Quest per day to keep your streak alive. Missing a day resets it. Some streaks track across habits or challenges.
-                  </p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            {/* Task & Habit Management */}
-            <AccordionItem value="task-management" className="border border-slate-700 rounded-lg bg-slate-800/90 backdrop-blur-sm">
-              <AccordionTrigger className="px-6 py-4 text-xl font-semibold hover:no-underline text-white">
-                Task & Habit Management
-              </AccordionTrigger>
-              <AccordionContent className="px-6 pb-6 space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">How do I make a task recurring?</h3>
-                  <p className="text-slate-300">
-                    Select "Daily" when creating a quest. It will reappear automatically each day.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">What happens to unfinished tasks?</h3>
-                  <ul className="list-disc list-inside space-y-2 text-slate-300 ml-4">
-                    <li>Quests remain in your backlog.</li>
-                    <li>Daily Habits reset at midnight.</li>
-                    <li>Focus Tasks reset daily—you'll need to reselect them tomorrow.</li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">Can I delete or archive quests?</h3>
-                  <p className="text-slate-300">
-                    Yes. Click the three dots on any quest card and select "Delete." (Archiving is coming soon.)
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">Can I prioritize or reorder tasks?</h3>
-                  <p className="text-slate-300">
-                    You can assign XP and gold to reflect priority, but drag-and-drop reordering is not yet available.
-                  </p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            {/* Parties & Social */}
-            <AccordionItem value="parties-social" className="border border-slate-700 rounded-lg bg-slate-800/90 backdrop-blur-sm">
-              <AccordionTrigger className="px-6 py-4 text-xl font-semibold hover:no-underline text-white">
-                Parties & Social
-              </AccordionTrigger>
-              <AccordionContent className="px-6 pb-6 space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">What are parties and how do I join one?</h3>
-                  <p className="text-slate-300 mb-3">
-                    Parties (coming soon) are small groups for shared accountability. You'll be able to:
-                  </p>
-                  <ul className="list-disc list-inside space-y-2 text-slate-300 ml-4">
-                    <li>Create or join parties</li>
-                    <li>Take on group quests</li>
-                    <li>Track shared progress and milestones</li>
-                  </ul>
-                  <p className="text-slate-300 mt-3">
-                    Cooperative systems boost motivation, especially for neurodivergent users, by creating social accountability and shared celebration [6].
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">What's shared and what stays private?</h3>
-                  <p className="text-slate-300">
-                    Only shared quest progress, XP, and streaks are visible to your party. Personal task lists and notes stay private.
-                  </p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            {/* Account & Settings */}
-            <AccordionItem value="account-settings" className="border border-slate-700 rounded-lg bg-slate-800/90 backdrop-blur-sm">
-              <AccordionTrigger className="px-6 py-4 text-xl font-semibold hover:no-underline text-white">
-                Account & Settings
-              </AccordionTrigger>
-              <AccordionContent className="px-6 pb-6 space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">How do I reset my password?</h3>
-                  <p className="text-slate-300">
-                    Click "Forgot password?" on the login page.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">Can I export my data?</h3>
-                  <p className="text-slate-300">
-                    Not yet—but we're working on data export (CSV/JSON) support.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">How do I delete my account?</h3>
-                  <p className="text-slate-300">
-                    Go to Profile → Settings → Delete Account. This action is irreversible.
-                  </p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            {/* Troubleshooting & Bugs */}
-            <AccordionItem value="troubleshooting" className="border border-slate-700 rounded-lg bg-slate-800/90 backdrop-blur-sm">
-              <AccordionTrigger className="px-6 py-4 text-xl font-semibold hover:no-underline text-white">
-                Troubleshooting & Bugs
-              </AccordionTrigger>
-              <AccordionContent className="px-6 pb-6 space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">Why isn't my XP updating?</h3>
-                  <ul className="list-disc list-inside space-y-2 text-slate-300 ml-4">
-                    <li>Habits always give fixed XP (5 XP)</li>
-                    <li>Some sync delays may occur—try refreshing</li>
-                    <li>Still not working? Contact support.</li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">Why did my completed task reappear?</h3>
-                  <p className="text-slate-300">
-                    It may not have synced before the daily reset. If this happens repeatedly, let us know.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">How do I report a bug?</h3>
-                  <p className="text-slate-300">
-                    Use the "Contact Support" form or click "Email Us" in the footer.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">Do you have a roadmap?</h3>
-                  <p className="text-slate-300 mb-3">Yes! Upcoming features include:</p>
-                  <ul className="list-disc list-inside space-y-2 text-slate-300 ml-4">
-                    <li>Shops and badges</li>
-                    <li>Social parties</li>
-                    <li>Advanced customization</li>
-                  </ul>
-                  <p className="text-slate-300 mt-3">Subscribe to our newsletter for updates.</p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            {/* Tips & Best Practices */}
-            <AccordionItem value="tips-practices" className="border border-slate-700 rounded-lg bg-slate-800/90 backdrop-blur-sm">
-              <AccordionTrigger className="px-6 py-4 text-xl font-semibold hover:no-underline text-white">
-                Tips & Best Practices
-              </AccordionTrigger>
-              <AccordionContent className="px-6 pb-6 space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">What's the best way to build a habit with LifeQuest?</h3>
-                  <p className="text-slate-300 mb-3">Start small. Use the Quick Daily Setup to:</p>
-                  <ul className="list-disc list-inside space-y-2 text-slate-300 ml-4">
-                    <li>Choose 3-5 habits to begin</li>
-                    <li>Anchor habits to existing cues (e.g., "after brushing teeth")</li>
-                    <li>Build momentum through streaks and rewards</li>
-                  </ul>
-                  <p className="text-slate-300 mt-3">
-                    This mirrors proven strategies from habit stacking and cue-based repetition [7].
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">How can I stay motivated if I miss a few days?</h3>
-                  <p className="text-slate-300">
-                    You don't lose XP—LifeQuest is about consistency, not perfection. Pick up where you left off.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-amber-400 mb-3">Can I use LifeQuest to support my mental health?</h3>
-                  <p className="text-slate-300 mb-3">Yes. LifeQuest was designed with mental health in mind:</p>
-                  <ul className="list-disc list-inside space-y-2 text-slate-300 ml-4">
-                    <li>Daily Focus supports executive function by limiting overwhelm</li>
-                    <li>Visual categorization and filters help with clarity and goal salience</li>
-                    <li>Reward feedback loops enhance motivation and self-esteem</li>
-                    <li>Cognitive offloading (e.g., Dailies sidebar) reduces mental clutter and anxiety [8]</li>
-                  </ul>
-                  <p className="text-slate-300 mt-3">
-                    It's especially helpful for individuals with ADHD, anxiety, executive dysfunction, or decision fatigue, as it applies behavioral strategies like task chunking, cognitive offloading, and structured reinforcement to support follow-through and reduce overwhelm.
-                  </p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            {/* References */}
-            <AccordionItem value="references" className="border border-slate-700 rounded-lg bg-slate-800/90 backdrop-blur-sm">
-              <AccordionTrigger className="px-6 py-4 text-xl font-semibold hover:no-underline text-white">
-                References
-              </AccordionTrigger>
-              <AccordionContent className="px-6 pb-6">
-                <ol className="list-decimal list-inside space-y-2 text-slate-300">
-                  <li>Aarts, H. et al. (2010). Habits as knowledge structures.</li>
-                  <li>Cowan, N. (2001). The magical number 4 in short-term memory.</li>
-                  <li>Martinussen et al. (2005). Working memory deficits in ADHD.</li>
-                  <li>Locke & Latham (2002). Goal-setting theory.</li>
-                  <li>Baumeister et al. (1998). Ego depletion and decision fatigue.</li>
-                  <li>Barkley & Brown (2011). Social motivation and cooperative tasks in ADHD.</li>
-                  <li>Clear, J. (2018). Atomic Habits.</li>
-                  <li>Risko & Gilbert (2016). Cognitive offloading.</li>
-                </ol>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+        {/* AI Sidekick */}
+        <div className="mt-12">
+          <AISidekick />
         </div>
       </div>
-
-      {/* AI Sidekick */}
-      <AISidekick />
     </div>
   );
 };
