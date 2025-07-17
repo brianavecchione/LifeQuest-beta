@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Headphones, RefreshCw } from "lucide-react";
+import { Headphones, X, RefreshCw } from "lucide-react";
 
 // Default YouTube embed URL
 const DEFAULT_YOUTUBE_URL = "https://www.youtube.com/embed/nOmx4ePpuRM?si=0i37bV2oLEfTXSKe";
@@ -102,7 +102,7 @@ export const YouTubePlayer = () => {
           isExpanded 
             ? "opacity-100 pointer-events-auto" 
             : "opacity-0 pointer-events-none absolute"
-        } ${isExpanded ? "animate-scale-in" : ""} transition-opacity duration-300`}
+        } ${isExpanded ? "animate-scale-in" : ""} transition-opacity duration-300 w-[300px]`}
       >
         <div className="bg-background/80 backdrop-blur-sm rounded-lg shadow-xl border border-border overflow-hidden">
           {/* Header with title and close button - Only visible when expanded */}
@@ -117,13 +117,13 @@ export const YouTubePlayer = () => {
                 className="ml-3 p-1 hover:bg-muted rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 aria-label="Collapse Quest Soundtrack Player"
               >
-                <Headphones className="h-5 w-5 text-muted-foreground" />
+                <X className="h-5 w-5 text-muted-foreground" />
               </button>
             </div>
           )}
           
-          {/* Single YouTube iframe - Always in DOM to maintain playback */}
-          <div className={isExpanded ? "w-[300px] h-[169px]" : "w-0 h-0"}>
+          {/* Single YouTube iframe */}
+          <div className="w-full h-[169px] bg-background">
             <iframe 
               ref={iframeRef}
               width="300" 
@@ -145,32 +145,38 @@ export const YouTubePlayer = () => {
           
           {/* Custom YouTube URL Input - Only visible when expanded */}
           {isExpanded && (
-            <div className="p-3 pt-2 border-t border-border">
-              <label htmlFor="youtube-url" className="block text-xs font-medium text-foreground mb-1">
-                Summon your YouTube soundtrack
-              </label>
-              <div className="flex space-x-2 items-center">
-                <input
-                  id="youtube-url"
-                  type="text"
-                  value={customUrl}
-                  onChange={handleUrlChange}
-                  placeholder="Paste YouTube URL here"
-                  className={`flex-1 h-8 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${urlError ? 'border-destructive' : ''}`}
-                />
-                <button 
-                  onClick={applyCustomUrl}
-                  className="inline-flex items-center justify-center h-8 rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground shadow hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            <div className="p-4 space-y-3">
+              <div>
+                <label 
+                  htmlFor="youtube-url" 
+                  className="block text-sm font-medium text-foreground mb-2"
                 >
-                  Begin
-                </button>
+                  Paste your own YouTube URL
+                </label>
+                <div className="flex space-x-2">
+                  <input
+                    id="youtube-url"
+                    type="text"
+                    value={customUrl}
+                    onChange={handleUrlChange}
+                    placeholder="YouTube video or playlist link"
+                    className={`flex-1 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${urlError ? 'border-destructive' : ''}`}
+                  />
+                  <button 
+                    onClick={applyCustomUrl}
+                    className="inline-flex items-center justify-center h-10 px-4 rounded-md bg-primary text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                  >
+                    Begin
+                  </button>
+                </div>
+                {urlError && (
+                  <p className="text-xs text-destructive mt-1">{urlError}</p>
+                )}
               </div>
-              {urlError && (
-                <p className="text-xs text-destructive mt-1">{urlError}</p>
-              )}
+              
               <button
                 onClick={restoreDefaultUrl}
-                className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground mt-2 focus:outline-none"
+                className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground focus:outline-none"
               >
                 <RefreshCw className="h-3 w-3 mr-1" />
                 Restore default quest music
