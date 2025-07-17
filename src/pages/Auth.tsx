@@ -166,12 +166,13 @@ const Auth = () => {
                 </div>
               </div>
               
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 lg:mb-6 leading-tight">
-                A science-backed, gamified system that transforms your real-life goals into quests.
+              <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white mb-4 lg:mb-6 leading-tight">
+                Your Adventure<br />
+                Awaits
               </h2>
               
               <p className="text-lg sm:text-xl text-slate-300 mb-8 lg:mb-12">
-                Join the quest to level up your life:
+                Join the quest to level up your life!
               </p>
               
               {/* Feature List */}
@@ -180,35 +181,28 @@ const Auth = () => {
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
                     <span className="text-xl sm:text-2xl">🎯</span>
                   </div>
-                  <span className="text-base sm:text-lg text-white">Create daily quests and track your progress</span>
+                  <span className="text-base sm:text-lg text-white">Set daily quests to stay on track</span>
                 </div>
                 
                 <div className="flex items-center gap-4 justify-center lg:justify-start">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
                     <span className="text-xl sm:text-2xl">⭐</span>
                   </div>
-                  <span className="text-base sm:text-lg text-white">Earn XP, gold, and rewards to build momentum</span>
+                  <span className="text-base sm:text-lg text-white">Earn XP and badges for your progress</span>
                 </div>
                 
                 <div className="flex items-center gap-4 justify-center lg:justify-start">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
                     <span className="text-xl sm:text-2xl">🔥</span>
                   </div>
-                  <span className="text-base sm:text-lg text-white">Strengthen habits with streaks, milestones, and badges</span>
+                  <span className="text-base sm:text-lg text-white">Build habits with streak tracking</span>
                 </div>
                 
                 <div className="flex items-center gap-4 justify-center lg:justify-start">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
                     <span className="text-xl sm:text-2xl">🏆</span>
                   </div>
-                  <span className="text-base sm:text-lg text-white">Redeem your achievements for meaningful real-world rewards</span>
-                </div>
-                
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl sm:text-2xl">🧠</span>
-                  </div>
-                  <span className="text-base sm:text-lg text-white">Designed with behavioral science to support motivation, focus, and consistent follow-through</span>
+                  <span className="text-base sm:text-lg text-white">Redeem your achievements for real-life rewards</span>
                 </div>
               </div>
             </div>
