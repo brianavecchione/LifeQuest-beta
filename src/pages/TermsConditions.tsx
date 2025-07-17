@@ -16,7 +16,7 @@ const TermsConditions = () => {
     <div className="text-white">
       <LandingNavbar />
       
-      <div className="relative z-10 container mx-auto px-4 py-24">
+      <div className="relative z-10 container mx-auto px-4 pt-36 pb-12">{/* Added more padding at the top */}
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
             Terms & Conditions
