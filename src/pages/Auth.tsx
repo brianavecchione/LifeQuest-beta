@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Eye, EyeOff, LogIn, UserPlus } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Eye, EyeOff, LogIn, UserPlus, Mail } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGuest } from '@/contexts/GuestContext';
 import { toast } from 'sonner';
@@ -20,10 +21,14 @@ const Auth = () => {
     displayName: '',
     confirmPassword: ''
   });
+  const [resetEmail, setResetEmail] = useState('');
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [isResetLoading, setIsResetLoading] = useState(false);
   
-  const { signIn, signUp, signInWithGoogle, user, loading } = useAuth();
+  const { signIn, signUp, signInWithGoogle, resetPassword, user, loading } = useAuth();
   const { enableGuestMode } = useGuest();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   // Redirect if already logged in
   useEffect(() => {
@@ -31,6 +36,13 @@ const Auth = () => {
       navigate('/');
     }
   }, [user, loading, navigate]);
+
+  // Check for reset confirmation
+  useEffect(() => {
+    if (searchParams.get('reset') === 'true') {
+      toast.success('Password reset email sent! Check your inbox and follow the instructions.');
+    }
+  }, [searchParams]);
 
   // Show loading state if auth is loading
   if (loading) {
@@ -101,6 +113,29 @@ const Auth = () => {
     enableGuestMode();
     toast.success('Welcome to your preview adventure!');
     navigate('/');
+  };
+
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!resetEmail) {
+      toast.error('Please enter your email address');
+      return;
+    }
+    
+    setIsResetLoading(true);
+    
+    const { error } = await resetPassword(resetEmail);
+    
+    if (error) {
+      toast.error(error.message || 'Failed to send reset email');
+    } else {
+      toast.success('Password reset email sent! Check your inbox.');
+      setShowResetModal(false);
+      setResetEmail('');
+    }
+    
+    setIsResetLoading(false);
   };
 
   return (
@@ -269,6 +304,60 @@ const Auth = () => {
                       <LogIn className="w-4 h-4 mr-2" />
                       {isLoading ? 'Signing In...' : 'Begin Quest'}
                     </Button>
+
+                    {/* Forgot Password Link */}
+                    <div className="text-center mt-4">
+                      <Dialog open={showResetModal} onOpenChange={setShowResetModal}>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="link"
+                            className="text-amber-400 hover:text-amber-300 text-sm p-0 h-auto"
+                          >
+                            Forgot Password?
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="bg-slate-800 border-slate-700">
+                          <DialogHeader>
+                            <DialogTitle className="text-white">Reset Password</DialogTitle>
+                            <DialogDescription className="text-slate-400">
+                              Enter your email address and we'll send you a link to reset your password.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <form onSubmit={handlePasswordReset} className="space-y-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="reset-email" className="text-slate-300">Email</Label>
+                              <Input
+                                id="reset-email"
+                                type="email"
+                                placeholder="Enter your email address"
+                                value={resetEmail}
+                                onChange={(e) => setResetEmail(e.target.value)}
+                                className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-amber-500"
+                                required
+                              />
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setShowResetModal(false)}
+                                className="flex-1 bg-slate-700/50 border-slate-600 text-white hover:bg-slate-600/50"
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                type="submit"
+                                disabled={isResetLoading}
+                                className="flex-1 bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white"
+                              >
+                                <Mail className="w-4 h-4 mr-2" />
+                                {isResetLoading ? 'Sending...' : 'Send Reset Email'}
+                              </Button>
+                            </div>
+                          </form>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   </form>
                 </TabsContent>
 
