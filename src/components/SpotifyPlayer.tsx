@@ -1,8 +1,8 @@
 const SpotifyPlayer = () => {
   return (
-    <div className="w-full bg-background/80 backdrop-blur-sm border-t border-border/50 py-6">
+    <div className="w-full bg-black/90 backdrop-blur-sm border-t border-border/30 py-6">
       <div className="container mx-auto px-4 max-w-6xl">
-        <h3 className="text-lg font-semibold text-foreground/90 mb-4 text-center">
+        <h3 className="text-lg font-semibold text-white mb-4 text-center">
           Your Quest Soundtrack
         </h3>
         <div className="flex justify-center">
