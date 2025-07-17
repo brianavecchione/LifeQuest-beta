@@ -23,6 +23,7 @@ import Settings from "./pages/Settings";
 import Customization from "./pages/Customization";
 import Challenges from "./pages/Challenges";
 import Help from "./pages/Help";
+import About from "./pages/About";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -55,6 +56,7 @@ const App = () => (
                         <Route path="/customization" element={<ProtectedRoute><Customization /></ProtectedRoute>} />
                         <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
                         <Route path="/help" element={<Help />} />
+                        <Route path="/about" element={<About />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                       <YouTubePlayer />

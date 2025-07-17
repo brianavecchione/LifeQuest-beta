@@ -46,15 +46,16 @@ const Navigation = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Show landing navbar for logged-out users
-  const isAuthPage = location.pathname === '/auth';
+  // Show landing navbar for logged-out users and non-auth pages
   const isLoggedOut = !loading && !user && !isGuestMode;
   
-  if (isAuthPage && isLoggedOut) {
+  // Show landing navbar if user is not logged in (even on public pages like Help)
+  if (isLoggedOut) {
     return <LandingNavbar />;
   }
   
-  // Hide navigation completely on auth page for logged-in users
+  // Hide in-app navigation completely on auth page for logged-in users
+  const isAuthPage = location.pathname === '/auth';
   if (isAuthPage) {
     return null;
   }
