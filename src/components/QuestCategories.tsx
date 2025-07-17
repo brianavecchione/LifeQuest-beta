@@ -340,6 +340,8 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
                 onStatusChange={updateQuestStatus}
                 onEditQuest={setEditingQuest}
                 onDeleteQuest={setDeletingQuest}
+                onAddToFocus={handleAddToFocus}
+                isInTodaysFocus={todaysFocusQuests.includes(quest.id)}
               />
             ))
           )}

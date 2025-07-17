@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, Trophy, Flag, Crown, CheckCircle2, Coins, MoreVertical, Edit, Trash2, Play, X, Calendar, Clock, AlertCircle, Tag } from 'lucide-react';
+import { Star, Trophy, Flag, Crown, CheckCircle2, Coins, MoreVertical, Edit, Trash2, Play, X, Calendar, Clock, AlertCircle, Tag, Target } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -12,6 +12,8 @@ interface QuestCardProps {
   showDeleteButton?: boolean;
   onStatusChange: (questId: string, newStatus: string) => void;
   onRemoveFromFocus?: (questId: string) => void;
+  onAddToFocus?: (questId: string) => void;
+  isInTodaysFocus?: boolean;
   onEditQuest: (quest: Quest) => void;
   onDeleteQuest: (quest: Quest) => void;
   onBeginQuest?: (quest: Quest) => void;
@@ -25,6 +27,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
   showDeleteButton = false,
   onStatusChange,
   onRemoveFromFocus,
+  onAddToFocus,
+  isInTodaysFocus = false,
   onEditQuest,
   onDeleteQuest,
   onBeginQuest,
@@ -114,6 +118,13 @@ const QuestCard: React.FC<QuestCardProps> = ({
                     {!hideBadges.includes('type') && (
                       <Badge variant="outline" className={`${getTypeColor(quest.quest_type)} border-current`}>
                         {quest.quest_type}
+                      </Badge>
+                    )}
+                    {/* Today's Focus Indicator */}
+                    {isInTodaysFocus && (
+                      <Badge variant="outline" className="text-amber-400 border-amber-400/50 animate-pulse">
+                        <Target className="w-3 h-3 mr-1" />
+                        In Focus
                       </Badge>
                     )}
                   </div>
@@ -282,6 +293,16 @@ const QuestCard: React.FC<QuestCardProps> = ({
               <CheckCircle2 className="w-4 h-4 mr-2" />
               {quest.status === 'Completed' ? 'Mark Incomplete' : 'Mark Complete'}
             </Button>
+            {/* Add to Focus Button */}
+            {onAddToFocus && !isInTodaysFocus && quest.quest_type !== 'Daily' && quest.status !== 'Completed' && (
+              <Button
+                onClick={() => onAddToFocus(quest.id)}
+                className="bg-amber-600 hover:bg-amber-700 text-white"
+              >
+                <Target className="w-4 h-4 mr-2" />
+                Add to Focus
+              </Button>
+            )}
             <Button
               onClick={() => onEditQuest(quest)}
               variant="outline"
