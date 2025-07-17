@@ -21,12 +21,12 @@ body.landing-page {
 
 /* Special handling for anchor links */
 html {
-  scroll-padding-top: 14rem;
+  scroll-padding-top: 6rem;
 }
 
 /* Common spacing for all page content in logged-in pages */
 .page-content-wrapper {
-  padding-top: 14rem; /* Spacing above page content to clear the fixed navbar (top-4 + navbar height) */
+  padding-top: 6rem; /* Industry standard spacing for fixed navbar */
 }
 
 .logo {
