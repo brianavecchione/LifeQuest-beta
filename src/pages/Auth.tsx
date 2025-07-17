@@ -183,7 +183,7 @@ const Auth = () => {
           backgroundImage: `url(/lovable-uploads/68f36d26-b4e4-41b2-8f4f-f740c275bd38.png)`,
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 via-slate-900/50 to-slate-900/70 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 via-slate-900/40 to-slate-900/60 backdrop-blur-[1px]" />
       </div>
 
       {/* Content Container */}
