@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
@@ -6,6 +6,16 @@ import { Link, useNavigate } from 'react-router-dom';
 const LandingNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Add a class to body for landing pages
+  useEffect(() => {
+    document.body.classList.add('landing-page');
+    
+    // Cleanup when component unmounts
+    return () => {
+      document.body.classList.remove('landing-page');
+    };
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     // If we're not on the landing page, navigate there first

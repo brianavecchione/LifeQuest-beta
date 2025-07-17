@@ -6,19 +6,23 @@
 
 /* Different padding approach for logged-in vs logged-out pages */
 body {
-  padding-top: 0; /* No padding by default for logged-out pages */
+  padding-top: 0; /* No padding by default for logged-out pages with floating navbar */
 }
 
-/* Add padding only for logged-in pages */
+/* Add specific padding for logged-in pages with fixed navbar */
 body.logged-in {
-  padding-top: 7rem;
+  padding-top: 5rem; /* Increased for logged-in navbar */
 }
 
-/* Special handling for anchor links to prevent content being hidden under navbar */
+/* Landing page gets no top padding */
+body.landing-page {
+  padding-top: 0;
+}
+
+/* Special handling for anchor links */
 html {
-  scroll-padding-top: 7rem;
+  scroll-padding-top: 5rem;
 }
-
 
 .logo {
   height: 6em;

@@ -36,7 +36,7 @@ const Home = () => {
         </div>
       )}
 
-      <div className="relative z-10 container mx-auto px-4 py-12">{/* Increased top padding */}
+      <div className="relative z-10 container mx-auto px-4 py-16">{/* Increased top padding for logged-in view */}
         {/* Guest Mode Indicator */}
         <GuestModeIndicator />
         

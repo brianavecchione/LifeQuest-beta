@@ -56,7 +56,7 @@ All colors MUST be HSL.
     --sidebar-ring: 217.2 91.2% 59.8%;
     
     /* Navbar layout values */
-    --navbar-height: 5rem;
+    --navbar-height: 4rem;
     --navbar-top-offset: 1rem;
   }
 
@@ -107,7 +107,7 @@ All colors MUST be HSL.
     --sidebar-ring: 217.2 91.2% 59.8%;
     
     /* Navbar layout values - match light mode */
-    --navbar-height: 5rem;
+    --navbar-height: 4rem;
     --navbar-top-offset: 1rem;
   }
 }
