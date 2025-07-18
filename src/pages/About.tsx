@@ -17,33 +17,6 @@ const About = () => {
         {/* Content */}
         <div className="space-y-8 text-slate-300">
           <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
-            <h2 className="text-2xl font-bold text-amber-400 mb-4">Our Mission</h2>
-            <p className="mb-4">
-              LifeQuest was created to help people with ADHD, motivation challenges, and productivity struggles 
-              by transforming everyday tasks into engaging quests within a fantasy RPG-like experience.
-            </p>
-            <p>
-              We believe that productivity tools should be enjoyable, accessible, and effective—especially for 
-              neurodivergent individuals who often struggle with traditional productivity systems.
-            </p>
-          </section>
-
-          <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
-            <h2 className="text-2xl font-bold text-amber-400 mb-4">Built on Science</h2>
-            <p className="mb-4">
-              LifeQuest is built on established principles from behavioral psychology, gamification research, 
-              and neuroscience. Our approach incorporates:
-            </p>
-            <ul className="list-disc list-inside space-y-2 ml-4">
-              <li>Dopamine-driven reward mechanisms that create positive feedback loops</li>
-              <li>Progressive achievement systems that build momentum through consistent small wins</li>
-              <li>Visual categorization and filtering to reduce cognitive load and decision fatigue</li>
-              <li>Focus limitation techniques based on working memory research</li>
-              <li>Customizable interfaces to accommodate different cognitive styles and preferences</li>
-            </ul>
-          </section>
-
-          <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
             <h2 className="text-2xl font-bold text-amber-400 mb-6">Meet the Founder</h2>
             <div className="flex flex-col md:flex-row gap-6 items-start">
               <div className="flex-shrink-0">
@@ -65,6 +38,33 @@ const About = () => {
                 </p>
               </div>
             </div>
+          </section>
+
+          <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
+            <h2 className="text-2xl font-bold text-amber-400 mb-4">Built on Science</h2>
+            <p className="mb-4">
+              LifeQuest is built on established principles from behavioral psychology, gamification research, 
+              and neuroscience. Our approach incorporates:
+            </p>
+            <ul className="list-disc list-inside space-y-2 ml-4">
+              <li>Dopamine-driven reward mechanisms that create positive feedback loops</li>
+              <li>Progressive achievement systems that build momentum through consistent small wins</li>
+              <li>Visual categorization and filtering to reduce cognitive load and decision fatigue</li>
+              <li>Focus limitation techniques based on working memory research</li>
+              <li>Customizable interfaces to accommodate different cognitive styles and preferences</li>
+            </ul>
+          </section>
+
+          <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
+            <h2 className="text-2xl font-bold text-amber-400 mb-4">The Mission</h2>
+            <p className="mb-4">
+              LifeQuest was created to help people with ADHD, motivation challenges, and productivity struggles 
+              by transforming everyday tasks into engaging quests within a fantasy RPG-like experience.
+            </p>
+            <p>
+              We believe that productivity tools should be enjoyable, accessible, and effective—especially for 
+              neurodivergent individuals who often struggle with traditional productivity systems.
+            </p>
           </section>
 
           <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
