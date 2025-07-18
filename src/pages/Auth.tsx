@@ -189,34 +189,92 @@ const Auth = () => {
         <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0">
           {/* Left Side - Promotional Content */}
           <div className="flex-1 flex flex-col justify-center max-w-2xl lg:pr-8 xl:pr-16">
-            {/* Fantasy Scroll with Features Content */}
+            {/* Fantasy Scroll with Hero Content */}
             <div className="mb-8 lg:mb-12 relative">
               {/* Golden Glow Background */}
               <div 
-                className="absolute inset-0 bg-gradient-to-r from-amber-400/20 via-yellow-500/30 to-amber-600/20 rounded-3xl blur-2xl scale-110"
-                style={{ filter: 'blur(25px)' }}
+                className="absolute inset-0 bg-gradient-to-r from-amber-400/30 via-yellow-500/40 to-amber-600/30 rounded-3xl blur-xl scale-110 animate-pulse"
+                style={{ filter: 'blur(20px)' }}
               />
               
               {/* Scroll Background Container */}
               <div 
-                className="relative bg-contain bg-center bg-no-repeat min-h-[400px] sm:min-h-[450px] lg:min-h-[500px] flex items-center justify-center p-6 sm:p-8 lg:p-12"
+                className="relative bg-contain bg-center bg-no-repeat min-h-[800px] sm:min-h-[900px] lg:min-h-[1000px] flex items-center justify-center p-8 sm:p-12 lg:p-16"
                 style={{
-                  backgroundImage: `url(/lovable-uploads/9ba19943-4882-4319-b788-717ff249b649.png)`,
+                  backgroundImage: `url(/lovable-uploads/08d4b1cc-0768-4a03-989d-cc4c6141baa2.png)`,
                   backgroundSize: 'contain',
                   filter: 'drop-shadow(0 10px 30px rgba(0, 0, 0, 0.4))'
                 }}
               >
                 {/* Content within Scroll Boundaries */}
-                <div className="w-full max-w-xs sm:max-w-sm lg:max-w-md text-center px-3 sm:px-4 lg:px-6 animate-fade-in">
-                  {/* Features Title */}
-                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-amber-900 mb-3 sm:mb-4 lg:mb-6 leading-tight" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)' }}>
-                    Features
+                <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl text-center px-4 sm:px-8 animate-fade-in">
+                  {/* Logo & Title */}
+                  <div className="flex items-center justify-center gap-3 mb-6 lg:mb-8">
+                    <div className="flex items-center gap-2" style={{ filter: 'drop-shadow(0 2px 6px rgba(80, 48, 28, 0.7)) drop-shadow(0 0 12px rgba(80, 48, 28, 0.5))' }}>
+                      <img 
+                        src="/lovable-uploads/8805b1c0-4806-4158-b6a4-d2d47464e096.png" 
+                        alt="LifeQuest Logo" 
+                        className="w-8 h-8 sm:w-10 sm:h-10"
+                        style={{ filter: 'drop-shadow(0 2px 4px rgba(80, 48, 28, 0.6)) drop-shadow(0 0 8px rgba(80, 48, 28, 0.4))' }}
+                      />
+                      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent" style={{ filter: 'drop-shadow(0 2px 6px rgba(80, 48, 28, 0.7)) drop-shadow(0 0 10px rgba(80, 48, 28, 0.5)) drop-shadow(0 0 6px rgba(251, 191, 36, 0.2))' }}>
+                        LifeQuest
+                      </h1>
+                    </div>
+                  </div>
+                  
+                  {/* Main Headline */}
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-amber-900 mb-4 lg:mb-6 leading-none" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)' }}>
+                    Your Adventure Awaits
                   </h2>
                   
-                  {/* Features Description */}
-                  <p className="text-sm sm:text-base lg:text-lg text-amber-800 leading-relaxed" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
-                    Transform your daily routine into an epic adventure with our comprehensive suite of gamification tools
+                  {/* Subheadline */}
+                  <p className="text-sm sm:text-base lg:text-lg text-amber-800 mb-4 lg:mb-6" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
+                    LifeQuest is a science-backed, gamified system that transforms your real-life goals into quests.
                   </p>
+                  
+                  {/* Call to Action */}
+                  <h3 className="text-base sm:text-lg lg:text-xl text-amber-900 font-semibold mb-4 lg:mb-6" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)' }}>
+                    Join the quest to level up your life!
+                  </h3>
+                  
+                  {/* Feature List */}
+                  <div className="space-y-3 lg:space-y-4">
+                    <div className="flex items-center gap-3 text-left">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-700/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-lg sm:text-xl">🎯</span>
+                      </div>
+                      <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Create daily quests and track your progress</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 text-left">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-700/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-lg sm:text-xl">💰</span>
+                      </div>
+                      <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Earn XP, gold, and rewards to build momentum</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 text-left">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-700/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-lg sm:text-xl">🔥</span>
+                      </div>
+                      <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Strengthen habits with streaks, milestones, and badges</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 text-left">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-700/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-lg sm:text-xl">🏆</span>
+                      </div>
+                      <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Redeem your achievements for meaningful real-world rewards</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 text-left">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-700/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-lg sm:text-xl">🧠</span>
+                      </div>
+                      <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Designed with behavioral science to support motivation, focus, and consistent follow-through</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
