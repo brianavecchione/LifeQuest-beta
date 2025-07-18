@@ -118,7 +118,7 @@ const Settings = () => {
         </div>
       )}
 
-      <div className="relative z-10 container mx-auto px-4 py-8">
+      <div className="relative z-10 container mx-auto px-4 py-8 pt-20">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="bg-slate-900/80 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 shadow-xl">
