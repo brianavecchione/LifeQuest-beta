@@ -525,13 +525,35 @@ const Auth = () => {
       {/* Features Section */}
       <div id="features" className="relative z-10 py-20 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6" style={{ textShadow: '0 3px 6px rgba(0, 0, 0, 0.7)' }}>
-              Features
-            </h2>
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto" style={{ textShadow: '0 3px 6px rgba(0, 0, 0, 0.7)' }}>
-              Transform your daily routine into an epic adventure with our comprehensive suite of gamification tools
-            </p>
+          {/* Features Scroll Container */}
+          <div className="flex justify-center mb-16">
+            <div className="relative">
+              {/* Glow Effect Behind Scroll */}
+              <div 
+                className="absolute inset-0 bg-gradient-to-r from-amber-400/20 via-yellow-500/30 to-amber-600/20 rounded-2xl blur-lg scale-110"
+                style={{ filter: 'blur(15px)' }}
+              />
+              
+              {/* Scroll Background with Text Overlay */}
+              <div 
+                className="relative bg-contain bg-center bg-no-repeat min-h-[200px] sm:min-h-[240px] lg:min-h-[280px] flex items-center justify-center p-8 sm:p-12 lg:p-16"
+                style={{
+                  backgroundImage: `url(/lovable-uploads/61f3f9d5-7250-4cad-a2c6-033af8dcb9e0.png)`,
+                  backgroundSize: 'contain',
+                  filter: 'drop-shadow(0 8px 25px rgba(0, 0, 0, 0.3))'
+                }}
+              >
+                {/* Content within Scroll Boundaries */}
+                <div className="w-full max-w-lg lg:max-w-xl text-center px-6 sm:px-8 lg:px-12">
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-amber-900 mb-3 lg:mb-4 leading-tight" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)' }}>
+                    Features
+                  </h2>
+                  <p className="text-sm sm:text-base lg:text-lg text-amber-800 leading-relaxed" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)' }}>
+                    Transform your daily routine into an epic adventure with our comprehensive suite of gamification tools
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-center mb-16">
