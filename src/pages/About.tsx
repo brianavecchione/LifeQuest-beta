@@ -166,12 +166,10 @@ const About = () => {
           <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
             <h2 className="text-2xl font-bold text-amber-400 mb-4">Join the Adventure</h2>
             <p className="mb-4">
-              LifeQuest is more than just a productivity app—it's a community of people supporting each other 
-              on their quests to build better habits, accomplish goals, and level up their lives.
+              I want LifeQuest to be more than just a productivity app—I want it to grow into a community of people supporting each other on their quests to build better habits, accomplish meaningful goals, and level up their lives.
             </p>
             <p>
-              Whether you're a student, professional, creative, or anyone looking to bring more structure and 
-              enjoyment to your daily tasks, we invite you to join us on this epic journey.
+              Whether you're a student, professional, creative, or simply someone looking to bring more structure and enjoyment to your daily routine, I invite you to join the journey.
             </p>
           </section>
         </div>
