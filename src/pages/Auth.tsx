@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Eye, EyeOff, LogIn, UserPlus, Mail } from 'lucide-react';
+import { Eye, EyeOff, LogIn, UserPlus, Mail, Target, Zap, Trophy, ShoppingBag, Palette, Sword, Users } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGuest } from '@/contexts/GuestContext';
 import { toast } from 'sonner';
@@ -510,67 +510,67 @@ const Auth = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Daily Quests */}
-          <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 shadow-xl">
-            <div className="w-12 h-12 bg-amber-600/20 rounded-lg flex items-center justify-center mb-4">
-              <span className="text-2xl">🎯</span>
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl">
+            <div className="w-12 h-12 bg-amber-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+              <Target className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-3">Daily Quests</h3>
-            <p className="text-slate-300">
+            <h3 className="text-xl font-semibold text-slate-900 mb-3">Daily Quests</h3>
+            <p className="text-slate-700">
               Break big goals into bite-sized tasks. Build consistency by turning your to-do list into daily quests.
             </p>
           </div>
 
           {/* Focus Mode */}
-          <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 shadow-xl">
-            <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center mb-4">
-              <span className="text-2xl">🎯</span>
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl">
+            <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+              <Zap className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-3">Focus Mode</h3>
-            <p className="text-slate-300">
+            <h3 className="text-xl font-semibold text-slate-900 mb-3">Focus Mode</h3>
+            <p className="text-slate-700">
               Pick your top 3–5 priorities each day to stay on track. Earn extra XP and gold for completing them.
             </p>
           </div>
 
           {/* Achievements */}
-          <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 shadow-xl">
-            <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center mb-4">
-              <span className="text-2xl">🏆</span>
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl">
+            <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+              <Trophy className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-3">Achievements</h3>
-            <p className="text-slate-300">
+            <h3 className="text-xl font-semibold text-slate-900 mb-3">Achievements</h3>
+            <p className="text-slate-700">
               Get rewarded for your effort. Earn streaks, badges, and milestones as you complete your quests.
             </p>
           </div>
 
           {/* Inventory & Gold Shop */}
-          <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 shadow-xl">
-            <div className="w-12 h-12 bg-yellow-600/20 rounded-lg flex items-center justify-center mb-4">
-              <span className="text-2xl">💰</span>
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl">
+            <div className="w-12 h-12 bg-yellow-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+              <ShoppingBag className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-3">Inventory & Gold Shop</h3>
-            <p className="text-slate-300">
+            <h3 className="text-xl font-semibold text-slate-900 mb-3">Inventory & Gold Shop</h3>
+            <p className="text-slate-700">
               Claim in-platform or real-world rewards using the gold you earn. Unlock streak protectors, XP boosts, profile frames, or create your own rewards.
             </p>
           </div>
 
           {/* Customization */}
-          <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 shadow-xl">
-            <div className="w-12 h-12 bg-green-600/20 rounded-lg flex items-center justify-center mb-4">
-              <span className="text-2xl">🎨</span>
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl">
+            <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+              <Palette className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-3">Customization</h3>
-            <p className="text-slate-300">
+            <h3 className="text-xl font-semibold text-slate-900 mb-3">Customization</h3>
+            <p className="text-slate-700">
               Personalize your journey with custom backgrounds, themes, and avatars. Design your space to match your vibe.
             </p>
           </div>
 
           {/* Challenges */}
-          <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 shadow-xl">
-            <div className="w-12 h-12 bg-red-600/20 rounded-lg flex items-center justify-center mb-4">
-              <span className="text-2xl">⚔️</span>
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl">
+            <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+              <Sword className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-3">Challenges <span className="text-sm text-slate-400">(Coming Soon)</span></h3>
-            <p className="text-slate-300">
+            <h3 className="text-xl font-semibold text-slate-900 mb-3">Challenges <span className="text-sm text-slate-600">(Coming Soon)</span></h3>
+            <p className="text-slate-700">
               Join limited-time challenges to compete with others, track progress, and unlock exclusive rewards.
             </p>
           </div>
@@ -581,12 +581,12 @@ const Auth = () => {
           <h3 className="text-2xl font-bold text-white mb-8" style={{ textShadow: '0 3px 6px rgba(0, 0, 0, 0.7)' }}>
             Coming Soon
           </h3>
-          <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 shadow-xl max-w-2xl mx-auto">
-            <div className="w-16 h-16 bg-gradient-to-r from-amber-600/20 to-yellow-600/20 rounded-lg flex items-center justify-center mb-6 mx-auto">
-              <span className="text-3xl">👥</span>
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 border border-white/20 shadow-xl max-w-2xl mx-auto">
+            <div className="w-16 h-16 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg">
+              <Users className="w-8 h-8 text-white" />
             </div>
-            <h4 className="text-xl font-semibold text-white mb-4">Parties</h4>
-            <p className="text-slate-300">
+            <h4 className="text-xl font-semibold text-slate-900 mb-4">Parties</h4>
+            <p className="text-slate-700">
               Team up with friends to tackle quests together, keep each other accountable, and grow as a party.
             </p>
           </div>
