@@ -227,7 +227,10 @@ const GoldShopContent = () => {
                       size="sm"
                       className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-slate-600"
                     >
-                      {reward.status === 'Redeemed' ? 'Completed' : reward.status === 'Unlocked' ? 'Redeem' : 'Unlock'}
+                      {reward.status === 'Redeemed' ? 'Completed' : 
+                       reward.status === 'Unlocked' ? 'Redeem' : 
+                       currentGold >= reward.gold_cost ? 'Unlock' : 
+                       `Need ${reward.gold_cost - currentGold} more gold`}
                     </Button>
                   </CardContent>
                 </Card>
