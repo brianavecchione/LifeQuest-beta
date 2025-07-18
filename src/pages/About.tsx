@@ -44,11 +44,37 @@ const About = () => {
           </section>
 
           <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
-            <h2 className="text-2xl font-bold text-amber-400 mb-4">Our Team</h2>
+            <h2 className="text-2xl font-bold text-amber-400 mb-4">Created by Briana Vecchione</h2>
             <p className="mb-4">
-              LifeQuest was created by a small, passionate team with personal experience in ADHD, executive 
-              dysfunction, and productivity challenges. We've combined our expertise in software development, 
-              game design, and behavioral psychology to create a tool we wish we'd had ourselves.
+              LifeQuest was created by me, Briana Vecchione—a researcher in computer and information science with a deep interest in how technology can support personal growth, mental health, and wellness. Designed for people who thrive on structure, enjoy games, or want to build a more intentional relationship with their goals, LifeQuest transforms everyday tasks into an immersive and rewarding experience.
+            </p>
+            <p className="mb-4">
+              Inspired by behavioral psychology and game design, the platform uses streaks, progress tracking, and meaningful rewards to help users stay motivated and focused without relying on guilt or rigid discipline.
+            </p>
+            <p>
+              Whether you're feeling overwhelmed, struggling to stay organized, craving more structure, or just want to bring more fun and intention into your daily routine, LifeQuest was built with you in mind.
+            </p>
+          </section>
+
+          <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
+            <h2 className="text-2xl font-bold text-amber-400 mb-4">Looking for Collaborators</h2>
+            <p className="mb-4">
+              This is just the beginning—and I'm looking for collaborators to help shape what comes next.
+            </p>
+            <p className="mb-4">
+              If you have skills in any of the following, I'd love to connect:
+            </p>
+            <ul className="list-disc list-inside space-y-2 ml-4 mb-4">
+              <li>Software development (especially front-end, mobile, or full-stack)</li>
+              <li>Game design and systems thinking</li>
+              <li>Behavioral science or psychology</li>
+              <li>Audio/sound design</li>
+              <li>UI/UX design</li>
+              <li>Community building</li>
+              <li>Narrative design or worldbuilding</li>
+            </ul>
+            <p>
+              If you're passionate about building supportive tools for growth, focus, and joy, please reach out!
             </p>
           </section>
 
