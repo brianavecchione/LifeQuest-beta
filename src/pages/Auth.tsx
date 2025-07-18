@@ -563,17 +563,6 @@ const Auth = () => {
               Personalize your journey with custom backgrounds, themes, and avatars. Design your space to match your vibe.
             </p>
           </div>
-
-          {/* Challenges */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl">
-            <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
-              <Sword className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 mb-3">Challenges <span className="text-sm text-slate-600">(Coming Soon)</span></h3>
-            <p className="text-slate-700">
-              Join limited-time challenges to compete with others, track progress, and unlock exclusive rewards.
-            </p>
-          </div>
         </div>
 
         {/* Coming Soon Section */}
@@ -581,14 +570,28 @@ const Auth = () => {
           <h3 className="text-2xl font-bold text-white mb-8" style={{ textShadow: '0 3px 6px rgba(0, 0, 0, 0.7)' }}>
             Coming Soon
           </h3>
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 border border-white/20 shadow-xl max-w-2xl mx-auto">
-            <div className="w-16 h-16 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg">
-              <Users className="w-8 h-8 text-white" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Challenges */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 border border-white/20 shadow-xl">
+              <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg">
+                <Sword className="w-8 h-8 text-white" />
+              </div>
+              <h4 className="text-xl font-semibold text-slate-900 mb-4">Challenges</h4>
+              <p className="text-slate-700">
+                Join limited-time challenges to compete with others, track progress, and unlock exclusive rewards.
+              </p>
             </div>
-            <h4 className="text-xl font-semibold text-slate-900 mb-4">Parties</h4>
-            <p className="text-slate-700">
-              Team up with friends to tackle quests together, keep each other accountable, and grow as a party.
-            </p>
+
+            {/* Parties */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 border border-white/20 shadow-xl">
+              <div className="w-16 h-16 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg">
+                <Users className="w-8 h-8 text-white" />
+              </div>
+              <h4 className="text-xl font-semibold text-slate-900 mb-4">Parties</h4>
+              <p className="text-slate-700">
+                Team up with friends to tackle quests together, keep each other accountable, and grow as a party.
+              </p>
+            </div>
           </div>
         </div>
       </div>
