@@ -26,6 +26,13 @@ const GoldShopContent = () => {
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
   const currentGold = balance?.current_gold_balance || 0;
+  console.log('🔍 Gold Shop Debug:', { 
+    balance, 
+    currentGold, 
+    currentGoldType: typeof currentGold,
+    shopItemsCount: shopItems.length,
+    rewardsCount: rewards.length 
+  });
   
   // Using real database data from hooks
 
@@ -250,64 +257,73 @@ const GoldShopContent = () => {
           <h4 className="text-lg font-semibold text-purple-400">Exclusive LifeQuest Treasures</h4>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {lifequestShopItems.map((item) => (
-              <Card key={item.shop_item_id} className="bg-slate-700/50 border-slate-600/50 hover:border-purple-500/50 transition-colors">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <CardTitle className="text-purple-400 text-base">{item.name}</CardTitle>
-                    <Badge className="bg-purple-600 text-white text-xs">
-                      {item.category}
-                    </Badge>
-                  </div>
-                  <CardDescription className="text-slate-300 text-sm">
-                    {item.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="space-y-3">
-                    {item.effect_description && (
-                      <div className="bg-slate-600/50 p-2 rounded border border-green-500/30">
-                        <div className="text-green-400 text-xs font-medium">Effect: {item.effect_description}</div>
-                      </div>
-                    )}
-                    
-                    {item.duration_days && (
-                      <div className="flex items-center gap-2 text-slate-300 text-xs">
-                        <Clock className="w-3 h-3" />
-                        Duration: {item.duration_days} days
-                      </div>
-                    )}
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Coins className="w-4 h-4 text-yellow-400" />
-                        <span className="text-yellow-400 font-bold text-sm">{item.gold_cost} Gold</span>
-                      </div>
+            {lifequestShopItems.map((item) => {
+              console.log('🔍 LifeQuest Item:', { 
+                name: item.name, 
+                gold_cost: item.gold_cost, 
+                gold_cost_type: typeof item.gold_cost, 
+                currentGold, 
+                comparison: currentGold >= item.gold_cost 
+              });
+              return (
+                <Card key={item.shop_item_id} className="bg-slate-700/50 border-slate-600/50 hover:border-purple-500/50 transition-colors">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <CardTitle className="text-purple-400 text-base">{item.name}</CardTitle>
+                      <Badge className="bg-purple-600 text-white text-xs">
+                        {item.category}
+                      </Badge>
                     </div>
-                    
-                    {currentGold >= item.gold_cost ? (
-                      <Progress value={100} className="h-2" />
-                    ) : (
-                      <div>
-                        <Progress value={(currentGold / item.gold_cost) * 100} className="h-2 mb-1" />
-                        <div className="text-xs text-slate-400">
-                          {item.gold_cost - currentGold} more gold needed
+                    <CardDescription className="text-slate-300 text-sm">
+                      {item.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-3">
+                      {item.effect_description && (
+                        <div className="bg-slate-600/50 p-2 rounded border border-green-500/30">
+                          <div className="text-green-400 text-xs font-medium">Effect: {item.effect_description}</div>
+                        </div>
+                      )}
+                      
+                      {item.duration_days && (
+                        <div className="flex items-center gap-2 text-slate-300 text-xs">
+                          <Clock className="w-3 h-3" />
+                          Duration: {item.duration_days} days
+                        </div>
+                      )}
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Coins className="w-4 h-4 text-yellow-400" />
+                          <span className="text-yellow-400 font-bold text-sm">{item.gold_cost} Gold</span>
                         </div>
                       </div>
-                    )}
-                    
-                    <Button
-                      onClick={() => handlePurchaseShopItem(item)}
-                      disabled={currentGold < item.gold_cost}
-                      size="sm"
-                      className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600"
-                    >
-                      {currentGold >= item.gold_cost ? 'Purchase Now' : 'Need More Gold'}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                      
+                      {currentGold >= item.gold_cost ? (
+                        <Progress value={100} className="h-2" />
+                      ) : (
+                        <div>
+                          <Progress value={(currentGold / item.gold_cost) * 100} className="h-2 mb-1" />
+                          <div className="text-xs text-slate-400">
+                            {item.gold_cost - currentGold} more gold needed
+                          </div>
+                        </div>
+                      )}
+                      
+                      <Button
+                        onClick={() => handlePurchaseShopItem(item)}
+                        disabled={currentGold < item.gold_cost}
+                        size="sm"
+                        className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600"
+                      >
+                        {currentGold >= item.gold_cost ? 'Purchase Now' : 'Need More Gold'}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </TabsContent>
       </Tabs>
