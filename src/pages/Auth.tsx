@@ -536,7 +536,7 @@ const Auth = () => {
               
               {/* Scroll Background with Text Overlay */}
               <div 
-                className="relative bg-contain bg-center bg-no-repeat min-h-[280px] sm:min-h-[320px] lg:min-h-[360px] flex items-center justify-center p-8 sm:p-12 lg:p-16"
+                className="relative bg-contain bg-center bg-no-repeat min-h-[320px] sm:min-h-[380px] lg:min-h-[420px] flex items-center justify-center p-8 sm:p-12 lg:p-16"
                 style={{
                   backgroundImage: `url(/lovable-uploads/61f3f9d5-7250-4cad-a2c6-033af8dcb9e0.png)`,
                   backgroundSize: 'contain',
