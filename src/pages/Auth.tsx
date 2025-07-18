@@ -212,9 +212,14 @@ const Auth = () => {
                 <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl text-center px-4 sm:px-8 animate-fade-in">
                   {/* Logo & Title */}
                   <div className="flex items-center justify-center gap-3 mb-6 lg:mb-8">
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl sm:text-3xl">⚔️</span>
-                      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent" style={{ filter: 'drop-shadow(0 0 8px rgba(251, 191, 36, 0.5))' }}>
+                    <div className="flex items-center gap-2" style={{ filter: 'drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5))' }}>
+                      <img 
+                        src="/lovable-uploads/8805b1c0-4806-4158-b6a4-d2d47464e096.png" 
+                        alt="LifeQuest Logo" 
+                        className="w-8 h-8 sm:w-10 sm:h-10"
+                        style={{ filter: 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4))' }}
+                      />
+                      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent" style={{ filter: 'drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 8px rgba(251, 191, 36, 0.3))' }}>
                         LifeQuest
                       </h1>
                     </div>
