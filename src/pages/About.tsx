@@ -44,16 +44,27 @@ const About = () => {
           </section>
 
           <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
-            <h2 className="text-2xl font-bold text-amber-400 mb-4">Created by Briana Vecchione</h2>
-            <p className="mb-4">
-              LifeQuest was created by me, Briana Vecchione—a researcher in computer and information science with a deep interest in how technology can support personal growth, mental health, and wellness. Designed for people who thrive on structure, enjoy games, or want to build a more intentional relationship with their goals, LifeQuest transforms everyday tasks into an immersive and rewarding experience.
-            </p>
-            <p className="mb-4">
-              Inspired by behavioral psychology and game design, the platform uses streaks, progress tracking, and meaningful rewards to help users stay motivated and focused without relying on guilt or rigid discipline.
-            </p>
-            <p>
-              Whether you're feeling overwhelmed, struggling to stay organized, craving more structure, or just want to bring more fun and intention into your daily routine, LifeQuest was built with you in mind.
-            </p>
+            <h2 className="text-2xl font-bold text-amber-400 mb-6">Meet the Founder</h2>
+            <div className="flex flex-col md:flex-row gap-6 items-start">
+              <div className="flex-shrink-0">
+                <img 
+                  src="/lovable-uploads/3414ac74-8342-4b27-9146-5d7cf3c9b215.png" 
+                  alt="Briana Vecchione, Founder of LifeQuest" 
+                  className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-2 border-amber-400/30"
+                />
+              </div>
+              <div className="flex-1">
+                <p className="mb-4">
+                  LifeQuest was created by me, Briana Vecchione—a researcher in computer and information science with a deep interest in how technology can support personal growth, mental health, and wellness. Designed for people who thrive on structure, enjoy games, or want to build a more intentional relationship with their goals, LifeQuest transforms everyday tasks into an immersive and rewarding experience.
+                </p>
+                <p className="mb-4">
+                  Inspired by behavioral psychology and game design, the platform uses streaks, progress tracking, and meaningful rewards to help users stay motivated and focused without relying on guilt or rigid discipline.
+                </p>
+                <p>
+                  Whether you're feeling overwhelmed, struggling to stay organized, craving more structure, or just want to bring more fun and intention into your daily routine, LifeQuest was built with you in mind.
+                </p>
+              </div>
+            </div>
           </section>
 
           <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
