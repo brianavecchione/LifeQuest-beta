@@ -84,31 +84,31 @@ const About = () => {
               <ol className="list-decimal list-inside space-y-2 text-sm text-slate-400">
                 <li>
                   Berridge, K. C., & Robinson, T. E. (2016). 
-                  <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4824232/" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
+                  <a href="https://psycnet.apa.org/manuscript/2016-59374-007.pdf" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
                     Liking, wanting, and the incentive-sensitization theory of addiction
                   </a> - NIH/NIDA
                 </li>
                 <li>
                   Locke, E. A., & Latham, G. P. (2002). 
-                  <a href="https://psycnet.apa.org/record/2002-18085-004" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
+                  <a href="https://psycnet.apa.org/record/2002-15790-003" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
                     Building a practically useful theory of goal setting and task motivation: A 35-year odyssey
                   </a> - American Psychologist
                 </li>
                 <li>
                   Risko, E. F., & Gilbert, S. J. (2016). 
-                  <a href="https://www.sciencedirect.com/science/article/pii/S1364661316300158" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
+                  <a href="https://pubmed.ncbi.nlm.nih.gov/27542527/" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
                     Cognitive offloading
                   </a> - Trends in Cognitive Sciences
                 </li>
                 <li>
                   Cowan, N. (2001). 
-                  <a href="https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/magical-number-4-in-shortterm-memory-a-reconsideration-of-mental-storage-capacity/44F7EFFBE55691509C4D4169E5B72E68" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
+                  <a href="https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/magical-number-4-in-shortterm-memory-a-reconsideration-of-mental-storage-capacity/44023F1147D4A1D44BDC0AD226838496" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
                     The magical number 4 in short-term memory: A reconsideration of mental storage capacity
                   </a> - Behavioral and Brain Sciences
                 </li>
                 <li>
                   Lally, P., van Jaarsveld, C. H. M., Potts, H. W. W., & Wardle, J. (2010). 
-                  <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/ejsp.674" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
+                  <a href="https://onlinelibrary.wiley.com/doi/10.1002/ejsp.674" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
                     How are habits formed: Modelling habit formation in the real world
                   </a> - European Journal of Social Psychology
                 </li>
