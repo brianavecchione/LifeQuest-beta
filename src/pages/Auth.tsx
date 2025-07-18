@@ -61,13 +61,10 @@ const Auth = () => {
       const element = document.getElementById(sectionId);
       
       if (element) {
-        // Get CSS variables for navbar offset
-        const navbarHeight = getComputedStyle(document.documentElement).getPropertyValue('--navbar-height').trim();
-        const navbarOffset = getComputedStyle(document.documentElement).getPropertyValue('--navbar-top-offset').trim();
-        
-        // Calculate scroll position with offset
+        // Calculate scroll position with navbar offset
+        // Navbar is fixed top-4 (16px) with h-16 (64px), so total offset is 80px + extra space
         const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-        const offsetPosition = elementPosition - (parseFloat(navbarHeight) + parseFloat(navbarOffset) + 16);
+        const offsetPosition = elementPosition - 100; // 80px navbar + 20px extra space
         
         // Use a slight delay to ensure the page is fully loaded
         setTimeout(() => {
