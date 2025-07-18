@@ -226,7 +226,7 @@ const Auth = () => {
                   </div>
                   
                   {/* Main Headline */}
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-amber-900 mb-4 lg:mb-6 leading-tight" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)' }}>
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-amber-900 mb-4 lg:mb-6 leading-none" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)' }}>
                     Your Adventure<br />
                     Awaits
                   </h2>
