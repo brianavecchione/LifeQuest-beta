@@ -560,55 +560,55 @@ const Auth = () => {
             <div className="flex flex-wrap justify-center gap-6 sm:gap-8 max-w-6xl">
               {/* Daily Quests */}
               <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl w-full max-w-sm sm:w-80">
-                <div className="w-12 h-12 bg-amber-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                <div className="w-12 h-12 bg-amber-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg">
                   <Target className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3">Daily Quests</h3>
-                <p className="text-slate-700">
+                <h3 className="text-xl font-semibold text-slate-900 mb-3 text-center">Daily Quests</h3>
+                <p className="text-slate-700 text-center">
                   Break big goals into bite-sized tasks. Build consistency by turning your to-do list into daily quests.
                 </p>
               </div>
 
               {/* Focus Mode */}
               <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl w-full max-w-sm sm:w-80">
-                <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg">
                   <Zap className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3">Focus Mode</h3>
-                <p className="text-slate-700">
+                <h3 className="text-xl font-semibold text-slate-900 mb-3 text-center">Focus Mode</h3>
+                <p className="text-slate-700 text-center">
                   Pick your top 3–5 priorities each day to stay on track. Earn extra XP and gold for completing them.
                 </p>
               </div>
 
               {/* Achievements */}
               <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl w-full max-w-sm sm:w-80">
-                <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg">
                   <Trophy className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3">Achievements</h3>
-                <p className="text-slate-700">
+                <h3 className="text-xl font-semibold text-slate-900 mb-3 text-center">Achievements</h3>
+                <p className="text-slate-700 text-center">
                   Get rewarded for your effort. Earn streaks, badges, and milestones as you complete your quests.
                 </p>
               </div>
 
               {/* Inventory & Gold Shop */}
               <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl w-full max-w-sm sm:w-80">
-                <div className="w-12 h-12 bg-yellow-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                <div className="w-12 h-12 bg-yellow-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg">
                   <ShoppingBag className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3">Inventory & Gold Shop</h3>
-                <p className="text-slate-700">
+                <h3 className="text-xl font-semibold text-slate-900 mb-3 text-center">Inventory & Gold Shop</h3>
+                <p className="text-slate-700 text-center">
                   Claim in-platform or real-world rewards using the gold you earn. Unlock streak protectors, XP boosts, profile frames, or create your own rewards.
                 </p>
               </div>
 
               {/* Customization */}
               <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl w-full max-w-sm sm:w-80">
-                <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg">
                   <Palette className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3">Customization</h3>
-                <p className="text-slate-700">
+                <h3 className="text-xl font-semibold text-slate-900 mb-3 text-center">Customization</h3>
+                <p className="text-slate-700 text-center">
                   Personalize your journey with custom backgrounds, themes, and avatars. Design your space to match your vibe.
                 </p>
               </div>
