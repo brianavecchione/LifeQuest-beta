@@ -510,9 +510,9 @@ const Auth = () => {
           </div>
 
           <div className="flex justify-center mb-16">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl justify-items-center">
+            <div className="flex flex-wrap justify-center gap-6 sm:gap-8 max-w-6xl">
               {/* Daily Quests */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl w-full max-w-sm">
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl w-full max-w-sm sm:w-80">
                 <div className="w-12 h-12 bg-amber-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
                   <Target className="w-6 h-6 text-white" />
                 </div>
@@ -523,7 +523,7 @@ const Auth = () => {
               </div>
 
               {/* Focus Mode */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl w-full max-w-sm">
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl w-full max-w-sm sm:w-80">
                 <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
                   <Zap className="w-6 h-6 text-white" />
                 </div>
@@ -534,7 +534,7 @@ const Auth = () => {
               </div>
 
               {/* Achievements */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl w-full max-w-sm">
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl w-full max-w-sm sm:w-80">
                 <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
                   <Trophy className="w-6 h-6 text-white" />
                 </div>
@@ -545,7 +545,7 @@ const Auth = () => {
               </div>
 
               {/* Inventory & Gold Shop */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl w-full max-w-sm">
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl w-full max-w-sm sm:w-80">
                 <div className="w-12 h-12 bg-yellow-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
                   <ShoppingBag className="w-6 h-6 text-white" />
                 </div>
@@ -556,7 +556,7 @@ const Auth = () => {
               </div>
 
               {/* Customization */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl w-full max-w-sm">
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-xl w-full max-w-sm sm:w-80">
                 <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
                   <Palette className="w-6 h-6 text-white" />
                 </div>
