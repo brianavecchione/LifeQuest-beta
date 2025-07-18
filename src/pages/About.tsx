@@ -140,17 +140,6 @@ const About = () => {
             </div>
           </section>
 
-          <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
-            <h2 className="text-2xl font-bold text-amber-400 mb-4">The Mission</h2>
-            <p className="mb-4">
-              LifeQuest was created to help people with ADHD, motivation challenges, and productivity struggles 
-              by transforming everyday tasks into engaging quests within a fantasy RPG-like experience.
-            </p>
-            <p>
-              We believe that productivity tools should be enjoyable, accessible, and effective—especially for 
-              neurodivergent individuals who often struggle with traditional productivity systems.
-            </p>
-          </section>
 
           <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
             <h2 className="text-2xl font-bold text-amber-400 mb-4">Looking for Collaborators</h2>
