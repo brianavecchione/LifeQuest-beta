@@ -26,13 +26,6 @@ const GoldShopContent = () => {
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
   const currentGold = balance?.current_gold_balance || 0;
-  console.log('🔍 Gold Shop Debug:', { 
-    balance, 
-    currentGold, 
-    currentGoldType: typeof currentGold,
-    shopItemsCount: shopItems.length,
-    rewardsCount: rewards.length 
-  });
   
   // Using real database data from hooks
 
@@ -257,15 +250,7 @@ const GoldShopContent = () => {
           <h4 className="text-lg font-semibold text-purple-400">Exclusive LifeQuest Treasures</h4>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {lifequestShopItems.map((item) => {
-              console.log('🔍 LifeQuest Item:', { 
-                name: item.name, 
-                gold_cost: item.gold_cost, 
-                gold_cost_type: typeof item.gold_cost, 
-                currentGold, 
-                comparison: currentGold >= item.gold_cost 
-              });
-              return (
+            {lifequestShopItems.map((item) => (
                 <Card key={item.shop_item_id} className="bg-slate-700/50 border-slate-600/50 hover:border-purple-500/50 transition-colors">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between mb-2">
@@ -322,8 +307,7 @@ const GoldShopContent = () => {
                     </div>
                   </CardContent>
                 </Card>
-              );
-            })}
+              ))}
           </div>
         </TabsContent>
       </Tabs>
