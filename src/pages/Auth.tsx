@@ -523,7 +523,7 @@ const Auth = () => {
       </div>
 
       {/* Features Section */}
-      <div id="features" className="relative z-10 py-20 px-4 sm:px-8">
+      <div id="features" className="relative z-10 py-12 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Features Scroll Container */}
           <div className="flex justify-center mb-16">
