@@ -191,65 +191,88 @@ const Auth = () => {
         <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0">
           {/* Left Side - Promotional Content */}
           <div className="flex-1 flex flex-col justify-center max-w-2xl lg:pr-8 xl:pr-16">
-            {/* Logo & Hero Section */}
-            <div className="mb-8 lg:mb-12 text-center lg:text-left">
-              <div className="flex items-center justify-center lg:justify-start gap-3 mb-6 lg:mb-8">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl sm:text-3xl">⚔️</span>
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent" style={{ filter: 'drop-shadow(0 0 8px rgba(251, 191, 36, 0.5))' }}>
-                    LifeQuest
-                  </h1>
-                </div>
-              </div>
+            {/* Fantasy Scroll with Hero Content */}
+            <div className="mb-8 lg:mb-12 relative">
+              {/* Golden Glow Background */}
+              <div 
+                className="absolute inset-0 bg-gradient-to-r from-amber-400/30 via-yellow-500/40 to-amber-600/30 rounded-3xl blur-xl scale-110 animate-pulse"
+                style={{ filter: 'blur(20px)' }}
+              />
               
-              <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white mb-4 lg:mb-6 leading-tight" style={{ textShadow: '0 3px 6px rgba(0, 0, 0, 0.7)' }}>
-                Your Adventure<br />
-                Awaits
-              </h2>
-              
-              <p className="text-lg sm:text-xl text-slate-300 mb-6 lg:mb-8" style={{ textShadow: '0 3px 6px rgba(0, 0, 0, 0.7)' }}>
-                LifeQuest is a science-backed, gamified system that transforms your real-life goals into quests.
-              </p>
-              
-              <h3 className="text-xl sm:text-2xl text-white font-semibold mb-6 lg:mb-8" style={{ textShadow: '0 3px 6px rgba(0, 0, 0, 0.7)' }}>
-                Join the quest to level up your life!
-              </h3>
-              
-              {/* Feature List */}
-              <div className="space-y-4 lg:space-y-6 max-w-lg mx-auto lg:mx-0">
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl sm:text-2xl">🎯</span>
+              {/* Scroll Background Container */}
+              <div 
+                className="relative bg-contain bg-center bg-no-repeat min-h-[800px] sm:min-h-[900px] lg:min-h-[1000px] flex items-center justify-center p-8 sm:p-12 lg:p-16"
+                style={{
+                  backgroundImage: `url(/lovable-uploads/08d4b1cc-0768-4a03-989d-cc4c6141baa2.png)`,
+                  backgroundSize: 'contain',
+                  filter: 'drop-shadow(0 10px 30px rgba(0, 0, 0, 0.4))'
+                }}
+              >
+                {/* Content within Scroll Boundaries */}
+                <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl text-center px-4 sm:px-8 animate-fade-in">
+                  {/* Logo & Title */}
+                  <div className="flex items-center justify-center gap-3 mb-6 lg:mb-8">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl sm:text-3xl">⚔️</span>
+                      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent" style={{ filter: 'drop-shadow(0 0 8px rgba(251, 191, 36, 0.5))' }}>
+                        LifeQuest
+                      </h1>
+                    </div>
                   </div>
-                  <span className="text-base sm:text-lg text-white" style={{ textShadow: '0 3px 6px rgba(0, 0, 0, 0.7)' }}>Create daily quests and track your progress</span>
-                </div>
-                
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl sm:text-2xl">💰</span>
+                  
+                  {/* Main Headline */}
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-amber-900 mb-4 lg:mb-6 leading-tight" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)' }}>
+                    Your Adventure<br />
+                    Awaits
+                  </h2>
+                  
+                  {/* Subheadline */}
+                  <p className="text-sm sm:text-base lg:text-lg text-amber-800 mb-4 lg:mb-6" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
+                    LifeQuest is a science-backed, gamified system that transforms your real-life goals into quests.
+                  </p>
+                  
+                  {/* Call to Action */}
+                  <h3 className="text-base sm:text-lg lg:text-xl text-amber-900 font-semibold mb-4 lg:mb-6" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)' }}>
+                    Join the quest to level up your life!
+                  </h3>
+                  
+                  {/* Feature List */}
+                  <div className="space-y-3 lg:space-y-4">
+                    <div className="flex items-center gap-3 text-left">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-700/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-lg sm:text-xl">🎯</span>
+                      </div>
+                      <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Create daily quests and track your progress</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 text-left">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-700/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-lg sm:text-xl">💰</span>
+                      </div>
+                      <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Earn XP, gold, and rewards to build momentum</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 text-left">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-700/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-lg sm:text-xl">🔥</span>
+                      </div>
+                      <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Strengthen habits with streaks, milestones, and badges</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 text-left">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-700/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-lg sm:text-xl">🏆</span>
+                      </div>
+                      <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Redeem your achievements for meaningful real-world rewards</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 text-left">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-700/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-lg sm:text-xl">🧠</span>
+                      </div>
+                      <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Designed with behavioral science to support motivation, focus, and consistent follow-through</span>
+                    </div>
                   </div>
-                  <span className="text-base sm:text-lg text-white" style={{ textShadow: '0 3px 6px rgba(0, 0, 0, 0.7)' }}>Earn XP, gold, and rewards to build momentum</span>
-                </div>
-                
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl sm:text-2xl">🔥</span>
-                  </div>
-                  <span className="text-base sm:text-lg text-white" style={{ textShadow: '0 3px 6px rgba(0, 0, 0, 0.7)' }}>Strengthen habits with streaks, milestones, and badges</span>
-                </div>
-                
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl sm:text-2xl">🏆</span>
-                  </div>
-                  <span className="text-base sm:text-lg text-white" style={{ textShadow: '0 3px 6px rgba(0, 0, 0, 0.7)' }}>Redeem your achievements for meaningful real-world rewards</span>
-                </div>
-                
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl sm:text-2xl">🧠</span>
-                  </div>
-                  <span className="text-base sm:text-lg text-white" style={{ textShadow: '0 3px 6px rgba(0, 0, 0, 0.7)' }}>Designed with behavioral science to support motivation, focus, and consistent follow-through</span>
                 </div>
               </div>
             </div>
