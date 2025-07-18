@@ -20,12 +20,14 @@ const Customization = () => {
       <div className="relative z-10 container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-pink-400 via-purple-500 to-pink-600 bg-clip-text text-transparent mb-4">
-            🎨 Customization
-          </h1>
-          <p className="text-xl text-slate-300">
-            Personalize your adventure experience
-          </p>
+          <div className="bg-slate-900/80 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 shadow-xl">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-pink-400 via-purple-500 to-pink-600 bg-clip-text text-transparent mb-4">
+              🎨 Customization
+            </h1>
+            <p className="text-xl text-slate-300">
+              Personalize your adventure experience
+            </p>
+          </div>
         </div>
 
         {/* Customization Panel */}

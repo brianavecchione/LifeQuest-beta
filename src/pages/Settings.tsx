@@ -121,12 +121,14 @@ const Settings = () => {
       <div className="relative z-10 container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent mb-4">
-            ⚙️ Settings
-          </h1>
-          <p className="text-xl text-slate-300">
-            Configure your adventure preferences
-          </p>
+          <div className="bg-slate-900/80 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 shadow-xl">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent mb-4">
+              ⚙️ Settings
+            </h1>
+            <p className="text-xl text-slate-300">
+              Configure your adventure preferences
+            </p>
+          </div>
         </div>
 
         {/* Profile Settings */}
