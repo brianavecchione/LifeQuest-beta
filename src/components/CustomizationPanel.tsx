@@ -13,10 +13,19 @@ const CustomizationPanel = () => {
   const [userProfile, setUserProfile] = useState<any>(null);
   const [userSettings, setUserSettings] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedFrame, setSelectedFrame] = useState<number | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { backgroundImage, backgroundOpacity, uploadBackgroundImage, removeBackgroundImage, setBackgroundOpacity, loading: backgroundLoading } = useBackground();
   const { user } = useAuth();
+
+  // Avatar frames data
+  const avatarFrames = [
+    { id: 1, name: "Classic Gold", src: "/lovable-uploads/frame-1.png" },
+    { id: 2, name: "Royal Silver", src: "/lovable-uploads/frame-2.png" },
+    { id: 3, name: "Mystic Purple", src: "/lovable-uploads/frame-3.png" },
+    { id: 4, name: "Dragon Fire", src: "/lovable-uploads/frame-4.png" }
+  ];
 
   // Fetch user profile and settings data
   useEffect(() => {
@@ -163,37 +172,125 @@ const CustomizationPanel = () => {
             <p className="text-slate-400 text-sm">Choose your character's appearance and style</p>
           </div>
 
-          {/* Current Avatar Preview */}
+          {/* Avatar Preview with Frame */}
           <div className="bg-slate-700/50 rounded-lg p-6 text-center border border-slate-600/50 mb-6">
             {loading ? (
               <div className="animate-pulse">
-                <div className="w-20 h-20 bg-slate-600 rounded-full mx-auto mb-3"></div>
+                <div className="w-32 h-32 bg-slate-600 rounded-full mx-auto mb-3"></div>
                 <div className="h-4 bg-slate-600 rounded w-24 mx-auto mb-1"></div>
                 <div className="h-3 bg-slate-600 rounded w-16 mx-auto"></div>
               </div>
             ) : (
               <>
-                {userProfile?.avatar_url ? (
-                  <img 
-                    src={userProfile.avatar_url} 
-                    alt="Current avatar"
-                    className="w-20 h-20 rounded-full object-cover mx-auto mb-3 shadow-lg"
-                  />
-                ) : (
-                  <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-3xl font-bold text-slate-900 shadow-lg mx-auto mb-3">
-                    {userProfile?.display_name ? userProfile.display_name[0].toUpperCase() : 'A'}
-                  </div>
-                )}
+                <div className="relative w-32 h-32 mx-auto mb-4">
+                  {/* Avatar Image */}
+                  {userProfile?.avatar_url ? (
+                    <img 
+                      src={userProfile.avatar_url} 
+                      alt="Current avatar"
+                      className="w-32 h-32 rounded-full object-cover shadow-lg"
+                    />
+                  ) : (
+                    <div className="w-32 h-32 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-4xl font-bold text-slate-900 shadow-lg">
+                      {userProfile?.display_name ? userProfile.display_name[0].toUpperCase() : 'A'}
+                    </div>
+                  )}
+                  
+                  {/* Avatar Frame Overlay */}
+                  {selectedFrame && (
+                    <img 
+                      src={avatarFrames.find(frame => frame.id === selectedFrame)?.src}
+                      alt="Avatar frame"
+                      className="absolute inset-0 w-32 h-32 object-cover pointer-events-none"
+                    />
+                  )}
+                </div>
                 <h5 className="text-white font-bold">Current Avatar</h5>
                 <p className="text-slate-400 text-sm">{userProfile?.display_name || 'Adventurer'}</p>
+                {selectedFrame && (
+                  <p className="text-pink-300 text-xs mt-1">
+                    Frame: {avatarFrames.find(frame => frame.id === selectedFrame)?.name}
+                  </p>
+                )}
               </>
             )}
           </div>
 
-          <div className="bg-slate-700/50 rounded-lg p-12 text-center border border-slate-600/50">
-            <div className="text-6xl mb-4">🎭</div>
-            <h5 className="text-white font-bold text-xl mb-2">Custom avatar styles coming soon!</h5>
-            <p className="text-slate-400 text-sm">We're working on bringing you more personalization options for your character.</p>
+          {/* Avatar Frames Selection */}
+          <div className="bg-slate-700/50 rounded-lg p-6 border border-slate-600/50 mb-6">
+            <h5 className="text-pink-300 font-semibold mb-3">Avatar Frames</h5>
+            <p className="text-slate-400 text-sm mb-4">Choose a decorative frame for your avatar</p>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-4">
+              {/* No Frame Option */}
+              <button
+                onClick={() => setSelectedFrame(null)}
+                className={`group relative w-16 h-16 rounded-full border-2 transition-all duration-200 ${
+                  selectedFrame === null 
+                    ? 'border-pink-400 bg-pink-400/20' 
+                    : 'border-slate-600 hover:border-slate-500'
+                }`}
+              >
+                <div className="w-full h-full rounded-full bg-slate-600 flex items-center justify-center">
+                  <X className="w-6 h-6 text-slate-400" />
+                </div>
+                <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-slate-400 whitespace-nowrap">
+                  No Frame
+                </div>
+              </button>
+
+              {/* Frame Options */}
+              {avatarFrames.map((frame) => (
+                <button
+                  key={frame.id}
+                  onClick={() => setSelectedFrame(frame.id)}
+                  className={`group relative w-16 h-16 rounded-full border-2 transition-all duration-200 ${
+                    selectedFrame === frame.id 
+                      ? 'border-pink-400 bg-pink-400/20 scale-110' 
+                      : 'border-slate-600 hover:border-slate-500 hover:scale-105'
+                  }`}
+                >
+                  <div className="relative w-full h-full">
+                    {/* Preview avatar background */}
+                    <div className="w-full h-full rounded-full bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-xs font-bold text-slate-900">
+                      {userProfile?.display_name ? userProfile.display_name[0].toUpperCase() : 'A'}
+                    </div>
+                    {/* Frame overlay */}
+                    <img 
+                      src={frame.src}
+                      alt={frame.name}
+                      className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                    />
+                  </div>
+                  <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-slate-400 whitespace-nowrap">
+                    {frame.name}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <div className="text-center">
+              <p className="text-slate-500 text-xs">
+                Frames are decorative overlays that enhance your avatar's appearance
+              </p>
+            </div>
+          </div>
+
+          {/* Avatar Upload Section */}
+          <div className="bg-slate-700/50 rounded-lg p-6 text-center border border-slate-600/50">
+            <div className="text-4xl mb-4">📸</div>
+            <h5 className="text-white font-bold text-lg mb-2">Upload Custom Avatar</h5>
+            <p className="text-slate-400 text-sm mb-4">Change your profile picture to personalize your character</p>
+            <Button 
+              className="bg-pink-600 hover:bg-pink-700 text-white"
+              onClick={() => {
+                // This would integrate with existing avatar upload functionality
+                toast.info('Avatar upload feature coming soon!');
+              }}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Upload New Avatar
+            </Button>
           </div>
         </div>
       )}
