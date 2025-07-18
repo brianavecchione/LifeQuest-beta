@@ -28,13 +28,19 @@ const About = () => {
               </div>
               <div className="flex-1">
                 <p className="mb-4">
-                  LifeQuest was created by me, Briana Vecchione—a researcher in computer and information science with a deep interest in how technology can support personal growth, mental health, and wellness. Designed for people who thrive on structure, enjoy games, or want to build a more intentional relationship with their goals, LifeQuest transforms everyday tasks into an immersive and rewarding experience.
+                  Hi, I'm Briana. I'm a researcher in computer and information science with a deep interest in how technology can support personal growth, mental health, and wellness.
                 </p>
                 <p className="mb-4">
-                  Inspired by behavioral psychology and game design, the platform uses streaks, progress tracking, and meaningful rewards to help users stay motivated and focused without relying on guilt or rigid discipline.
+                  I built LifeQuest because I couldn't find a productivity tool that actually worked for me—so I made one. I wanted something that kept me motivated with real-world rewards, offered an immersive environment, and didn't feel overwhelming or cluttered with features I didn't need. LifeQuest is a blend of my academic background and research interests with my creative passions: games, software development, behavioral design, storytelling, and self-exploration.
+                </p>
+                <p className="mb-4">
+                  LifeQuest is my "side quest," so to speak. By day, I'm a full-time researcher studying the sociotechnical impacts of AI systems. I hold a PhD in computer and information science from Cornell University, and my work has been supported by organizations like Google, Facebook, Microsoft, the National Science Foundation, the MacArthur Foundation, the Mozilla Foundation, and the Notre Dame–IBM Tech Ethics Lab.
                 </p>
                 <p>
-                  Whether you're feeling overwhelmed, struggling to stay organized, craving more structure, or just want to bring more fun and intention into your daily routine, LifeQuest was built with you in mind.
+                  You can learn more about my research at{" "}
+                  <a href="https://brianavecchione.org" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline">
+                    brianavecchione.org
+                  </a>.
                 </p>
               </div>
             </div>
