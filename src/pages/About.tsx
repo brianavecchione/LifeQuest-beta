@@ -43,16 +43,95 @@ const About = () => {
           <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
             <h2 className="text-2xl font-bold text-amber-400 mb-4">Built on Science</h2>
             <p className="mb-4">
-              LifeQuest is built on established principles from behavioral psychology, gamification research, 
-              and neuroscience. Our approach incorporates:
+              LifeQuest is grounded in behavioral psychology, gamification research, and neuroscience. Every mechanic is designed with intention—to support follow-through, reduce friction, and make progress feel rewarding. Our approach incorporates insights from leading research:
             </p>
-            <ul className="list-disc list-inside space-y-2 ml-4">
-              <li>Dopamine-driven reward mechanisms that create positive feedback loops</li>
-              <li>Progressive achievement systems that build momentum through consistent small wins</li>
-              <li>Visual categorization and filtering to reduce cognitive load and decision fatigue</li>
-              <li>Focus limitation techniques based on working memory research</li>
-              <li>Customizable interfaces to accommodate different cognitive styles and preferences</li>
+            <ul className="list-disc list-inside space-y-3 ml-4 mb-6">
+              <li>
+                <strong>Dopamine-based reward loops:</strong> Reinforcing small wins triggers the brain's reward system, increasing motivation and habit strength over time
+                <span className="text-slate-400"> (Berridge & Robinson, 2016; NIH/NIDA)</span>
+              </li>
+              <li>
+                <strong>Progressive achievement structures:</strong> Goal-setting theory shows that clear, incremental goals significantly improve task performance
+                <span className="text-slate-400"> (Locke & Latham, 2002, American Psychologist)</span>
+              </li>
+              <li>
+                <strong>Cognitive offloading and visual organization:</strong> Externalizing information—like with categorized quest types and filters—helps reduce cognitive load and decision fatigue
+                <span className="text-slate-400"> (Risko & Gilbert, 2016, Trends in Cognitive Sciences)</span>
+              </li>
+              <li>
+                <strong>Working memory-informed task design:</strong> We limit focus tasks based on the understanding that most people can only hold about 4±1 items in working memory at once
+                <span className="text-slate-400"> (Cowan, 2001, Behavioral and Brain Sciences)</span>
+              </li>
+              <li>
+                <strong>Habit formation through environmental cues and repetition:</strong> Anchoring behaviors to cues and rewarding consistency helps embed long-term habits
+                <span className="text-slate-400"> (Fogg, 2019, Tiny Habits; Lally et al., 2010, European Journal of Social Psychology)</span>
+              </li>
+              <li>
+                <strong>Autonomy and customization:</strong> Allowing users to shape their own experience (via theme, focus, and soundtrack) increases engagement and intrinsic motivation
+                <span className="text-slate-400"> (Ryan & Deci, 2000, Self-Determination Theory)</span>
+              </li>
+              <li>
+                <strong>Gamified motivational design:</strong> Badges, streaks, and rewards can boost user engagement when used with care and tied to meaningful goals
+                <span className="text-slate-400"> (Hamari et al., 2014, Computers in Human Behavior)</span>
+              </li>
             </ul>
+            <p className="mb-6">
+              LifeQuest combines these principles into a playful system that supports both structure and self-discovery. It's not about forcing productivity—it's about designing an environment where progress becomes natural.
+            </p>
+            
+            <div className="border-t border-slate-600 pt-4">
+              <h3 className="text-lg font-semibold text-amber-400 mb-3">References</h3>
+              <ol className="list-decimal list-inside space-y-2 text-sm text-slate-400">
+                <li>
+                  Berridge, K. C., & Robinson, T. E. (2016). 
+                  <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4824232/" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
+                    Liking, wanting, and the incentive-sensitization theory of addiction
+                  </a> - NIH/NIDA
+                </li>
+                <li>
+                  Locke, E. A., & Latham, G. P. (2002). 
+                  <a href="https://psycnet.apa.org/record/2002-18085-004" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
+                    Building a practically useful theory of goal setting and task motivation: A 35-year odyssey
+                  </a> - American Psychologist
+                </li>
+                <li>
+                  Risko, E. F., & Gilbert, S. J. (2016). 
+                  <a href="https://www.sciencedirect.com/science/article/pii/S1364661316300158" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
+                    Cognitive offloading
+                  </a> - Trends in Cognitive Sciences
+                </li>
+                <li>
+                  Cowan, N. (2001). 
+                  <a href="https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/magical-number-4-in-shortterm-memory-a-reconsideration-of-mental-storage-capacity/44F7EFFBE55691509C4D4169E5B72E68" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
+                    The magical number 4 in short-term memory: A reconsideration of mental storage capacity
+                  </a> - Behavioral and Brain Sciences
+                </li>
+                <li>
+                  Lally, P., van Jaarsveld, C. H. M., Potts, H. W. W., & Wardle, J. (2010). 
+                  <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/ejsp.674" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
+                    How are habits formed: Modelling habit formation in the real world
+                  </a> - European Journal of Social Psychology
+                </li>
+                <li>
+                  Fogg, B. J. (2019). 
+                  <a href="https://tinyhabits.com/" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
+                    Tiny Habits: The Small Changes That Change Everything
+                  </a> - Book
+                </li>
+                <li>
+                  Ryan, R. M., & Deci, E. L. (2000). 
+                  <a href="https://psycnet.apa.org/record/2000-13324-007" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
+                    Self-determination theory and the facilitation of intrinsic motivation, social development, and well-being
+                  </a> - American Psychologist
+                </li>
+                <li>
+                  Hamari, J., Koivisto, J., & Sarsa, H. (2014). 
+                  <a href="https://ieeexplore.ieee.org/document/6758978" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-amber-200 underline ml-1">
+                    Does Gamification Work? – A Literature Review of Empirical Studies on Gamification
+                  </a> - IEEE Xplore
+                </li>
+              </ol>
+            </div>
           </section>
 
           <section className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
