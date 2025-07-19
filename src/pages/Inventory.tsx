@@ -35,7 +35,7 @@ const Inventory = () => {
 
       {/* Gold Balance Display */}
       <div className="flex justify-center mb-8">
-        <div className="bg-gradient-to-r from-yellow-600/20 to-amber-600/20 border border-yellow-500/30 rounded-lg p-4">
+        <div className="bg-slate-900/80 backdrop-blur-sm rounded-lg p-4 border border-slate-700/50 shadow-xl">
           <div className="flex items-center gap-3">
             <Coins className="w-6 h-6 text-yellow-400" />
             <div className="text-2xl font-bold text-yellow-400">{activeUser.gold.toLocaleString()}</div>
