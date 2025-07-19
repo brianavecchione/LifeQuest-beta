@@ -11,7 +11,7 @@ const InventorySystem = () => {
   const { user: authUser } = useAuth();
   const { items, loading, equipItem } = useInventory();
   const { toast } = useToast();
-  const [currentTab, setCurrentTab] = useState<'equipped' | 'inventory'>('equipped');
+  const [currentTab, setCurrentTab] = useState<'equipped' | 'inventory'>('inventory');
 
   // Check if this is the dummy account
   const isDummyAccount = authUser?.email === 'contact@lifequest.com';
@@ -127,17 +127,6 @@ const InventorySystem = () => {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => setCurrentTab('equipped')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                currentTab === 'equipped' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-              }`}
-            >
-              <Sword className="w-4 h-4 mr-1 inline" />
-              Equipped
-            </button>
-            <button
               onClick={() => setCurrentTab('inventory')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 currentTab === 'inventory' 
@@ -147,6 +136,17 @@ const InventorySystem = () => {
             >
               <Package className="w-4 h-4 mr-1 inline" />
               Inventory
+            </button>
+            <button
+              onClick={() => setCurrentTab('equipped')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                currentTab === 'equipped' 
+                  ? 'bg-blue-600 text-white' 
+                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              }`}
+            >
+              <Sword className="w-4 h-4 mr-1 inline" />
+              Equipped
             </button>
           </div>
         </div>
@@ -293,17 +293,6 @@ const InventorySystem = () => {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => setCurrentTab('equipped')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              currentTab === 'equipped' 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-            }`}
-          >
-            <Sword className="w-4 h-4 mr-1 inline" />
-            Equipped
-          </button>
-          <button
             onClick={() => setCurrentTab('inventory')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               currentTab === 'inventory' 
@@ -313,6 +302,17 @@ const InventorySystem = () => {
           >
             <Package className="w-4 h-4 mr-1 inline" />
             Inventory
+          </button>
+          <button
+            onClick={() => setCurrentTab('equipped')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              currentTab === 'equipped' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+            }`}
+          >
+            <Sword className="w-4 h-4 mr-1 inline" />
+            Equipped
           </button>
         </div>
       </div>
