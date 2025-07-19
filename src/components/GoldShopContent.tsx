@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Coins, Gift, Plus, Clock, Star, Crown, Gem } from 'lucide-react';
+import { Coins, Gift, Plus, Clock, Star, Crown, Gem, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useGoldShop } from '@/hooks/useGoldShopWrapper';
 import { useRewards } from '@/hooks/useRewardsWrapper';
@@ -389,6 +389,18 @@ const GoldShopContent = () => {
         {/* LifeQuest Rewards Tab */}
         <TabsContent value="lifequest-rewards" className="space-y-6">
           <h4 className="text-lg font-semibold text-purple-400">Exclusive LifeQuest Treasures</h4>
+          
+          {/* Work in Progress Notice */}
+          <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4 mb-6">
+            <div className="flex items-start gap-3">
+              <Sparkles className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-blue-300 text-sm leading-relaxed">
+                  We're still building this feature! For now, here's a preview of the exclusive LifeQuest rewards you'll be able to unlock soon.
+                </p>
+              </div>
+            </div>
+          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {lifequestShopItems.map((item) => (
