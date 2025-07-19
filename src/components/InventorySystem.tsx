@@ -382,7 +382,7 @@ const InventorySystem = () => {
             ) : (
               <div className="text-center text-slate-400 py-8">
                 <Package className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p className="text-lg font-medium mb-2">You'll soon be able to equip your LifeQuest rewards from your inventory. Coming soon!</p>
+                <p className="text-lg font-medium mb-2">You'll soon be able to equip your LifeQuest rewards from your inventory. Keep an eye out for updates!</p>
               </div>
             )}
           </div>
