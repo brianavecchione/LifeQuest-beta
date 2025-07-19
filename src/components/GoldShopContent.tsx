@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Coins, Gift, Plus, Clock, Star, Crown, Gem, Sparkles } from 'lucide-react';
+import { Coins, Gift, Plus, Clock, Star, Crown, Gem, Sparkles, MoreVertical } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { useGoldShop } from '@/hooks/useGoldShopWrapper';
 import { useRewards } from '@/hooks/useRewardsWrapper';
@@ -285,13 +286,36 @@ const GoldShopContent = () => {
               personalRewards.map((reward) => (
                 <Card key={reward.reward_id} className="bg-slate-700/50 border-slate-600/50 hover:border-amber-500/50 transition-colors">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-amber-400 flex items-center gap-2 text-base">
-                      <Gift className="w-4 h-4" />
-                      {reward.name}
-                    </CardTitle>
-                    <CardDescription className="text-slate-300 text-sm">
-                      {reward.description}
-                    </CardDescription>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-amber-400 flex items-center gap-2 text-base">
+                          <Gift className="w-4 h-4" />
+                          {reward.name}
+                        </CardTitle>
+                        <CardDescription className="text-slate-300 text-sm">
+                          {reward.description}
+                        </CardDescription>
+                      </div>
+                      
+                      {/* Three-dot dropdown menu */}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="bg-slate-800 border-slate-700">
+                          {reward.status === 'Redeemed' && (
+                            <DropdownMenuItem 
+                              onClick={() => handleUnredeemReward(reward)}
+                              className="text-orange-400 hover:bg-slate-700 cursor-pointer"
+                            >
+                              Unredeem
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </CardHeader>
                   <CardContent className="pt-0">
                     <div className="flex items-center justify-between mb-3">
@@ -331,48 +355,49 @@ const GoldShopContent = () => {
                       );
                     })()}
                     
-                    {IS_TESTING_REWARDS ? (
-                      <div className="space-y-2">
-                        <Button
-                          onClick={() => toggleTestingRewardState(reward.reward_id, getTestingRewardStatus(reward))}
-                          size="sm"
-                          className="w-full bg-blue-600 hover:bg-blue-700"
-                        >
-                          Toggle Status ({getTestingRewardStatus(reward)})
-                        </Button>
-                        {reward.status === 'Redeemed' && (
-                          <Button
-                            onClick={() => handleUnredeemReward(reward)}
-                            size="sm"
-                            variant="outline"
-                            className="w-full border-orange-600 text-orange-400 hover:bg-orange-600 hover:text-white"
-                          >
-                            🔄 Unredeem (Testing)
-                          </Button>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
+                    {(() => {
+                      const hasEnoughGold = currentGold >= reward.gold_cost;
+                      
+                      // Determine button text and state based on user's gold and reward status
+                      let buttonText = '';
+                      let isDisabled = false;
+                      let buttonClass = 'w-full bg-amber-600 hover:bg-amber-700';
+                      
+                      if (reward.status === 'Redeemed') {
+                        buttonText = 'Redeemed';
+                        isDisabled = true;
+                        buttonClass = 'w-full bg-green-600/50 cursor-not-allowed';
+                      } else if (reward.status === 'Unlocked') {
+                        if (hasEnoughGold) {
+                          buttonText = 'Unlocked';
+                          isDisabled = false;
+                        } else {
+                          buttonText = 'Need More Gold';
+                          isDisabled = true;
+                          buttonClass = 'w-full bg-slate-600 cursor-not-allowed';
+                        }
+                      } else { // status === 'Locked'
+                        if (hasEnoughGold) {
+                          buttonText = 'Unlocked';
+                          isDisabled = false;
+                        } else {
+                          buttonText = 'Need More Gold';
+                          isDisabled = true;
+                          buttonClass = 'w-full bg-slate-600 cursor-not-allowed';
+                        }
+                      }
+                      
+                      return (
                         <Button
                           onClick={() => handleUnlockReward(reward)}
-                          disabled={
-                            reward.status === 'Redeemed' || 
-                            currentGold < reward.gold_cost
-                          }
+                          disabled={isDisabled}
                           size="sm"
-                          className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-slate-600"
-                          title={
-                            currentGold < reward.gold_cost ? 
-                            `Need ${reward.gold_cost - currentGold} more gold` : undefined
-                          }
+                          className={buttonClass}
                         >
-                          {reward.status === 'Redeemed' ? '✓ Completed' : 
-                           reward.status === 'Unlocked' ? `Redeem (${reward.gold_cost} gold)` : 
-                           currentGold >= reward.gold_cost ? `Unlock (${reward.gold_cost} gold)` : 
-                           `Need ${reward.gold_cost - currentGold} more gold`}
+                          {buttonText}
                         </Button>
-                      </div>
-                    )}
+                      );
+                    })()}
                   </CardContent>
                 </Card>
               ))
