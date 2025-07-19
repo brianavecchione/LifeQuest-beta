@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Target, Trophy, Sword, Settings, Users, LogOut, Coins, Menu, X, Crown, Zap, User, Bell, Palette, HelpCircle } from 'lucide-react';
+import { Home, Target, Trophy, Sword, Settings, Users, LogOut, Coins, Menu, X, Crown, Zap, User, Bell, Palette, HelpCircle, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/contexts/UserContext';
@@ -186,6 +186,20 @@ const Navigation = () => {
                 </Link>
               );
             })}
+            
+            {/* Support LifeQuest Button */}
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="ml-3 border-pink-500/50 bg-pink-600/20 text-pink-300 hover:bg-pink-600/30 hover:text-pink-200 transition-all duration-300"
+              title="Help us build more features, fix bugs, and keep the quest alive."
+            >
+              <a href="https://coff.ee/lifequest" target="_blank" rel="noopener noreferrer">
+                <Heart className="w-4 h-4 mr-2" />
+                <span className="hidden lg:inline">Support LifeQuest</span>
+              </a>
+            </Button>
             
             {/* Desktop Profile Dropdown */}
             <div className="ml-3 pl-3 border-l border-slate-700 relative" ref={profileDropdownRef}>

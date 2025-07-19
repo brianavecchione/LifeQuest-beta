@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Coins, Gift, Plus, Clock, Star, Crown, Gem } from 'lucide-react';
+import { Coins, Gift, Plus, Clock, Star, Crown, Gem, Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@/contexts/UserContext';
 
@@ -313,7 +313,26 @@ const GoldShop = () => {
 
           {/* LifeQuest Rewards Tab */}
           <TabsContent value="lifequest-rewards" className="space-y-6">
-            <h2 className="text-2xl font-bold text-purple-400">Exclusive LifeQuest Treasures</h2>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <h2 className="text-2xl font-bold text-purple-400">Exclusive LifeQuest Treasures</h2>
+              
+              {/* Support LifeQuest Callout */}
+              <div className="bg-pink-600/10 border border-pink-500/30 rounded-lg p-4">
+                <p className="text-pink-300 text-sm mb-3">Fuel future rewards</p>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="border-pink-500/50 bg-pink-600/20 text-pink-300 hover:bg-pink-600/30 hover:text-pink-200 transition-all duration-300"
+                  title="Help us build more features, fix bugs, and keep the quest alive."
+                >
+                  <a href="https://coff.ee/lifequest" target="_blank" rel="noopener noreferrer">
+                    <Heart className="w-4 h-4 mr-2" />
+                    Support LifeQuest
+                  </a>
+                </Button>
+              </div>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {lifequestRewards.map((reward) => (

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Mail } from 'lucide-react';
+import { Mail, Heart } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -55,6 +55,20 @@ const Footer = () => {
                 >
                   <a href="https://tally.so/r/wb1jM6" target="_blank" rel="noopener noreferrer">
                     📩 Contact Support
+                  </a>
+                </Button>
+                
+                {/* Support LifeQuest Button */}
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="border-pink-500/30 bg-pink-600/10 text-pink-400 hover:bg-pink-600/20 hover:text-pink-300"
+                  title="Help us build more features, fix bugs, and keep the quest alive."
+                >
+                  <a href="https://coff.ee/lifequest" target="_blank" rel="noopener noreferrer">
+                    <Heart className="w-4 h-4 mr-2" />
+                    Support LifeQuest
                   </a>
                 </Button>
               </div>

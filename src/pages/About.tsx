@@ -1,4 +1,6 @@
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Heart } from 'lucide-react';
 
 const About = () => {
   return (
@@ -168,9 +170,25 @@ const About = () => {
             <p className="mb-4">
               I want LifeQuest to be more than just a productivity app—I want it to grow into a community of people supporting each other on their quests to build better habits, accomplish meaningful goals, and level up their lives.
             </p>
-            <p>
+            <p className="mb-6">
               Whether you're a student, professional, creative, or simply someone looking to bring more structure and enjoyment to your daily routine, I invite you to join the journey.
             </p>
+            
+            {/* Support LifeQuest Button */}
+            <div className="flex justify-center">
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="border-pink-500/50 bg-pink-600/20 text-pink-300 hover:bg-pink-600/30 hover:text-pink-200 transition-all duration-300"
+                title="Help us build more features, fix bugs, and keep the quest alive."
+              >
+                <a href="https://coff.ee/lifequest" target="_blank" rel="noopener noreferrer">
+                  <Heart className="w-5 h-5 mr-2" />
+                  Support LifeQuest
+                </a>
+              </Button>
+            </div>
           </section>
         </div>
       </div>
