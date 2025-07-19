@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useGoldShop } from '@/hooks/useGoldShopWrapper';
 import { useRewards } from '@/hooks/useRewardsWrapper';
 import { useUserBalance } from '@/hooks/useUserBalanceWrapper';
+import confetti from 'canvas-confetti';
 
 // Testing flag - set to true to enable testing features (unredeem button)
 const IS_TESTING_REWARDS = true;
@@ -67,6 +68,51 @@ const GoldShopContent = () => {
       case 'legendary': return <Crown className="w-3 h-3" />;
       default: return <Star className="w-3 h-3" />;
     }
+  };
+
+  // Confetti celebration animation
+  const triggerConfetti = () => {
+    // Multiple confetti bursts for better effect
+    const count = 200;
+    const defaults = {
+      origin: { y: 0.7 }
+    };
+    
+    function fire(particleRatio: number, opts: any) {
+      confetti({
+        ...defaults,
+        ...opts,
+        particleCount: Math.floor(count * particleRatio)
+      });
+    }
+    
+    // Fire multiple bursts with different configurations
+    fire(0.25, {
+      spread: 26,
+      startVelocity: 55,
+    });
+    
+    fire(0.2, {
+      spread: 60,
+    });
+    
+    fire(0.35, {
+      spread: 100,
+      decay: 0.91,
+      scalar: 0.8
+    });
+    
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 25,
+      decay: 0.92,
+      scalar: 1.2
+    });
+    
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 45,
+    });
   };
 
   const addCustomReward = async () => {
@@ -157,9 +203,13 @@ const GoldShopContent = () => {
 
       await refetchBalance();
       
+      // Trigger confetti celebration animation
+      triggerConfetti();
+      
       toast({
         title: "🎉 Reward Unlocked!",
-        description: `${reward.name} is now available to redeem!`,
+        description: `${reward.name} is now available in your inventory!`,
+        duration: 5000,
       });
     } catch (error) {
       console.error('Error unlocking reward:', error);
