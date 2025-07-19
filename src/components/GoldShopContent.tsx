@@ -21,7 +21,7 @@ const GoldShopContent = () => {
   const { toast } = useToast();
   const { items: shopItems, loading: shopLoading, purchaseItem } = useGoldShop();
   const { rewards, loading: rewardsLoading, unlockReward, redeemReward, unredeemReward, createReward } = useRewards();
-  const { balance, spendGold } = useUserBalance();
+  const { balance, spendGold, refetch: refetchBalance } = useUserBalance();
   
   const [customRewardName, setCustomRewardName] = useState('');
   const [customRewardCost, setCustomRewardCost] = useState('');
@@ -157,6 +157,8 @@ const GoldShopContent = () => {
       // Redeem the reward (costs gold and updates both reward status and balance)
       const result = await redeemReward(reward.reward_id);
       if (result.success) {
+        // Refresh balance to show updated gold amount
+        await refetchBalance();
         toast({
           title: "🎉 Reward Redeemed!",
           description: `Enjoy your ${reward.name}! ${reward.gold_cost} gold spent.`,
@@ -172,6 +174,8 @@ const GoldShopContent = () => {
       // Unlock the reward (costs gold - handled by unlockReward function)
       const result = await unlockReward(reward.reward_id, reward.gold_cost);
       if (result.success) {
+        // Refresh balance to show updated gold amount
+        await refetchBalance();
         toast({
           title: "🎉 Reward Unlocked!",
           description: `${reward.name} is now available to redeem!`,
@@ -189,6 +193,8 @@ const GoldShopContent = () => {
   const handleUnredeemReward = async (reward: any) => {
     const result = await unredeemReward(reward.reward_id);
     if (result.success) {
+      // Refresh balance to show refunded gold amount
+      await refetchBalance();
       toast({
         title: "🔄 Reward Unredeemed!",
         description: `${reward.name} has been unredeemed. ${reward.gold_cost} gold refunded.`,
