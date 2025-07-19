@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Mail, Heart, MessageCircle } from 'lucide-react';
+import { Mail, Heart, MessageCircle, Settings, LifeBuoy } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -20,7 +20,8 @@ const Footer = () => {
                 Questions or feedback? We'd love to hear from you!
               </p>
               
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              {/* Row 1: Primary Actions */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
                 {/* Email Button */}
                 <Button
                   asChild
@@ -34,6 +35,35 @@ const Footer = () => {
                   </a>
                 </Button>
                 
+                {/* Request Feature Button */}
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="border-amber-500/30 bg-amber-600/10 text-amber-400 hover:bg-amber-600/20 hover:text-amber-300"
+                >
+                  <a href="https://tally.so/r/m66jGA" target="_blank" rel="noopener noreferrer">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Request a Feature
+                  </a>
+                </Button>
+                
+                {/* Contact Support Button */}
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="border-amber-500/30 bg-amber-600/10 text-amber-400 hover:bg-amber-600/20 hover:text-amber-300"
+                >
+                  <a href="https://tally.so/r/wb1jM6" target="_blank" rel="noopener noreferrer">
+                    <LifeBuoy className="w-4 h-4 mr-2" />
+                    Contact Support
+                  </a>
+                </Button>
+              </div>
+              
+              {/* Row 2: Community & Support */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 {/* Join Discord Button */}
                 <Button
                   asChild
@@ -47,30 +77,6 @@ const Footer = () => {
                   </a>
                 </Button>
                 
-                {/* Request Feature Button */}
-                <Button
-                  asChild
-                  variant="outline"
-                  size="sm"
-                  className="border-amber-500/30 bg-amber-600/10 text-amber-400 hover:bg-amber-600/20 hover:text-amber-300"
-                >
-                  <a href="https://tally.so/r/m66jGA" target="_blank" rel="noopener noreferrer">
-                    🔧 Request a Feature
-                  </a>
-                </Button>
-                
-                {/* Contact Support Button */}
-                <Button
-                  asChild
-                  variant="outline"
-                  size="sm"
-                  className="border-amber-500/30 bg-amber-600/10 text-amber-400 hover:bg-amber-600/20 hover:text-amber-300"
-                >
-                  <a href="https://tally.so/r/wb1jM6" target="_blank" rel="noopener noreferrer">
-                    📩 Contact Support
-                  </a>
-                </Button>
-                
                 {/* Support LifeQuest Button */}
                 <Button
                   asChild
@@ -79,7 +85,7 @@ const Footer = () => {
                   className="border-pink-500/30 bg-pink-600/10 text-pink-400 hover:bg-pink-600/20 hover:text-pink-300"
                   title="Help us build more features, fix bugs, and keep the quest alive."
                 >
-                  <a href="https://coff.ee/lifequest" target="_blank" rel="noopener noreferrer">
+                  <a href="https://buymeacoffee.com/lifequest" target="_blank" rel="noopener noreferrer">
                     <Heart className="w-4 h-4 mr-2" />
                     Support LifeQuest
                   </a>
