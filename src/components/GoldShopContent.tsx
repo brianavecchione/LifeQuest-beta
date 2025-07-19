@@ -14,7 +14,7 @@ import { useRewards } from '@/hooks/useRewardsWrapper';
 import { useUserBalance } from '@/hooks/useUserBalanceWrapper';
 
 // Testing flag - set to true to disable redemptions for testing
-const IS_TESTING_REWARDS = true;
+const IS_TESTING_REWARDS = false;
 
 const GoldShopContent = () => {
   const { toast } = useToast();
