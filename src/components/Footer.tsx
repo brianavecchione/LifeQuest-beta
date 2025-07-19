@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Mail, Heart } from 'lucide-react';
+import { Mail, Heart, MessageCircle } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -31,6 +31,19 @@ const Footer = () => {
                   <a href="mailto:contact@getlifequest.com">
                     <Mail className="w-4 h-4 mr-2" />
                     Email Us
+                  </a>
+                </Button>
+                
+                {/* Join Discord Button */}
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="border-blue-500/30 bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 hover:text-blue-300"
+                >
+                  <a href="https://discord.gg/bvD4RkvV" target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Join Our Discord
                   </a>
                 </Button>
                 
