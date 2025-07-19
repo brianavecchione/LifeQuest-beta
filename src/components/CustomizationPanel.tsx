@@ -13,10 +13,21 @@ const CustomizationPanel = () => {
   const [userProfile, setUserProfile] = useState<any>(null);
   const [userSettings, setUserSettings] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedFrame, setSelectedFrame] = useState<string | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { backgroundImage, backgroundOpacity, uploadBackgroundImage, removeBackgroundImage, setBackgroundOpacity, loading: backgroundLoading } = useBackground();
   const { user } = useAuth();
+
+  // Avatar frame options
+  const avatarFrames = [
+    { id: 'none', name: 'No Frame', image: null },
+    { id: 'cosmic', name: 'Cosmic Nebula', image: '/avatar-frames/cosmic-frame.png' },
+    { id: 'candy', name: 'Candy Dreams', image: '/avatar-frames/candy-frame.png' },
+    { id: 'ornate', name: 'Royal Ornate', image: '/avatar-frames/ornate-frame.png' },
+    { id: 'water', name: 'Ocean Waves', image: '/avatar-frames/water-frame.png' },
+    { id: 'steampunk', name: 'Steampunk Gears', image: '/avatar-frames/steampunk-frame.png' }
+  ];
 
   // Fetch user profile and settings data
   useEffect(() => {
@@ -163,37 +174,113 @@ const CustomizationPanel = () => {
             <p className="text-slate-400 text-sm">Choose your character's appearance and style</p>
           </div>
 
-          {/* Current Avatar Preview */}
+          {/* Avatar Preview with Frame */}
           <div className="bg-slate-700/50 rounded-lg p-6 text-center border border-slate-600/50 mb-6">
             {loading ? (
               <div className="animate-pulse">
-                <div className="w-20 h-20 bg-slate-600 rounded-full mx-auto mb-3"></div>
+                <div className="w-32 h-32 bg-slate-600 rounded-full mx-auto mb-3"></div>
                 <div className="h-4 bg-slate-600 rounded w-24 mx-auto mb-1"></div>
                 <div className="h-3 bg-slate-600 rounded w-16 mx-auto"></div>
               </div>
             ) : (
               <>
-                {userProfile?.avatar_url ? (
-                  <img 
-                    src={userProfile.avatar_url} 
-                    alt="Current avatar"
-                    className="w-20 h-20 rounded-full object-cover mx-auto mb-3 shadow-lg"
-                  />
-                ) : (
-                  <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-3xl font-bold text-slate-900 shadow-lg mx-auto mb-3">
-                    {userProfile?.display_name ? userProfile.display_name[0].toUpperCase() : 'A'}
-                  </div>
+                {/* Avatar with Frame Container */}
+                <div className="relative w-32 h-32 mx-auto mb-4">
+                  {/* Avatar Base */}
+                  {userProfile?.avatar_url ? (
+                    <img 
+                      src={userProfile.avatar_url} 
+                      alt="Current avatar"
+                      className="w-32 h-32 rounded-full object-cover absolute inset-0 shadow-lg"
+                    />
+                  ) : (
+                    <div className="w-32 h-32 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-4xl font-bold text-slate-900 shadow-lg absolute inset-0">
+                      {userProfile?.display_name ? userProfile.display_name[0].toUpperCase() : 'A'}
+                    </div>
+                  )}
+                  
+                  {/* Frame Overlay */}
+                  {selectedFrame && avatarFrames.find(f => f.id === selectedFrame)?.image && (
+                    <img 
+                      src={avatarFrames.find(f => f.id === selectedFrame)?.image || ''}
+                      alt="Avatar frame"
+                      className="w-32 h-32 absolute inset-0 pointer-events-none"
+                    />
+                  )}
+                </div>
+                
+                <h5 className="text-white font-bold mb-1">Current Avatar</h5>
+                <p className="text-slate-400 text-sm mb-1">{userProfile?.display_name || 'Adventurer'}</p>
+                {selectedFrame && selectedFrame !== 'none' && (
+                  <p className="text-pink-300 text-xs">
+                    Frame: {avatarFrames.find(f => f.id === selectedFrame)?.name}
+                  </p>
                 )}
-                <h5 className="text-white font-bold">Current Avatar</h5>
-                <p className="text-slate-400 text-sm">{userProfile?.display_name || 'Adventurer'}</p>
               </>
             )}
           </div>
 
-          <div className="bg-slate-700/50 rounded-lg p-12 text-center border border-slate-600/50">
-            <div className="text-6xl mb-4">🎭</div>
-            <h5 className="text-white font-bold text-xl mb-2">Custom avatar styles coming soon!</h5>
-            <p className="text-slate-400 text-sm">We're working on bringing you more personalization options for your character.</p>
+          {/* Avatar Frame Selection */}
+          <div className="bg-slate-700/50 rounded-lg p-6 border border-slate-600/50 mb-6">
+            <h6 className="text-pink-300 font-medium mb-4 text-center">Choose Avatar Frame</h6>
+            
+            {/* Frame Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {avatarFrames.map((frame) => (
+                <button
+                  key={frame.id}
+                  onClick={() => setSelectedFrame(frame.id)}
+                  className={`relative group transition-all duration-200 hover:scale-105 ${
+                    selectedFrame === frame.id 
+                      ? 'ring-2 ring-pink-400 ring-offset-2 ring-offset-slate-800' 
+                      : 'hover:ring-1 hover:ring-pink-400/50 hover:ring-offset-1 hover:ring-offset-slate-800'
+                  }`}
+                >
+                  {/* Frame Preview Container */}
+                  <div className="relative w-16 h-16 mx-auto">
+                    {/* Sample Avatar for Preview */}
+                    <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-lg font-bold text-slate-900 shadow-lg absolute inset-0">
+                      A
+                    </div>
+                    
+                    {/* Frame Preview */}
+                    {frame.image && (
+                      <img 
+                        src={frame.image}
+                        alt={frame.name}
+                        className="w-16 h-16 absolute inset-0 pointer-events-none"
+                      />
+                    )}
+                    
+                    {/* "No Frame" indicator */}
+                    {frame.id === 'none' && (
+                      <div className="absolute inset-0 border-2 border-dashed border-slate-500 rounded-full flex items-center justify-center">
+                        <X className="w-4 h-4 text-slate-400" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Frame Name */}
+                  <p className="text-xs text-slate-300 mt-2 group-hover:text-pink-300 transition-colors">
+                    {frame.name}
+                  </p>
+                  
+                  {/* Selected Indicator */}
+                  {selectedFrame === frame.id && (
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-pink-400 rounded-full flex items-center justify-center">
+                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+            
+            {/* Frame Info */}
+            <div className="mt-4 text-center">
+              <p className="text-slate-400 text-sm">
+                Click on a frame to preview it with your avatar
+              </p>
+            </div>
           </div>
         </div>
       )}
