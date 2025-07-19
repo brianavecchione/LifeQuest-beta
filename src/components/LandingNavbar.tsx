@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Link, useNavigate } from 'react-router-dom';
 
 const LandingNavbar = () => {
@@ -112,6 +113,25 @@ const LandingNavbar = () => {
             >
               Login
             </button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={() => window.open('https://coff.ee/lifequest', '_blank')}
+                    className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-medium px-4 py-2 rounded-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 mr-2"
+                    style={{
+                      boxShadow: '0 4px 20px rgba(236, 72, 153, 0.4), 0 0 0 1px rgba(236, 72, 153, 0.2)'
+                    }}
+                  >
+                    <Heart className="w-4 h-4 mr-2" />
+                    Support LifeQuest
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Help us build more features, fix bugs, and keep the quest alive.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <Button
               onClick={() => handleNavigation('#login')}
               className="bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white font-medium px-6 py-2 rounded-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
@@ -168,6 +188,13 @@ const LandingNavbar = () => {
               >
                 Login
               </button>
+              <Button
+                onClick={() => window.open('https://coff.ee/lifequest', '_blank')}
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-medium py-2 rounded-full mt-2"
+              >
+                <Heart className="w-4 h-4 mr-2" />
+                Support LifeQuest
+              </Button>
               <Button
                 onClick={() => handleNavigation('#login')}
                 className="w-full bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white font-medium py-2 rounded-full mt-2"
