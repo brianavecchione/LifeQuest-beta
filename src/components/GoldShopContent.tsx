@@ -124,12 +124,17 @@ const GoldShopContent = () => {
   };
 
   const getTestingRewardStatus = (reward: any) => {
-    return testingRewardStates[reward.reward_id] || reward.status;
+    // For testing purposes only - shows testing state overlay
+    // But actual database operations should use reward.status
+    return IS_TESTING_REWARDS ? (testingRewardStates[reward.reward_id] || reward.status) : reward.status;
   };
 
   const handleUnlockReward = async (reward: any) => {
+    // ALWAYS use the actual database status for operations, not testing state
+    const actualStatus = reward.status;
+    
     // Check if user has enough gold for unlock/redeem
-    if (reward.status === 'Locked' && currentGold < reward.gold_cost) {
+    if (actualStatus === 'Locked' && currentGold < reward.gold_cost) {
       toast({
         title: "Not Enough Gold",
         description: `You need ${reward.gold_cost - currentGold} more gold to unlock this reward.`,
@@ -137,8 +142,8 @@ const GoldShopContent = () => {
       });
       return;
     }
-
-    if (reward.status === 'Unlocked' && currentGold < reward.gold_cost) {
+    
+    if (actualStatus === 'Unlocked' && currentGold < reward.gold_cost) {
       toast({
         title: "Not Enough Gold", 
         description: `You need ${reward.gold_cost - currentGold} more gold to redeem this reward.`,
@@ -147,7 +152,7 @@ const GoldShopContent = () => {
       return;
     }
 
-    if (reward.status === 'Unlocked') {
+    if (actualStatus === 'Unlocked') {
       // Redeem the reward (costs gold and updates both reward status and balance)
       const result = await redeemReward(reward.reward_id);
       if (result.success) {
@@ -162,7 +167,7 @@ const GoldShopContent = () => {
           variant: "destructive"
         });
       }
-    } else {
+    } else if (actualStatus === 'Locked') {
       // Unlock the reward (costs gold - handled by unlockReward function)
       const result = await unlockReward(reward.reward_id, reward.gold_cost);
       if (result.success) {
@@ -347,35 +352,25 @@ const GoldShopContent = () => {
                         )}
                       </div>
                     ) : (
-                       <div className="space-y-2">
-                         <Button
-                           onClick={() => handleUnlockReward(reward)}
-                           disabled={
-                             reward.status === 'Redeemed' || 
-                             currentGold < reward.gold_cost
-                           }
-                           size="sm"
-                           className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-slate-600"
-                           title={
-                             currentGold < reward.gold_cost ? 
-                             `Need ${reward.gold_cost - currentGold} more gold` : undefined
-                           }
-                         >
-                           {reward.status === 'Redeemed' ? '✓ Completed' : 
-                            reward.status === 'Unlocked' ? `Redeem (${reward.gold_cost} gold)` : 
-                            currentGold >= reward.gold_cost ? `Unlock (${reward.gold_cost} gold)` : 
-                            `Need ${reward.gold_cost - currentGold} more gold`}
-                         </Button>
-                        {IS_TESTING_REWARDS && reward.status === 'Redeemed' && (
-                          <Button
-                            onClick={() => handleUnredeemReward(reward)}
-                            size="sm"
-                            variant="outline"
-                            className="w-full border-orange-600 text-orange-400 hover:bg-orange-600 hover:text-white"
-                          >
-                            🔄 Unredeem (Testing)
-                          </Button>
-                        )}
+                      <div className="space-y-2">
+                        <Button
+                          onClick={() => handleUnlockReward(reward)}
+                          disabled={
+                            reward.status === 'Redeemed' || 
+                            currentGold < reward.gold_cost
+                          }
+                          size="sm"
+                          className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-slate-600"
+                          title={
+                            currentGold < reward.gold_cost ? 
+                            `Need ${reward.gold_cost - currentGold} more gold` : undefined
+                          }
+                        >
+                          {reward.status === 'Redeemed' ? '✓ Completed' : 
+                           reward.status === 'Unlocked' ? `Redeem (${reward.gold_cost} gold)` : 
+                           currentGold >= reward.gold_cost ? `Unlock (${reward.gold_cost} gold)` : 
+                           `Need ${reward.gold_cost - currentGold} more gold`}
+                        </Button>
                       </div>
                     )}
                   </CardContent>
