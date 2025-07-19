@@ -48,16 +48,16 @@ const Inventory = () => {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 bg-slate-800 border-slate-700 mb-8">
           <TabsTrigger 
-            value="inventory" 
-            className="data-[state=active]:bg-amber-600 data-[state=active]:text-white"
-          >
-            Inventory & Gear
-          </TabsTrigger>
-          <TabsTrigger 
             value="gold-shop" 
             className="data-[state=active]:bg-yellow-600 data-[state=active]:text-white"
           >
             Gold Shop
+          </TabsTrigger>
+          <TabsTrigger 
+            value="inventory" 
+            className="data-[state=active]:bg-amber-600 data-[state=active]:text-white"
+          >
+            Inventory & Gear
           </TabsTrigger>
         </TabsList>
 
