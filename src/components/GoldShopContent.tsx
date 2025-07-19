@@ -227,8 +227,9 @@ const GoldShopContent = () => {
 
   const personalShopItems = shopItems.filter(item => item.category === 'Personal');
   const lifequestShopItems = shopItems.filter(item => item.category === 'LifeQuest');
-  const personalRewards = rewards.filter(reward => reward.reward_type === 'Personal');
-  const companyRewards = rewards.filter(reward => reward.reward_type === 'Company');
+  // Only show locked rewards in Gold Shop - unlocked rewards move to inventory
+  const personalRewards = rewards.filter(reward => reward.reward_type === 'Personal' && reward.status === 'Locked');
+  const companyRewards = rewards.filter(reward => reward.reward_type === 'Company' && reward.status === 'Locked');
 
   return (
     <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-yellow-600/30 shadow-2xl">

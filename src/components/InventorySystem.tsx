@@ -1,16 +1,48 @@
 
 import React, { useState } from 'react';
-import { Sword, Shield, Crown, Gem, Package, Wand2 } from 'lucide-react';
+import { Sword, Shield, Crown, Gem, Package, Wand2, Gift, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useInventory } from '@/hooks/useInventoryWrapper';
+import { useRewards } from '@/hooks/useRewardsWrapper';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 const InventorySystem = () => {
   const { user: authUser } = useAuth();
   const { items, loading, equipItem } = useInventory();
+  const { rewards, redeemReward } = useRewards();
   const { toast } = useToast();
+  
+  // Handle reward redemption with celebration animation
+  const handleRedeemReward = async (reward: any) => {
+    try {
+      const result = await redeemReward(reward.reward_id);
+      if (result.success) {
+        // Celebration toast with animation
+        toast({
+          title: "🎉 Reward Redeemed!",
+          description: `Your reward "${reward.name}" has been redeemed! Enjoy your well-earned treat!`,
+          duration: 5000,
+        });
+      } else {
+        toast({
+          title: "Redemption Failed",
+          description: result.error || "Unknown error occurred",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Error redeeming reward:', error);
+      toast({
+        title: "Error",
+        description: "Failed to redeem reward. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+  
   const [currentTab, setCurrentTab] = useState<'equipped' | 'inventory'>('inventory');
 
   // Check if this is the dummy account
@@ -283,6 +315,9 @@ const InventorySystem = () => {
   const unequippedItems = items.filter(item => !item.equipped);
   const gearItems = unequippedItems.filter(item => item.category === 'Gear');
   const companionItems = unequippedItems.filter(item => item.category === 'Companion');
+  
+  // Filter rewards for inventory (unlocked and redeemed)
+  const inventoryRewards = rewards.filter(reward => reward.status === 'Unlocked' || reward.status === 'Redeemed');
 
   return (
     <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-blue-600/30 shadow-2xl">
@@ -427,12 +462,64 @@ const InventorySystem = () => {
             </div>
           )}
 
+          {/* Personal Rewards Section */}
+          {inventoryRewards.length > 0 && (
+            <div>
+              <h4 className="text-lg font-semibold text-amber-300 mb-4">Personal Rewards ({inventoryRewards.length})</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {inventoryRewards.map((reward) => (
+                  <Card key={reward.reward_id} className="bg-slate-700/50 border-slate-600/50 hover:border-amber-500/50 transition-colors">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <CardTitle className="text-amber-400 flex items-center gap-2 text-base">
+                            <Gift className="w-4 h-4" />
+                            {reward.name}
+                          </CardTitle>
+                          <CardDescription className="text-slate-300 text-sm">
+                            {reward.description}
+                          </CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="flex items-center justify-between mb-3">
+                        <Badge className={reward.status === 'Redeemed' ? 'bg-green-600' : 'bg-blue-600'}>
+                          {reward.status === 'Redeemed' ? 'Redeemed' : 'Ready to Redeem'}
+                        </Badge>
+                      </div>
+                      
+                      {reward.status === 'Unlocked' ? (
+                        <Button
+                          onClick={() => handleRedeemReward(reward)}
+                          size="sm"
+                          className="w-full bg-amber-600 hover:bg-amber-700"
+                        >
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          Redeem
+                        </Button>
+                      ) : (
+                        <Button
+                          disabled
+                          size="sm"
+                          className="w-full bg-green-600/50 cursor-not-allowed"
+                        >
+                          Redeemed
+                        </Button>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Empty State */}
-          {unequippedItems.length === 0 && (
+          {unequippedItems.length === 0 && inventoryRewards.length === 0 && (
             <div className="text-center text-slate-400 py-8">
               <Package className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p>Your inventory is empty</p>
-              <p className="text-sm">Complete quests to earn gear and companions!</p>
+              <p className="text-sm">Complete quests and unlock rewards to build your collection!</p>
             </div>
           )}
         </div>
