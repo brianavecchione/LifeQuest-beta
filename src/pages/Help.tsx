@@ -291,13 +291,6 @@ const Help = () => {
           </div>
         </div>
 
-        {/* Bottom Logo */}
-        <div className="text-center mt-16 mb-8">
-          <h2 className="text-6xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
-            LifeQuest
-          </h2>
-        </div>
-
         {/* AI Sidekick */}
         <div className="mt-12">
           <AISidekick />
