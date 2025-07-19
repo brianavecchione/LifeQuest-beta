@@ -71,7 +71,7 @@ const Footer = () => {
                   size="sm"
                   className="border-blue-500/30 bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 hover:text-blue-300"
                 >
-                  <a href="https://discord.gg/bvD4RkvV" target="_blank" rel="noopener noreferrer">
+                  <a href="https://discord.gg/bETS24vqr6" target="_blank" rel="noopener noreferrer">
                     <MessageCircle className="w-4 h-4 mr-2" />
                     Join Our Discord
                   </a>
