@@ -77,8 +77,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .eq('user_id', authUser.id)
         .single();
 
-      if (error) {
+      // Also fetch user balance data (for gold)
+      const { data: userBalance, error: balanceError } = await supabase
+        .from('user_balances')
+        .select('*')
+        .eq('user_id', authUser.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
         console.error('Error fetching user profile:', error);
+      }
+
+      if (balanceError && balanceError.code !== 'PGRST116') {
+        console.error('Error fetching user balance:', balanceError);
       }
 
       // Load local settings from localStorage
@@ -114,7 +125,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           xp: Math.max(0, progressPercentage), // Progress percentage toward next level
           xpToNext: 100, // Always 100% for display purposes
           totalXp: totalXp, // Use database as source of truth
-          gold: profile.gold_balance, // Use database as source of truth
+          gold: userBalance?.current_gold_balance || profile?.gold_balance || 0, // Use user_balances as primary source
           pomodoroCount: settings.pomodoroCount || 0,
           dailyXp: {}, // No longer used, keep for compatibility
           reduceAnimations: settings.reduceAnimations || false,
@@ -157,9 +168,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     console.log('🔄 Loading user profile data after stat correction...');
     loadUserProfile();
 
-    // Set up real-time subscription to profile changes
+    // Set up real-time subscription to profile AND user_balances changes
     const channel = supabase
-      .channel('profile-changes')
+      .channel('user-data-changes')
       .on(
         'postgres_changes',
         {
@@ -171,6 +182,20 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         (payload) => {
           console.log('Profile updated:', payload);
           // When profile updates from database, reload to sync local state
+          loadUserProfile();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_balances',
+          filter: `user_id=eq.${authUser?.id}`
+        },
+        (payload) => {
+          console.log('User balance updated:', payload);
+          // When user balance updates, reload to sync local state
           loadUserProfile();
         }
       )
