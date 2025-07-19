@@ -131,11 +131,9 @@ const GoldShopContent = () => {
   };
 
   const handleUnlockReward = async (reward: any) => {
-    // ALWAYS use the actual database status for operations, not testing state
-    const actualStatus = reward.status;
+    const hasEnoughGold = currentGold >= reward.gold_cost;
     
-    // Check if user has enough gold for unlock/redeem
-    if (actualStatus === 'Locked' && currentGold < reward.gold_cost) {
+    if (!hasEnoughGold) {
       toast({
         title: "Not Enough Gold",
         description: `You need ${reward.gold_cost - currentGold} more gold to unlock this reward.`,
@@ -143,50 +141,61 @@ const GoldShopContent = () => {
       });
       return;
     }
-    
-    if (actualStatus === 'Unlocked' && currentGold < reward.gold_cost) {
-      toast({
-        title: "Not Enough Gold", 
-        description: `You need ${reward.gold_cost - currentGold} more gold to redeem this reward.`,
-        variant: "destructive"
-      });
-      return;
-    }
 
-    if (actualStatus === 'Unlocked') {
-      // Redeem the reward (costs gold and updates both reward status and balance)
-      const result = await redeemReward(reward.reward_id);
-      if (result.success) {
-        // Refresh balance to show updated gold amount
-        await refetchBalance();
-        toast({
-          title: "🎉 Reward Redeemed!",
-          description: `Enjoy your ${reward.name}! ${reward.gold_cost} gold spent.`,
-        });
-      } else {
-        toast({
-          title: "Redemption Failed",
-          description: result.error || "Unknown error occurred",
-          variant: "destructive"
-        });
-      }
-    } else if (actualStatus === 'Locked') {
-      // Unlock the reward (costs gold - handled by unlockReward function)
+    try {
+      // Unlock process - deduct gold and move from Locked to Unlocked
       const result = await unlockReward(reward.reward_id, reward.gold_cost);
-      if (result.success) {
-        // Refresh balance to show updated gold amount
-        await refetchBalance();
-        toast({
-          title: "🎉 Reward Unlocked!",
-          description: `${reward.name} is now available to redeem!`,
-        });
-      } else {
+      
+      if (!result.success) {
         toast({
           title: "Unlock Failed",
           description: result.error || "Unknown error occurred",
           variant: "destructive"
         });
+        return;
       }
+
+      await refetchBalance();
+      
+      toast({
+        title: "🎉 Reward Unlocked!",
+        description: `${reward.name} is now available to redeem!`,
+      });
+    } catch (error) {
+      console.error('Error unlocking reward:', error);
+      toast({
+        title: "Error",
+        description: "Failed to unlock reward. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleRedeemReward = async (reward: any) => {
+    try {
+      // Redeem process - move from Unlocked to Redeemed without deducting gold
+      const result = await redeemReward(reward.reward_id);
+      
+      if (!result.success) {
+        toast({
+          title: "Redeem Failed",
+          description: result.error || "Unknown error occurred",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      toast({
+        title: "🎉 Reward Redeemed!",
+        description: `Enjoy your ${reward.name}!`,
+      });
+    } catch (error) {
+      console.error('Error redeeming reward:', error);
+      toast({
+        title: "Error",
+        description: "Failed to redeem reward. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -361,11 +370,12 @@ const GoldShopContent = () => {
                       );
                     })()}
                     
-                    {(() => {
+                     {(() => {
                       const hasEnoughGold = currentGold >= reward.gold_cost;
                       
-                      // Determine button text and state based on user's gold and reward status
+                      // Determine button text, action, and state based on reward status
                       let buttonText = '';
+                      let onClick = () => {};
                       let isDisabled = false;
                       let buttonClass = 'w-full bg-amber-600 hover:bg-amber-700';
                       
@@ -374,17 +384,14 @@ const GoldShopContent = () => {
                         isDisabled = true;
                         buttonClass = 'w-full bg-green-600/50 cursor-not-allowed';
                       } else if (reward.status === 'Unlocked') {
-                        if (hasEnoughGold) {
-                          buttonText = 'Unlocked';
-                          isDisabled = false;
-                        } else {
-                          buttonText = 'Need More Gold';
-                          isDisabled = true;
-                          buttonClass = 'w-full bg-slate-600 cursor-not-allowed';
-                        }
+                        buttonText = 'Redeem';
+                        onClick = () => handleRedeemReward(reward);
+                        isDisabled = false;
+                        buttonClass = 'w-full bg-blue-600 hover:bg-blue-700';
                       } else { // status === 'Locked'
                         if (hasEnoughGold) {
-                          buttonText = 'Unlocked';
+                          buttonText = 'Unlock';
+                          onClick = () => handleUnlockReward(reward);
                           isDisabled = false;
                         } else {
                           buttonText = 'Need More Gold';
@@ -395,7 +402,7 @@ const GoldShopContent = () => {
                       
                       return (
                         <Button
-                          onClick={() => handleUnlockReward(reward)}
+                          onClick={onClick}
                           disabled={isDisabled}
                           size="sm"
                           className={buttonClass}
