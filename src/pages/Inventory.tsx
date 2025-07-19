@@ -8,7 +8,7 @@ import { useUser } from '@/contexts/UserContext';
 import { useGuest } from '@/contexts/GuestContext';
 
 const Inventory = () => {
-  const [activeTab, setActiveTab] = useState("inventory");
+  const [activeTab, setActiveTab] = useState("gold-shop");
   const { user } = useUser();
   const { isGuestMode, guestUser } = useGuest();
   
