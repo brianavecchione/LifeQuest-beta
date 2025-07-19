@@ -14,7 +14,7 @@ import { useRewards } from '@/hooks/useRewardsWrapper';
 import { useUserBalance } from '@/hooks/useUserBalanceWrapper';
 
 // Testing flag - set to true to disable redemptions for testing
-const IS_TESTING_REWARDS = false;
+const IS_TESTING_REWARDS = true;
 
 const GoldShopContent = () => {
   const { toast } = useToast();
@@ -27,6 +27,9 @@ const GoldShopContent = () => {
   const [customRewardType, setCustomRewardType] = useState<'Personal' | 'Company'>('Personal');
   const [isAddingReward, setIsAddingReward] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
+  
+  // Testing state for toggling reward status
+  const [testingRewardStates, setTestingRewardStates] = useState<Record<string, string>>({});
 
   const currentGold = balance?.current_gold_balance || 0;
   
@@ -93,6 +96,28 @@ const GoldShopContent = () => {
         variant: "destructive"
       });
     }
+  };
+
+  // Testing function to toggle reward states
+  const toggleTestingRewardState = (rewardId: string, currentStatus: string) => {
+    const stateCycle = ['Locked', 'Unlocked', 'Redeemed'];
+    const currentIndex = stateCycle.indexOf(currentStatus);
+    const nextIndex = (currentIndex + 1) % stateCycle.length;
+    const nextState = stateCycle[nextIndex];
+    
+    setTestingRewardStates(prev => ({
+      ...prev,
+      [rewardId]: nextState
+    }));
+    
+    toast({
+      title: "Testing State Changed",
+      description: `Reward status changed to: ${nextState}`,
+    });
+  };
+
+  const getTestingRewardStatus = (reward: any) => {
+    return testingRewardStates[reward.reward_id] || reward.status;
   };
 
   const handleUnlockReward = async (reward: any) => {
@@ -256,32 +281,39 @@ const GoldShopContent = () => {
                         <Coins className="w-4 h-4 text-yellow-400" />
                         <span className="text-yellow-400 font-bold text-sm">{reward.gold_cost} Gold</span>
                       </div>
-                      <Badge className={reward.status === 'Redeemed' ? 'bg-green-600' : reward.status === 'Unlocked' ? 'bg-blue-600' : 'bg-slate-600'}>
-                        {reward.status}
+                      <Badge className={getTestingRewardStatus(reward) === 'Redeemed' ? 'bg-green-600' : getTestingRewardStatus(reward) === 'Unlocked' ? 'bg-blue-600' : 'bg-slate-600'}>
+                        {getTestingRewardStatus(reward)}
                       </Badge>
                     </div>
                     
-                    <Button
-                      onClick={() => handleUnlockReward(reward)}
-                      disabled={
-                        IS_TESTING_REWARDS || 
-                        reward.status === 'Redeemed' || 
-                        (reward.status === 'Locked' && currentGold < reward.gold_cost)
-                      }
-                      size="sm"
-                      className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-slate-600"
-                      title={
-                        IS_TESTING_REWARDS ? "Testing mode: redemptions disabled" :
-                        reward.status === 'Locked' && currentGold < reward.gold_cost ? 
-                        "Not enough gold" : undefined
-                      }
-                    >
-                      {IS_TESTING_REWARDS ? 'Testing Mode' :
-                       reward.status === 'Redeemed' ? 'Completed' : 
-                       reward.status === 'Unlocked' ? 'Redeem' : 
-                       currentGold >= reward.gold_cost ? 'Unlock' : 
-                       `Need ${reward.gold_cost - currentGold} more gold`}
-                    </Button>
+                    {IS_TESTING_REWARDS ? (
+                      <Button
+                        onClick={() => toggleTestingRewardState(reward.reward_id, getTestingRewardStatus(reward))}
+                        size="sm"
+                        className="w-full bg-blue-600 hover:bg-blue-700"
+                      >
+                        Toggle Status ({getTestingRewardStatus(reward)})
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => handleUnlockReward(reward)}
+                        disabled={
+                          reward.status === 'Redeemed' || 
+                          (reward.status === 'Locked' && currentGold < reward.gold_cost)
+                        }
+                        size="sm"
+                        className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-slate-600"
+                        title={
+                          reward.status === 'Locked' && currentGold < reward.gold_cost ? 
+                          "Not enough gold" : undefined
+                        }
+                      >
+                        {reward.status === 'Redeemed' ? 'Completed' : 
+                         reward.status === 'Unlocked' ? 'Redeem' : 
+                         currentGold >= reward.gold_cost ? 'Unlock' : 
+                         `Need ${reward.gold_cost - currentGold} more gold`}
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
               ))
