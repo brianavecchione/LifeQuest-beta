@@ -295,6 +295,13 @@ const Help = () => {
         <div className="mt-12">
           <AISidekick />
         </div>
+
+        {/* LifeQuest Logo for logged-out users */}
+        <div className="text-center mt-16 mb-8">
+          <h1 className="text-6xl font-bold bg-gradient-to-r from-amber-400 to-purple-600 bg-clip-text text-transparent">
+            LifeQuest
+          </h1>
+        </div>
       </div>
     </div>
   );
