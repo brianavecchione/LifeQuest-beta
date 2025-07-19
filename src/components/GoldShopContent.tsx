@@ -13,11 +13,14 @@ import { useGoldShop } from '@/hooks/useGoldShopWrapper';
 import { useRewards } from '@/hooks/useRewardsWrapper';
 import { useUserBalance } from '@/hooks/useUserBalanceWrapper';
 
+// Testing flag - set to true to disable redemptions for testing
+const IS_TESTING_REWARDS = false;
+
 const GoldShopContent = () => {
   const { toast } = useToast();
   const { items: shopItems, loading: shopLoading, purchaseItem } = useGoldShop();
   const { rewards, loading: rewardsLoading, unlockReward, redeemReward, createReward } = useRewards();
-  const { balance } = useUserBalance();
+  const { balance, spendGold } = useUserBalance();
   
   const [customRewardName, setCustomRewardName] = useState('');
   const [customRewardCost, setCustomRewardCost] = useState('');
@@ -93,25 +96,62 @@ const GoldShopContent = () => {
   };
 
   const handleUnlockReward = async (reward: any) => {
+    // Check testing flag
+    if (IS_TESTING_REWARDS) {
+      toast({
+        title: "Testing Mode",
+        description: "Reward redemption is disabled for testing",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Check if user has enough gold
+    if (currentGold < reward.gold_cost) {
+      toast({
+        title: "Not Enough Gold",
+        description: `You need ${reward.gold_cost - currentGold} more gold to unlock this reward.`,
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (reward.status === 'Unlocked') {
+      // Redeem the reward (no gold cost for redemption)
       const result = await redeemReward(reward.reward_id);
       if (result.success) {
         toast({
           title: "🎉 Reward Redeemed!",
           description: `Enjoy your ${reward.name}!`,
         });
-      }
-    } else {
-      const result = await unlockReward(reward.reward_id, reward.gold_cost);
-      if (result.success) {
-        toast({
-          title: "🎉 Reward Unlocked!",
-          description: `${reward.name} is now available to redeem!`,
-        });
       } else {
         toast({
-          title: "Unlock Failed",
+          title: "Redemption Failed",
           description: result.error || "Unknown error occurred",
+          variant: "destructive"
+        });
+      }
+    } else {
+      // Unlock the reward (costs gold)
+      const goldSpent = await spendGold(reward.gold_cost);
+      if (goldSpent) {
+        const result = await unlockReward(reward.reward_id, reward.gold_cost);
+        if (result.success) {
+          toast({
+            title: "🎉 Reward Unlocked!",
+            description: `${reward.name} is now available to redeem!`,
+          });
+        } else {
+          toast({
+            title: "Unlock Failed",
+            description: result.error || "Unknown error occurred",
+            variant: "destructive"
+          });
+        }
+      } else {
+        toast({
+          title: "Not Enough Gold",
+          description: `You need ${reward.gold_cost} gold to unlock this reward.`,
           variant: "destructive"
         });
       }
@@ -223,11 +263,21 @@ const GoldShopContent = () => {
                     
                     <Button
                       onClick={() => handleUnlockReward(reward)}
-                      disabled={reward.status === 'Redeemed' || (reward.status === 'Locked' && currentGold < reward.gold_cost)}
+                      disabled={
+                        IS_TESTING_REWARDS || 
+                        reward.status === 'Redeemed' || 
+                        (reward.status === 'Locked' && currentGold < reward.gold_cost)
+                      }
                       size="sm"
                       className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-slate-600"
+                      title={
+                        IS_TESTING_REWARDS ? "Testing mode: redemptions disabled" :
+                        reward.status === 'Locked' && currentGold < reward.gold_cost ? 
+                        "Not enough gold" : undefined
+                      }
                     >
-                      {reward.status === 'Redeemed' ? 'Completed' : 
+                      {IS_TESTING_REWARDS ? 'Testing Mode' :
+                       reward.status === 'Redeemed' ? 'Completed' : 
                        reward.status === 'Unlocked' ? 'Redeem' : 
                        currentGold >= reward.gold_cost ? 'Unlock' : 
                        `Need ${reward.gold_cost - currentGold} more gold`}
