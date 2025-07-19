@@ -301,6 +301,18 @@ const GoldShopContent = () => {
                       </Badge>
                     </div>
                     
+                    {/* Gold Progress Bar - Same as LifeQuest rewards */}
+                    {currentGold >= reward.gold_cost ? (
+                      <Progress value={100} className="h-2 mb-3" />
+                    ) : (
+                      <div className="mb-3">
+                        <Progress value={(currentGold / reward.gold_cost) * 100} className="h-2 mb-1" />
+                        <div className="text-xs text-slate-400">
+                          {reward.gold_cost - currentGold} more gold needed
+                        </div>
+                      </div>
+                    )}
+                    
                     {IS_TESTING_REWARDS ? (
                       <div className="space-y-2">
                         <Button
