@@ -142,7 +142,7 @@ const GoldShopContent = () => {
     }
 
     if (reward.status === 'Unlocked') {
-      // Redeem the reward (no gold cost for redemption)
+      // Redeem the reward (costs gold)
       const result = await redeemReward(reward.reward_id);
       if (result.success) {
         toast({

@@ -92,14 +92,54 @@ export const useRewards = () => {
     if (!user) return { success: false, error: 'User not authenticated' };
 
     try {
-      const { error } = await supabase
+      // First get the reward to check its gold cost
+      const { data: reward, error: rewardError } = await supabase
+        .from('rewards')
+        .select('gold_cost')
+        .eq('reward_id', rewardId)
+        .eq('user_id', user.id)
+        .eq('status', 'Unlocked')
+        .single();
+
+      if (rewardError || !reward) {
+        return { success: false, error: 'Reward not found or not unlocked' };
+      }
+
+      // Check user's gold balance
+      const { data: balance, error: balanceError } = await supabase
+        .from('user_balances')
+        .select('current_gold_balance, total_gold_spent')
+        .eq('user_id', user.id)
+        .single();
+
+      if (balanceError || !balance) {
+        return { success: false, error: 'Could not retrieve balance' };
+      }
+
+      if (balance.current_gold_balance < reward.gold_cost) {
+        return { success: false, error: 'Insufficient gold' };
+      }
+
+      // Update reward status to redeemed
+      const { error: updateError } = await supabase
         .from('rewards')
         .update({ status: 'Redeemed' })
         .eq('reward_id', rewardId)
         .eq('user_id', user.id)
         .eq('status', 'Unlocked');
 
-      if (error) throw error;
+      if (updateError) throw updateError;
+
+      // Deduct gold from user balance
+      const { error: balanceUpdateError } = await supabase
+        .from('user_balances')
+        .update({
+          current_gold_balance: balance.current_gold_balance - reward.gold_cost,
+          total_gold_spent: balance.total_gold_spent + reward.gold_cost
+        })
+        .eq('user_id', user.id);
+
+      if (balanceUpdateError) throw balanceUpdateError;
       
       await fetchRewards();
       return { success: true };
