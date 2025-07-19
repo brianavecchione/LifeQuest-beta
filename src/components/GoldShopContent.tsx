@@ -13,13 +13,13 @@ import { useGoldShop } from '@/hooks/useGoldShopWrapper';
 import { useRewards } from '@/hooks/useRewardsWrapper';
 import { useUserBalance } from '@/hooks/useUserBalanceWrapper';
 
-// Testing flag - set to true to disable redemptions for testing
-const IS_TESTING_REWARDS = false;
+// Testing flag - set to true to enable testing features (unredeem button)
+const IS_TESTING_REWARDS = true;
 
 const GoldShopContent = () => {
   const { toast } = useToast();
   const { items: shopItems, loading: shopLoading, purchaseItem } = useGoldShop();
-  const { rewards, loading: rewardsLoading, unlockReward, redeemReward, createReward } = useRewards();
+  const { rewards, loading: rewardsLoading, unlockReward, redeemReward, unredeemReward, createReward } = useRewards();
   const { balance, spendGold } = useUserBalance();
   
   const [customRewardName, setCustomRewardName] = useState('');
@@ -121,21 +121,20 @@ const GoldShopContent = () => {
   };
 
   const handleUnlockReward = async (reward: any) => {
-    // Check testing flag
-    if (IS_TESTING_REWARDS) {
+    // Check if user has enough gold for unlock/redeem
+    if (reward.status === 'Locked' && currentGold < reward.gold_cost) {
       toast({
-        title: "Testing Mode",
-        description: "Reward redemption is disabled for testing",
+        title: "Not Enough Gold",
+        description: `You need ${reward.gold_cost - currentGold} more gold to unlock this reward.`,
         variant: "destructive"
       });
       return;
     }
 
-    // Check if user has enough gold
-    if (currentGold < reward.gold_cost) {
+    if (reward.status === 'Unlocked' && currentGold < reward.gold_cost) {
       toast({
-        title: "Not Enough Gold",
-        description: `You need ${reward.gold_cost - currentGold} more gold to unlock this reward.`,
+        title: "Not Enough Gold", 
+        description: `You need ${reward.gold_cost - currentGold} more gold to redeem this reward.`,
         variant: "destructive"
       });
       return;
@@ -147,7 +146,7 @@ const GoldShopContent = () => {
       if (result.success) {
         toast({
           title: "🎉 Reward Redeemed!",
-          description: `Enjoy your ${reward.name}!`,
+          description: `Enjoy your ${reward.name}! ${reward.gold_cost} gold spent.`,
         });
       } else {
         toast({
@@ -180,6 +179,22 @@ const GoldShopContent = () => {
           variant: "destructive"
         });
       }
+    }
+  };
+
+  const handleUnredeemReward = async (reward: any) => {
+    const result = await unredeemReward(reward.reward_id);
+    if (result.success) {
+      toast({
+        title: "🔄 Reward Unredeemed!",
+        description: `${reward.name} has been unredeemed. ${reward.gold_cost} gold refunded.`,
+      });
+    } else {
+      toast({
+        title: "Unredeem Failed",
+        description: result.error || "Unknown error occurred",
+        variant: "destructive"
+      });
     }
   };
 
@@ -287,32 +302,59 @@ const GoldShopContent = () => {
                     </div>
                     
                     {IS_TESTING_REWARDS ? (
-                      <Button
-                        onClick={() => toggleTestingRewardState(reward.reward_id, getTestingRewardStatus(reward))}
-                        size="sm"
-                        className="w-full bg-blue-600 hover:bg-blue-700"
-                      >
-                        Toggle Status ({getTestingRewardStatus(reward)})
-                      </Button>
+                      <div className="space-y-2">
+                        <Button
+                          onClick={() => toggleTestingRewardState(reward.reward_id, getTestingRewardStatus(reward))}
+                          size="sm"
+                          className="w-full bg-blue-600 hover:bg-blue-700"
+                        >
+                          Toggle Status ({getTestingRewardStatus(reward)})
+                        </Button>
+                        {reward.status === 'Redeemed' && (
+                          <Button
+                            onClick={() => handleUnredeemReward(reward)}
+                            size="sm"
+                            variant="outline"
+                            className="w-full border-orange-600 text-orange-400 hover:bg-orange-600 hover:text-white"
+                          >
+                            🔄 Unredeem (Testing)
+                          </Button>
+                        )}
+                      </div>
                     ) : (
-                      <Button
-                        onClick={() => handleUnlockReward(reward)}
-                        disabled={
-                          reward.status === 'Redeemed' || 
-                          (reward.status === 'Locked' && currentGold < reward.gold_cost)
-                        }
-                        size="sm"
-                        className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-slate-600"
-                        title={
-                          reward.status === 'Locked' && currentGold < reward.gold_cost ? 
-                          "Not enough gold" : undefined
-                        }
-                      >
-                        {reward.status === 'Redeemed' ? 'Completed' : 
-                         reward.status === 'Unlocked' ? 'Redeem' : 
-                         currentGold >= reward.gold_cost ? 'Unlock' : 
-                         `Need ${reward.gold_cost - currentGold} more gold`}
-                      </Button>
+                      <div className="space-y-2">
+                        <Button
+                          onClick={() => handleUnlockReward(reward)}
+                          disabled={
+                            reward.status === 'Redeemed' || 
+                            (reward.status === 'Locked' && currentGold < reward.gold_cost) ||
+                            (reward.status === 'Unlocked' && currentGold < reward.gold_cost)
+                          }
+                          size="sm"
+                          className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-slate-600"
+                          title={
+                            reward.status === 'Locked' && currentGold < reward.gold_cost ? 
+                            "Not enough gold to unlock" : 
+                            reward.status === 'Unlocked' && currentGold < reward.gold_cost ?
+                            "Not enough gold to redeem" : undefined
+                          }
+                        >
+                          {reward.status === 'Redeemed' ? 'Completed' : 
+                           reward.status === 'Unlocked' ? `Redeem (${reward.gold_cost} gold)` : 
+                           currentGold >= reward.gold_cost ? `Unlock (${reward.gold_cost} gold)` : 
+                           `Need ${reward.gold_cost - currentGold} more gold`}
+                        </Button>
+                        {IS_TESTING_REWARDS && reward.status === 'Redeemed' && (
+                          <Button
+                            onClick={() => handleUnredeemReward(reward)}
+                            size="sm"
+                            variant="outline"
+                            className="w-full border-orange-600 text-orange-400 hover:bg-orange-600 hover:text-white"
+                          >
+                            🔄 Unredeem (Testing)
+                          </Button>
+                        )}
+                      </div>
                     )}
                   </CardContent>
                 </Card>

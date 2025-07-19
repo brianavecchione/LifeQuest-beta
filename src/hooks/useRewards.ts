@@ -149,6 +149,63 @@ export const useRewards = () => {
     }
   };
 
+  const unredeemReward = async (rewardId: string) => {
+    if (!user) return { success: false, error: 'User not authenticated' };
+
+    try {
+      // First get the reward to check its gold cost
+      const { data: reward, error: rewardError } = await supabase
+        .from('rewards')
+        .select('gold_cost')
+        .eq('reward_id', rewardId)
+        .eq('user_id', user.id)
+        .eq('status', 'Redeemed')
+        .single();
+
+      if (rewardError || !reward) {
+        return { success: false, error: 'Reward not found or not redeemed' };
+      }
+
+      // Get user's current balance
+      const { data: balance, error: balanceError } = await supabase
+        .from('user_balances')
+        .select('current_gold_balance, total_gold_spent')
+        .eq('user_id', user.id)
+        .single();
+
+      if (balanceError || !balance) {
+        return { success: false, error: 'Could not retrieve balance' };
+      }
+
+      // Update reward status back to unlocked
+      const { error: updateError } = await supabase
+        .from('rewards')
+        .update({ status: 'Unlocked' })
+        .eq('reward_id', rewardId)
+        .eq('user_id', user.id)
+        .eq('status', 'Redeemed');
+
+      if (updateError) throw updateError;
+
+      // Add gold back to user balance
+      const { error: balanceUpdateError } = await supabase
+        .from('user_balances')
+        .update({
+          current_gold_balance: balance.current_gold_balance + reward.gold_cost,
+          total_gold_spent: Math.max(0, balance.total_gold_spent - reward.gold_cost)
+        })
+        .eq('user_id', user.id);
+
+      if (balanceUpdateError) throw balanceUpdateError;
+      
+      await fetchRewards();
+      return { success: true };
+    } catch (error) {
+      console.error('Error unredeeming reward:', error);
+      return { success: false, error: 'Failed to unredeem reward' };
+    }
+  };
+
   const createReward = async (rewardData: Omit<Reward, 'reward_id' | 'user_id' | 'date_unlocked'>) => {
     if (!user) return;
 
@@ -201,6 +258,7 @@ export const useRewards = () => {
     loading,
     unlockReward,
     redeemReward,
+    unredeemReward,
     createReward,
     refetch: fetchRewards
   };

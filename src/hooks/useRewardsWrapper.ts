@@ -64,6 +64,7 @@ export const useRewards = () => {
       loading: false,
       unlockReward: () => Promise.resolve({ success: true, error: undefined }),
       redeemReward: () => Promise.resolve({ success: true, error: undefined }),
+      unredeemReward: () => Promise.resolve({ success: true, error: undefined }),
       createReward: () => Promise.resolve(),
       refetch: () => Promise.resolve(),
     };
