@@ -148,7 +148,7 @@ const GoldShopContent = () => {
     }
 
     if (reward.status === 'Unlocked') {
-      // Redeem the reward (costs gold)
+      // Redeem the reward (costs gold and updates both reward status and balance)
       const result = await redeemReward(reward.reward_id);
       if (result.success) {
         toast({
@@ -163,26 +163,17 @@ const GoldShopContent = () => {
         });
       }
     } else {
-      // Unlock the reward (costs gold)
-      const goldSpent = await spendGold(reward.gold_cost);
-      if (goldSpent) {
-        const result = await unlockReward(reward.reward_id, reward.gold_cost);
-        if (result.success) {
-          toast({
-            title: "🎉 Reward Unlocked!",
-            description: `${reward.name} is now available to redeem!`,
-          });
-        } else {
-          toast({
-            title: "Unlock Failed",
-            description: result.error || "Unknown error occurred",
-            variant: "destructive"
-          });
-        }
+      // Unlock the reward (costs gold - handled by unlockReward function)
+      const result = await unlockReward(reward.reward_id, reward.gold_cost);
+      if (result.success) {
+        toast({
+          title: "🎉 Reward Unlocked!",
+          description: `${reward.name} is now available to redeem!`,
+        });
       } else {
         toast({
-          title: "Not Enough Gold",
-          description: `You need ${reward.gold_cost} gold to unlock this reward.`,
+          title: "Unlock Failed",
+          description: result.error || "Unknown error occurred",
           variant: "destructive"
         });
       }
@@ -309,19 +300,19 @@ const GoldShopContent = () => {
                     </div>
                     
                     {/* Gold Progress Bar - Same as LifeQuest rewards */}
-                    {(() => {
-                      const userGold = Number(currentGold) || 0;
-                      const rewardCost = Number(reward.gold_cost) || 1;
-                      const progressPercent = Math.min(100, Math.max(0, (userGold / rewardCost) * 100));
-                      const hasEnoughGold = userGold >= rewardCost;
-                      
-                      console.log('🔄 Progress Bar Debug:', {
-                        rewardName: reward.name,
-                        userGold,
-                        rewardCost,
-                        progressPercent,
-                        hasEnoughGold
-                      });
+                      {(() => {
+                        const userGold = Number(currentGold) || 0;
+                        const rewardCost = Number(reward.gold_cost) || 1;
+                        const progressPercent = Math.min(100, Math.max(0, (userGold / rewardCost) * 100));
+                        const hasEnoughGold = userGold >= rewardCost;
+                        
+                        console.log('🔄 Progress Bar Debug:', {
+                          rewardName: reward.name,
+                          userGold,
+                          rewardCost,
+                          progressPercent,
+                          hasEnoughGold
+                        });
                       
                       return (
                         <div className="mb-3">
@@ -356,28 +347,25 @@ const GoldShopContent = () => {
                         )}
                       </div>
                     ) : (
-                      <div className="space-y-2">
-                        <Button
-                          onClick={() => handleUnlockReward(reward)}
-                          disabled={
-                            reward.status === 'Redeemed' || 
-                            (reward.status === 'Locked' && currentGold < reward.gold_cost) ||
-                            (reward.status === 'Unlocked' && currentGold < reward.gold_cost)
-                          }
-                          size="sm"
-                          className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-slate-600"
-                          title={
-                            reward.status === 'Locked' && currentGold < reward.gold_cost ? 
-                            "Not enough gold to unlock" : 
-                            reward.status === 'Unlocked' && currentGold < reward.gold_cost ?
-                            "Not enough gold to redeem" : undefined
-                          }
-                        >
-                          {reward.status === 'Redeemed' ? 'Completed' : 
-                           reward.status === 'Unlocked' ? `Redeem (${reward.gold_cost} gold)` : 
-                           currentGold >= reward.gold_cost ? `Unlock (${reward.gold_cost} gold)` : 
-                           `Need ${reward.gold_cost - currentGold} more gold`}
-                        </Button>
+                       <div className="space-y-2">
+                         <Button
+                           onClick={() => handleUnlockReward(reward)}
+                           disabled={
+                             reward.status === 'Redeemed' || 
+                             currentGold < reward.gold_cost
+                           }
+                           size="sm"
+                           className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-slate-600"
+                           title={
+                             currentGold < reward.gold_cost ? 
+                             `Need ${reward.gold_cost - currentGold} more gold` : undefined
+                           }
+                         >
+                           {reward.status === 'Redeemed' ? '✓ Completed' : 
+                            reward.status === 'Unlocked' ? `Redeem (${reward.gold_cost} gold)` : 
+                            currentGold >= reward.gold_cost ? `Unlock (${reward.gold_cost} gold)` : 
+                            `Need ${reward.gold_cost - currentGold} more gold`}
+                         </Button>
                         {IS_TESTING_REWARDS && reward.status === 'Redeemed' && (
                           <Button
                             onClick={() => handleUnredeemReward(reward)}
