@@ -6,11 +6,8 @@ import {
   AccordionTrigger 
 } from '@/components/ui/accordion';
 import AISidekick from '@/components/AISidekick';
-import { useAuth } from '@/contexts/AuthContext';
 
 const Help = () => {
-  const { user } = useAuth();
-
   return (
     <div className="text-white">
       <div className="relative z-10 max-w-4xl mx-auto px-4 pt-36 pb-12">{/* Added more padding at the top */}
@@ -298,17 +295,6 @@ const Help = () => {
         <div className="mt-12">
           <AISidekick />
         </div>
-
-        {/* Large LifeQuest Logo - Only show when logged out */}
-        {!user && (
-          <div className="mt-16 mb-8 flex justify-center">
-            <img 
-              src="/lovable-uploads/cb8c4308-d603-4205-bacf-a30e3b1f5afa.png" 
-              alt="LifeQuest Logo" 
-              className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48"
-            />
-          </div>
-        )}
       </div>
     </div>
   );
