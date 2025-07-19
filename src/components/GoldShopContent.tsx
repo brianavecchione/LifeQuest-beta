@@ -33,6 +33,13 @@ const GoldShopContent = () => {
 
   const currentGold = balance?.current_gold_balance || 0;
   
+  // Debug logging for progress bar issues
+  console.log('🏆 GoldShopContent Debug:', {
+    currentGold,
+    balance: balance?.current_gold_balance,
+    balanceObject: balance,
+    typeof_currentGold: typeof currentGold
+  });
   // Using real database data from hooks
 
   const getRarityColor = (rarity: string) => {
@@ -302,16 +309,31 @@ const GoldShopContent = () => {
                     </div>
                     
                     {/* Gold Progress Bar - Same as LifeQuest rewards */}
-                    {currentGold >= reward.gold_cost ? (
-                      <Progress value={100} className="h-2 mb-3" />
-                    ) : (
-                      <div className="mb-3">
-                        <Progress value={(currentGold / reward.gold_cost) * 100} className="h-2 mb-1" />
-                        <div className="text-xs text-slate-400">
-                          {reward.gold_cost - currentGold} more gold needed
+                    {(() => {
+                      const userGold = Number(currentGold) || 0;
+                      const rewardCost = Number(reward.gold_cost) || 1;
+                      const progressPercent = Math.min(100, Math.max(0, (userGold / rewardCost) * 100));
+                      const hasEnoughGold = userGold >= rewardCost;
+                      
+                      console.log('🔄 Progress Bar Debug:', {
+                        rewardName: reward.name,
+                        userGold,
+                        rewardCost,
+                        progressPercent,
+                        hasEnoughGold
+                      });
+                      
+                      return (
+                        <div className="mb-3">
+                          <Progress value={hasEnoughGold ? 100 : progressPercent} className="h-2 mb-1" />
+                          {!hasEnoughGold && (
+                            <div className="text-xs text-slate-400">
+                              {rewardCost - userGold} more gold needed
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    )}
+                      );
+                    })()}
                     
                     {IS_TESTING_REWARDS ? (
                       <div className="space-y-2">
@@ -421,16 +443,31 @@ const GoldShopContent = () => {
                         </div>
                       </div>
                       
-                      {currentGold >= item.gold_cost ? (
-                        <Progress value={100} className="h-2" />
-                      ) : (
-                        <div>
-                          <Progress value={(currentGold / item.gold_cost) * 100} className="h-2 mb-1" />
-                          <div className="text-xs text-slate-400">
-                            {item.gold_cost - currentGold} more gold needed
+                      {(() => {
+                        const userGold = Number(currentGold) || 0;
+                        const itemCost = Number(item.gold_cost) || 1;
+                        const progressPercent = Math.min(100, Math.max(0, (userGold / itemCost) * 100));
+                        const hasEnoughGold = userGold >= itemCost;
+                        
+                        console.log('🔄 LifeQuest Progress Bar Debug:', {
+                          itemName: item.name,
+                          userGold,
+                          itemCost,
+                          progressPercent,
+                          hasEnoughGold
+                        });
+                        
+                        return (
+                          <div className="mb-3">
+                            <Progress value={hasEnoughGold ? 100 : progressPercent} className="h-2 mb-1" />
+                            {!hasEnoughGold && (
+                              <div className="text-xs text-slate-400">
+                                {itemCost - userGold} more gold needed
+                              </div>
+                            )}
                           </div>
-                        </div>
-                      )}
+                        );
+                      })()}
                       
                       <Button
                         onClick={() => handlePurchaseShopItem(item)}
