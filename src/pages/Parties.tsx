@@ -28,7 +28,7 @@ const Parties = () => {
 
       {/* Coming Soon Banner */}
       <div className="mb-8 max-w-4xl mx-auto">
-        <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-xl p-6 border border-blue-500/30 shadow-lg">
+        <div className="bg-slate-900/80 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 shadow-xl">
           <div className="flex items-center justify-center gap-3 mb-3">
             <Users className="w-6 h-6 text-blue-400" />
             <Clock className="w-6 h-6 text-purple-400" />
