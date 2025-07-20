@@ -19,9 +19,9 @@ const CharacterCard = () => {
   const xpProgress = activeUser.xp;
   const bestStreak = isGuestMode ? { current_streak: 5, streak_name: 'Daily Quests' } : getBestStreak();
 
-  // Helper function to render avatar with frame (increased size)
+  // Helper function to render avatar with frame (increased size further)
   const renderAvatarWithFrame = (avatarData: string, frameClass?: string) => {
-    const baseClasses = "w-32 h-32 rounded-full object-cover shadow-lg border-4 border-amber-400/50"; // Increased from w-24 h-24
+    const baseClasses = "w-40 h-40 rounded-full object-cover shadow-lg border-4 border-amber-400/50"; // Increased from w-32 h-32 to w-40 h-40
     const appliedFrameClass = frameClass && frameClass !== 'avatar-frame-none' ? frameClass : '';
     
     if (avatarData && (avatarData.startsWith('data:') || avatarData.startsWith('http'))) {
@@ -34,7 +34,7 @@ const CharacterCard = () => {
       );
     } else {
       return (
-        <div className={`${baseClasses} bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-4xl font-bold text-slate-900 ${appliedFrameClass}`}>
+        <div className={`${baseClasses} bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-5xl font-bold text-slate-900 ${appliedFrameClass}`}>
           {avatarData}
         </div>
       );
@@ -47,7 +47,7 @@ const CharacterCard = () => {
       <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-amber-500/30 shadow-2xl">
         {/* Loading state - centered layout */}
         <div className="flex flex-col items-center mb-6">
-          <Skeleton className="w-32 h-32 rounded-full bg-slate-700 mb-4" />
+          <Skeleton className="w-40 h-40 rounded-full bg-slate-700 mb-4" />
           <Skeleton className="h-8 w-32 mb-2 bg-slate-700" />
           <Skeleton className="h-6 w-24 mb-1 bg-slate-700" />
           <Skeleton className="h-5 w-20 bg-slate-700" />
@@ -98,7 +98,7 @@ const CharacterCard = () => {
         {/* Avatar with Level Badge */}
         <div className="relative mb-4">
           {renderAvatarWithFrame(activeUser.avatar, activeUser.avatarFrame)}
-          <div className="absolute -bottom-2 -right-2 bg-amber-400 text-slate-900 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border-2 border-slate-800">
+          <div className="absolute -bottom-2 -right-2 bg-amber-400 text-slate-900 rounded-full w-12 h-12 flex items-center justify-center text-xl font-bold border-2 border-slate-800">
             {activeUser.level}
           </div>
         </div>
