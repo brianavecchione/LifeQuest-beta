@@ -21,7 +21,7 @@ const CharacterCard = () => {
 
   // Helper function to render avatar with frame (increased size further)
   const renderAvatarWithFrame = (avatarData: string, frameClass?: string) => {
-    const baseClasses = "w-32 h-32 rounded-full object-cover shadow-lg border-4 border-amber-400/50"; // Reduced back to w-32 h-32
+    const baseClasses = "w-28 h-28 rounded-full object-cover shadow-lg border-4 border-amber-400/50"; // Reduced by ~12% from w-32 h-32
     const appliedFrameClass = frameClass && frameClass !== 'avatar-frame-none' ? frameClass : '';
     
     if (avatarData && (avatarData.startsWith('data:') || avatarData.startsWith('http'))) {
@@ -47,7 +47,7 @@ const CharacterCard = () => {
       <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-amber-500/30 shadow-2xl">
         {/* Loading state - centered layout */}
         <div className="flex flex-col items-center mb-6">
-          <Skeleton className="w-32 h-32 rounded-full bg-slate-700 mb-4" />
+          <Skeleton className="w-28 h-28 rounded-full bg-slate-700 mb-4" />
           <Skeleton className="h-8 w-32 mb-2 bg-slate-700" />
           <Skeleton className="h-6 w-24 mb-1 bg-slate-700" />
           <Skeleton className="h-5 w-20 bg-slate-700" />
@@ -71,7 +71,7 @@ const CharacterCard = () => {
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-amber-500/30 shadow-2xl relative">
+    <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 pb-4 border border-amber-500/30 shadow-2xl relative h-full flex flex-col">{/* Reduced bottom padding from p-6 to pb-4, added h-full and flex flex-col */}
       {/* Edit Button - Top Right */}
       <div className="absolute top-4 right-4">
         <TooltipProvider>
@@ -94,30 +94,30 @@ const CharacterCard = () => {
       </div>
 
       {/* Centered Avatar and Character Info */}
-      <div className="flex flex-col items-center mb-6">
+      <div className="flex flex-col items-center mb-4"> {/* Reduced margin from mb-6 to mb-4 */}
         {/* Avatar with Level Badge */}
-        <div className="relative mb-4">
+        <div className="relative mb-3"> {/* Reduced margin from mb-4 to mb-3 */}
           {renderAvatarWithFrame(activeUser.avatar, activeUser.avatarFrame)}
-          <div className="absolute -bottom-2 -right-2 bg-amber-400 text-slate-900 rounded-full w-12 h-12 flex items-center justify-center text-xl font-bold border-2 border-slate-800">
+          <div className="absolute -bottom-2 -right-2 bg-amber-400 text-slate-900 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border-2 border-slate-800"> {/* Reduced badge size from w-12 h-12 to w-10 h-10, text from text-xl to text-lg */}
             {activeUser.level}
           </div>
         </div>
         
         {/* Character Name, Level, and Title - Stacked Vertically */}
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-amber-400 mb-2">{activeUser.name}</h2>
-          <div className="flex items-center justify-center gap-2 text-yellow-300 mb-2">
+          <h2 className="text-3xl font-bold text-amber-400 mb-1">{activeUser.name}</h2> {/* Reduced margin from mb-2 to mb-1 */}
+          <div className="flex items-center justify-center gap-2 text-yellow-300 mb-1"> {/* Reduced margin from mb-2 to mb-1 */}
             <Crown className="w-5 h-5" />
             <span className="text-xl font-semibold">Level {activeUser.level}</span>
           </div>
-          <div className="text-base text-slate-300 font-medium mb-1">
+          <div className="text-base text-slate-300 font-medium">
             <span>Adventurer</span> {/* Placeholder for class/archetype */}
           </div>
         </div>
       </div>
 
       {/* Level Progress */}
-      <div className="mb-6">
+      <div className="mb-4"> {/* Reduced margin from mb-6 to mb-4 */}
         <div className="flex justify-between items-center mb-2">
           <span className="text-slate-300 font-medium">Level Progress</span>
           <span className="text-amber-400 font-bold">{Math.round(activeUser.xp)}%</span>
@@ -132,8 +132,8 @@ const CharacterCard = () => {
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-3 gap-3">
+      {/* Stats Grid - Push to bottom with flex-grow */}
+      <div className="grid grid-cols-3 gap-3 mt-auto"> {/* Added mt-auto to push to bottom */}
         <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-red-500/30 hover:border-red-500/50 transition-colors">
           <div className="flex items-center justify-center mb-1">
             <TrendingUp className="w-4 h-4 text-red-400 mr-1" />
