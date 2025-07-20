@@ -223,29 +223,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateUser = async (updates: Partial<UserData>) => {
     setUser(prev => ({ ...prev, ...updates }));
     
-    // If avatar or avatarFrame is being updated and user is authenticated, save to database
-    if ((updates.avatar || updates.avatarFrame) && authUser) {
+    // If avatar is being updated and user is authenticated, save to database
+    if (updates.avatar && authUser) {
       try {
-        const dbUpdates: any = {};
-        
-        if (updates.avatar) {
-          dbUpdates.avatar_url = updates.avatar;
-        }
-        
-        if (updates.avatarFrame) {
-          dbUpdates.avatar_frame = updates.avatarFrame;
-        }
-        
         const { error } = await supabase
           .from('profiles')
-          .update(dbUpdates)
+          .update({ avatar_url: updates.avatar })
           .eq('user_id', authUser.id);
           
         if (error) {
-          console.error('Error updating profile in database:', error);
+          console.error('Error updating avatar in database:', error);
         }
       } catch (error) {
-        console.error('Error updating profile:', error);
+        console.error('Error updating avatar:', error);
       }
     }
   };

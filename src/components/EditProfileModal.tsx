@@ -220,7 +220,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
         if (error) throw error;
       }
 
-      // Update local user state - always call updateUser with avatarFrame to ensure it's updated
+      // Update local user state
       if (Object.keys(updates).length > 0) {
         updateUser(updates);
       }
