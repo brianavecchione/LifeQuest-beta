@@ -16,6 +16,7 @@ interface UserData {
   dailyXp: Record<string, number>; // Track XP by date (YYYY-MM-DD format)
   reduceAnimations: boolean; // Accessibility setting to reduce animations
   avatar: string; // Avatar image URL or identifier
+  avatarFrame: string; // Avatar frame style identifier
 }
 
 interface UserContextType {
@@ -46,6 +47,7 @@ const emptyUser: UserData = {
   dailyXp: {},
   reduceAnimations: false,
   avatar: '',
+  avatarFrame: 'none',
 };
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -130,6 +132,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           dailyXp: {}, // No longer used, keep for compatibility
           reduceAnimations: settings.reduceAnimations || false,
           avatar: profile.avatar_url || (profile.display_name ? profile.display_name.charAt(0).toUpperCase() : 'A'),
+          avatarFrame: profile.avatar_frame || 'none',
         };
         
         // Update state with database values as source of truth

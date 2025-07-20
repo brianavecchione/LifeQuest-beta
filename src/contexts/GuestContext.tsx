@@ -11,6 +11,7 @@ interface GuestUserData {
   dailyXp: Record<string, number>;
   reduceAnimations: boolean;
   avatar: string;
+  avatarFrame: string;
 }
 
 interface GuestQuest {
@@ -253,6 +254,7 @@ const createDummyUser = (): GuestUserData => {
     },
     reduceAnimations: false,
     avatar: 'A', // Show "A" for Adventurer
+    avatarFrame: 'bronze',
   };
 };
 

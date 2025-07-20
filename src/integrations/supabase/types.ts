@@ -128,6 +128,45 @@ export type Database = {
         }
         Relationships: []
       }
+      avatar_frames: {
+        Row: {
+          created_at: string | null
+          css_class: string | null
+          description: string | null
+          display_name: string
+          id: string
+          is_active: boolean | null
+          name: string
+          rarity: string | null
+          unlock_requirements: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          css_class?: string | null
+          description?: string | null
+          display_name: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          rarity?: string | null
+          unlock_requirements?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          css_class?: string | null
+          description?: string | null
+          display_name?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          rarity?: string | null
+          unlock_requirements?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       badge_notifications: {
         Row: {
           achievement_id: string
@@ -530,6 +569,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_frame: string | null
           avatar_url: string | null
           created_at: string
           display_name: string | null
@@ -543,6 +583,7 @@ export type Database = {
           xp_balance: number
         }
         Insert: {
+          avatar_frame?: string | null
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
@@ -556,6 +597,7 @@ export type Database = {
           xp_balance?: number
         }
         Update: {
+          avatar_frame?: string | null
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null

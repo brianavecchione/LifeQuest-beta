@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Crown, TrendingUp, Star, Flame, Settings } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
@@ -7,15 +7,39 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { useUser } from '@/contexts/UserContext';
 import { useGuest } from '@/contexts/GuestContext';
 import { useStreaks } from '@/hooks/useStreaksWrapper';
+import EditProfileModal from '@/components/EditProfileModal';
 
 const CharacterCard = () => {
   const { user: character, isLoading } = useUser();
   const { isGuestMode, guestUser } = useGuest();
   const { getBestStreak, loading: streaksLoading } = useStreaks();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
   const activeUser = isGuestMode ? guestUser : character;
   const xpProgress = activeUser.xp;
   const bestStreak = isGuestMode ? { current_streak: 5, streak_name: 'Daily Quests' } : getBestStreak();
+
+  // Helper function to render avatar with frame
+  const renderAvatarWithFrame = (avatarData: string, frameClass?: string) => {
+    const baseClasses = "w-24 h-24 rounded-full object-cover shadow-lg border-4 border-amber-400/50";
+    const appliedFrameClass = frameClass && frameClass !== 'avatar-frame-none' ? frameClass : '';
+    
+    if (avatarData && (avatarData.startsWith('data:') || avatarData.startsWith('http'))) {
+      return (
+        <img 
+          src={avatarData} 
+          alt={activeUser.name} 
+          className={`${baseClasses} ${appliedFrameClass}`}
+        />
+      );
+    } else {
+      return (
+        <div className={`${baseClasses} bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-3xl font-bold text-slate-900 ${appliedFrameClass}`}>
+          {avatarData}
+        </div>
+      );
+    }
+  };
 
   // Show loading state if user data is still loading
   if (!isGuestMode && (isLoading || !character.name)) {
@@ -53,7 +77,12 @@ const CharacterCard = () => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button size="sm" variant="ghost" className="p-2 hover:bg-amber-500/20">
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="p-2 hover:bg-amber-500/20"
+                onClick={() => setIsEditModalOpen(true)}
+              >
                 <Settings className="w-4 h-4 text-amber-400" />
               </Button>
             </TooltipTrigger>
@@ -66,27 +95,12 @@ const CharacterCard = () => {
 
       {/* Header with Character Portrait and Basic Info */}
       <div className="flex items-center gap-4 mb-6">
-        {activeUser.avatar && (activeUser.avatar.startsWith('data:') || activeUser.avatar.startsWith('http')) ? (
-          <div className="relative">
-            <img 
-              src={activeUser.avatar} 
-              alt={activeUser.name} 
-              className="w-24 h-24 rounded-full object-cover shadow-lg border-4 border-amber-400/50"
-            />
-            <div className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-900 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
-              {activeUser.level}
-            </div>
+        <div className="relative">
+          {renderAvatarWithFrame(activeUser.avatar, activeUser.avatarFrame)}
+          <div className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-900 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
+            {activeUser.level}
           </div>
-        ) : (
-          <div className="relative">
-            <div className="w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-3xl font-bold text-slate-900 shadow-lg border-4 border-amber-400/50">
-              {activeUser.avatar}
-            </div>
-            <div className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-900 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
-              {activeUser.level}
-            </div>
-          </div>
-        )}
+        </div>
         
         <div className="flex-1">
           <h2 className="text-2xl font-bold text-amber-400 mb-1">{activeUser.name}</h2>
@@ -158,6 +172,12 @@ const CharacterCard = () => {
           </Tooltip>
         </TooltipProvider>
       </div>
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal 
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+      />
     </div>
   );
 };
