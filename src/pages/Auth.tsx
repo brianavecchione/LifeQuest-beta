@@ -214,7 +214,7 @@ const Auth = () => {
                       src="/lovable-uploads/3b10a53a-0b74-49ce-ab04-0bc91897d5c6.png" 
                       alt="LifeQuest Logo" 
                       className="h-16 sm:h-20 lg:h-24 w-auto relative z-10"
-                      style={{ filter: 'drop-shadow(0 4px 8px rgba(80, 48, 28, 0.7)) drop-shadow(0 0 16px rgba(80, 48, 28, 0.5))' }}
+                      style={{ filter: 'drop-shadow(0 4px 8px rgba(251, 191, 36, 0.6)) drop-shadow(0 0 20px rgba(245, 158, 11, 0.8))' }}
                     />
                   </div>
                   
