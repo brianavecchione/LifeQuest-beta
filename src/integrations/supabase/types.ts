@@ -874,6 +874,7 @@ export type Database = {
           created_at: string
           daily_quest_reminders_enabled: boolean
           difficulty_multipliers_enabled: boolean
+          has_seen_walkthrough: boolean
           id: string
           reduce_animations_enabled: boolean
           streak_warnings_enabled: boolean
@@ -889,6 +890,7 @@ export type Database = {
           created_at?: string
           daily_quest_reminders_enabled?: boolean
           difficulty_multipliers_enabled?: boolean
+          has_seen_walkthrough?: boolean
           id?: string
           reduce_animations_enabled?: boolean
           streak_warnings_enabled?: boolean
@@ -904,6 +906,7 @@ export type Database = {
           created_at?: string
           daily_quest_reminders_enabled?: boolean
           difficulty_multipliers_enabled?: boolean
+          has_seen_walkthrough?: boolean
           id?: string
           reduce_animations_enabled?: boolean
           streak_warnings_enabled?: boolean

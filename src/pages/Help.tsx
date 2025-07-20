@@ -5,12 +5,17 @@ import {
   AccordionItem, 
   AccordionTrigger 
 } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
+import { Play } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import AISidekick from '@/components/AISidekick';
 
 const Help = () => {
+  const { openWalkthrough } = useAuth();
+
   return (
     <div className="text-white">
-      <div className="relative z-10 max-w-4xl mx-auto px-4 pt-36 pb-12">{/* Added more padding at the top */}
+      <div className="relative z-10 max-w-4xl mx-auto px-4 pt-36 pb-12">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">
@@ -19,6 +24,17 @@ const Help = () => {
           <p className="text-slate-300 text-lg max-w-2xl mx-auto">
             Everything you need to know about using LifeQuest to level up your productivity and build better habits.
           </p>
+          
+          {/* Getting Started Walkthrough Button */}
+          <div className="mt-6">
+            <Button
+              onClick={openWalkthrough}
+              className="bg-amber-600 hover:bg-amber-700 text-white font-semibold px-6 py-3 rounded-lg flex items-center gap-2 mx-auto"
+            >
+              <Play className="w-5 h-5" />
+              Getting Started Walkthrough
+            </Button>
+          </div>
         </div>
 
         {/* FAQ Section */}

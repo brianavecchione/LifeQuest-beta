@@ -7,12 +7,15 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  showWalkthrough: boolean;
   signUp: (email: string, password: string, displayName?: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signInWithGoogle: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   deleteAccount: () => Promise<{ error: any }>;
   resetPassword: (email: string) => Promise<{ error: any }>;
+  openWalkthrough: () => void;
+  closeWalkthrough: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -21,6 +24,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showWalkthrough, setShowWalkthrough] = useState(false);
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -30,7 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(session?.user ?? null);
         setLoading(false);
         
-        // Seed user data after successful signup
+        // Seed user data after successful signup and check walkthrough status
         if (event === 'SIGNED_IN' && session?.user) {
           // Use setTimeout to avoid blocking the auth flow
           setTimeout(async () => {
@@ -38,6 +42,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               await supabase.functions.invoke('seed-user-data', {
                 body: { user_id: session.user.id }
               });
+
+              // Check if user has seen walkthrough
+              const { data: userSettings } = await supabase
+                .from('user_settings')
+                .select('has_seen_walkthrough')
+                .eq('user_id', session.user.id)
+                .single();
+
+              // Show walkthrough if user hasn't seen it
+              if (userSettings && !userSettings.has_seen_walkthrough) {
+                setShowWalkthrough(true);
+              }
             } catch (error) {
               console.error('Error seeding user data:', error);
             }
@@ -159,16 +175,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
+  const openWalkthrough = () => {
+    setShowWalkthrough(true);
+  };
+
+  const closeWalkthrough = async () => {
+    setShowWalkthrough(false);
+    
+    // Mark walkthrough as seen if user is logged in
+    if (user) {
+      try {
+        await supabase
+          .from('user_settings')
+          .update({ has_seen_walkthrough: true })
+          .eq('user_id', user.id);
+      } catch (error) {
+        console.error('Error updating walkthrough status:', error);
+      }
+    }
+  };
+
   const value: AuthContextType = {
     user,
     session,
     loading,
+    showWalkthrough,
     signUp,
     signIn,
     signInWithGoogle,
     signOut,
     deleteAccount,
     resetPassword,
+    openWalkthrough,
+    closeWalkthrough,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
