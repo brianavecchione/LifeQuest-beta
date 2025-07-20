@@ -30,12 +30,31 @@ const TodaysFocus: React.FC<TodaysFocusProps> = ({
   onBeginQuest,
   activeTimerQuestId
 }) => {
+  const today = new Date().toISOString().split('T')[0];
+  
+  // Get focus quests (originally in today's focus)
   const focusQuests = quests.filter(quest => 
     todaysFocus.includes(quest.id) && quest.quest_type !== 'Daily'
   );
   
-  const incompleteQuests = focusQuests.filter(q => q.status !== 'Completed');
-  const completedQuests = focusQuests.filter(q => q.status === 'Completed');
+  // Also include quests completed today that might have been removed from focus
+  const todayCompletedQuests = quests.filter(quest => 
+    quest.status === 'Completed' && 
+    quest.quest_type !== 'Daily' &&
+    quest.completed_at &&
+    new Date(quest.completed_at).toISOString().split('T')[0] === today
+  );
+  
+  // Combine and deduplicate
+  const allRelevantQuests = [...focusQuests];
+  todayCompletedQuests.forEach(quest => {
+    if (!allRelevantQuests.find(q => q.id === quest.id)) {
+      allRelevantQuests.push(quest);
+    }
+  });
+  
+  const incompleteQuests = allRelevantQuests.filter(q => q.status !== 'Completed');
+  const completedQuests = allRelevantQuests.filter(q => q.status === 'Completed');
   
   // Debug logging
   console.log('🎯 TodaysFocus Debug:', {
