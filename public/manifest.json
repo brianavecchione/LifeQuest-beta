@@ -1,0 +1,27 @@
+{
+  "name": "LifeQuest",
+  "short_name": "LifeQuest",
+  "description": "Gamified productivity dashboard for turning daily tasks into epic quests",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#f59e0b",
+  "icons": [
+    {
+      "src": "/lovable-uploads/bd72b4c6-711a-4cbf-baaa-74b97f341628.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/lovable-uploads/bd72b4c6-711a-4cbf-baaa-74b97f341628.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/lovable-uploads/bd72b4c6-711a-4cbf-baaa-74b97f341628.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
