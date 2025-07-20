@@ -12,8 +12,9 @@ import { useQuests } from '@/hooks/useQuestsWrapper';
 import { useDailyGold } from '@/hooks/useDailyGoldWrapper';
 import { calculateGoldThisWeek, calculateQuestsCompletedThisWeek, getCurrentWeekBounds, calculateXpThisWeek, calculateXpThisMonth } from '@/utils/timezone';
 import { useDailyXp } from '@/hooks/useDailyXpWrapper';
-  const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
+
 const XPProgressChart = () => {
+  const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
   const { user: character, getDailyXpData, getWeeklyXpData, isLoading } = useUser();
   const { isGuestMode, guestUser } = useGuest();
   const { balance } = useUserBalance();
