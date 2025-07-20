@@ -207,24 +207,24 @@ const Auth = () => {
                 <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl text-center px-4 sm:px-8 animate-fade-in">
                   {/* Header Block */}
                   {/* Logo with Glow */}
-                  <div className="flex items-center justify-center mb-4 lg:mb-6 relative">
+                  <div className="flex items-center justify-center mb-6 lg:mb-8 relative">
                     {/* Glow effect behind logo */}
                     <div className="absolute inset-0 bg-gradient-to-r from-amber-400/40 via-yellow-500/50 to-amber-600/40 rounded-full blur-2xl scale-150" />
                     <img 
                       src="/lovable-uploads/3b10a53a-0b74-49ce-ab04-0bc91897d5c6.png" 
                       alt="LifeQuest Logo" 
-                      className="h-10 sm:h-12 lg:h-14 w-auto relative z-10"
+                      className="h-16 sm:h-20 lg:h-24 w-auto relative z-10"
                       style={{ filter: 'drop-shadow(0 4px 8px rgba(80, 48, 28, 0.7)) drop-shadow(0 0 16px rgba(80, 48, 28, 0.5))' }}
                     />
                   </div>
                   
                   {/* Primary Headline */}
-                  <h1 className="text-sm sm:text-base lg:text-lg font-bold text-amber-900 mb-4 lg:mb-6 leading-tight text-center" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)' }}>
+                  <h1 className="text-sm sm:text-base lg:text-lg font-bold text-amber-900 mb-6 lg:mb-8 leading-tight text-center" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)' }}>
                     Turn your real-life goals into epic quests—grounded in science, driven by purpose.
                   </h1>
                   
                   {/* Features List Section */}
-                  <div className="space-y-2 lg:space-y-3 mb-4 lg:mb-6">
+                  <div className="space-y-3 lg:space-y-4">
                     <div className="flex items-start gap-3 text-left">
                       <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-amber-700/25 flex items-center justify-center flex-shrink-0 mt-0.5">
                         <CheckSquare className="w-3 h-3 sm:w-4 sm:h-4 text-amber-800" strokeWidth={2} />
@@ -259,13 +259,6 @@ const Auth = () => {
                       </div>
                       <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium leading-snug" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Designed with behavioral science to support motivation, focus, and consistent follow-through</span>
                     </div>
-                  </div>
-                  
-                  {/* Call to Action */}
-                  <div className="text-center">
-                    <h2 className="text-sm sm:text-base lg:text-lg text-amber-700 font-bold leading-tight" style={{ textShadow: '0 3px 6px rgba(0, 0, 0, 0.4)' }}>
-                      Join the quest to level up your life!
-                    </h2>
                   </div>
                 </div>
               </div>
