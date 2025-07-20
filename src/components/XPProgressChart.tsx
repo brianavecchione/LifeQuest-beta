@@ -10,15 +10,16 @@ import { useGuest } from '@/contexts/GuestContext';
 import { useUserBalance } from '@/hooks/useUserBalanceWrapper';
 import { useQuests } from '@/hooks/useQuestsWrapper';
 import { useDailyGold } from '@/hooks/useDailyGoldWrapper';
-import { calculateGoldThisWeek, calculateQuestsCompletedThisWeek, getCurrentWeekBounds } from '@/utils/timezone';
-
+import { calculateGoldThisWeek, calculateQuestsCompletedThisWeek, getCurrentWeekBounds, calculateXpThisWeek, calculateXpThisMonth } from '@/utils/timezone';
+import { useDailyXp } from '@/hooks/useDailyXpWrapper';
+  const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
 const XPProgressChart = () => {
   const { user: character, getDailyXpData, getWeeklyXpData, isLoading } = useUser();
   const { isGuestMode, guestUser } = useGuest();
   const { balance } = useUserBalance();
   const { quests } = useQuests();
+  const { dailyXpData: xpHistoryData, loading: xpLoading } = useDailyXp();
   const { dailyGoldData: goldHistoryData, loading: goldLoading } = useDailyGold();
-  const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
   
   const activeUser = isGuestMode ? guestUser : character;
 
@@ -138,18 +139,71 @@ const XPProgressChart = () => {
     }
   }, [isGuestMode, quests]);
 
-  const levelProgress = React.useMemo(() => {
-    const currentLevel = activeUser.level || 1;
-    const currentXP = activeUser.totalXp || 0;
-    const xpForCurrentLevel = (currentLevel - 1) * 100;
-    const xpForNextLevel = currentLevel * 100;
-    const progressInLevel = currentXP - xpForCurrentLevel;
-    const xpNeededForLevel = xpForNextLevel - xpForCurrentLevel;
-    return Math.round((progressInLevel / xpNeededForLevel) * 100);
-  }, [activeUser.level, activeUser.totalXp]);
+  const levelProgressThisPeriod = React.useMemo(() => {
+    if (isGuestMode) return Math.floor(Math.random() * 80) + 10; // Mock data for guest
+    
+    // Check if we have XP history data
+    if (xpLoading) return null; // Still loading
+    
+    try {
+      const currentLevel = activeUser.level || 1;
+      
+      // Calculate XP needed to reach next level
+      const xpForNextLevel = currentLevel * 100;
+      const xpForCurrentLevel = (currentLevel - 1) * 100;
+      const xpNeededForLevelUp = xpForNextLevel - xpForCurrentLevel; // Always 100 in this system
+      
+      // Convert daily XP data to the format expected by calculate functions
+      const xpHistory = xpHistoryData.map(day => ({
+        date: day.fullDate || day.date,
+        xp_earned: day.xp
+      }));
+      
+      // Calculate XP earned this period
+      const xpEarnedThisPeriod = chartPeriod === 'week' 
+        ? calculateXpThisWeek(xpHistory)
+        : calculateXpThisMonth(xpHistory);
+      
+      console.log('📊 Level Progress Debug:', {
+        currentLevel,
+        xpNeededForLevelUp,
+        xpEarnedThisPeriod,
+        chartPeriod,
+        xpHistoryData
+      });
+      
+      if (xpEarnedThisPeriod === 0) {
+        return 0; // No progress this period
+      }
+      
+      // Calculate percentage progress toward next level
+      // If they earned more XP than needed for level up, calculate progress into next level(s)
+      let remainingXp = xpEarnedThisPeriod;
+      let progressPercentage = 0;
+      
+      // Handle case where user leveled up during this period
+      if (remainingXp >= xpNeededForLevelUp) {
+        // They completed at least one level - calculate progress into current/next level
+        const completeLevels = Math.floor(remainingXp / 100); // Each level needs 100 XP
+        remainingXp = remainingXp % 100; // XP progress into the current level
+        progressPercentage = remainingXp; // This represents percentage since each level is 100 XP
+      } else {
+        // They didn't level up - show progress toward next level
+        progressPercentage = (remainingXp / xpNeededForLevelUp) * 100;
+      }
+      
+      const finalPercentage = Math.min(100, Math.max(0, Math.round(progressPercentage)));
+      console.log('📊 Final level progress percentage:', finalPercentage);
+      
+      return finalPercentage;
+    } catch (error) {
+      console.error('Error calculating level progress:', error);
+      return null; // Data not available
+    }
+  }, [isGuestMode, xpHistoryData, xpLoading, chartPeriod, activeUser.level]);
 
   // Show loading state if user data is still loading
-  if (!isGuestMode && (isLoading || !character.name || goldLoading)) {
+  if (!isGuestMode && (isLoading || !character.name || goldLoading || xpLoading)) {
     return (
       <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/20 shadow-2xl">
         <div className="flex items-center justify-between mb-4">
@@ -310,7 +364,7 @@ const XPProgressChart = () => {
           </div>
         </div>
 
-        {/* Level Progress */}
+        {/* Level Progress This Period */}
         <div className="bg-slate-700/30 rounded-lg p-4 border border-purple-500/20">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-4 h-4 rounded-full border-2 border-purple-400 flex items-center justify-center">
@@ -318,12 +372,23 @@ const XPProgressChart = () => {
             </div>
             <span className="text-purple-400 text-sm font-medium">Level</span>
           </div>
-          <div className="text-2xl font-bold text-white mb-1">{Math.max(0, Math.min(100, levelProgress))}%</div>
-          <div className="text-xs text-slate-400 mb-2">Progress</div>
-          <Progress 
-            value={Math.max(0, Math.min(100, levelProgress))} 
-            className="h-2 bg-slate-600/50"
-          />
+          <div className="text-2xl font-bold text-white mb-1">
+            {levelProgressThisPeriod === null ? '—' : `${levelProgressThisPeriod}%`}
+          </div>
+          <div className="text-xs text-slate-400 mb-2">
+            {levelProgressThisPeriod === null 
+              ? 'Data not yet available' 
+              : levelProgressThisPeriod === 0
+              ? `No progress this ${chartPeriod}`
+              : `Progress This ${chartPeriod === 'week' ? 'Week' : 'Month'}`
+            }
+          </div>
+          {levelProgressThisPeriod !== null && (
+            <Progress 
+              value={levelProgressThisPeriod} 
+              className="h-2 bg-slate-600/50"
+            />
+          )}
         </div>
       </div>
     </div>

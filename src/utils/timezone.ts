@@ -314,3 +314,25 @@ export const calculateQuestsCompletedThisWeek = (quests: Array<{ completed_at?: 
     return completedLocalDate >= start && completedLocalDate <= end;
   }).length;
 };
+
+/**
+ * Calculate XP earned this week from daily XP history
+ */
+export const calculateXpThisWeek = (xpHistory: Array<{ date: string; xp_earned: number }>): number => {
+  const { start, end } = getCurrentWeekBounds();
+  
+  return xpHistory
+    .filter(entry => entry.date >= start && entry.date <= end)
+    .reduce((total, entry) => total + entry.xp_earned, 0);
+};
+
+/**
+ * Calculate XP earned this month from daily XP history
+ */
+export const calculateXpThisMonth = (xpHistory: Array<{ date: string; xp_earned: number }>): number => {
+  const { start, end } = getCurrentMonthBounds();
+  
+  return xpHistory
+    .filter(entry => entry.date >= start && entry.date <= end)
+    .reduce((total, entry) => total + entry.xp_earned, 0);
+};
