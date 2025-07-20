@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Eye, EyeOff, LogIn, UserPlus, Mail, Target, Zap, Trophy, ShoppingBag, Palette, Sword, Users } from 'lucide-react';
+import { Eye, EyeOff, LogIn, UserPlus, Mail, Target, Zap, Trophy, ShoppingBag, Palette, Sword, Users, CheckSquare, Star, Flame, Gift, Brain } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGuest } from '@/contexts/GuestContext';
 import { toast } from 'sonner';
@@ -205,8 +205,9 @@ const Auth = () => {
               >
                 {/* Content within Scroll Boundaries */}
                 <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl text-center px-4 sm:px-8 animate-fade-in">
+                  {/* Header Block */}
                   {/* Logo */}
-                  <div className="flex items-center justify-center mb-6 lg:mb-8">
+                  <div className="flex items-center justify-center mb-4 lg:mb-6">
                     <img 
                       src="/lovable-uploads/3b10a53a-0b74-49ce-ab04-0bc91897d5c6.png" 
                       alt="LifeQuest Logo" 
@@ -215,58 +216,58 @@ const Auth = () => {
                     />
                   </div>
                   
-                  {/* Main Headline */}
-                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-amber-900 mb-4 lg:mb-6 leading-none" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)' }}>
+                  {/* Tagline */}
+                  <p className="text-sm sm:text-base lg:text-lg text-amber-800 mb-3 lg:mb-4 font-light" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
                     Your Adventure Awaits
-                  </h2>
-                  
-                  {/* Subheadline */}
-                  <p className="text-sm sm:text-base lg:text-lg text-amber-800 mb-4 lg:mb-6" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
-                    LifeQuest is a science-backed, gamified system that transforms your real-life goals into quests.
                   </p>
                   
-                  {/* Call to Action */}
-                  <h3 className="text-base sm:text-lg lg:text-xl text-amber-900 font-semibold mb-4 lg:mb-6" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)' }}>
-                    Join the quest to level up your life!
-                  </h3>
+                  {/* Primary Headline */}
+                  <h2 className="text-base sm:text-lg lg:text-xl font-bold text-amber-900 mb-6 lg:mb-8 leading-tight" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)' }}>
+                    Turn your real-life goals into epic quests—grounded in science, driven by purpose.
+                  </h2>
                   
-                  {/* Feature List */}
-                  <div className="space-y-3 lg:space-y-4">
+                  {/* Features List Section */}
+                  <div className="space-y-3 lg:space-y-4 mb-6 lg:mb-8">
                     <div className="flex items-center gap-3 text-left">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-700/20 flex items-center justify-center flex-shrink-0">
-                        <span className="text-lg sm:text-xl">🎯</span>
+                        <CheckSquare className="w-4 h-4 sm:w-5 sm:h-5 text-amber-800" />
                       </div>
                       <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Create daily quests and track your progress</span>
                     </div>
                     
                     <div className="flex items-center gap-3 text-left">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-700/20 flex items-center justify-center flex-shrink-0">
-                        <span className="text-lg sm:text-xl">💰</span>
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-amber-800" />
                       </div>
                       <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Earn XP, gold, and rewards to build momentum</span>
                     </div>
                     
                     <div className="flex items-center gap-3 text-left">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-700/20 flex items-center justify-center flex-shrink-0">
-                        <span className="text-lg sm:text-xl">🔥</span>
+                        <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-amber-800" />
                       </div>
                       <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Strengthen habits with streaks, milestones, and badges</span>
                     </div>
                     
                     <div className="flex items-center gap-3 text-left">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-700/20 flex items-center justify-center flex-shrink-0">
-                        <span className="text-lg sm:text-xl">🏆</span>
+                        <Gift className="w-4 h-4 sm:w-5 sm:h-5 text-amber-800" />
                       </div>
                       <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Redeem your achievements for meaningful real-world rewards</span>
                     </div>
                     
                     <div className="flex items-center gap-3 text-left">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-700/20 flex items-center justify-center flex-shrink-0">
-                        <span className="text-lg sm:text-xl">🧠</span>
+                        <Brain className="w-4 h-4 sm:w-5 sm:h-5 text-amber-800" />
                       </div>
                       <span className="text-xs sm:text-sm lg:text-base text-amber-900 font-medium" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>Designed with behavioral science to support motivation, focus, and consistent follow-through</span>
                     </div>
                   </div>
+                  
+                  {/* Call to Action */}
+                  <h3 className="text-base sm:text-lg lg:text-xl text-amber-900 font-semibold" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)' }}>
+                    Join the quest to level up your life!
+                  </h3>
                 </div>
               </div>
             </div>
