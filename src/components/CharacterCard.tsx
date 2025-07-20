@@ -19,9 +19,9 @@ const CharacterCard = () => {
   const xpProgress = activeUser.xp;
   const bestStreak = isGuestMode ? { current_streak: 5, streak_name: 'Daily Quests' } : getBestStreak();
 
-  // Helper function to render avatar with frame
+  // Helper function to render avatar with frame (increased size)
   const renderAvatarWithFrame = (avatarData: string, frameClass?: string) => {
-    const baseClasses = "w-24 h-24 rounded-full object-cover shadow-lg border-4 border-amber-400/50";
+    const baseClasses = "w-32 h-32 rounded-full object-cover shadow-lg border-4 border-amber-400/50"; // Increased from w-24 h-24
     const appliedFrameClass = frameClass && frameClass !== 'avatar-frame-none' ? frameClass : '';
     
     if (avatarData && (avatarData.startsWith('data:') || avatarData.startsWith('http'))) {
@@ -34,7 +34,7 @@ const CharacterCard = () => {
       );
     } else {
       return (
-        <div className={`${baseClasses} bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-3xl font-bold text-slate-900 ${appliedFrameClass}`}>
+        <div className={`${baseClasses} bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-4xl font-bold text-slate-900 ${appliedFrameClass}`}>
           {avatarData}
         </div>
       );
@@ -45,12 +45,12 @@ const CharacterCard = () => {
   if (!isGuestMode && (isLoading || !character.name)) {
     return (
       <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-amber-500/30 shadow-2xl">
-        <div className="flex items-center gap-4 mb-6">
-          <Skeleton className="w-24 h-24 rounded-full bg-slate-700" />
-          <div>
-            <Skeleton className="h-8 w-32 mb-2 bg-slate-700" />
-            <Skeleton className="h-6 w-24 bg-slate-700" />
-          </div>
+        {/* Loading state - centered layout */}
+        <div className="flex flex-col items-center mb-6">
+          <Skeleton className="w-32 h-32 rounded-full bg-slate-700 mb-4" />
+          <Skeleton className="h-8 w-32 mb-2 bg-slate-700" />
+          <Skeleton className="h-6 w-24 mb-1 bg-slate-700" />
+          <Skeleton className="h-5 w-20 bg-slate-700" />
         </div>
         <div className="space-y-4">
           <div>
@@ -93,22 +93,24 @@ const CharacterCard = () => {
         </TooltipProvider>
       </div>
 
-      {/* Header with Character Portrait and Basic Info */}
-      <div className="flex items-center gap-4 mb-6">
-        <div className="relative">
+      {/* Centered Avatar and Character Info */}
+      <div className="flex flex-col items-center mb-6">
+        {/* Avatar with Level Badge */}
+        <div className="relative mb-4">
           {renderAvatarWithFrame(activeUser.avatar, activeUser.avatarFrame)}
-          <div className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-900 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
+          <div className="absolute -bottom-2 -right-2 bg-amber-400 text-slate-900 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border-2 border-slate-800">
             {activeUser.level}
           </div>
         </div>
         
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold text-amber-400 mb-1">{activeUser.name}</h2>
-          <div className="flex items-center gap-2 text-yellow-300 mb-2">
+        {/* Character Name, Level, and Title - Stacked Vertically */}
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-amber-400 mb-2">{activeUser.name}</h2>
+          <div className="flex items-center justify-center gap-2 text-yellow-300 mb-2">
             <Crown className="w-5 h-5" />
-            <span className="text-lg font-semibold">Level {activeUser.level}</span>
+            <span className="text-xl font-semibold">Level {activeUser.level}</span>
           </div>
-          <div className="text-sm text-slate-400">
+          <div className="text-base text-slate-300 font-medium">
             <span>Adventurer</span> {/* Placeholder for class/archetype */}
           </div>
         </div>
