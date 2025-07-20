@@ -554,12 +554,12 @@ const GoldShopContent = () => {
                       })()}
                       
                       <Button
-                        onClick={() => handlePurchaseShopItem(item)}
-                        disabled={currentGold < item.gold_cost}
+                        // onClick={() => handlePurchaseShopItem(item)} // TEMPORARILY DISABLED - Will reactivate later
+                        disabled={true} // Always disabled for now
                         size="sm"
-                        className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600"
+                        className="w-full bg-slate-600 cursor-not-allowed"
                       >
-                        {currentGold >= item.gold_cost ? 'Purchase Now' : 'Need More Gold'}
+                        Coming Soon
                       </Button>
                     </div>
                   </CardContent>
