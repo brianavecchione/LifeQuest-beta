@@ -21,7 +21,7 @@ const CharacterCard = () => {
 
   // Helper function to render avatar with frame (increased size further)
   const renderAvatarWithFrame = (avatarData: string, frameClass?: string) => {
-    const baseClasses = "w-40 h-40 rounded-full object-cover shadow-lg border-4 border-amber-400/50"; // Increased from w-32 h-32 to w-40 h-40
+    const baseClasses = "w-32 h-32 rounded-full object-cover shadow-lg border-4 border-amber-400/50"; // Reduced back to w-32 h-32
     const appliedFrameClass = frameClass && frameClass !== 'avatar-frame-none' ? frameClass : '';
     
     if (avatarData && (avatarData.startsWith('data:') || avatarData.startsWith('http'))) {
@@ -47,7 +47,7 @@ const CharacterCard = () => {
       <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-amber-500/30 shadow-2xl">
         {/* Loading state - centered layout */}
         <div className="flex flex-col items-center mb-6">
-          <Skeleton className="w-40 h-40 rounded-full bg-slate-700 mb-4" />
+          <Skeleton className="w-32 h-32 rounded-full bg-slate-700 mb-4" />
           <Skeleton className="h-8 w-32 mb-2 bg-slate-700" />
           <Skeleton className="h-6 w-24 mb-1 bg-slate-700" />
           <Skeleton className="h-5 w-20 bg-slate-700" />
@@ -110,7 +110,7 @@ const CharacterCard = () => {
             <Crown className="w-5 h-5" />
             <span className="text-xl font-semibold">Level {activeUser.level}</span>
           </div>
-          <div className="text-base text-slate-300 font-medium">
+          <div className="text-base text-slate-300 font-medium mb-1">
             <span>Adventurer</span> {/* Placeholder for class/archetype */}
           </div>
         </div>
@@ -139,7 +139,7 @@ const CharacterCard = () => {
             <TrendingUp className="w-4 h-4 text-red-400 mr-1" />
             <span className="text-red-400 text-sm font-medium">Total XP</span>
           </div>
-          <div className="text-xl font-bold text-white">{activeUser.totalXp}</div>
+          <div className="text-lg font-bold text-white">{activeUser.totalXp}</div>
         </div>
 
         <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-yellow-500/30 hover:border-yellow-500/50 transition-colors">
@@ -147,7 +147,7 @@ const CharacterCard = () => {
             <Star className="w-4 h-4 text-yellow-400 mr-1" />
             <span className="text-yellow-400 text-sm font-medium">Gold</span>
           </div>
-          <div className="text-xl font-bold text-white">{activeUser.gold}</div>
+          <div className="text-lg font-bold text-white">{activeUser.gold}</div>
         </div>
 
         <TooltipProvider>
@@ -158,7 +158,7 @@ const CharacterCard = () => {
                   <Flame className="w-4 h-4 text-purple-400 mr-1" />
                   <span className="text-purple-400 text-sm font-medium">Streak</span>
                 </div>
-                <div className="text-xl font-bold text-white">
+                <div className="text-lg font-bold text-white">
                   {streaksLoading ? '...' : `${bestStreak.current_streak} ${bestStreak.current_streak === 1 ? 'Day' : 'Days'}`}
                 </div>
               </div>
