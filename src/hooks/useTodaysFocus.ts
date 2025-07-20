@@ -1,13 +1,27 @@
 import { useState, useEffect } from 'react';
 import { Quest } from '@/hooks/useQuests';
 import { useGuest } from '@/contexts/GuestContext';
+import { getLocalToday, getLocalDateFromUTC } from '@/utils/timezone';
 
 export const useTodaysFocus = (quests: Quest[]) => {
   const { isGuestMode, guestTodaysFocus, updateGuestTodaysFocus } = useGuest();
   
   const [todaysFocus, setTodaysFocus] = useState<string[]>(() => {
     if (isGuestMode) return guestTodaysFocus;
+    
+    // Check for daily reset based on local timezone
+    const currentLocalDate = getLocalToday();
+    const savedFocusDate = localStorage.getItem('lifequest-focus-date');
     const savedFocus = localStorage.getItem('lifequest-todays-focus');
+    
+    // If the saved date doesn't match today's local date, clear the focus
+    if (savedFocusDate !== currentLocalDate) {
+      console.log('🗓️ Daily Focus Reset: Date changed from', savedFocusDate, 'to', currentLocalDate);
+      localStorage.setItem('lifequest-focus-date', currentLocalDate);
+      localStorage.removeItem('lifequest-todays-focus');
+      return [];
+    }
+    
     return savedFocus ? JSON.parse(savedFocus) : [];
   });
 
@@ -17,6 +31,32 @@ export const useTodaysFocus = (quests: Quest[]) => {
       setTodaysFocus(guestTodaysFocus);
     }
   }, [isGuestMode, guestTodaysFocus]);
+
+  // Check for date changes on interval (for midnight resets)
+  useEffect(() => {
+    if (isGuestMode) return;
+
+    const checkDateChange = () => {
+      const currentLocalDate = getLocalToday();
+      const savedFocusDate = localStorage.getItem('lifequest-focus-date');
+      
+      if (savedFocusDate && savedFocusDate !== currentLocalDate) {
+        console.log('🗓️ Daily Focus Reset: Midnight passed, clearing focus tasks');
+        setTodaysFocus([]);
+        localStorage.setItem('lifequest-focus-date', currentLocalDate);
+        localStorage.removeItem('lifequest-todays-focus');
+        window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
+      }
+    };
+
+    // Check immediately
+    checkDateChange();
+    
+    // Check every minute for date changes (to catch midnight)
+    const interval = setInterval(checkDateChange, 60000);
+    
+    return () => clearInterval(interval);
+  }, [isGuestMode]);
 
   // Listen for localStorage changes to sync Today's Focus across pages (not in guest mode)
   useEffect(() => {
@@ -48,7 +88,7 @@ export const useTodaysFocus = (quests: Quest[]) => {
   // Clean up todaysFocus to remove quest IDs that no longer exist or completed non-recurring quests from previous days
   useEffect(() => {
     if (!isGuestMode && todaysFocus.length > 0 && quests.length > 0) {
-      const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+      const today = getLocalToday(); // Get today's date in local timezone (YYYY-MM-DD format)
       
       console.log('🧹 TodaysFocus Cleanup Debug:', {
         today,
@@ -82,11 +122,11 @@ export const useTodaysFocus = (quests: Quest[]) => {
           return true;
         }
         
-        // Keep completed non-recurring quests if they were completed today
+        // Keep completed non-recurring quests if they were completed today (in local timezone)
         if (quest.status === 'Completed' && quest.completed_at) {
-          const completedDate = new Date(quest.completed_at).toISOString().split('T')[0];
-          const keepQuest = completedDate === today;
-          console.log(`${keepQuest ? '✅' : '❌'} Completed quest: ${quest.quest_name} (completed: ${completedDate}, today: ${today})`);
+          const completedLocalDate = getLocalDateFromUTC(quest.completed_at); // Convert UTC completion time to local date
+          const keepQuest = completedLocalDate === today;
+          console.log(`${keepQuest ? '✅' : '❌'} Completed quest: ${quest.quest_name} (completed: ${completedLocalDate}, today: ${today})`);
           return keepQuest;
         }
         
@@ -110,6 +150,8 @@ export const useTodaysFocus = (quests: Quest[]) => {
   useEffect(() => {
     if (!isGuestMode) {
       localStorage.setItem('lifequest-todays-focus', JSON.stringify(todaysFocus));
+      // Also save the current date to track daily resets
+      localStorage.setItem('lifequest-focus-date', getLocalToday());
     }
   }, [todaysFocus, isGuestMode]);
 
@@ -122,6 +164,7 @@ export const useTodaysFocus = (quests: Quest[]) => {
       const newFocus = [...todaysFocus, ...selectedQuestIds];
       setTodaysFocus(newFocus);
       localStorage.setItem('lifequest-todays-focus', JSON.stringify(newFocus));
+      localStorage.setItem('lifequest-focus-date', getLocalToday());
       window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
     }
   };
@@ -135,6 +178,7 @@ export const useTodaysFocus = (quests: Quest[]) => {
       const newFocus = todaysFocus.filter(id => id !== questId);
       setTodaysFocus(newFocus);
       localStorage.setItem('lifequest-todays-focus', JSON.stringify(newFocus));
+      localStorage.setItem('lifequest-focus-date', getLocalToday());
       window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
     }
   };
