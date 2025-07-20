@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { TrendingUp, Loader2, Coins, CheckCircle2 } from 'lucide-react';
+import { TrendingUp, Loader2, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Progress } from '@/components/ui/progress';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { AreaChart, Area, XAxis, YAxis } from 'recharts';
 import { useUser } from '@/contexts/UserContext';
@@ -12,9 +11,11 @@ import { useQuests } from '@/hooks/useQuestsWrapper';
 import { useDailyGold } from '@/hooks/useDailyGoldWrapper';
 import { calculateGoldThisWeek, calculateQuestsCompletedThisWeek, getCurrentWeekBounds, calculateXpThisWeek, calculateXpThisMonth } from '@/utils/timezone';
 import { useDailyXp } from '@/hooks/useDailyXpWrapper';
+import ProgressStatsModal from '@/components/ProgressStatsModal';
 
 const XPProgressChart = () => {
   const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
+  const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
   const { user: character, getDailyXpData, getWeeklyXpData, isLoading } = useUser();
   const { isGuestMode, guestUser } = useGuest();
   const { balance } = useUserBalance();
@@ -219,14 +220,8 @@ const XPProgressChart = () => {
             <Loader2 className="w-8 h-8 animate-spin text-yellow-400" />
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-4 mt-6">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="bg-slate-700/30 rounded-lg p-4 border border-yellow-500/20">
-              <Skeleton className="h-4 w-16 bg-slate-600 mb-2" />
-              <Skeleton className="h-6 w-12 bg-slate-600 mb-1" />
-              <Skeleton className="h-3 w-20 bg-slate-600" />
-            </div>
-          ))}
+        <div className="flex justify-end mt-6">
+          <Skeleton className="h-8 w-32 bg-slate-700" />
         </div>
       </div>
     );
@@ -335,63 +330,27 @@ const XPProgressChart = () => {
         )}
       </div>
 
-      {/* Summary Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        {/* Gold Earned This Week */}
-        <div className="bg-slate-700/30 rounded-lg p-4 border border-yellow-500/20">
-          <div className="flex items-center gap-2 mb-2">
-            <Coins className="w-4 h-4 text-yellow-400" />
-            <span className="text-yellow-400 text-sm font-medium">Gold</span>
-          </div>
-          <div className="text-2xl font-bold text-white mb-1">
-            {goldEarnedThisWeek === null ? '—' : goldEarnedThisWeek}
-          </div>
-          <div className="text-xs text-slate-400">
-            {goldEarnedThisWeek === null ? 'Data not yet available' : 'Earned This Week'}
-          </div>
-        </div>
-
-        {/* Quests Completed This Week */}
-        <div className="bg-slate-700/30 rounded-lg p-4 border border-green-500/20">
-          <div className="flex items-center gap-2 mb-2">
-            <CheckCircle2 className="w-4 h-4 text-green-400" />
-            <span className="text-green-400 text-sm font-medium">Quests</span>
-          </div>
-          <div className="text-2xl font-bold text-white mb-1">
-            {questsCompletedThisWeek === null ? '—' : questsCompletedThisWeek}
-          </div>
-          <div className="text-xs text-slate-400">
-            {questsCompletedThisWeek === null ? 'Data not yet available' : 'Completed This Week'}
-          </div>
-        </div>
-
-        {/* Level Progress This Period */}
-        <div className="bg-slate-700/30 rounded-lg p-4 border border-purple-500/20">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-4 h-4 rounded-full border-2 border-purple-400 flex items-center justify-center">
-              <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-            </div>
-            <span className="text-purple-400 text-sm font-medium">Level</span>
-          </div>
-          <div className="text-2xl font-bold text-white mb-1">
-            {levelProgressThisPeriod === null ? '—' : `${levelProgressThisPeriod}%`}
-          </div>
-          <div className="text-xs text-slate-400 mb-2">
-            {levelProgressThisPeriod === null 
-              ? 'Data not yet available' 
-              : levelProgressThisPeriod === 0
-              ? `No progress this ${chartPeriod}`
-              : `Progress This ${chartPeriod === 'week' ? 'Week' : 'Month'}`
-            }
-          </div>
-          {levelProgressThisPeriod !== null && (
-            <Progress 
-              value={levelProgressThisPeriod} 
-              className="h-2 bg-slate-600/50"
-            />
-          )}
-        </div>
+      {/* View More Stats Button */}
+      <div className="flex justify-end">
+        <Button
+          onClick={() => setIsStatsModalOpen(true)}
+          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white flex items-center gap-2"
+          size="sm"
+        >
+          <BarChart3 className="w-4 h-4" />
+          View More Stats
+        </Button>
       </div>
+
+      {/* Progress Stats Modal */}
+      <ProgressStatsModal
+        isOpen={isStatsModalOpen}
+        onClose={() => setIsStatsModalOpen(false)}
+        period={chartPeriod}
+        goldEarned={goldEarnedThisWeek}
+        questsCompleted={questsCompletedThisWeek}
+        levelProgress={levelProgressThisPeriod}
+      />
     </div>
   );
 };
