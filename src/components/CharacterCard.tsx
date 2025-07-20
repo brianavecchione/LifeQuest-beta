@@ -1,5 +1,5 @@
 import React from 'react';
-import { Crown, TrendingUp, Star, Flame, User } from 'lucide-react';
+import { Crown, TrendingUp, Star, Flame, Settings } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -47,7 +47,23 @@ const CharacterCard = () => {
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-amber-500/30 shadow-2xl">
+    <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-amber-500/30 shadow-2xl relative">
+      {/* Edit Button - Top Right */}
+      <div className="absolute top-4 right-4">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="sm" variant="ghost" className="p-2 hover:bg-amber-500/20">
+                <Settings className="w-4 h-4 text-amber-400" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="left">
+              <p>Edit Profile</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
       {/* Header with Character Portrait and Basic Info */}
       <div className="flex items-center gap-4 mb-6">
         {activeUser.avatar && (activeUser.avatar.startsWith('data:') || activeUser.avatar.startsWith('http')) ? (
@@ -81,22 +97,6 @@ const CharacterCard = () => {
           <div className="text-sm text-slate-400">
             <span>Adventurer</span> {/* Placeholder for class/archetype */}
           </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex flex-col gap-2">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button size="sm" variant="ghost" className="p-2 hover:bg-amber-500/20">
-                  <User className="w-4 h-4 text-amber-400" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="left">
-                <p>Edit Profile</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
         </div>
       </div>
 
