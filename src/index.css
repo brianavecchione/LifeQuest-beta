@@ -194,28 +194,22 @@ All colors MUST be HSL.
 
 .avatar-frame-space-odyssey {
   position: relative;
-  border: 8px solid transparent !important;
-  border-image: url('/lovable-uploads/3e038f99-aa5b-40eb-8907-6eb0b57774a4.png') 8 round;
+  border: none !important;
   border-radius: 50%;
-  box-shadow: 
-    0 0 25px rgba(138, 43, 226, 0.6),
-    0 0 50px rgba(72, 61, 139, 0.4),
-    inset 0 0 20px rgba(255, 255, 255, 0.1);
-  animation: space-odyssey-glow 3s ease-in-out infinite alternate;
 }
 
 .avatar-frame-space-odyssey::before {
   content: '';
   position: absolute;
-  top: -8px;
-  left: -8px;
-  right: -8px;
-  bottom: -8px;
-  background: url('/lovable-uploads/3e038f99-aa5b-40eb-8907-6eb0b57774a4.png') center/cover;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background: url('/lovable-uploads/3e038f99-aa5b-40eb-8907-6eb0b57774a4.png') center/contain no-repeat;
   border-radius: 50%;
   z-index: -1;
-  mask: radial-gradient(circle, transparent 60%, black 70%);
-  -webkit-mask: radial-gradient(circle, transparent 60%, black 70%);
+  filter: drop-shadow(0 0 15px rgba(138, 43, 226, 0.6)) drop-shadow(0 0 30px rgba(72, 61, 139, 0.4));
+  animation: space-odyssey-glow 3s ease-in-out infinite alternate;
 }
 
 @keyframes legendary-pulse {
@@ -235,15 +229,9 @@ All colors MUST be HSL.
 
 @keyframes space-odyssey-glow {
   from {
-    box-shadow: 
-      0 0 25px rgba(138, 43, 226, 0.6),
-      0 0 50px rgba(72, 61, 139, 0.4),
-      inset 0 0 20px rgba(255, 255, 255, 0.1);
+    filter: drop-shadow(0 0 15px rgba(138, 43, 226, 0.6)) drop-shadow(0 0 30px rgba(72, 61, 139, 0.4));
   }
   to {
-    box-shadow: 
-      0 0 35px rgba(138, 43, 226, 0.8),
-      0 0 70px rgba(72, 61, 139, 0.6),
-      inset 0 0 25px rgba(255, 255, 255, 0.2);
+    filter: drop-shadow(0 0 25px rgba(138, 43, 226, 0.8)) drop-shadow(0 0 45px rgba(72, 61, 139, 0.6));
   }
 }
