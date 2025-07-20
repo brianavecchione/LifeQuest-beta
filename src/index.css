@@ -194,21 +194,16 @@ All colors MUST be HSL.
 
 .avatar-frame-space-odyssey {
   position: relative;
-  border: none !important;
+  border: 3px solid transparent !important;
+  background: 
+    url('/lovable-uploads/3e038f99-aa5b-40eb-8907-6eb0b57774a4.png') center/cover,
+    radial-gradient(circle at center, rgba(138, 43, 226, 0.3), rgba(25, 25, 112, 0.5));
+  background-clip: padding-box;
   border-radius: 50%;
-}
-
-.avatar-frame-space-odyssey::before {
-  content: '';
-  position: absolute;
-  top: -20px;
-  left: -20px;
-  right: -20px;
-  bottom: -20px;
-  background: url('/lovable-uploads/3e038f99-aa5b-40eb-8907-6eb0b57774a4.png') center/contain no-repeat;
-  border-radius: 50%;
-  z-index: -1;
-  filter: drop-shadow(0 0 15px rgba(138, 43, 226, 0.6)) drop-shadow(0 0 30px rgba(72, 61, 139, 0.4));
+  box-shadow: 
+    0 0 25px rgba(138, 43, 226, 0.6),
+    0 0 50px rgba(72, 61, 139, 0.4),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
   animation: space-odyssey-glow 3s ease-in-out infinite alternate;
 }
 
@@ -229,9 +224,15 @@ All colors MUST be HSL.
 
 @keyframes space-odyssey-glow {
   from {
-    filter: drop-shadow(0 0 15px rgba(138, 43, 226, 0.6)) drop-shadow(0 0 30px rgba(72, 61, 139, 0.4));
+    box-shadow: 
+      0 0 25px rgba(138, 43, 226, 0.6),
+      0 0 50px rgba(72, 61, 139, 0.4),
+      inset 0 0 20px rgba(255, 255, 255, 0.1);
   }
   to {
-    filter: drop-shadow(0 0 25px rgba(138, 43, 226, 0.8)) drop-shadow(0 0 45px rgba(72, 61, 139, 0.6));
+    box-shadow: 
+      0 0 35px rgba(138, 43, 226, 0.8),
+      0 0 70px rgba(72, 61, 139, 0.6),
+      inset 0 0 25px rgba(255, 255, 255, 0.2);
   }
 }
