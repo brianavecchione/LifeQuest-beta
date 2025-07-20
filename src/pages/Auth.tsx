@@ -190,7 +190,7 @@ const Auth = () => {
             <div className="mb-8 lg:mb-12 relative">
               {/* Golden Glow Background */}
               <div 
-                className="absolute inset-0 bg-gradient-to-r from-amber-400/30 via-yellow-500/40 to-amber-600/30 rounded-3xl blur-xl scale-110 animate-pulse"
+                className="absolute inset-0 bg-gradient-to-r from-amber-400/30 via-yellow-500/40 to-amber-600/30 rounded-3xl blur-xl scale-110"
                 style={{ filter: 'blur(20px)' }}
               />
               
