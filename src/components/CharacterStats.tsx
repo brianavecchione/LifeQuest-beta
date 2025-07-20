@@ -5,12 +5,16 @@ import XPProgressChart from '@/components/XPProgressChart';
 
 const CharacterStats = () => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Character Card - Left Panel */}
-      <CharacterCard />
+    <div className="flex flex-col lg:flex-row gap-6 items-stretch">
+      {/* Character Card - 30% width on large screens */}
+      <div className="lg:w-[30%]">
+        <CharacterCard />
+      </div>
       
-      {/* XP Progress Chart - Right Panel */}
-      <XPProgressChart />
+      {/* XP Progress Chart - 70% width on large screens */}
+      <div className="lg:w-[70%]">
+        <XPProgressChart />
+      </div>
     </div>
   );
 };
