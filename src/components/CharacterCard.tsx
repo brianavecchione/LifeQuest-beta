@@ -1,5 +1,5 @@
 import React from 'react';
-import { Crown, TrendingUp, Star, Flame, Settings, User } from 'lucide-react';
+import { Crown, TrendingUp, Star, Flame, User } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -85,19 +85,6 @@ const CharacterCard = () => {
 
         {/* Action Buttons */}
         <div className="flex flex-col gap-2">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button size="sm" variant="ghost" className="p-2 hover:bg-amber-500/20">
-                  <Settings className="w-4 h-4 text-amber-400" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="left">
-                <p>View Stats</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
