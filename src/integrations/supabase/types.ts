@@ -202,6 +202,33 @@ export type Database = {
           },
         ]
       }
+      daily_gold_history: {
+        Row: {
+          created_at: string
+          date: string
+          gold_earned: number
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          gold_earned?: number
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          gold_earned?: number
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_reset_logs: {
         Row: {
           created_at: string
@@ -968,6 +995,10 @@ export type Database = {
       }
       seed_new_user_data: {
         Args: { user_id: string }
+        Returns: undefined
+      }
+      update_daily_gold_history: {
+        Args: { p_user_id: string; gold_gained: number }
         Returns: undefined
       }
       update_daily_xp_history: {

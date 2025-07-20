@@ -9,12 +9,15 @@ import { useUser } from '@/contexts/UserContext';
 import { useGuest } from '@/contexts/GuestContext';
 import { useUserBalance } from '@/hooks/useUserBalanceWrapper';
 import { useQuests } from '@/hooks/useQuestsWrapper';
+import { useDailyGold } from '@/hooks/useDailyGoldWrapper';
+import { calculateGoldThisWeek, calculateQuestsCompletedThisWeek, getCurrentWeekBounds } from '@/utils/timezone';
 
 const XPProgressChart = () => {
   const { user: character, getDailyXpData, getWeeklyXpData, isLoading } = useUser();
   const { isGuestMode, guestUser } = useGuest();
   const { balance } = useUserBalance();
   const { quests } = useQuests();
+  const { dailyGoldData: goldHistoryData, loading: goldLoading } = useDailyGold();
   const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
   
   const activeUser = isGuestMode ? guestUser : character;
@@ -87,15 +90,52 @@ const XPProgressChart = () => {
   const currentData = chartPeriod === 'week' ? weeklyXpData : monthlyXpData;
   const hasXpData = currentData.some(item => item.xp > 0);
 
-  // Calculate summary stats
-  const goldEarned = React.useMemo(() => {
-    if (isGuestMode) return Math.floor(Math.random() * 100) + 50; // Mock data for guest
-    return balance?.total_gold_earned || 0;
-  }, [isGuestMode, balance?.total_gold_earned]);
+  // Calculate summary stats with fallback messaging
+  const goldEarnedThisWeek = React.useMemo(() => {
+    if (isGuestMode) return Math.floor(Math.random() * 200) + 150; // Mock data for guest
+    
+    // Check if we have gold history data
+    if (goldLoading) return null; // Still loading
+    
+    try {
+      // Use actual daily gold history to calculate weekly total
+      const { start, end } = getCurrentWeekBounds();
+      console.log('🏆 Calculating gold for week:', { start, end, goldHistoryData });
+      
+      // Convert daily gold data to the format expected by calculateGoldThisWeek
+      const goldHistory = goldHistoryData.map(day => ({
+        date: day.fullDate || day.date,
+        gold_earned: day.gold
+      }));
+      
+      const weeklyGold = calculateGoldThisWeek(goldHistory);
+      console.log('🏆 Calculated weekly gold:', weeklyGold);
+      return weeklyGold;
+    } catch (error) {
+      console.error('Error calculating weekly gold:', error);
+      return null; // Data not available
+    }
+  }, [isGuestMode, goldHistoryData, goldLoading]);
 
-  const questsCompleted = React.useMemo(() => {
-    if (isGuestMode) return Math.floor(Math.random() * 20) + 8; // Mock data for guest
-    return quests.filter(q => q.status === 'Completed').length;
+  const questsCompletedThisWeek = React.useMemo(() => {
+    if (isGuestMode) return Math.floor(Math.random() * 15) + 5; // Mock data for guest
+    
+    // Check if we have quest completion timestamps
+    const questsWithTimestamps = quests.filter(q => q.completed_at);
+    if (questsWithTimestamps.length === 0 && quests.some(q => q.status === 'Completed')) {
+      // Some quests are completed but don't have timestamps
+      console.warn('⚠️ Found completed quests without timestamps');
+      return null; // Data not available
+    }
+    
+    try {
+      const weeklyCompleted = calculateQuestsCompletedThisWeek(quests);
+      console.log('🎯 Calculated weekly quests completed:', weeklyCompleted);
+      return weeklyCompleted;
+    } catch (error) {
+      console.error('Error calculating weekly quests:', error);
+      return null; // Data not available
+    }
   }, [isGuestMode, quests]);
 
   const levelProgress = React.useMemo(() => {
@@ -109,7 +149,7 @@ const XPProgressChart = () => {
   }, [activeUser.level, activeUser.totalXp]);
 
   // Show loading state if user data is still loading
-  if (!isGuestMode && (isLoading || !character.name)) {
+  if (!isGuestMode && (isLoading || !character.name || goldLoading)) {
     return (
       <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/20 shadow-2xl">
         <div className="flex items-center justify-between mb-4">
@@ -242,24 +282,32 @@ const XPProgressChart = () => {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-3 gap-4">
-        {/* Gold Earned */}
+        {/* Gold Earned This Week */}
         <div className="bg-slate-700/30 rounded-lg p-4 border border-yellow-500/20">
           <div className="flex items-center gap-2 mb-2">
             <Coins className="w-4 h-4 text-yellow-400" />
             <span className="text-yellow-400 text-sm font-medium">Gold</span>
           </div>
-          <div className="text-2xl font-bold text-white mb-1">{goldEarned}</div>
-          <div className="text-xs text-slate-400">Gold Earned</div>
+          <div className="text-2xl font-bold text-white mb-1">
+            {goldEarnedThisWeek === null ? '—' : goldEarnedThisWeek}
+          </div>
+          <div className="text-xs text-slate-400">
+            {goldEarnedThisWeek === null ? 'Data not yet available' : 'Earned This Week'}
+          </div>
         </div>
 
-        {/* Quests Completed */}
+        {/* Quests Completed This Week */}
         <div className="bg-slate-700/30 rounded-lg p-4 border border-green-500/20">
           <div className="flex items-center gap-2 mb-2">
             <CheckCircle2 className="w-4 h-4 text-green-400" />
             <span className="text-green-400 text-sm font-medium">Quests</span>
           </div>
-          <div className="text-2xl font-bold text-white mb-1">{questsCompleted}</div>
-          <div className="text-xs text-slate-400">Completed</div>
+          <div className="text-2xl font-bold text-white mb-1">
+            {questsCompletedThisWeek === null ? '—' : questsCompletedThisWeek}
+          </div>
+          <div className="text-xs text-slate-400">
+            {questsCompletedThisWeek === null ? 'Data not yet available' : 'Completed This Week'}
+          </div>
         </div>
 
         {/* Level Progress */}

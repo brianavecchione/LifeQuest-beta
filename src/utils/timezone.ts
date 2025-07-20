@@ -249,3 +249,68 @@ export const debugTimezone = () => {
   
   return { timezone, utcNow, localToday };
 };
+
+/**
+ * Get the start and end dates for the current week in local timezone
+ */
+export const getCurrentWeekBounds = (): { start: string; end: string } => {
+  const today = new Date();
+  const timezone = getUserTimezone();
+  
+  // Get start of week (Sunday)
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - today.getDay());
+  
+  // Get end of week (Saturday)
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+  
+  const startDateStr = startOfWeek.toLocaleDateString('en-CA', { timeZone: timezone });
+  const endDateStr = endOfWeek.toLocaleDateString('en-CA', { timeZone: timezone });
+  
+  return { start: startDateStr, end: endDateStr };
+};
+
+/**
+ * Get the start and end dates for the current month in local timezone
+ */
+export const getCurrentMonthBounds = (): { start: string; end: string } => {
+  const today = new Date();
+  const timezone = getUserTimezone();
+  
+  // Get start of month
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  
+  // Get end of month
+  const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  
+  const startDateStr = startOfMonth.toLocaleDateString('en-CA', { timeZone: timezone });
+  const endDateStr = endOfMonth.toLocaleDateString('en-CA', { timeZone: timezone });
+  
+  return { start: startDateStr, end: endDateStr };
+};
+
+/**
+ * Calculate gold earned this week from daily gold history
+ */
+export const calculateGoldThisWeek = (goldHistory: Array<{ date: string; gold_earned: number }>): number => {
+  const { start, end } = getCurrentWeekBounds();
+  
+  return goldHistory
+    .filter(entry => entry.date >= start && entry.date <= end)
+    .reduce((total, entry) => total + entry.gold_earned, 0);
+};
+
+/**
+ * Calculate quests completed this week from quest completion timestamps
+ */
+export const calculateQuestsCompletedThisWeek = (quests: Array<{ completed_at?: string; status: string }>): number => {
+  const { start, end } = getCurrentWeekBounds();
+  
+  return quests.filter(quest => {
+    if (quest.status !== 'Completed' || !quest.completed_at) return false;
+    
+    const completedLocalDate = getLocalDateFromUTC(quest.completed_at);
+    return completedLocalDate >= start && completedLocalDate <= end;
+  }).length;
+};
