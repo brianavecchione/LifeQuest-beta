@@ -123,19 +123,10 @@ const Navigation = () => {
           {/* Logo and Brand */}
           <div className="flex items-center gap-2 sm:gap-4">
             <img 
-              src="/lovable-uploads/cb8c4308-d603-4205-bacf-a30e3b1f5afa.png" 
+              src="/lovable-uploads/075724f8-fc61-40fb-8303-6a4588776d3a.png" 
               alt="LifeQuest Logo" 
               className="w-10 h-10 sm:w-12 sm:h-12"
             />
-            <span 
-              className="text-lg sm:text-xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent"
-              style={{ 
-                filter: 'drop-shadow(0 0 8px rgba(251, 191, 36, 0.5))',
-                textShadow: '0 0 20px rgba(251, 191, 36, 0.3)'
-              }}
-            >
-              LifeQuest
-            </span>
             
             {/* User Stats - Hidden on smaller screens */}
             <div className="hidden xl:flex items-center gap-3 ml-6">
