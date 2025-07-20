@@ -125,7 +125,8 @@ const Navigation = () => {
             <img 
               src="/lovable-uploads/075724f8-fc61-40fb-8303-6a4588776d3a.png" 
               alt="LifeQuest Logo" 
-              className="w-10 h-10 sm:w-12 sm:h-12"
+              className="h-8 w-auto sm:h-10"
+              style={{ objectFit: 'contain' }}
             />
             
             {/* User Stats - Hidden on smaller screens */}

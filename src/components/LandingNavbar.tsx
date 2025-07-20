@@ -69,7 +69,8 @@ const LandingNavbar = () => {
               <img 
                 src="/lovable-uploads/075724f8-fc61-40fb-8303-6a4588776d3a.png" 
                 alt="LifeQuest Logo" 
-                className="w-12 h-12"
+                className="h-10 w-auto"
+                style={{ objectFit: 'contain' }}
               />
             </button>
             </div>
