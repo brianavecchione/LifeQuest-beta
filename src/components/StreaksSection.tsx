@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useStreaks } from '@/hooks/useStreaksWrapper';
 
 const StreaksSection = () => {
-  const { streaks, loading } = useStreaks();
+  const { streaks, loading, getBestStreak, getLongestStreak } = useStreaks();
 
   if (loading) {
     return (
@@ -22,9 +22,10 @@ const StreaksSection = () => {
     );
   }
 
-  // Calculate current and longest streaks
-  const currentStreak = Math.max(...streaks.map(streak => streak.current_streak || 0), 0);
-  const longestStreak = Math.max(...streaks.map(streak => streak.best_streak || 0), 0);
+  // Use calculated streak values from the hook (same as Today page)
+  const bestStreak = getBestStreak();
+  const displayCurrentStreak = bestStreak?.current_streak || 0;
+  const displayLongestStreak = getLongestStreak() || 0;
 
   return (
     <Card className="bg-slate-900 border border-slate-700/50">
@@ -45,7 +46,7 @@ const StreaksSection = () => {
               </div>
               <div className="text-orange-400 text-sm font-medium mb-1">Current Streak</div>
               <div className="text-3xl font-bold text-white">
-                {currentStreak}
+                {displayCurrentStreak}
               </div>
               <div className="text-sm text-orange-300">days</div>
             </div>
@@ -59,23 +60,30 @@ const StreaksSection = () => {
               </div>
               <div className="text-yellow-400 text-sm font-medium mb-1">Longest Streak</div>
               <div className="text-3xl font-bold text-white">
-                {longestStreak}
+                {displayLongestStreak}
               </div>
               <div className="text-sm text-yellow-300">days</div>
             </div>
           </div>
 
-          {/* Active Streaks Count */}
+          {/* Active Streaks Breakdown */}
           <div className="bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-lg p-4 border border-purple-500/30">
             <div className="text-center">
               <div className="p-2 bg-purple-500/20 rounded-full mx-auto w-fit mb-3">
                 <TrendingUp className="w-6 h-6 text-purple-400" />
               </div>
-              <div className="text-purple-400 text-sm font-medium mb-1">Active Streaks</div>
-              <div className="text-3xl font-bold text-white">
-                {streaks.filter(s => s.status === 'Active').length}
-              </div>
-              <div className="text-sm text-purple-300">running</div>
+              <div className="text-purple-400 text-sm font-medium mb-2">Active Streaks</div>
+              {displayCurrentStreak > 0 ? (
+                <div className="space-y-1">
+                  <div className="text-lg font-bold text-white">Daily Completion</div>
+                  <div className="text-sm text-purple-300">{displayCurrentStreak} {displayCurrentStreak === 1 ? 'day' : 'days'}</div>
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  <div className="text-2xl font-bold text-white">0</div>
+                  <div className="text-sm text-purple-300">No active streaks</div>
+                </div>
+              )}
             </div>
           </div>
         </div>

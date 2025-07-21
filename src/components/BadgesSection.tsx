@@ -114,7 +114,7 @@ const BadgesSection = () => {
         <CardHeader>
           <CardTitle className="text-xl font-bold text-purple-400 flex items-center gap-2">
             <Award className="w-5 h-5" />
-            Achievements & Badges
+            Badges
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -129,7 +129,7 @@ const BadgesSection = () => {
       <CardHeader>
         <CardTitle className="text-xl font-bold text-purple-400 flex items-center gap-2">
           <Award className="w-5 h-5" />
-          Achievements & Badges
+          Badges
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -141,7 +141,7 @@ const BadgesSection = () => {
           </TabsList>
           
           <TabsContent value={filter} className="mt-4">
-            <div className="space-y-4 max-h-[600px] overflow-y-auto">
+            <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin', scrollbarColor: '#64748b #334155' }}>
               {sortedAchievements.length === 0 ? (
                 <div className="text-center text-slate-400 py-8">
                   No achievements found for this filter.
