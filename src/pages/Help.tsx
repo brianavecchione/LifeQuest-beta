@@ -306,29 +306,6 @@ const Help = () => {
             </Accordion>
           </div>
 
-          {/* References */}
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
-            <h3 className="text-xl font-semibold text-amber-400 mb-4">References</h3>
-            <Accordion type="single" collapsible className="w-full space-y-3">
-              <AccordionItem value="scientific" className="border border-slate-600 rounded-lg">
-                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
-                  Scientific foundations
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4 text-slate-300">
-                  LifeQuest is built on research from behavioral psychology, particularly the work on operant conditioning, habit formation, and gamification principles that leverage our brain's reward systems.
-                </AccordionContent>
-              </AccordionItem>
-              
-              <AccordionItem value="adhd-design" className="border border-slate-600 rounded-lg">
-                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
-                  ADHD-friendly design
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Our interface incorporates design principles specifically helpful for ADHD and executive function challenges: clear visual hierarchy, minimal cognitive load, immediate feedback, and customizable organization systems.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
         </div>
 
         {/* AI Sidekick */}
