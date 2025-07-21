@@ -173,12 +173,6 @@ const QuestTracker = () => {
         </div>
       )}
 
-      {/* Daily Focus Header */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-amber-400 mb-2">Daily Focus</h2>
-        <p className="text-slate-300">Your selected quests to focus on today</p>
-      </div>
-
       {/* Main Quest Tracker */}
       <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-emerald-600/30 shadow-2xl">
         <QuickActions
