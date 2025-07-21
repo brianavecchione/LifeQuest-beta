@@ -221,10 +221,10 @@ const WalkthroughModal: React.FC<WalkthroughModalProps> = ({ isOpen, onClose }) 
         {/* Navigation */}
         <div className="flex justify-between items-center pt-4 border-t border-slate-700">
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={prevStep}
             disabled={currentStep === 0}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="w-4 h-4" />
             Back
