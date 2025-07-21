@@ -13,7 +13,7 @@ const Achievements = () => {
                 filter: 'drop-shadow(0 0 8px rgba(251, 191, 36, 0.5))',
                 textShadow: '0 0 20px rgba(251, 191, 36, 0.3)'
               }}>
-            🏅 Achievements & Badges
+            🏅 Achievements
           </h1>
           <p className="text-xl text-slate-300" style={{ textShadow: '0 2px 4px rgba(0, 0, 0, 0.6)' }}>
             Celebrate your victories and progress
