@@ -69,7 +69,6 @@ const TodaysFocus: React.FC<TodaysFocusProps> = ({
     console.log('🎯 TodaysFocus: No quests in focus, showing empty state');
     return (
       <div className="bg-slate-700/30 rounded-lg p-6 border border-amber-600/30 text-center mb-6">
-        <h2 className="text-2xl font-bold text-amber-400 mb-4">Daily Focus</h2>
         <Target className="w-12 h-12 text-amber-400 mx-auto mb-4 opacity-50" />
         <h4 className="text-lg font-semibold text-amber-400 mb-2">You haven't added any quests yet</h4>
         <p className="text-slate-300 mb-4">

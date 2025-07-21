@@ -29,8 +29,9 @@ const QuickActions: React.FC<QuickActionsProps> = ({
       <div className="flex gap-2">
         <Button 
           size="sm" 
+          variant="outline" 
           onClick={onSetupModalOpen}
-          className="bg-blue-600 hover:bg-blue-700 text-white"
+          className="border-amber-600 text-amber-400 hover:bg-amber-600 hover:text-white"
         >
           <Target className="w-4 h-4 mr-1" />
           Add to Daily Focus
