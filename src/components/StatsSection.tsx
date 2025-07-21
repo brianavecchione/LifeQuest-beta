@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Coins, CheckCircle2, BarChart3, Zap } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -9,7 +9,8 @@ import { useUserBalance } from '@/hooks/useUserBalanceWrapper';
 import { useQuests } from '@/hooks/useQuestsWrapper';
 import { useDailyGold } from '@/hooks/useDailyGoldWrapper';
 import { useDailyXp } from '@/hooks/useDailyXpWrapper';
-import { calculateGoldThisWeek, calculateGoldThisMonth, calculateQuestsCompletedThisWeek, calculateQuestsCompletedThisMonth, calculateXpThisWeek, calculateXpThisMonth } from '@/utils/timezone';
+import { useArchivedQuests } from '@/hooks/useArchivedQuests';
+import { calculateGoldThisWeek, calculateGoldThisMonth, calculateQuestsCompletedThisWeek, calculateQuestsCompletedThisMonth, calculateXpThisWeek, calculateXpThisMonth, getCurrentWeekBounds, getCurrentMonthBounds } from '@/utils/timezone';
 
 const StatsSection = () => {
   const [period, setPeriod] = useState<'week' | 'month'>('week');
@@ -19,8 +20,35 @@ const StatsSection = () => {
   const { quests } = useQuests();
   const { dailyGoldData } = useDailyGold();
   const { dailyXpData } = useDailyXp();
+  const { archivedQuests, fetchArchivedQuests, loading: archivedLoading } = useArchivedQuests();
 
   const user = isGuestMode ? guestUser : character;
+
+  // Fetch archived quests for the selected period
+  useEffect(() => {
+    if (!isGuestMode && user) {
+      const bounds = period === 'week' ? getCurrentWeekBounds() : getCurrentMonthBounds();
+      fetchArchivedQuests(bounds.start, bounds.end);
+    }
+  }, [period, user, isGuestMode, fetchArchivedQuests]);
+
+  // Combine current and archived quests for accurate counting
+  const allQuests = React.useMemo(() => {
+    if (isGuestMode) return quests;
+    
+    // Transform archived quests to match expected format
+    const transformedArchivedQuests = archivedQuests.map(archived => ({
+      id: archived.id,
+      completed_at: archived.completed_at,
+      status: 'Completed' as const,
+      quest_name: archived.quest_name,
+      quest_type: archived.quest_type,
+      xp_reward: archived.xp_reward,
+      gold_reward: archived.gold_reward
+    }));
+    
+    return [...quests, ...transformedArchivedQuests];
+  }, [quests, archivedQuests, isGuestMode]);
 
   // Debug logging for data accuracy
   React.useEffect(() => {
@@ -44,14 +72,21 @@ const StatsSection = () => {
     xp_earned: day.xp
   }));
 
-  // Calculate stats based on period
+  // Helper function for graceful fallbacks
+  const getDisplayValue = (value: number | null | undefined, isLoading: boolean): string => {
+    if (isLoading) return '—';
+    if (value === null || value === undefined || isNaN(value)) return '—';
+    return value.toString();
+  };
+
+  // Calculate stats based on period - using combined quest data
   const goldEarnedThisPeriod = period === 'week' 
     ? calculateGoldThisWeek(goldHistoryFormatted) 
     : calculateGoldThisMonth(goldHistoryFormatted);
 
   const questsCompletedThisPeriod = period === 'week' 
-    ? calculateQuestsCompletedThisWeek(quests) 
-    : calculateQuestsCompletedThisMonth(quests);
+    ? calculateQuestsCompletedThisWeek(allQuests) 
+    : calculateQuestsCompletedThisMonth(allQuests);
 
   const xpEarnedThisPeriod = period === 'week' 
     ? calculateXpThisWeek(xpHistoryFormatted) 
@@ -64,10 +99,12 @@ const StatsSection = () => {
       goldEarnedThisPeriod,
       questsCompletedThisPeriod,
       xpEarnedThisPeriod,
-      goldHistoryFormatted,
-      xpHistoryFormatted
+      allQuestsCount: allQuests.length,
+      currentQuestsCount: quests.length,
+      archivedQuestsCount: archivedQuests.length,
+      archivedLoading
     });
-  }, [period, goldEarnedThisPeriod, questsCompletedThisPeriod, xpEarnedThisPeriod]);
+  }, [period, goldEarnedThisPeriod, questsCompletedThisPeriod, xpEarnedThisPeriod, allQuests, archivedQuests, archivedLoading]);
 
   // Calculate XP required to reach next level (using level * 100 as base XP per level)
   const currentLevel = user?.level || 1;
@@ -118,7 +155,7 @@ const StatsSection = () => {
               </div>
               <div className="text-blue-400 text-sm font-medium mb-1">XP Earned</div>
               <div className="text-2xl font-bold text-white">
-                {xpEarnedThisPeriod}
+                {getDisplayValue(xpEarnedThisPeriod, archivedLoading)}
               </div>
               <div className="text-xs text-slate-400">
                 {`This ${period === 'week' ? 'Week' : 'Month'}`}
@@ -134,7 +171,7 @@ const StatsSection = () => {
               </div>
               <div className="text-yellow-400 text-sm font-medium mb-1">Gold Earned</div>
               <div className="text-2xl font-bold text-white">
-                {goldEarnedThisPeriod}
+                {getDisplayValue(goldEarnedThisPeriod, archivedLoading)}
               </div>
               <div className="text-xs text-slate-400">
                 {`This ${period === 'week' ? 'Week' : 'Month'}`}
@@ -150,7 +187,7 @@ const StatsSection = () => {
               </div>
               <div className="text-green-400 text-sm font-medium mb-1">Quests Completed</div>
               <div className="text-2xl font-bold text-white">
-                {questsCompletedThisPeriod}
+                {getDisplayValue(questsCompletedThisPeriod, archivedLoading)}
               </div>
               <div className="text-xs text-slate-400">
                 {`This ${period === 'week' ? 'Week' : 'Month'}`}
@@ -168,7 +205,7 @@ const StatsSection = () => {
               </div>
               <div className="text-purple-400 text-sm font-medium mb-1">Level Progress</div>
               <div className="text-2xl font-bold text-white">
-                {`${levelProgressThisPeriod}%`}
+                {archivedLoading ? '—' : `${levelProgressThisPeriod}%`}
               </div>
               <div className="text-xs text-slate-400">
                 {levelProgressThisPeriod === 0
