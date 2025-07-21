@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, Loader2, BarChart3 } from 'lucide-react';
+import { TrendingUp, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
@@ -11,11 +11,8 @@ import { useQuests } from '@/hooks/useQuestsWrapper';
 import { useDailyGold } from '@/hooks/useDailyGoldWrapper';
 import { calculateGoldThisWeek, calculateQuestsCompletedThisWeek, getCurrentWeekBounds, calculateXpThisWeek, calculateXpThisMonth } from '@/utils/timezone';
 import { useDailyXp } from '@/hooks/useDailyXpWrapper';
-import ProgressStatsModal from '@/components/ProgressStatsModal';
-
 const XPProgressChart = () => {
   const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
-  const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
   const { user: character, getDailyXpData, getWeeklyXpData, isLoading } = useUser();
   const { isGuestMode, guestUser } = useGuest();
   const { balance } = useUserBalance();
@@ -347,26 +344,6 @@ const XPProgressChart = () => {
       </div>
 
       {/* View More Stats Button */}
-      <div className="flex justify-end">
-        <Button
-          onClick={() => setIsStatsModalOpen(true)}
-          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white flex items-center gap-2"
-          size="sm"
-        >
-          <BarChart3 className="w-4 h-4" />
-          View More Stats
-        </Button>
-      </div>
-
-      {/* Progress Stats Modal */}
-      <ProgressStatsModal
-        isOpen={isStatsModalOpen}
-        onClose={() => setIsStatsModalOpen(false)}
-        period={chartPeriod}
-        goldEarned={goldEarnedThisWeek}
-        questsCompleted={questsCompletedThisWeek}
-        levelProgress={levelProgressThisPeriod}
-      />
     </div>
   );
 };
