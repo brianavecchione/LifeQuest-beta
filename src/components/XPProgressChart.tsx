@@ -275,15 +275,15 @@ const XPProgressChart = () => {
       </div>
 
       {/* Chart Container */}
-      <div className="bg-slate-700/30 rounded-lg p-4 border border-yellow-500/20 flex-1 flex flex-col justify-center">
+      <div className="bg-slate-700/30 rounded-lg p-3 border border-yellow-500/20 flex-1 flex flex-col">
         {hasXpData ? (
           <>
-            <div className="mb-3">
+            <div className="mb-1">
               <span className="text-green-400 text-sm font-medium">
                 XP Earned {chartPeriod === 'week' ? 'This Week' : 'This Month'}
               </span>
             </div>
-            <ChartContainer config={chartConfig} className="h-[200px] w-full">
+            <ChartContainer config={chartConfig} className="flex-1 w-full min-h-0">
               <AreaChart 
                 data={currentData}
                 key={`xp-chart-${chartPeriod}`}
@@ -331,7 +331,7 @@ const XPProgressChart = () => {
             </ChartContainer>
           </>
         ) : (
-          <div className="h-[200px] flex flex-col items-center justify-center text-center">
+          <div className="flex-1 flex flex-col items-center justify-center text-center">
             <div className="text-slate-400 mb-2">
               <TrendingUp className="w-12 h-12 mx-auto mb-3 opacity-50" />
               <p className="text-lg font-medium mb-1">No XP Data Yet</p>
