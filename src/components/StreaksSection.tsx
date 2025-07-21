@@ -8,7 +8,7 @@ const StreaksSection = () => {
 
   if (loading) {
     return (
-      <Card className="bg-slate-900/80 backdrop-blur-sm border border-slate-700/50">
+      <Card className="bg-transparent backdrop-blur-sm border border-slate-700/50">
         <CardHeader>
           <CardTitle className="text-xl font-bold text-amber-400 flex items-center gap-2">
             <Flame className="w-5 h-5" />
@@ -27,7 +27,7 @@ const StreaksSection = () => {
   const longestStreak = Math.max(...streaks.map(streak => streak.best_streak || 0), 0);
 
   return (
-    <Card className="bg-slate-900/80 backdrop-blur-sm border border-slate-700/50">
+    <Card className="bg-transparent backdrop-blur-sm border border-slate-700/50">
       <CardHeader>
         <CardTitle className="text-xl font-bold text-amber-400 flex items-center gap-2">
           <Flame className="w-5 h-5" />

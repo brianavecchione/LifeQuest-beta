@@ -27,7 +27,7 @@ interface Achievement {
 const BadgesSection = () => {
   const { achievements, loading, claimAchievement } = useAchievements();
   const { toast } = useToast();
-  const [filter, setFilter] = useState<'all' | 'earned' | 'locked'>('all');
+  const [filter, setFilter] = useState<'all' | 'earned' | 'locked'>('earned');
 
   // Function to get achievement state
   const getAchievementState = (achievement: Achievement) => {
@@ -43,7 +43,9 @@ const BadgesSection = () => {
       case 'earned':
         return state === 'earned';
       case 'locked':
-        return state === 'locked';
+        return state === 'locked' || state === 'unlockable';
+      case 'all':
+        return true;
       default:
         return true;
     }
@@ -110,7 +112,7 @@ const BadgesSection = () => {
 
   if (loading) {
     return (
-      <Card className="bg-slate-900/80 backdrop-blur-sm border border-slate-700/50">
+      <Card className="bg-transparent backdrop-blur-sm border border-slate-700/50">
         <CardHeader>
           <CardTitle className="text-xl font-bold text-purple-400 flex items-center gap-2">
             <Award className="w-5 h-5" />
@@ -125,7 +127,7 @@ const BadgesSection = () => {
   }
 
   return (
-    <Card className="bg-slate-900/80 backdrop-blur-sm border border-slate-700/50">
+    <Card className="bg-transparent backdrop-blur-sm border border-slate-700/50">
       <CardHeader>
         <CardTitle className="text-xl font-bold text-purple-400 flex items-center gap-2">
           <Award className="w-5 h-5" />
@@ -135,9 +137,9 @@ const BadgesSection = () => {
       <CardContent>
         <Tabs value={filter} onValueChange={(value) => setFilter(value as 'all' | 'earned' | 'locked')}>
           <TabsList className="grid w-full grid-cols-3 bg-slate-800/50">
-            <TabsTrigger value="all" className="data-[state=active]:bg-purple-600">All</TabsTrigger>
             <TabsTrigger value="earned" className="data-[state=active]:bg-green-600">Earned</TabsTrigger>
             <TabsTrigger value="locked" className="data-[state=active]:bg-slate-600">Locked</TabsTrigger>
+            <TabsTrigger value="all" className="data-[state=active]:bg-purple-600">All</TabsTrigger>
           </TabsList>
           
           <TabsContent value={filter} className="mt-4">
