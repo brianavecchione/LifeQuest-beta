@@ -302,6 +302,30 @@ export const calculateGoldThisWeek = (goldHistory: Array<{ date: string; gold_ea
 };
 
 /**
+ * Calculate gold earned this month from daily gold history
+ */
+export const calculateGoldThisMonth = (goldHistory: Array<{ date: string; gold_earned: number }>): number => {
+  const { start, end } = getCurrentMonthBounds();
+  
+  return goldHistory
+    .filter(entry => entry.date >= start && entry.date <= end)
+    .reduce((total, entry) => total + entry.gold_earned, 0);
+};
+
+/**
+ * Calculate quests completed this month from quest completion timestamps
+ */
+export const calculateQuestsCompletedThisMonth = (quests: Array<{ completed_at?: string; status: string }>): number => {
+  const { start, end } = getCurrentMonthBounds();
+  
+  return quests.filter(quest => {
+    if (quest.status !== 'Completed' || !quest.completed_at) return false;
+    
+    const completedLocalDate = getLocalDateFromUTC(quest.completed_at);
+    return completedLocalDate >= start && completedLocalDate <= end;
+  }).length;
+};
+/**
  * Calculate quests completed this week from quest completion timestamps
  */
 export const calculateQuestsCompletedThisWeek = (quests: Array<{ completed_at?: string; status: string }>): number => {

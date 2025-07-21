@@ -9,7 +9,7 @@ import { useGuest } from '@/contexts/GuestContext';
 import { useUserBalance } from '@/hooks/useUserBalanceWrapper';
 import { useQuests } from '@/hooks/useQuestsWrapper';
 import { useDailyGold } from '@/hooks/useDailyGoldWrapper';
-import { calculateGoldThisWeek, calculateQuestsCompletedThisWeek, getCurrentWeekBounds, calculateXpThisWeek, calculateXpThisMonth } from '@/utils/timezone';
+import { calculateGoldThisWeek, calculateGoldThisMonth, calculateQuestsCompletedThisWeek, calculateQuestsCompletedThisMonth, getCurrentWeekBounds, getCurrentMonthBounds, calculateXpThisWeek, calculateXpThisMonth } from '@/utils/timezone';
 import { useDailyXp } from '@/hooks/useDailyXpWrapper';
 const XPProgressChart = () => {
   const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');

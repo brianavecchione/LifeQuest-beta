@@ -9,7 +9,7 @@ import { useUserBalance } from '@/hooks/useUserBalanceWrapper';
 import { useQuests } from '@/hooks/useQuestsWrapper';
 import { useDailyGold } from '@/hooks/useDailyGoldWrapper';
 import { useDailyXp } from '@/hooks/useDailyXpWrapper';
-import { calculateGoldThisWeek, calculateQuestsCompletedThisWeek, calculateXpThisWeek, calculateXpThisMonth } from '@/utils/timezone';
+import { calculateGoldThisWeek, calculateGoldThisMonth, calculateQuestsCompletedThisWeek, calculateQuestsCompletedThisMonth, calculateXpThisWeek, calculateXpThisMonth } from '@/utils/timezone';
 
 const StatsSection = () => {
   const [period, setPeriod] = useState<'week' | 'month'>('week');
@@ -22,22 +22,60 @@ const StatsSection = () => {
 
   const user = isGuestMode ? guestUser : character;
 
+  // Debug logging for data accuracy
+  React.useEffect(() => {
+    console.log('📊 StatsSection Debug - Raw Data:', {
+      period,
+      dailyXpData,
+      dailyGoldData,
+      quests: quests.filter(q => q.status === 'Completed' && q.completed_at),
+      isGuestMode
+    });
+  }, [period, dailyXpData, dailyGoldData, quests, isGuestMode]);
+
+  // Convert data formats for calculations
+  const goldHistoryFormatted = dailyGoldData.map(day => ({
+    date: day.fullDate || day.date,
+    gold_earned: day.gold
+  }));
+
+  const xpHistoryFormatted = dailyXpData.map(day => ({
+    date: day.fullDate || day.date,
+    xp_earned: day.xp
+  }));
+
   // Calculate stats based on period
   const goldEarnedThisPeriod = period === 'week' 
-    ? calculateGoldThisWeek(dailyGoldData) 
-    : null; // Add month calculation if needed
+    ? calculateGoldThisWeek(goldHistoryFormatted) 
+    : calculateGoldThisMonth(goldHistoryFormatted);
 
   const questsCompletedThisPeriod = period === 'week' 
     ? calculateQuestsCompletedThisWeek(quests) 
-    : null; // Add month calculation if needed
+    : calculateQuestsCompletedThisMonth(quests);
 
   const xpEarnedThisPeriod = period === 'week' 
-    ? calculateXpThisWeek(dailyXpData) 
-    : calculateXpThisMonth(dailyXpData);
+    ? calculateXpThisWeek(xpHistoryFormatted) 
+    : calculateXpThisMonth(xpHistoryFormatted);
 
-  // Calculate level progress percentage
-  const levelProgressThisPeriod = user?.level ? 
-    Math.round((xpEarnedThisPeriod / (user.level * 100)) * 100) : 0;
+  // Debug logging for calculated values
+  React.useEffect(() => {
+    console.log('📊 StatsSection Debug - Calculated Values:', {
+      period,
+      goldEarnedThisPeriod,
+      questsCompletedThisPeriod,
+      xpEarnedThisPeriod,
+      goldHistoryFormatted,
+      xpHistoryFormatted
+    });
+  }, [period, goldEarnedThisPeriod, questsCompletedThisPeriod, xpEarnedThisPeriod]);
+
+  // Calculate XP required to reach next level (using level * 100 as base XP per level)
+  const currentLevel = user?.level || 1;
+  const xpRequiredForNextLevel = currentLevel * 100; // XP needed to go from current level to next
+  
+  // Calculate level progress percentage based on XP earned this period vs XP required for next level
+  const levelProgressThisPeriod = xpRequiredForNextLevel > 0 ? 
+    Math.min(Math.round((xpEarnedThisPeriod / xpRequiredForNextLevel) * 100), 100) : 0;
 
   const periodLabel = period === 'week' ? 'Weekly' : 'Monthly';
 
@@ -80,10 +118,10 @@ const StatsSection = () => {
               </div>
               <div className="text-blue-400 text-sm font-medium mb-1">XP Earned</div>
               <div className="text-2xl font-bold text-white">
-                {xpEarnedThisPeriod === null ? '—' : xpEarnedThisPeriod}
+                {xpEarnedThisPeriod}
               </div>
               <div className="text-xs text-slate-400">
-                {xpEarnedThisPeriod === null ? 'Data not available' : `This ${period === 'week' ? 'Week' : 'Month'}`}
+                {`This ${period === 'week' ? 'Week' : 'Month'}`}
               </div>
             </div>
           </div>
@@ -96,10 +134,10 @@ const StatsSection = () => {
               </div>
               <div className="text-yellow-400 text-sm font-medium mb-1">Gold Earned</div>
               <div className="text-2xl font-bold text-white">
-                {goldEarnedThisPeriod === null ? '—' : goldEarnedThisPeriod}
+                {goldEarnedThisPeriod}
               </div>
               <div className="text-xs text-slate-400">
-                {goldEarnedThisPeriod === null ? 'Data not available' : `This ${period === 'week' ? 'Week' : 'Month'}`}
+                {`This ${period === 'week' ? 'Week' : 'Month'}`}
               </div>
             </div>
           </div>
@@ -112,10 +150,10 @@ const StatsSection = () => {
               </div>
               <div className="text-green-400 text-sm font-medium mb-1">Quests Completed</div>
               <div className="text-2xl font-bold text-white">
-                {questsCompletedThisPeriod === null ? '—' : questsCompletedThisPeriod}
+                {questsCompletedThisPeriod}
               </div>
               <div className="text-xs text-slate-400">
-                {questsCompletedThisPeriod === null ? 'Data not available' : `This ${period === 'week' ? 'Week' : 'Month'}`}
+                {`This ${period === 'week' ? 'Week' : 'Month'}`}
               </div>
             </div>
           </div>
@@ -130,22 +168,18 @@ const StatsSection = () => {
               </div>
               <div className="text-purple-400 text-sm font-medium mb-1">Level Progress</div>
               <div className="text-2xl font-bold text-white">
-                {levelProgressThisPeriod === null ? '—' : `${Math.min(levelProgressThisPeriod, 100)}%`}
+                {`${levelProgressThisPeriod}%`}
               </div>
               <div className="text-xs text-slate-400">
-                {levelProgressThisPeriod === null 
-                  ? 'Data not available' 
-                  : levelProgressThisPeriod === 0
+                {levelProgressThisPeriod === 0
                   ? `No progress this ${period}`
-                  : `This ${period === 'week' ? 'Week' : 'Month'}`
+                  : `Toward Level ${currentLevel + 1}`
                 }
               </div>
-              {levelProgressThisPeriod !== null && (
-                <Progress 
-                  value={Math.min(levelProgressThisPeriod, 100)} 
-                  className="h-2 bg-slate-600/50 mt-2"
-                />
-              )}
+              <Progress 
+                value={levelProgressThisPeriod} 
+                className="h-2 bg-slate-600/50 mt-2"
+              />
             </div>
           </div>
         </div>
