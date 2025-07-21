@@ -42,7 +42,7 @@ const StatsSection = () => {
   const periodLabel = period === 'week' ? 'Weekly' : 'Monthly';
 
   return (
-    <Card className="bg-transparent backdrop-blur-sm border border-slate-700/50">
+    <Card className="bg-slate-900/80 backdrop-blur-sm border border-slate-700/50">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-bold text-blue-400 flex items-center gap-2">
