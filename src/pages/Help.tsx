@@ -52,7 +52,7 @@ const Help = () => {
                   How do I create my first quest?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Click the "+" button on your dashboard or navigate to the Quests page. Fill in your quest name, choose a type (Daily, Main, Side, or Legendary), set priority, and add any description or tags you'd like. Then click "Create Quest" to add it to your adventure!
+                  Head to the Quests page and click "New Quest." Give your quest a name, pick a type (Daily, Main, Side, or Legendary), and set its priority. You can also add a short description or tags to keep things organized. When you're ready, hit "Create Quest" to add it to your journey!
                 </AccordionContent>
               </AccordionItem>
               
@@ -61,19 +61,12 @@ const Help = () => {
                   What's the difference between quest types?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  <strong>Daily:</strong> Recurring tasks that reset each day (habits, routines)<br/>
-                  <strong>Main:</strong> Important, high-priority goals and projects<br/>
-                  <strong>Side:</strong> Smaller tasks and optional objectives<br/>
-                  <strong>Legendary:</strong> Major life goals and significant achievements
-                </AccordionContent>
-              </AccordionItem>
-              
-              <AccordionItem value="level-up" className="border border-slate-600 rounded-lg">
-                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
-                  How do I level up and earn XP?
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Complete quests to earn XP! Different quest types and priorities give different amounts of XP. Daily quests give 10-25 XP, Side quests 15-35 XP, Main quests 25-60 XP, and Legendary quests 50-150 XP. As you accumulate XP, you'll automatically level up.
+                  Each quest type serves a different purpose to help you organize your goals:<br/><br/>
+                  <strong>Daily Quests:</strong> Habits or routines that repeat every day (e.g., stretch, journal)<br/>
+                  <strong>Main Quests:</strong> Big projects or high-priority goals (e.g., finish a report)<br/>
+                  <strong>Side Quests:</strong> Smaller tasks or optional to-dos (e.g., return a package)<br/>
+                  <strong>Legendary Quests:</strong> Major life achievements or long-term milestones (e.g., publish a book)<br/><br/>
+                  Using quest types helps you balance short-term actions with long-term aspirations.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -83,12 +76,30 @@ const Help = () => {
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
             <h3 className="text-xl font-semibold text-amber-400 mb-4">Game Mechanics</h3>
             <Accordion type="single" collapsible className="w-full space-y-3">
+              <AccordionItem value="level-up" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  How do I level up and earn XP?
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Complete quests to earn XP! Different quest types and priorities give different amounts of XP. Daily quests give 10-25 XP, Side quests 15-35 XP, Main quests 25-60 XP, and Legendary quests 50-150 XP. As you accumulate XP, you'll automatically level up.
+                </AccordionContent>
+              </AccordionItem>
+
               <AccordionItem value="xp-system" className="border border-slate-600 rounded-lg">
                 <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
                   How does the XP and leveling system work?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  XP requirements increase as you level up using the formula: Level × 100. So Level 2 needs 200 total XP, Level 3 needs 300 total XP, etc. Your progress bar shows how close you are to your next level.
+                  LifeQuest uses a progressive XP system inspired by RPGs and incremental games. As you level up, the XP needed for the next level increases—encouraging consistent effort while making your journey feel more epic over time.<br/><br/>
+                  For example:<br/>
+                  • Level 1 requires 100 XP total<br/>
+                  • Level 2: 300 XP total (200 XP after reaching level 1)<br/>
+                  • Level 3: 600 XP total (300 XP after level 2)<br/>
+                  • Level 4: 1,000 XP total<br/>
+                  • Level 5: 1,500 XP total<br/><br/>
+                  Each level requires more XP than the last. The formula we use is:<br/>
+                  XP required to reach level n = 100 × (n × (n + 1)) ÷ 2<br/><br/>
+                  This ensures leveling up feels progressively more rewarding and aligns with your growing consistency.
                 </AccordionContent>
               </AccordionItem>
               
@@ -97,16 +108,8 @@ const Help = () => {
                   What can I buy with gold?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Visit the Gold Shop to purchase rewards, themes, and customization options. You can buy personal rewards (treats, breaks, activities) or LifeQuest themes and features. Gold is earned by completing quests alongside XP.
-                </AccordionContent>
-              </AccordionItem>
-              
-              <AccordionItem value="achievements" className="border border-slate-600 rounded-lg">
-                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
-                  How do achievements and badges work?
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Achievements unlock automatically as you hit milestones (completing quests, maintaining streaks, reaching levels). Check your Achievements page to see progress and claim rewards. Some achievements are hidden until discovered!
+                  Gold is your personal reward currency! You earn it by completing quests, and you can spend it in the Gold Shop to create your own incentives—like a treat, a break, or a fun activity.<br/><br/>
+                  In the future, you'll be able to unlock exclusive LifeQuest themes, features, and dashboard customizations using your gold. Keep an eye on updates as we roll out new ways to make your quest even more fun and meaningful.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -121,7 +124,8 @@ const Help = () => {
                   How do daily quests reset?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Daily quests automatically reset at midnight in your local timezone. Incomplete daily quests are archived, and fresh copies are created for the new day. Your streaks are maintained if you complete them regularly.
+                  Daily Quests reset automatically at midnight in your local time zone. Any incomplete dailies are archived, and fresh versions are generated for the new day.<br/><br/>
+                  This system helps you maintain momentum by starting each day clean—and if you complete your habits regularly, you'll keep your streaks going strong.
                 </AccordionContent>
               </AccordionItem>
               
@@ -130,7 +134,10 @@ const Help = () => {
                   Can I edit or delete quests?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Yes! Click on any quest to open the details modal, then use the edit or delete buttons. You can modify the name, description, priority, type, and tags. Completed quests are archived and can't be edited.
+                  Yes! Click on any quest to open its details. From there, you can:<br/>
+                  • Edit the name, description, type, priority, and tags<br/>
+                  • Delete it entirely if it's no longer needed<br/><br/>
+                  Completed quests are archived and can't be edited—but you can always duplicate or recreate them.
                 </AccordionContent>
               </AccordionItem>
               
@@ -139,7 +146,8 @@ const Help = () => {
                   What's the Pomodoro timer feature?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Enable the Pomodoro timer on any quest to use focused work sessions. The timer follows the traditional 25-minute work / 5-minute break cycle, helping you maintain focus and track time spent on tasks.
+                  The Pomodoro timer helps you stay focused by breaking your work into manageable sprints: 25 minutes of work + 5 minutes of rest.<br/><br/>
+                  This method has been shown to reduce burnout and increase productivity by encouraging short, intentional focus sessions (Cirillo, 2006). You can enable the timer for any quest you want to track.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -154,25 +162,8 @@ const Help = () => {
                   How do I create or join a party?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Go to the Parties page to create a new party or join an existing one with a party code. Parties allow you to share goals, compete on leaderboards, and support each other's progress.
-                </AccordionContent>
-              </AccordionItem>
-              
-              <AccordionItem value="party-quests" className="border border-slate-600 rounded-lg">
-                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
-                  What are party quests?
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Party quests are shared objectives that all party members can contribute to. They promote collaboration and group accountability. Party leaders can create quests for the entire group.
-                </AccordionContent>
-              </AccordionItem>
-              
-              <AccordionItem value="leaderboard" className="border border-slate-600 rounded-lg">
-                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
-                  How does the party leaderboard work?
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4 text-slate-300">
-                  The leaderboard tracks XP earned and quests completed by party members over weekly and monthly periods. It's designed to encourage friendly competition and celebrate everyone's progress.
+                  Parties are on the way! You'll soon be able to create or join a party on the Parties page using a party code.<br/>
+                  Parties let you share your progress with others, cheer each other on, and compete on shared leaderboards. Whether you're working with friends or connecting with fellow adventurers, it's a great way to stay motivated and inspired.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -187,7 +178,8 @@ const Help = () => {
                   How do I customize my avatar and theme?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Visit the Customization page to change your character name, avatar style, and background theme. Some themes may require gold to unlock, adding to the progression system.
+                  Click the gear icon on your character card on the Today page to edit your avatar and display name. You can also find these settings under the Customization tab.<br/><br/>
+                  We're working on even more options, including new avatar styles and dashboard themes. Some of these may be unlockable using gold, so keep collecting those rewards to personalize your LifeQuest world!
                 </AccordionContent>
               </AccordionItem>
               
@@ -196,7 +188,8 @@ const Help = () => {
                   Can I export my data?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Currently, data export isn't available, but we're working on this feature. Your progress is safely stored and backed up in our secure database.
+                  Not yet—but we're working on adding a data export feature!<br/><br/>
+                  For now, rest assured that your quests, progress, and rewards are safely stored in our secure database and backed up regularly.
                 </AccordionContent>
               </AccordionItem>
               
@@ -205,7 +198,8 @@ const Help = () => {
                   How do I delete my account?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Go to Settings and scroll to the bottom to find the "Delete Account" option. This action is permanent and will remove all your data, so please consider carefully before proceeding.
+                  To delete your account, head to Settings and scroll to the bottom. You'll see an option to Delete Account.<br/><br/>
+                  ⚠️ This action is permanent and cannot be undone, so please double-check before proceeding. It will erase all of your progress, quests, and user data.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -220,7 +214,8 @@ const Help = () => {
                   My quests aren't saving or loading properly
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Try refreshing the page first. If problems persist, check your internet connection and try logging out and back in. Contact support if issues continue.
+                  Start by refreshing the page—this fixes most issues. If that doesn't help, check your internet connection and try logging out and back in.<br/><br/>
+                  Still stuck? Reach out via our <a href="https://tally.so/r/wb1jM6" className="text-amber-400 hover:text-amber-300 underline" target="_blank" rel="noopener noreferrer">support form</a> or email us at contact@getlifequest.com with a description of what's going wrong. We'll get it sorted as soon as possible.
                 </AccordionContent>
               </AccordionItem>
               
@@ -229,7 +224,11 @@ const Help = () => {
                   The app is running slowly or freezing
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Close other browser tabs, clear your browser cache, or try using a different browser. Some browser extensions can also interfere with the app's performance.
+                  If LifeQuest feels laggy or unresponsive, try these quick fixes:<br/>
+                  • Close other tabs that may be using up memory<br/>
+                  • Clear your browser's cache<br/>
+                  • Try a different browser to see if performance improves<br/><br/>
+                  Sometimes, certain browser extensions (like ad blockers) can interfere with app performance. Disabling them temporarily may help.
                 </AccordionContent>
               </AccordionItem>
               
@@ -238,7 +237,8 @@ const Help = () => {
                   I found a bug - how do I report it?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  We appreciate bug reports! Please email us at contact@getlifequest.com with details about what happened, what you expected, and steps to reproduce the issue.
+                  Thank you for helping us improve LifeQuest! You can report bugs using our <a href="https://tally.so/r/wb1jM6" className="text-amber-400 hover:text-amber-300 underline" target="_blank" rel="noopener noreferrer">support form</a> or by emailing contact@getlifequest.com.<br/><br/>
+                  Please include as much detail as possible: what went wrong, what you expected to happen, and steps we can take to recreate the issue. We appreciate your help in making LifeQuest better for everyone.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -253,7 +253,16 @@ const Help = () => {
                   How should I organize my quests?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Use Daily quests for habits, Main quests for important projects, Side quests for smaller tasks, and Legendary quests for major life goals. Use tags to categorize by area (work, health, learning, etc.).
+                  Think of your tasks like a game quest log:<br/><br/>
+                  <strong>Daily Quests</strong> are for habits you want to build—repeatable, easy wins.<br/>
+                  <em>Example:</em> "Drink 8 glasses of water," "Stretch for 10 minutes," "Take morning meds."<br/><br/>
+                  <strong>Main Quests</strong> are for important projects or milestones you're actively working toward.<br/>
+                  <em>Example:</em> "Finish Q3 report," "Submit job application," "Write draft of research paper."<br/><br/>
+                  <strong>Side Quests</strong> are optional or smaller tasks that support your day but aren't mission-critical.<br/>
+                  <em>Example:</em> "Organize desktop," "Buy new notebook," "Reply to emails."<br/><br/>
+                  <strong>Legendary Quests</strong> are your long-term, life-defining goals—the epic stuff.<br/>
+                  <em>Example:</em> "Launch my startup," "Publish my book," "Run a half marathon."<br/><br/>
+                  Use tags to group your quests by category: #Work, #Health, #Creative, #Learning, #Admin, etc. This lets you sort and filter based on your focus for the day.
                 </AccordionContent>
               </AccordionItem>
               
@@ -262,7 +271,9 @@ const Help = () => {
                   What's the best way to build habits?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Start small with Daily quests for habits you want to build. Be consistent rather than perfect - the streak system rewards regular completion. Focus on 2-3 key habits at a time rather than overwhelming yourself.
+                  The best way to build habits is to start small and stay consistent. Research shows that small actions—like one push-up or one sentence—are more likely to become lasting habits than big, overwhelming goals (Tiny Habits, 2019). LifeQuest's Daily Quests are designed around this idea: small, achievable actions that reinforce consistency over intensity.<br/><br/>
+                  Instead of aiming for perfection, focus on showing up regularly. Neuroscience research shows that habits form through repetition (Graybiel, 2008), and other research emphasizes that missing a day isn't failure—quitting is (Atomic Habits, 2018). That's why the LifeQuest streak system helps you stay motivated without guilt-tripping you for missing a day.<br/><br/>
+                  Finally, don't try to change everything at once. Studies on cognitive load and self-control show that focusing on just 2–3 habits at a time is far more effective (Sweller, 1988; Baumeister, 1998). LifeQuest encourages you to keep it simple, so you can build a sustainable rhythm and expand as habits become second nature.
                 </AccordionContent>
               </AccordionItem>
               
@@ -271,7 +282,25 @@ const Help = () => {
                   How can I stay motivated long-term?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Set meaningful rewards in the Gold Shop, celebrate achievements, and consider joining a party for social accountability. Remember that progress isn't always linear - focus on overall trends rather than daily perfection.
+                  Staying motivated long-term works best when you combine meaningful incentives with visible progress. Setting personal rewards in the Gold Shop helps your brain associate effort with payoff, which increases follow-through. Even small rewards can trigger dopamine responses that reinforce behavior over time (Eisenberger & Cameron, 1996).<br/><br/>
+                  Celebrating progress is also key. When you track wins—like completing streaks, leveling up, or earning badges—it creates a positive feedback loop that boosts momentum (Amabile & Kramer, 2011). LifeQuest is designed to make that progress feel visible and satisfying.<br/><br/>
+                  For an added layer of accountability, join a party. Sharing goals with others increases follow-through, especially when you're encouraged by a supportive group (Bandura, 1977). Progress won't always be linear, but what matters most is the overall direction—and LifeQuest helps you keep that in view.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+
+          {/* Privacy and Data Security */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
+            <h3 className="text-xl font-semibold text-amber-400 mb-4">Privacy and Data Security</h3>
+            <Accordion type="single" collapsible className="w-full space-y-3">
+              <AccordionItem value="privacy" className="border border-slate-600 rounded-lg">
+                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
+                  Privacy and data security
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-slate-300">
+                  Your privacy is important to us. All your data is encrypted and securely stored. We never sell or share your personal information with third parties.<br/><br/>
+                  For full transparency about how your data is handled and what rights you have, check out our <a href="https://getlifequest.com/privacy-policy" className="text-amber-400 hover:text-amber-300 underline" target="_blank" rel="noopener noreferrer">Privacy Policy</a>. Your journey is yours alone—we're just here to help you track it safely.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -296,15 +325,6 @@ const Help = () => {
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
                   Our interface incorporates design principles specifically helpful for ADHD and executive function challenges: clear visual hierarchy, minimal cognitive load, immediate feedback, and customizable organization systems.
-                </AccordionContent>
-              </AccordionItem>
-              
-              <AccordionItem value="privacy" className="border border-slate-600 rounded-lg">
-                <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
-                  Privacy and data security
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Your data is encrypted and stored securely. We never share personal information with third parties. See our Privacy Policy for complete details on data handling and your rights.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
