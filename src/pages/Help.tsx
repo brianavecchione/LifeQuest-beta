@@ -14,8 +14,8 @@ const Help = () => {
   const { openWalkthrough } = useAuth();
 
   return (
-    <div className="text-white">
-      <div className="relative z-10 max-w-4xl mx-auto px-4 pt-36 pb-12">
+    <div className="min-h-screen bg-slate-900 text-white relative z-10">
+      <div className="max-w-4xl mx-auto px-4 pt-36 pb-12">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">
