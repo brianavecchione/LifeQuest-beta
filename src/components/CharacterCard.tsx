@@ -15,9 +15,20 @@ const CharacterCard = () => {
   const { getBestStreak, loading: streaksLoading } = useStreaks();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
+  
   const activeUser = isGuestMode ? guestUser : character;
-  const xpProgress = activeUser.xp;
+  const xpProgress = activeUser?.xp || 0;
   const bestStreak = isGuestMode ? { current_streak: 5, streak_name: 'Daily Quests' } : getBestStreak();
+
+  // Debug logging for guest mode
+  console.log('🎭 CharacterCard Debug:', {
+    isGuestMode,
+    guestUser,
+    character,
+    activeUser,
+    isLoading,
+    hasActiveUserName: activeUser?.name
+  });
 
   // Helper function to render avatar with frame (increased size further)
   const renderAvatarWithFrame = (avatarData: string, frameClass?: string) => {
@@ -28,7 +39,7 @@ const CharacterCard = () => {
       return (
         <img 
           src={avatarData} 
-          alt={activeUser.name} 
+          alt={activeUser?.name || 'Avatar'} 
           className={`${baseClasses} ${appliedFrameClass}`}
         />
       );
@@ -41,8 +52,8 @@ const CharacterCard = () => {
     }
   };
 
-  // Show loading state if user data is still loading
-  if (!isGuestMode && (isLoading || !character.name)) {
+  // Show loading state if user data is still loading or if activeUser is not properly set
+  if (!isGuestMode && (isLoading || !character?.name)) {
     return (
       <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-amber-500/30 shadow-2xl">
         {/* Loading state - centered layout */}
@@ -65,6 +76,17 @@ const CharacterCard = () => {
             <Skeleton className="h-20 bg-slate-700" />
             <Skeleton className="h-20 bg-slate-700" />
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // If no activeUser data available, show a fallback
+  if (!activeUser || !activeUser.name) {
+    return (
+      <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-amber-500/30 shadow-2xl">
+        <div className="text-center text-slate-400">
+          <p>Character data not available</p>
         </div>
       </div>
     );
@@ -97,18 +119,18 @@ const CharacterCard = () => {
       <div className="flex flex-col items-center mb-4"> {/* Reduced margin from mb-6 to mb-4 */}
         {/* Avatar with Level Badge */}
         <div className="relative mb-3"> {/* Reduced margin from mb-4 to mb-3 */}
-          {renderAvatarWithFrame(activeUser.avatar, activeUser.avatarFrame)}
+          {renderAvatarWithFrame(activeUser?.avatar || 'A', activeUser?.avatarFrame)}
           <div className="absolute -bottom-2 -right-2 bg-amber-400 text-slate-900 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border-2 border-slate-800"> {/* Reduced badge size from w-12 h-12 to w-10 h-10, text from text-xl to text-lg */}
-            {activeUser.level}
+            {activeUser?.level || 1}
           </div>
         </div>
         
         {/* Character Name, Level, and Title - Stacked Vertically */}
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-amber-400 mb-1">{activeUser.name}</h2> {/* Reduced margin from mb-2 to mb-1 */}
+          <h2 className="text-3xl font-bold text-amber-400 mb-1">{activeUser?.name || 'Adventurer'}</h2> {/* Reduced margin from mb-2 to mb-1 */}
           <div className="flex items-center justify-center gap-2 text-yellow-300 mb-1"> {/* Reduced margin from mb-2 to mb-1 */}
             <Crown className="w-5 h-5" />
-            <span className="text-xl font-semibold">Level {activeUser.level}</span>
+            <span className="text-xl font-semibold">Level {activeUser?.level || 1}</span>
           </div>
           <div className="text-base text-slate-300 font-medium">
             <span>Adventurer</span> {/* Placeholder for class/archetype */}
@@ -120,15 +142,15 @@ const CharacterCard = () => {
       <div className="mb-4"> {/* Reduced margin from mb-6 to mb-4 */}
         <div className="flex justify-between items-center mb-2">
           <span className="text-slate-300 font-medium">Level Progress</span>
-          <span className="text-amber-400 font-bold">{Math.round(activeUser.xp)}%</span>
+          <span className="text-amber-400 font-bold">{Math.round(xpProgress)}%</span>
         </div>
         <Progress 
           value={xpProgress} 
           className="h-3 bg-slate-700 border border-amber-500/20" 
         />
         <div className="flex justify-between text-xs text-slate-400 mt-1">
-          <span>Level {activeUser.level}</span>
-          <span>Level {activeUser.level + 1}</span>
+          <span>Level {activeUser?.level || 1}</span>
+          <span>Level {(activeUser?.level || 1) + 1}</span>
         </div>
       </div>
 
@@ -139,7 +161,7 @@ const CharacterCard = () => {
             <TrendingUp className="w-4 h-4 text-red-400 mr-1" />
             <span className="text-red-400 text-sm font-medium">Total XP</span>
           </div>
-          <div className="text-lg font-bold text-white">{activeUser.totalXp}</div>
+          <div className="text-lg font-bold text-white">{activeUser?.totalXp || 0}</div>
         </div>
 
         <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-yellow-500/30 hover:border-yellow-500/50 transition-colors">
@@ -147,7 +169,7 @@ const CharacterCard = () => {
             <Star className="w-4 h-4 text-yellow-400 mr-1" />
             <span className="text-yellow-400 text-sm font-medium">Gold</span>
           </div>
-          <div className="text-lg font-bold text-white">{activeUser.gold}</div>
+          <div className="text-lg font-bold text-white">{activeUser?.gold || 0}</div>
         </div>
 
         <TooltipProvider>
@@ -159,14 +181,14 @@ const CharacterCard = () => {
                   <span className="text-purple-400 text-sm font-medium">Streak</span>
                 </div>
                 <div className="text-lg font-bold text-white">
-                  {streaksLoading ? '...' : `${bestStreak.current_streak} ${bestStreak.current_streak === 1 ? 'Day' : 'Days'}`}
+                  {streaksLoading ? '...' : `${bestStreak?.current_streak || 0} ${(bestStreak?.current_streak || 0) === 1 ? 'Day' : 'Days'}`}
                 </div>
               </div>
             </TooltipTrigger>
             <TooltipContent side="top" className="bg-slate-800 border-purple-500/30">
               <p className="text-sm">
-                {bestStreak.current_streak > 0 
-                  ? `You've completed at least one quest every day for the past ${bestStreak.current_streak} ${bestStreak.current_streak === 1 ? 'day' : 'days'}!`
+                {(bestStreak?.current_streak || 0) > 0 
+                  ? `You've completed at least one quest every day for the past ${bestStreak?.current_streak || 0} ${(bestStreak?.current_streak || 0) === 1 ? 'day' : 'days'}!`
                   : 'Complete a quest to start your streak!'
                 }
               </p>

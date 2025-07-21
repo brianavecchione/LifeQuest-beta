@@ -25,6 +25,17 @@ const XPProgressChart = () => {
   
   const activeUser = isGuestMode ? guestUser : character;
 
+  // Debug logging for guest mode
+  console.log('📊 XPProgressChart Debug:', {
+    isGuestMode,
+    guestUser,
+    character,
+    activeUser,
+    isLoading,
+    xpLoading,
+    goldLoading
+  });
+
   // Get real or guest XP data with fallback for safety
   const weeklyXpData = React.useMemo(() => {
     if (isGuestMode) {
@@ -57,7 +68,7 @@ const XPProgressChart = () => {
         };
       });
     }
-  }, [isGuestMode, getDailyXpData, activeUser.totalXp]);
+  }, [isGuestMode, getDailyXpData, activeUser?.totalXp]);
 
   const monthlyXpData = React.useMemo(() => {
     if (isGuestMode) {
@@ -148,7 +159,7 @@ const XPProgressChart = () => {
     if (xpLoading) return null; // Still loading
     
     try {
-      const currentLevel = activeUser.level || 1;
+      const currentLevel = activeUser?.level || 1;
       
       // Calculate XP needed to reach next level
       const xpForNextLevel = currentLevel * 100;
@@ -202,10 +213,10 @@ const XPProgressChart = () => {
       console.error('Error calculating level progress:', error);
       return null; // Data not available
     }
-  }, [isGuestMode, xpHistoryData, xpLoading, chartPeriod, activeUser.level]);
+  }, [isGuestMode, xpHistoryData, xpLoading, chartPeriod, activeUser?.level]);
 
   // Show loading state if user data is still loading
-  if (!isGuestMode && (isLoading || !character.name || goldLoading || xpLoading)) {
+  if (!isGuestMode && (isLoading || !character?.name || goldLoading || xpLoading)) {
     return (
       <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/20 shadow-2xl">
         <div className="flex items-center justify-between mb-4">
