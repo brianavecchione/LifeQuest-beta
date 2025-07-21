@@ -35,17 +35,20 @@ const GuestModeIndicator = () => {
               </div>
             </div>
           </div>
-          
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              className="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-1 h-auto"
-              onClick={handleSignUp}
-            >
-              <LogIn className="w-3 h-3 mr-1" />
-              Sign Up to Save
-            </Button>
-          </div>
+           
+          {/* Sign Up button - hidden temporarily but code preserved for later */}
+          {false && (
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                className="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-1 h-auto"
+                onClick={handleSignUp}
+              >
+                <LogIn className="w-3 h-3 mr-1" />
+                Sign Up to Save
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
