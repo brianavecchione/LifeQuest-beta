@@ -241,7 +241,7 @@ const XPProgressChart = () => {
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/20 shadow-2xl">
+    <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/20 shadow-2xl h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
@@ -275,7 +275,7 @@ const XPProgressChart = () => {
       </div>
 
       {/* Chart Container */}
-      <div className="bg-slate-700/30 rounded-lg p-4 border border-yellow-500/20 mb-6">
+      <div className="bg-slate-700/30 rounded-lg p-4 border border-yellow-500/20 flex-1 flex flex-col justify-center">
         {hasXpData ? (
           <>
             <div className="mb-3">
