@@ -1,3 +1,4 @@
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -33,7 +34,17 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const { showWalkthrough, closeWalkthrough } = useAuth();
+  const { showWalkthrough, closeWalkthrough, openWalkthrough } = useAuth();
+
+  // Listen for custom walkthrough event from guest mode
+  React.useEffect(() => {
+    const handleOpenWalkthrough = () => {
+      openWalkthrough();
+    };
+
+    window.addEventListener('openWalkthrough', handleOpenWalkthrough);
+    return () => window.removeEventListener('openWalkthrough', handleOpenWalkthrough);
+  }, [openWalkthrough]);
 
   return (
     <>

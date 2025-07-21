@@ -272,6 +272,12 @@ export const GuestProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setGuestUser(createDummyUser());
     setGuestQuests(createDummyQuests());
     setGuestTodaysFocus(['guest-5', 'guest-6', 'guest-9']); // Main and Side quests only
+    
+    // Trigger walkthrough modal after a short delay to allow navigation to complete
+    setTimeout(() => {
+      const event = new CustomEvent('openWalkthrough');
+      window.dispatchEvent(event);
+    }, 500);
   };
 
   const disableGuestMode = () => {
