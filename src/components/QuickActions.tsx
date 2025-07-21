@@ -34,7 +34,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
           className="border-amber-600 text-amber-400 hover:bg-amber-600 hover:text-white"
         >
           <Target className="w-4 h-4 mr-1" />
-          Quick Daily Setup
+          Add to Daily Focus
         </Button>
         <Button 
           size="sm" 

@@ -72,7 +72,7 @@ const TodaysFocus: React.FC<TodaysFocusProps> = ({
         <Target className="w-12 h-12 text-amber-400 mx-auto mb-4 opacity-50" />
         <h4 className="text-lg font-semibold text-amber-400 mb-2">You haven't added any quests yet</h4>
         <p className="text-slate-300 mb-4">
-          Use the 'New Quest' button to start your adventure!
+          Use the 'Quick Daily Setup' button to start your adventure!
         </p>
         <Button 
           onClick={onSetupModalOpen}
