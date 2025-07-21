@@ -260,19 +260,9 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-slate-800 border-amber-500/30 text-white max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-2xl font-bold text-amber-400 flex items-center gap-2">
-              ⚙️ Edit Profile
-            </DialogTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="hover:bg-slate-700/50"
-            >
-              <X className="w-5 h-5" />
-            </Button>
-          </div>
+          <DialogTitle className="text-2xl font-bold text-amber-400 flex items-center gap-2">
+            ⚙️ Edit Profile
+          </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6 mt-6">
@@ -349,47 +339,50 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
 
           {/* Avatar Frame Selector */}
           <div>
-            <label className="block text-slate-300 mb-3 font-medium">Choose Your Frame</label>
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-slate-300 font-medium">Choose Your Frame</label>
+              <span className="text-xs bg-amber-600/20 text-amber-400 px-2 py-1 rounded-full border border-amber-600/30">
+                Coming Soon
+              </span>
+            </div>
             
             {isLoadingFrames ? (
-              <div className="text-center py-8">
+              <div className="text-center py-8 opacity-50">
                 <div className="inline-block w-6 h-6 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
                 <p className="text-slate-400 mt-2">Loading frames...</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {availableFrames.map((frame) => (
-                  <div
-                    key={frame.id}
-                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedFrame === frame.name 
-                        ? 'border-amber-500 bg-amber-500/10' 
-                        : 'border-slate-600 hover:border-slate-500 bg-slate-700/30'
-                    }`}
-                    onClick={() => setSelectedFrame(frame.name)}
-                  >
-                    <div className="text-center">
-                      {/* Preview of frame with current avatar */}
-                      <div className="flex justify-center mb-2">
-                        {renderAvatar(
-                          previewImage || user.avatar, 
-                          frame.css_class, 
-                          "w-12 h-12"
-                        )}
+              <div className="relative">
+                <div className="absolute inset-0 bg-slate-900/70 z-10 rounded-lg"></div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 opacity-40 pointer-events-none">
+                  {availableFrames.map((frame) => (
+                    <div
+                      key={frame.id}
+                      className="p-3 rounded-lg border-2 border-slate-600 bg-slate-700/30"
+                    >
+                      <div className="text-center">
+                        {/* Preview of frame with current avatar */}
+                        <div className="flex justify-center mb-2">
+                          {renderAvatar(
+                            previewImage || user.avatar, 
+                            frame.css_class, 
+                            "w-12 h-12"
+                          )}
+                        </div>
+                        
+                        <h4 className="text-sm font-medium text-white mb-1">
+                          {frame.display_name}
+                        </h4>
+                        <p className={`text-xs capitalize ${getRarityColor(frame.rarity)} font-medium`}>
+                          {frame.rarity}
+                        </p>
+                        <p className="text-xs text-slate-400 mt-1">
+                          {frame.description}
+                        </p>
                       </div>
-                      
-                      <h4 className="text-sm font-medium text-white mb-1">
-                        {frame.display_name}
-                      </h4>
-                      <p className={`text-xs capitalize ${getRarityColor(frame.rarity)} font-medium`}>
-                        {frame.rarity}
-                      </p>
-                      <p className="text-xs text-slate-400 mt-1">
-                        {frame.description}
-                      </p>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
           </div>
