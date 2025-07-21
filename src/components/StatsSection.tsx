@@ -42,7 +42,7 @@ const StatsSection = () => {
   const periodLabel = period === 'week' ? 'Weekly' : 'Monthly';
 
   return (
-    <Card className="bg-slate-900/80 backdrop-blur-sm border border-slate-700/50">
+    <Card className="bg-slate-900 border border-slate-700/50">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-bold text-blue-400 flex items-center gap-2">
@@ -69,90 +69,85 @@ const StatsSection = () => {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {/* XP Earned */}
-        <div className="bg-gradient-to-r from-blue-600/20 to-indigo-600/20 rounded-lg p-4 border border-blue-500/30">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-500/20 rounded-full">
-              <Zap className="w-5 h-5 text-blue-400" />
-            </div>
-            <div className="flex-1">
-              <div className="text-blue-400 text-sm font-medium">XP Earned</div>
+      <CardContent>
+        {/* Four metric cards in a row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* XP Earned */}
+          <div className="bg-gradient-to-r from-blue-600/20 to-indigo-600/20 rounded-lg p-4 border border-blue-500/30">
+            <div className="text-center">
+              <div className="p-2 bg-blue-500/20 rounded-full mx-auto w-fit mb-3">
+                <Zap className="w-5 h-5 text-blue-400" />
+              </div>
+              <div className="text-blue-400 text-sm font-medium mb-1">XP Earned</div>
               <div className="text-2xl font-bold text-white">
                 {xpEarnedThisPeriod === null ? '—' : xpEarnedThisPeriod}
               </div>
               <div className="text-xs text-slate-400">
-                {xpEarnedThisPeriod === null ? 'Data not yet available' : `This ${period === 'week' ? 'Week' : 'Month'}`}
+                {xpEarnedThisPeriod === null ? 'Data not available' : `This ${period === 'week' ? 'Week' : 'Month'}`}
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Gold Earned */}
-        <div className="bg-gradient-to-r from-yellow-600/20 to-amber-600/20 rounded-lg p-4 border border-yellow-500/30">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-yellow-500/20 rounded-full">
-              <Coins className="w-5 h-5 text-yellow-400" />
-            </div>
-            <div className="flex-1">
-              <div className="text-yellow-400 text-sm font-medium">Gold Earned</div>
+          {/* Gold Earned */}
+          <div className="bg-gradient-to-r from-yellow-600/20 to-amber-600/20 rounded-lg p-4 border border-yellow-500/30">
+            <div className="text-center">
+              <div className="p-2 bg-yellow-500/20 rounded-full mx-auto w-fit mb-3">
+                <Coins className="w-5 h-5 text-yellow-400" />
+              </div>
+              <div className="text-yellow-400 text-sm font-medium mb-1">Gold Earned</div>
               <div className="text-2xl font-bold text-white">
                 {goldEarnedThisPeriod === null ? '—' : goldEarnedThisPeriod}
               </div>
               <div className="text-xs text-slate-400">
-                {goldEarnedThisPeriod === null ? 'Data not yet available' : `This ${period === 'week' ? 'Week' : 'Month'}`}
+                {goldEarnedThisPeriod === null ? 'Data not available' : `This ${period === 'week' ? 'Week' : 'Month'}`}
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Quests Completed */}
-        <div className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 rounded-lg p-4 border border-green-500/30">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-500/20 rounded-full">
-              <CheckCircle2 className="w-5 h-5 text-green-400" />
-            </div>
-            <div className="flex-1">
-              <div className="text-green-400 text-sm font-medium">Quests Completed</div>
+          {/* Quests Completed */}
+          <div className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 rounded-lg p-4 border border-green-500/30">
+            <div className="text-center">
+              <div className="p-2 bg-green-500/20 rounded-full mx-auto w-fit mb-3">
+                <CheckCircle2 className="w-5 h-5 text-green-400" />
+              </div>
+              <div className="text-green-400 text-sm font-medium mb-1">Quests Completed</div>
               <div className="text-2xl font-bold text-white">
                 {questsCompletedThisPeriod === null ? '—' : questsCompletedThisPeriod}
               </div>
               <div className="text-xs text-slate-400">
-                {questsCompletedThisPeriod === null ? 'Data not yet available' : `This ${period === 'week' ? 'Week' : 'Month'}`}
+                {questsCompletedThisPeriod === null ? 'Data not available' : `This ${period === 'week' ? 'Week' : 'Month'}`}
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Level Progress */}
-        <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-lg p-4 border border-purple-500/30">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-purple-500/20 rounded-full">
-              <div className="w-5 h-5 rounded-full border-2 border-purple-400 flex items-center justify-center">
-                <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+          {/* Level Progress */}
+          <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-lg p-4 border border-purple-500/30">
+            <div className="text-center">
+              <div className="p-2 bg-purple-500/20 rounded-full mx-auto w-fit mb-3">
+                <div className="w-5 h-5 rounded-full border-2 border-purple-400 flex items-center justify-center">
+                  <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                </div>
               </div>
-            </div>
-            <div className="flex-1">
-              <div className="text-purple-400 text-sm font-medium">Level Progress</div>
+              <div className="text-purple-400 text-sm font-medium mb-1">Level Progress</div>
               <div className="text-2xl font-bold text-white">
                 {levelProgressThisPeriod === null ? '—' : `${Math.min(levelProgressThisPeriod, 100)}%`}
               </div>
               <div className="text-xs text-slate-400">
                 {levelProgressThisPeriod === null 
-                  ? 'Data not yet available' 
+                  ? 'Data not available' 
                   : levelProgressThisPeriod === 0
                   ? `No progress this ${period}`
-                  : `Progress This ${period === 'week' ? 'Week' : 'Month'}`
+                  : `This ${period === 'week' ? 'Week' : 'Month'}`
                 }
               </div>
+              {levelProgressThisPeriod !== null && (
+                <Progress 
+                  value={Math.min(levelProgressThisPeriod, 100)} 
+                  className="h-2 bg-slate-600/50 mt-2"
+                />
+              )}
             </div>
           </div>
-          {levelProgressThisPeriod !== null && (
-            <Progress 
-              value={Math.min(levelProgressThisPeriod, 100)} 
-              className="h-2 bg-slate-600/50"
-            />
-          )}
         </div>
       </CardContent>
     </Card>
