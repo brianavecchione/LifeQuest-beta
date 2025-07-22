@@ -644,6 +644,7 @@ export type Database = {
           completed_at: string | null
           created_at: string
           description: string | null
+          difficulty: Database["public"]["Enums"]["quest_difficulty"]
           due_date: string | null
           gold_reward: number
           id: string
@@ -662,6 +663,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           description?: string | null
+          difficulty?: Database["public"]["Enums"]["quest_difficulty"]
           due_date?: string | null
           gold_reward?: number
           id?: string
@@ -680,6 +682,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           description?: string | null
+          difficulty?: Database["public"]["Enums"]["quest_difficulty"]
           due_date?: string | null
           gold_reward?: number
           id?: string
@@ -1031,6 +1034,7 @@ export type Database = {
       leaderboard_time_range: "Week" | "Month"
       party_quest_status: "In Progress" | "Completed"
       party_role: "Leader" | "Co-Leader" | "Member"
+      quest_difficulty: "Easy" | "Moderate" | "Hard"
       quest_priority: "Low" | "Medium" | "High"
       quest_type: "Daily" | "Main" | "Side" | "Legendary"
       reward_status: "Locked" | "Unlocked" | "Redeemed"
@@ -1183,6 +1187,7 @@ export const Constants = {
       leaderboard_time_range: ["Week", "Month"],
       party_quest_status: ["In Progress", "Completed"],
       party_role: ["Leader", "Co-Leader", "Member"],
+      quest_difficulty: ["Easy", "Moderate", "Hard"],
       quest_priority: ["Low", "Medium", "High"],
       quest_type: ["Daily", "Main", "Side", "Legendary"],
       reward_status: ["Locked", "Unlocked", "Redeemed"],
