@@ -39,6 +39,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
     gold_reward: '',
     quest_type: defaultQuestType || 'Main' as Quest['quest_type'],
     priority: 'Medium' as Quest['priority'],
+    difficulty: 'Moderate' as Quest['difficulty'],
     tags: '',
     due_date: null as Date | null,
     pomodoro_enabled: false,
@@ -148,6 +149,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
       gold_reward: goldValue,
       quest_type: formData.quest_type,
       priority: formData.quest_type === 'Daily' ? 'Medium' : formData.priority, // Default Medium for Daily quests
+      difficulty: formData.difficulty,
       tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(Boolean) : undefined,
       due_date: finalDueDate,
       pomodoro_enabled: formData.pomodoro_enabled,
@@ -164,6 +166,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
         gold_reward: (defaultQuestType || 'Main') === 'Daily' ? '0' : '',
         quest_type: defaultQuestType || 'Main',
         priority: 'Medium',
+        difficulty: 'Moderate',
         tags: '',
         due_date: null,
         pomodoro_enabled: false,
@@ -230,7 +233,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Quest Type */}
             <div>
               <Label className="text-slate-300 font-medium mb-2 block">Quest Type</Label>
@@ -277,6 +280,24 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
                 </Select>
               </div>
             )}
+
+            {/* Difficulty */}
+            <div>
+              <Label className="text-slate-300 font-medium mb-2 block">Difficulty</Label>
+              <Select 
+                value={formData.difficulty} 
+                onValueChange={(value: Quest['difficulty']) => setFormData(prev => ({ ...prev, difficulty: value }))}
+              >
+                <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-800 border-slate-700 text-white">
+                  <SelectItem value="Easy">Easy</SelectItem>
+                  <SelectItem value="Moderate">Moderate</SelectItem>
+                  <SelectItem value="Hard">Hard</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

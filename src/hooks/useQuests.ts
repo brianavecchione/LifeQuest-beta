@@ -15,6 +15,7 @@ export interface Quest {
   description?: string;
   quest_type: 'Daily' | 'Main' | 'Side' | 'Legendary';
   priority: 'Low' | 'Medium' | 'High';
+  difficulty: 'Easy' | 'Moderate' | 'Hard';
   xp_reward: number;
   gold_reward: number;
   tags?: string[];
@@ -35,6 +36,7 @@ const transformDbQuest = (dbQuest: DbQuest): Quest => ({
   description: dbQuest.description || undefined,
   quest_type: dbQuest.quest_type as Quest['quest_type'],
   priority: dbQuest.priority as Quest['priority'],
+  difficulty: (dbQuest as any).difficulty as Quest['difficulty'] || 'Moderate',
   xp_reward: dbQuest.xp_reward,
   gold_reward: dbQuest.gold_reward,
   tags: dbQuest.tags || undefined,
