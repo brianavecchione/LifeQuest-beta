@@ -100,26 +100,47 @@ const QuestTracker = () => {
 
   // AUTO-TRIGGER Focus Master Bonus when all Focus tasks are completed
   useEffect(() => {
+    console.log('🎯 Focus Master Effect Triggered:', {
+      todaysFocusLength: todaysFocus.length,
+      todaysFocus,
+      questsLoaded: quests.length > 0
+    });
+
     if (todaysFocus.length >= 3) {
       const focusedQuests = quests.filter(q => todaysFocus.includes(q.id));
       const allCompleted = focusedQuests.length >= 3 && focusedQuests.every(q => q.status === 'Completed');
+      
+      console.log('🎯 Focus Master Detailed Check:', {
+        todaysFocusCount: todaysFocus.length,
+        focusedQuestsFound: focusedQuests.length,
+        focusedQuestDetails: focusedQuests.map(q => ({
+          id: q.id,
+          name: q.quest_name,
+          status: q.status
+        })),
+        allCompleted,
+        meetsMinimum: focusedQuests.length >= 3
+      });
       
       if (allCompleted) {
         const today = new Date().toDateString();
         const bonusKey = `lifequest-focus-bonus-${today}`;
         const bonusAlreadyClaimed = localStorage.getItem(bonusKey) === 'true';
         
-        console.log('AUTO Focus Master Bonus Check:', {
+        console.log('🎉 FOCUS MASTER BONUS TRIGGERED!', {
           todaysFocus: todaysFocus.length,
           focusedQuests: focusedQuests.length,
           allCompleted,
           bonusAlreadyClaimed,
-          questStatuses: focusedQuests.map(q => ({ name: q.quest_name, status: q.status }))
+          bonusKey,
+          today
         });
         
         if (!bonusAlreadyClaimed) {
           const bonusXP = 25;
           const bonusGold = 10;
+          
+          console.log('🎉 AWARDING FOCUS MASTER BONUS:', { bonusXP, bonusGold });
           
           // Award the bonus
           addXP(bonusXP);
@@ -131,9 +152,17 @@ const QuestTracker = () => {
           // Show celebratory modal
           setIsFocusMasterModalOpen(true);
           
-          console.log('AUTO Focus Master Bonus Awarded:', { bonusXP, bonusGold });
+          console.log('🎉 FOCUS MASTER BONUS AWARDED SUCCESSFULLY');
+        } else {
+          console.log('🚫 Focus Master bonus already claimed today');
         }
       }
+    } else {
+      console.log('🚫 Not enough Focus tasks:', { 
+        current: todaysFocus.length, 
+        required: 3,
+        focusTasks: todaysFocus
+      });
     }
   }, [quests, todaysFocus, addXP, addGold]);
 
