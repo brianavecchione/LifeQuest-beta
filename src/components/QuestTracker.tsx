@@ -98,63 +98,54 @@ const QuestTracker = () => {
     }
   }, [quests, todaysFocus]);
 
+  // AUTO-TRIGGER Focus Master Bonus when all Focus tasks are completed
+  useEffect(() => {
+    if (todaysFocus.length >= 3) {
+      const focusedQuests = quests.filter(q => todaysFocus.includes(q.id));
+      const allCompleted = focusedQuests.length >= 3 && focusedQuests.every(q => q.status === 'Completed');
+      
+      if (allCompleted) {
+        const today = new Date().toDateString();
+        const bonusKey = `lifequest-focus-bonus-${today}`;
+        const bonusAlreadyClaimed = localStorage.getItem(bonusKey) === 'true';
+        
+        console.log('AUTO Focus Master Bonus Check:', {
+          todaysFocus: todaysFocus.length,
+          focusedQuests: focusedQuests.length,
+          allCompleted,
+          bonusAlreadyClaimed,
+          questStatuses: focusedQuests.map(q => ({ name: q.quest_name, status: q.status }))
+        });
+        
+        if (!bonusAlreadyClaimed) {
+          const bonusXP = 25;
+          const bonusGold = 10;
+          
+          // Award the bonus
+          addXP(bonusXP);
+          addGold(bonusGold);
+          
+          // Mark bonus as claimed for today
+          localStorage.setItem(bonusKey, 'true');
+          
+          // Show celebratory modal
+          setIsFocusMasterModalOpen(true);
+          
+          console.log('AUTO Focus Master Bonus Awarded:', { bonusXP, bonusGold });
+        }
+      }
+    }
+  }, [quests, todaysFocus, addXP, addGold]);
+
   const handleSetupComplete = (selectedQuestIds: string[]) => {
     handleDailySetup(selectedQuestIds);
     setIsSetupModalOpen(false);
   };
 
   const handleNoMoreQuests = () => {
+    // Simply set flag to prevent auto-opening the modal today
+    // Focus Master bonus is now handled automatically when tasks are completed
     const today = new Date().toDateString();
-    const bonusKey = `lifequest-focus-bonus-${today}`;
-    const bonusAlreadyClaimed = localStorage.getItem(bonusKey) === 'true';
-    
-    // Check if user had Focus Tasks today and completed them all
-    const focusHistoryKey = `lifequest-focus-history-${today}`;
-    const focusHistory = JSON.parse(localStorage.getItem(focusHistoryKey) || '[]');
-    
-    const focusedQuests = quests.filter(q => todaysFocus.includes(q.id));
-    const currentAllFocusCompleted = focusedQuests.length > 0 && focusedQuests.every(q => q.status === 'Completed');
-    
-    // Also check if there were Focus Tasks completed today (from history)
-    const hadFocusTasksToday = focusHistory.length > 0;
-    const allHistoricalFocusCompleted = focusHistory.length > 0 && focusHistory.every(questId => {
-      const quest = quests.find(q => q.id === questId);
-      return quest && quest.status === 'Completed';
-    });
-    
-    const shouldAwardBonus = (currentAllFocusCompleted || allHistoricalFocusCompleted) && !bonusAlreadyClaimed;
-    
-    console.log('Focus Master Bonus Check:', {
-      todaysFocus: todaysFocus.length,
-      focusedQuests: focusedQuests.length,
-      currentAllFocusCompleted,
-      hadFocusTasksToday,
-      allHistoricalFocusCompleted,
-      bonusAlreadyClaimed,
-      shouldAwardBonus,
-      focusHistory,
-      questStatuses: focusedQuests.map(q => ({ name: q.quest_name, status: q.status }))
-    });
-    
-    // Check if user deserves Focus Master bonus
-    if (shouldAwardBonus) {
-      const bonusXP = 25;
-      const bonusGold = 10;
-      
-      // Award the bonus
-      addXP(bonusXP);
-      addGold(bonusGold);
-      
-      // Mark bonus as claimed for today
-      localStorage.setItem(bonusKey, 'true');
-      
-      // Show celebratory modal
-      setIsFocusMasterModalOpen(true);
-      
-      console.log('Focus Master Bonus Awarded:', { bonusXP, bonusGold });
-    }
-    
-    // Set flag to prevent auto-opening the modal today
     localStorage.setItem('lifequest-no-more-quests-today', today);
     setIsSetupModalOpen(false);
   };
