@@ -105,21 +105,39 @@ const QuestTracker = () => {
 
   const handleNoMoreQuests = () => {
     const today = new Date().toDateString();
-    const focusedQuests = quests.filter(q => todaysFocus.includes(q.id));
-    const allFocusCompleted = focusedQuests.length > 0 && focusedQuests.every(q => q.status === 'Completed');
     const bonusKey = `lifequest-focus-bonus-${today}`;
     const bonusAlreadyClaimed = localStorage.getItem(bonusKey) === 'true';
+    
+    // Check if user had Focus Tasks today and completed them all
+    const focusHistoryKey = `lifequest-focus-history-${today}`;
+    const focusHistory = JSON.parse(localStorage.getItem(focusHistoryKey) || '[]');
+    
+    const focusedQuests = quests.filter(q => todaysFocus.includes(q.id));
+    const currentAllFocusCompleted = focusedQuests.length > 0 && focusedQuests.every(q => q.status === 'Completed');
+    
+    // Also check if there were Focus Tasks completed today (from history)
+    const hadFocusTasksToday = focusHistory.length > 0;
+    const allHistoricalFocusCompleted = focusHistory.length > 0 && focusHistory.every(questId => {
+      const quest = quests.find(q => q.id === questId);
+      return quest && quest.status === 'Completed';
+    });
+    
+    const shouldAwardBonus = (currentAllFocusCompleted || allHistoricalFocusCompleted) && !bonusAlreadyClaimed;
     
     console.log('Focus Master Bonus Check:', {
       todaysFocus: todaysFocus.length,
       focusedQuests: focusedQuests.length,
-      allFocusCompleted,
+      currentAllFocusCompleted,
+      hadFocusTasksToday,
+      allHistoricalFocusCompleted,
       bonusAlreadyClaimed,
+      shouldAwardBonus,
+      focusHistory,
       questStatuses: focusedQuests.map(q => ({ name: q.quest_name, status: q.status }))
     });
     
     // Check if user deserves Focus Master bonus
-    if (allFocusCompleted && !bonusAlreadyClaimed) {
+    if (shouldAwardBonus) {
       const bonusXP = 25;
       const bonusGold = 10;
       
