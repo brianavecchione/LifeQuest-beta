@@ -78,16 +78,26 @@ const Help = () => {
             <Accordion type="single" collapsible className="w-full space-y-3">
               <AccordionItem value="level-up" className="border border-slate-600 rounded-lg">
                 <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
-                  How do I level up and earn XP?
+                  How do I earn XP and gold?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Complete quests to earn XP! Different quest types and priorities give different amounts of XP. Daily quests give 10-25 XP, Side quests 15-35 XP, Main quests 25-60 XP, and Legendary quests 50-150 XP. As you accumulate XP, you'll automatically level up.
+                  XP and gold are earned by completing quests based on their difficulty and priority. Each quest has a preset reward amount:<br/><br/>
+                  • Easy + Low Priority = 5 XP, 2 Gold<br/>
+                  • Easy + Medium Priority = 10 XP, 3 Gold<br/>
+                  • Easy + High Priority = 15 XP, 4 Gold<br/>
+                  • Moderate + Low Priority = 15 XP, 5 Gold<br/>
+                  • Moderate + Medium Priority = 20 XP, 6 Gold<br/>
+                  • Moderate + High Priority = 25 XP, 8 Gold<br/>
+                  • Hard + Low Priority = 25 XP, 8 Gold<br/>
+                  • Hard + Medium Priority = 30 XP, 10 Gold<br/>
+                  • Hard + High Priority = 35 XP, 12 Gold<br/><br/>
+                  You also earn 25 bonus XP and 10 gold for completing all of your daily focus tasks.
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="xp-system" className="border border-slate-600 rounded-lg">
                 <AccordionTrigger className="px-4 py-3 text-left text-white hover:text-amber-300">
-                  How does the XP and leveling system work?
+                  How does the leveling system work?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
                   LifeQuest uses a progressive XP system inspired by RPGs and incremental games. As you level up, the XP needed for the next level increases—encouraging consistent effort while making your journey feel more epic over time.<br/><br/>
