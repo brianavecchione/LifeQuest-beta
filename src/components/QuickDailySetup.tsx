@@ -25,12 +25,38 @@ const QuickDailySetup: React.FC<QuickDailySetupProps> = ({
   const [selectedQuests, setSelectedQuests] = useState<string[]>([]);
   const { quests } = useQuests();
 
-  // Filter to show Main, Side, and Legendary quests (not completed and not already in focus)
-  const focusableQuests = quests.filter(quest => 
-    ['Main', 'Side', 'Legendary'].includes(quest.quest_type) && 
-    quest.status !== 'Completed' &&
-    !currentFocusQuests.includes(quest.id) // Exclude quests already in Today's Focus
-  );
+  // Get today's date for filtering
+  const today = new Date().toLocaleDateString();
+
+  // Filter to show Main, Side, and Legendary quests (not completed today and not already in focus)
+  const focusableQuests = quests.filter(quest => {
+    // Must be Main, Side, or Legendary quest type
+    if (!['Main', 'Side', 'Legendary'].includes(quest.quest_type)) {
+      return false;
+    }
+    
+    // Exclude quests already in Today's Focus
+    if (currentFocusQuests.includes(quest.id)) {
+      return false;
+    }
+    
+    // Exclude completed quests
+    if (quest.status === 'Completed') {
+      // For completed quests, check if they were completed today
+      if (quest.completed_at) {
+        const completedDate = new Date(quest.completed_at).toLocaleDateString();
+        // If completed today, exclude from focus selection
+        if (completedDate === today) {
+          return false;
+        }
+      } else {
+        // If marked as completed but no completion date, exclude it
+        return false;
+      }
+    }
+    
+    return true;
+  });
 
   // Count only active (non-completed) focus quests
   const activeFocusQuests = quests.filter(q => 
