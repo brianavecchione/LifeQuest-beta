@@ -7,6 +7,7 @@ import EditQuestModal from './EditQuestModal';
 import TodaysFocus from './TodaysFocus';
 import DailyHabits from './DailyHabits';
 import QuickActions from './QuickActions';
+import FocusMasterModal from './FocusMasterModal';
 import { 
   PomodoroSetupModal, 
   ActiveTimer, 
@@ -19,10 +20,12 @@ import { useQuests } from '@/hooks/useQuestsWrapper';
 import { Quest } from '@/hooks/useQuests';
 import { useTodaysFocus } from '@/hooks/useTodaysFocus';
 import { usePomodoroTimer } from '@/hooks/usePomodoroTimer';
+import { useUser } from '@/contexts/UserContext';
 
 const QuestTracker = () => {
   const { toast } = useToast();
   const { quests, updateQuestStatus, deleteQuest, refetchQuests } = useQuests();
+  const { addXP, addGold } = useUser();
   
   // Custom hooks
   const { todaysFocus, handleDailySetup, handleRemoveFromFocus } = useTodaysFocus(quests);
@@ -59,6 +62,7 @@ const QuestTracker = () => {
   const [editingQuest, setEditingQuest] = useState<Quest | null>(null);
   const [deletingQuest, setDeletingQuest] = useState<Quest | null>(null);
   const [showAddMoreQuests, setShowAddMoreQuests] = useState(false);
+  const [isFocusMasterModalOpen, setIsFocusMasterModalOpen] = useState(false);
 
   // Check if all focused quests are completed OR if active quests drop below minimum
   useEffect(() => {
@@ -100,8 +104,39 @@ const QuestTracker = () => {
   };
 
   const handleNoMoreQuests = () => {
-    // Set a flag to prevent auto-opening the modal today
     const today = new Date().toDateString();
+    const focusedQuests = quests.filter(q => todaysFocus.includes(q.id));
+    const allFocusCompleted = focusedQuests.length > 0 && focusedQuests.every(q => q.status === 'Completed');
+    const bonusKey = `lifequest-focus-bonus-${today}`;
+    const bonusAlreadyClaimed = localStorage.getItem(bonusKey) === 'true';
+    
+    console.log('Focus Master Bonus Check:', {
+      todaysFocus: todaysFocus.length,
+      focusedQuests: focusedQuests.length,
+      allFocusCompleted,
+      bonusAlreadyClaimed,
+      questStatuses: focusedQuests.map(q => ({ name: q.quest_name, status: q.status }))
+    });
+    
+    // Check if user deserves Focus Master bonus
+    if (allFocusCompleted && !bonusAlreadyClaimed) {
+      const bonusXP = 25;
+      const bonusGold = 10;
+      
+      // Award the bonus
+      addXP(bonusXP);
+      addGold(bonusGold);
+      
+      // Mark bonus as claimed for today
+      localStorage.setItem(bonusKey, 'true');
+      
+      // Show celebratory modal
+      setIsFocusMasterModalOpen(true);
+      
+      console.log('Focus Master Bonus Awarded:', { bonusXP, bonusGold });
+    }
+    
+    // Set flag to prevent auto-opening the modal today
     localStorage.setItem('lifequest-no-more-quests-today', today);
     setIsSetupModalOpen(false);
   };
@@ -253,6 +288,14 @@ const QuestTracker = () => {
         onClose={() => setEditingQuest(null)}
         quest={editingQuest}
         onQuestUpdated={refetchQuests}
+      />
+
+      {/* Focus Master Modal */}
+      <FocusMasterModal
+        isOpen={isFocusMasterModalOpen}
+        onClose={() => setIsFocusMasterModalOpen(false)}
+        xpEarned={25}
+        goldEarned={10}
       />
 
       {/* Delete Confirmation Dialog */}
