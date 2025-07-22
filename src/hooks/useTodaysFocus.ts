@@ -165,14 +165,6 @@ export const useTodaysFocus = (quests: Quest[]) => {
       setTodaysFocus(newFocus);
       localStorage.setItem('lifequest-todays-focus', JSON.stringify(newFocus));
       localStorage.setItem('lifequest-focus-date', getLocalToday());
-      
-      // Track Focus Task history for bonus calculations
-      const today = new Date().toDateString();
-      const focusHistoryKey = `lifequest-focus-history-${today}`;
-      const existingHistory = JSON.parse(localStorage.getItem(focusHistoryKey) || '[]');
-      const updatedHistory = Array.from(new Set([...existingHistory, ...newFocus]));
-      localStorage.setItem(focusHistoryKey, JSON.stringify(updatedHistory));
-      
       window.dispatchEvent(new CustomEvent('todaysFocusUpdated'));
     }
   };
