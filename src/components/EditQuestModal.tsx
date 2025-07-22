@@ -35,8 +35,6 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
   const [formData, setFormData] = useState({
     quest_name: '',
     description: '',
-    xp_reward: '',
-    gold_reward: '',
     quest_type: 'Main' as Quest['quest_type'],
     priority: 'Medium' as Quest['priority'],
     difficulty: 'Moderate' as Quest['difficulty'],
@@ -45,14 +43,27 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
     pomodoro_enabled: false,
   });
 
+  // Helper function to calculate rewards based on difficulty and priority
+  const calculateRewards = (difficulty: Quest['difficulty'], priority: Quest['priority']) => {
+    const rewardMatrix = {
+      Easy: { Low: { xp: 5, gold: 2 }, Medium: { xp: 10, gold: 3 }, High: { xp: 15, gold: 4 } },
+      Moderate: { Low: { xp: 15, gold: 5 }, Medium: { xp: 20, gold: 6 }, High: { xp: 25, gold: 8 } },
+      Hard: { Low: { xp: 25, gold: 8 }, Medium: { xp: 30, gold: 10 }, High: { xp: 35, gold: 12 } }
+    };
+    return rewardMatrix[difficulty][priority];
+  };
+
+  // Calculate current rewards
+  const currentRewards = formData.quest_type === 'Daily' 
+    ? { xp: 5, gold: 0 } 
+    : calculateRewards(formData.difficulty, formData.priority);
+
   // Initialize form data when quest changes
   useEffect(() => {
     if (quest) {
       setFormData({
         quest_name: quest.quest_name,
         description: quest.description || '',
-        xp_reward: quest.xp_reward.toString(),
-        gold_reward: quest.gold_reward.toString(),
         quest_type: quest.quest_type,
         priority: quest.priority,
         difficulty: quest.difficulty,
@@ -63,16 +74,6 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
     }
   }, [quest]);
 
-  // Enforce fixed rewards for Daily quests
-  useEffect(() => {
-    if (formData.quest_type === 'Daily') {
-      setFormData(prev => ({
-        ...prev,
-        xp_reward: '5',
-        gold_reward: '0'
-      }));
-    }
-  }, [formData.quest_type]);
 
   const getTypeIcon = (type: Quest['quest_type']) => {
     switch (type) {
@@ -106,41 +107,10 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
       return;
     }
 
-    // For non-Daily quests, check XP and Gold values
-    if (formData.quest_type !== 'Daily') {
-      if (!formData.xp_reward || !formData.gold_reward) {
-        toast({
-          title: "Missing Information",
-          description: "Please fill in the XP value and Gold reward.",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      const xpValue = parseInt(formData.xp_reward);
-      if (isNaN(xpValue) || xpValue < 1) {
-        toast({
-          title: "Invalid XP Value",
-          description: "XP must be a positive number.",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      const goldValue = parseInt(formData.gold_reward);
-      if (isNaN(goldValue) || goldValue < 0) {
-        toast({
-          title: "Invalid Gold Value",
-          description: "Gold must be a non-negative number.",
-          variant: "destructive"
-        });
-        return;
-      }
-    }
-
     // Calculate XP and Gold rewards based on quest type
-    const xpValue = formData.quest_type === 'Daily' ? 5 : parseInt(formData.xp_reward);
-    const goldValue = formData.quest_type === 'Daily' ? 0 : parseInt(formData.gold_reward);
+    const { xp, gold } = formData.quest_type === 'Daily' 
+      ? { xp: 5, gold: 0 } 
+      : calculateRewards(formData.difficulty, formData.priority);
 
     // Auto-assign due date for Daily quests to today
     const finalDueDate = formData.quest_type === 'Daily' 
@@ -153,8 +123,8 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
         .update({
           quest_name: formData.quest_name.trim(),
           description: formData.description.trim() || null,
-          xp_reward: xpValue,
-          gold_reward: goldValue,
+          xp_reward: xp,
+          gold_reward: gold,
           quest_type: formData.quest_type,
           priority: formData.quest_type === 'Daily' ? 'Medium' : formData.priority, // Default Medium for Daily quests
           difficulty: formData.difficulty,
@@ -240,9 +210,6 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
                   setFormData(prev => ({ 
                     ...prev, 
                     quest_type: value,
-                    // Auto-set fixed rewards for Daily quests
-                    xp_reward: value === 'Daily' ? '5' : prev.xp_reward,
-                    gold_reward: value === 'Daily' ? '0' : prev.gold_reward
                   }));
                 }}
               >
@@ -297,69 +264,27 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* XP Value */}
-            <div>
-              <Label htmlFor="quest-xp" className="text-slate-300 font-medium">
-                XP Reward *
-              </Label>
-              <Input
-                id="quest-xp"
-                type="number"
-                value={formData.xp_reward}
-                onChange={(e) => setFormData(prev => ({ ...prev, xp_reward: e.target.value }))}
-                placeholder="e.g., 50"
-                className={`mt-1 ${
-                  formData.quest_type === 'Daily' 
-                    ? 'bg-slate-600 border-slate-500 text-slate-300 cursor-not-allowed' 
-                    : 'bg-slate-700 border-slate-600 text-white'
-                }`}
-                min="1"
-                max="1000"
-                disabled={formData.quest_type === 'Daily'}
-              />
+          {/* Reward Display Section */}
+          <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+            <h4 className="text-slate-300 font-medium text-sm mb-2">Calculated Rewards:</h4>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1 bg-amber-600/20 px-2 py-1 rounded border border-amber-600/30">
+                <span className="text-amber-400 text-sm">⚡</span>
+                <span className="text-amber-400 font-medium text-sm">{currentRewards.xp} XP</span>
+              </div>
+              <div className="flex items-center gap-1 bg-yellow-600/20 px-2 py-1 rounded border border-yellow-600/30">
+                <span className="text-yellow-400 text-sm">🪙</span>
+                <span className="text-yellow-400 font-medium text-sm">{currentRewards.gold} Gold</span>
+              </div>
               {formData.quest_type === 'Daily' ? (
-                <p className="text-xs text-yellow-400 mt-1">
-                  ⚡ Daily habits have a fixed 5 XP reward
-                </p>
+                <p className="text-yellow-400 text-xs">Fixed rewards for Daily quests</p>
               ) : (
-                <p className="text-xs text-slate-400 mt-1">
-                  Suggested: Side (30-100), Main (100-300), Legendary (500+)
-                </p>
+                <p className="text-slate-400 text-xs">Based on {formData.difficulty} difficulty + {formData.priority} priority</p>
               )}
             </div>
+          </div>
 
-            {/* Gold Value */}
-            <div>
-              <Label htmlFor="quest-gold" className="text-slate-300 font-medium">
-                Gold Reward *
-              </Label>
-              <Input
-                id="quest-gold"
-                type="number"
-                value={formData.gold_reward}
-                onChange={(e) => setFormData(prev => ({ ...prev, gold_reward: e.target.value }))}
-                placeholder="e.g., 25"
-                className={`mt-1 ${
-                  formData.quest_type === 'Daily' 
-                    ? 'bg-slate-600 border-slate-500 text-slate-300 cursor-not-allowed' 
-                    : 'bg-slate-700 border-slate-600 text-white'
-                }`}
-                min="0"
-                max="1000"
-                disabled={formData.quest_type === 'Daily'}
-              />
-              {formData.quest_type === 'Daily' ? (
-                <p className="text-xs text-yellow-400 mt-1">
-                  🏆 Daily habits have a fixed 0 Gold reward
-                </p>
-              ) : (
-                <p className="text-xs text-slate-400 mt-1">
-                  Suggested: Side (15-50), Main (50-150), Legendary (200+)
-                </p>
-              )}
-            </div>
-
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Tags */}
             <div>
               <Label htmlFor="quest-tags" className="text-slate-300 font-medium">
@@ -452,10 +377,10 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
                   <h5 className="text-white font-medium truncate">{formData.quest_name}</h5>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant="outline" className="text-amber-400 border-amber-400/50 text-xs">
-                      {formData.xp_reward || 0} XP
+                      {currentRewards.xp} XP
                     </Badge>
                     <Badge variant="outline" className="text-yellow-500 border-yellow-500/50 text-xs">
-                      {formData.gold_reward || 0} Gold
+                      {currentRewards.gold} Gold
                     </Badge>
                     {formData.quest_type !== 'Daily' && (
                       <Badge className={`${formData.priority === 'High' ? 'bg-red-600' : formData.priority === 'Medium' ? 'bg-yellow-600' : 'bg-green-600'} text-white text-xs`}>
