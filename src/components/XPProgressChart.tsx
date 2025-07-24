@@ -40,10 +40,10 @@ const XPProgressChart = React.memo(() => {
   // In guest mode, use guestUser directly to avoid circular reference issues
   const displayUser = isGuestMode ? guestUser : activeUser;
 
-  // Get real or guest XP data with fallback for safety
+  // Get real or guest XP data with stable memoization
   const weeklyXpData = React.useMemo(() => {
     if (isGuestMode) {
-      // Generate mock data for guest mode
+      // Generate stable mock data for guest mode
       return Array.from({ length: 7 }, (_, i) => {
         const date = new Date();
         date.setDate(date.getDate() - (6 - i));
@@ -51,14 +51,15 @@ const XPProgressChart = React.memo(() => {
         return {
           date: date.toLocaleDateString('en-US', { weekday: 'short' }),
           xp: mockXp,
-          day: date.toLocaleDateString('en-US', { weekday: 'long' })
+          day: date.toLocaleDateString('en-US', { weekday: 'long' }),
+          fullDate: date.toISOString().split('T')[0]
         };
       });
     }
     
     try {
       const data = getDailyXpData();
-      return data;
+      return data || [];
     } catch (error) {
       console.error('❌ Error getting daily XP data:', error);
       // Fallback to empty data
@@ -68,11 +69,12 @@ const XPProgressChart = React.memo(() => {
         return {
           date: date.toLocaleDateString('en-US', { weekday: 'short' }),
           xp: 0,
-          day: date.toLocaleDateString('en-US', { weekday: 'long' })
+          day: date.toLocaleDateString('en-US', { weekday: 'long' }),
+          fullDate: date.toISOString().split('T')[0]
         };
       });
     }
-  }, [isGuestMode, getDailyXpData, displayUser?.totalXp, displayUser?.level]);
+  }, [isGuestMode, getDailyXpData]);
 
   const monthlyXpData = React.useMemo(() => {
     if (isGuestMode) {
@@ -105,8 +107,16 @@ const XPProgressChart = React.memo(() => {
     },
   };
 
-  const currentData = chartPeriod === 'week' ? weeklyXpData : monthlyXpData;
-  const hasXpData = currentData.some(item => item.xp > 0);
+  // Memoize current data selection to prevent unnecessary re-renders
+  const currentData = React.useMemo(() => {
+    const data = chartPeriod === 'week' ? weeklyXpData : monthlyXpData;
+    return data || [];
+  }, [chartPeriod, weeklyXpData, monthlyXpData]);
+  
+  const hasXpData = React.useMemo(() => 
+    currentData.some(item => item.xp > 0), 
+    [currentData]
+  );
 
   // Calculate summary stats with fallback messaging
   const goldEarnedThisWeek = React.useMemo(() => {
@@ -277,7 +287,7 @@ const XPProgressChart = React.memo(() => {
       </div>
 
       {/* Chart Container */}
-      <div className="bg-slate-700/30 rounded-lg p-4 border border-yellow-500/20 mb-6">
+      <div className="bg-slate-700/30 rounded-lg p-4 border border-yellow-500/20 mb-6 transition-all duration-300 ease-in-out">
         {hasXpData ? (
           <>
             <div className="mb-3">
@@ -288,7 +298,8 @@ const XPProgressChart = React.memo(() => {
             <ChartContainer config={chartConfig} className="h-[200px] w-full">
               <AreaChart 
                 data={currentData}
-                key={`xp-chart-${chartPeriod}`}
+                width={undefined}
+                height={200}
               >
                 <defs>
                   <linearGradient id="xpGradient" x1="0" y1="0" x2="0" y2="1">
@@ -324,10 +335,7 @@ const XPProgressChart = React.memo(() => {
                   stroke="#10b981"
                   strokeWidth={2}
                   fill="url(#xpGradient)"
-                  isAnimationActive={true}
-                  animationDuration={800}
-                  animationEasing="ease-in-out"
-                  animationBegin={0}
+                  isAnimationActive={false}
                 />
               </AreaChart>
             </ChartContainer>
