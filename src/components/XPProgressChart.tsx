@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { TrendingUp, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -107,11 +107,91 @@ const XPProgressChart = React.memo(() => {
     },
   };
 
+  // Track animated XP values for smooth transitions
+  const [animatedXpValues, setAnimatedXpValues] = useState<{ [key: string]: number }>({});
+  
   // Memoize current data selection to prevent unnecessary re-renders
-  const currentData = React.useMemo(() => {
+  const rawCurrentData = React.useMemo(() => {
     const data = chartPeriod === 'week' ? weeklyXpData : monthlyXpData;
     return data || [];
   }, [chartPeriod, weeklyXpData, monthlyXpData]);
+
+  // Animate XP values smoothly for the current day only
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0];
+    const todayShort = new Date().toLocaleDateString('en-US', { weekday: 'short' });
+    
+    rawCurrentData.forEach((item, index) => {
+      const key = `${chartPeriod}-${item.date || item.period}-${index}`;
+      const isToday = (chartPeriod === 'week' && item.fullDate === today) || 
+                     (chartPeriod === 'week' && item.date === todayShort) ||
+                     (chartPeriod === 'month' && index === rawCurrentData.length - 1); // Last item for month view
+      
+      if (isToday) {
+        const targetXp = item.xp;
+        const currentAnimatedValue = animatedXpValues[key] || 0;
+        
+        // Only animate if there's a significant change
+        if (Math.abs(targetXp - currentAnimatedValue) > 0.1) {
+          let startValue = currentAnimatedValue;
+          let startTime = Date.now();
+          const duration = 1200; // 1.2 seconds
+          
+          const animate = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Smooth easing function
+            const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+            const easedProgress = easeOutCubic(progress);
+            
+            const currentValue = startValue + (targetXp - startValue) * easedProgress;
+            
+            setAnimatedXpValues(prev => ({
+              ...prev,
+              [key]: currentValue
+            }));
+            
+            if (progress < 1) {
+              requestAnimationFrame(animate);
+            } else {
+              setAnimatedXpValues(prev => ({
+                ...prev,
+                [key]: targetXp
+              }));
+            }
+          };
+          
+          requestAnimationFrame(animate);
+        }
+      }
+    });
+  }, [rawCurrentData, chartPeriod]);
+
+  // Create current data with animated values
+  const currentData = React.useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
+    const todayShort = new Date().toLocaleDateString('en-US', { weekday: 'short' });
+    
+    return rawCurrentData.map((item, index) => {
+      const key = `${chartPeriod}-${item.date || item.period}-${index}`;
+      const isToday = (chartPeriod === 'week' && item.fullDate === today) || 
+                     (chartPeriod === 'week' && item.date === todayShort) ||
+                     (chartPeriod === 'month' && index === rawCurrentData.length - 1); // Last item for month view
+      
+      if (isToday) {
+        // Use animated value for current day
+        const animatedValue = animatedXpValues[key];
+        return {
+          ...item,
+          xp: animatedValue !== undefined ? animatedValue : item.xp
+        };
+      }
+      
+      // Non-current day items stay static
+      return item;
+    });
+  }, [rawCurrentData, chartPeriod, animatedXpValues]);
   
   const hasXpData = React.useMemo(() => 
     currentData.some(item => item.xp > 0), 
@@ -335,10 +415,7 @@ const XPProgressChart = React.memo(() => {
                   stroke="#10b981"
                   strokeWidth={2}
                   fill="url(#xpGradient)"
-                  isAnimationActive={true}
-                  animationDuration={1200}
-                  animationEasing="ease-out"
-                  animationBegin={200}
+                  isAnimationActive={false}
                 />
               </AreaChart>
             </ChartContainer>
