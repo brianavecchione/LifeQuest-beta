@@ -10,6 +10,7 @@ import { useQuests } from '@/hooks/useQuestsWrapper';
 import { useDailyGold } from '@/hooks/useDailyGoldWrapper';
 import { useDailyXp } from '@/hooks/useDailyXpWrapper';
 import { calculateGoldThisWeek, calculateGoldThisMonth, calculateQuestsCompletedThisWeek, calculateQuestsCompletedThisMonth, calculateXpThisWeek, calculateXpThisMonth } from '@/utils/timezone';
+import AnimatedValue from '@/components/AnimatedValue';
 
 const StatsSection = React.memo(() => {
   const [period, setPeriod] = useState<'week' | 'month'>('week');
@@ -119,7 +120,7 @@ const StatsSection = React.memo(() => {
               </div>
               <div className="text-blue-400 text-sm font-medium mb-1">XP Earned</div>
               <div className="text-2xl font-bold text-white transition-all duration-300 ease-in-out">
-                {xpEarnedThisPeriod}
+                <AnimatedValue value={xpEarnedThisPeriod} />
               </div>
               <div className="text-xs text-slate-400">
                 {`This ${period === 'week' ? 'Week' : 'Month'}`}
@@ -135,7 +136,7 @@ const StatsSection = React.memo(() => {
               </div>
               <div className="text-yellow-400 text-sm font-medium mb-1">Gold Earned</div>
               <div className="text-2xl font-bold text-white transition-all duration-300 ease-in-out">
-                {goldEarnedThisPeriod}
+                <AnimatedValue value={goldEarnedThisPeriod} />
               </div>
               <div className="text-xs text-slate-400">
                 {`This ${period === 'week' ? 'Week' : 'Month'}`}
@@ -151,7 +152,7 @@ const StatsSection = React.memo(() => {
               </div>
               <div className="text-green-400 text-sm font-medium mb-1">Quests Completed</div>
               <div className="text-2xl font-bold text-white transition-all duration-300 ease-in-out">
-                {questsCompletedThisPeriod}
+                <AnimatedValue value={questsCompletedThisPeriod} />
               </div>
               <div className="text-xs text-slate-400">
                 {`This ${period === 'week' ? 'Week' : 'Month'}`}
@@ -179,7 +180,7 @@ const StatsSection = React.memo(() => {
               </div>
               <Progress 
                 value={levelProgressThisPeriod} 
-                className="h-2 bg-slate-600/50 mt-2"
+                className="h-2 bg-slate-600/50 mt-2 transition-all duration-700 ease-out"
               />
             </div>
           </div>

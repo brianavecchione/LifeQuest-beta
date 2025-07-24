@@ -8,29 +8,29 @@ import { useUser } from '@/contexts/UserContext';
 import { useGuest } from '@/contexts/GuestContext';
 import { useStreaks } from '@/hooks/useStreaksWrapper';
 import EditProfileModal from '@/components/EditProfileModal';
+import AnimatedValue from '@/components/AnimatedValue';
 
-const CharacterCard = () => {
+const CharacterCard = React.memo(() => {
   const { user: character, isLoading } = useUser();
   const { isGuestMode, guestUser } = useGuest();
   const { getBestStreak, loading: streaksLoading } = useStreaks();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
+  // Memoize user data to prevent unnecessary re-renders
+  const activeUser = React.useMemo(() => 
+    isGuestMode ? guestUser : character, 
+    [isGuestMode, guestUser, character]
+  );
   
-  const activeUser = isGuestMode ? guestUser : character;
-  const xpProgress = activeUser?.xp || 0;
-  const bestStreak = isGuestMode ? { current_streak: 5, streak_name: 'Daily Quests' } : getBestStreak();
-
-  // Debug logging for guest mode
-  React.useEffect(() => {
-    console.log('🎭 CharacterCard Debug:', {
-      isGuestMode,
-      guestUser,
-      character,
-      activeUser,
-      isLoading,
-      hasActiveUserName: activeUser?.name
-    });
-  }, [isGuestMode, guestUser, character, activeUser, isLoading]);
+  const xpProgress = React.useMemo(() => 
+    activeUser?.xp || 0, 
+    [activeUser?.xp]
+  );
+  
+  const bestStreak = React.useMemo(() => 
+    isGuestMode ? { current_streak: 5, streak_name: 'Daily Quests' } : getBestStreak(),
+    [isGuestMode, getBestStreak]
+  );
 
   // Helper function to render avatar with frame (increased size further)
   const renderAvatarWithFrame = (avatarData: string, frameClass?: string) => {
@@ -101,7 +101,7 @@ const CharacterCard = () => {
   const displayUser = isGuestMode ? guestUser : activeUser;
 
   return (
-    <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 pb-4 border border-amber-500/30 shadow-2xl relative h-full flex flex-col">{/* Reduced bottom padding from p-6 to pb-4, added h-full and flex flex-col */}
+    <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 pb-4 border border-amber-500/30 shadow-2xl relative h-full flex flex-col transition-all duration-300 ease-in-out">{/* Added smooth transition */}
       {/* Edit Button - Top Right */}
       <div className="absolute top-4 right-4">
         <TooltipProvider>
@@ -150,12 +150,16 @@ const CharacterCard = () => {
       <div className="mb-4"> {/* Reduced margin from mb-6 to mb-4 */}
         <div className="flex justify-between items-center mb-2">
           <span className="text-slate-300 font-medium">Level Progress</span>
-          <span className="text-amber-400 font-bold">{Math.round(displayUser?.xp || 0)}%</span>
+          <span className="text-amber-400 font-bold">
+            <AnimatedValue value={displayUser?.xp || 0} format={(val) => `${Math.round(val)}%`} />
+          </span>
         </div>
-        <Progress 
-          value={displayUser?.xp || 0} 
-          className="h-3 bg-slate-700 border border-amber-500/20" 
-        />
+        <div className="relative">
+          <Progress 
+            value={displayUser?.xp || 0} 
+            className="h-3 bg-slate-700 border border-amber-500/20 transition-all duration-500 ease-out" 
+          />
+        </div>
         <div className="flex justify-between text-xs text-slate-400 mt-1">
           <span>Level {displayUser?.level || 1}</span>
           <span>Level {(displayUser?.level || 1) + 1}</span>
@@ -164,32 +168,41 @@ const CharacterCard = () => {
 
       {/* Stats Grid - Push to bottom with flex-grow */}
       <div className="grid grid-cols-3 gap-3 mt-auto"> {/* Added mt-auto to push to bottom */}
-        <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-red-500/30 hover:border-red-500/50 transition-colors">
+        <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-red-500/30 hover:border-red-500/50 transition-all duration-300 ease-in-out">
           <div className="flex items-center justify-center mb-1">
             <TrendingUp className="w-4 h-4 text-red-400 mr-1" />
             <span className="text-red-400 text-sm font-medium">Total XP</span>
           </div>
-          <div className="text-lg font-bold text-white">{displayUser?.totalXp || 0}</div>
+          <div className="text-lg font-bold text-white">
+            <AnimatedValue value={displayUser?.totalXp || 0} />
+          </div>
         </div>
 
-        <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-yellow-500/30 hover:border-yellow-500/50 transition-colors">
+        <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-yellow-500/30 hover:border-yellow-500/50 transition-all duration-300 ease-in-out">
           <div className="flex items-center justify-center mb-1">
             <Star className="w-4 h-4 text-yellow-400 mr-1" />
             <span className="text-yellow-400 text-sm font-medium">Gold</span>
           </div>
-          <div className="text-lg font-bold text-white">{displayUser?.gold || 0}</div>
+          <div className="text-lg font-bold text-white">
+            <AnimatedValue value={displayUser?.gold || 0} />
+          </div>
         </div>
 
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-purple-500/30 hover:border-purple-500/50 transition-colors cursor-help">
+              <div className="bg-slate-700/50 rounded-lg p-3 text-center border border-purple-500/30 hover:border-purple-500/50 transition-all duration-300 ease-in-out cursor-help">
                 <div className="flex items-center justify-center mb-1">
                   <Flame className="w-4 h-4 text-purple-400 mr-1" />
                   <span className="text-purple-400 text-sm font-medium">Streak</span>
                 </div>
                 <div className="text-lg font-bold text-white">
-                  {streaksLoading ? '...' : `${bestStreak?.current_streak || 0} ${(bestStreak?.current_streak || 0) === 1 ? 'Day' : 'Days'}`}
+                  {streaksLoading ? '...' : (
+                    <AnimatedValue 
+                      value={bestStreak?.current_streak || 0} 
+                      format={(val) => `${Math.round(val)} ${Math.round(val) === 1 ? 'Day' : 'Days'}`}
+                    />
+                  )}
                 </div>
               </div>
             </TooltipTrigger>
@@ -212,6 +225,6 @@ const CharacterCard = () => {
       />
     </div>
   );
-};
+});
 
 export default CharacterCard;
