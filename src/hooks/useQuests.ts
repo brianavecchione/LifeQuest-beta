@@ -497,9 +497,24 @@ export const useQuests = () => {
 
       // Use React's concurrent features to batch updates and reduce flicker
       startTransition(() => {
-        // Only refresh if we're not already getting real-time updates
-        // The database trigger handles rewards, real-time subscriptions sync UI
-        console.log('✅ Quest completed, real-time subscriptions will handle UI updates');
+        // Still need to refresh daily XP data for charts since that's not real-time
+        const refreshChartData = async () => {
+          try {
+            if (refetchDailyXp) {
+              console.log('📊 Refreshing daily XP data for charts...');
+              await refetchDailyXp();
+            }
+          } catch (error) {
+            console.error('Error refreshing chart data:', error);
+            // Fallback: refresh user profile if real-time updates fail
+            if (refetchUserProfile) {
+              console.log('🔄 Fallback: Refreshing user profile...');
+              await refetchUserProfile();
+            }
+          }
+        };
+
+        refreshChartData();
       });
 
       // Trigger badge progress update after quest completion

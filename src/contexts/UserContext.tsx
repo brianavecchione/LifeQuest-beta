@@ -168,9 +168,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Load user profile data from Supabase when auth user changes
   useEffect(() => {
+    if (!authUser) {
+      setIsLoading(false);
+      return;
+    }
+
     console.log('🔄 Loading user profile data after stat correction...');
     loadUserProfile();
 
+    if (!authUser) return;
+    
     // Set up real-time subscription to profile AND user_balances changes
     const channel = supabase
       .channel('user-data-changes')
@@ -184,12 +191,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
         (payload) => {
           console.log('Profile updated:', payload);
-          // Incrementally update profile data without full reload
+          // Incrementally update profile data without full reload to prevent flickering
           const newData = payload.new as any;
           if (newData) {
             setUser(prev => {
               // Calculate level and XP progress using progressive formula if XP changed
-              if (newData.xp_balance !== undefined) {
+              if (newData.xp_balance !== undefined && newData.xp_balance !== prev.totalXp) {
+                console.log(`🎯 XP updated: ${prev.totalXp} → ${newData.xp_balance}`);
                 const totalXp = newData.xp_balance;
                 const baseXP = 100;
                 
@@ -205,6 +213,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const xpInCurrentLevel = totalXp - currentLevelXpThreshold;
                 const xpRequiredForNextLevel = nextLevelXpThreshold - currentLevelXpThreshold;
                 const progressPercentage = (xpInCurrentLevel / xpRequiredForNextLevel) * 100;
+                
+                // Check for level up
+                if (currentLevel > prev.level) {
+                  setTimeout(() => triggerLevelUpCelebration(currentLevel), 100);
+                }
                 
                 return {
                   ...prev,
@@ -238,13 +251,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
         (payload) => {
           console.log('User balance updated:', payload);
-          // Incrementally update balance without full reload
+          // Incrementally update balance without full reload to prevent flickering
           const newData = payload.new as any;
           if (newData?.current_gold_balance !== undefined) {
-            setUser(prev => ({
-              ...prev,
-              gold: newData.current_gold_balance
-            }));
+            setUser(prev => {
+              if (newData.current_gold_balance !== prev.gold) {
+                console.log(`💰 Gold updated: ${prev.gold} → ${newData.current_gold_balance}`);
+                return {
+                  ...prev,
+                  gold: newData.current_gold_balance
+                };
+              }
+              return prev;
+            });
           }
         }
       )
