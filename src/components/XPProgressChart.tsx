@@ -11,7 +11,8 @@ import { useQuests } from '@/hooks/useQuestsWrapper';
 import { useDailyGold } from '@/hooks/useDailyGoldWrapper';
 import { calculateGoldThisWeek, calculateGoldThisMonth, calculateQuestsCompletedThisWeek, calculateQuestsCompletedThisMonth, getCurrentWeekBounds, getCurrentMonthBounds, calculateXpThisWeek, calculateXpThisMonth } from '@/utils/timezone';
 import { useDailyXp } from '@/hooks/useDailyXpWrapper';
-const XPProgressChart = () => {
+
+const XPProgressChart = React.memo(() => {
   const [chartPeriod, setChartPeriod] = useState<'week' | 'month'>('week');
   const { user: character, getDailyXpData, getWeeklyXpData, isLoading } = useUser();
   const { isGuestMode, guestUser } = useGuest();
@@ -22,18 +23,19 @@ const XPProgressChart = () => {
   
   const activeUser = isGuestMode ? guestUser : character;
 
-  // Debug logging for guest mode
+  // Debug logging for guest mode (throttled to prevent excessive logs)
+  const debugData = React.useMemo(() => ({
+    isGuestMode,
+    hasCharacter: !!character,
+    hasGuestUser: !!guestUser,
+    isLoading,
+    xpLoading,
+    goldLoading
+  }), [isGuestMode, !!character, !!guestUser, isLoading, xpLoading, goldLoading]);
+
   React.useEffect(() => {
-    console.log('📊 XPProgressChart Debug:', {
-      isGuestMode,
-      guestUser,
-      character,
-      activeUser,
-      isLoading,
-      xpLoading,
-      goldLoading
-    });
-  }, [isGuestMode, guestUser, character, activeUser, isLoading, xpLoading, goldLoading]);
+    console.log('📊 XPProgressChart Debug:', debugData);
+  }, [debugData]);
 
   // In guest mode, use guestUser directly to avoid circular reference issues
   const displayUser = isGuestMode ? guestUser : activeUser;
@@ -70,7 +72,7 @@ const XPProgressChart = () => {
         };
       });
     }
-  }, [isGuestMode, getDailyXpData, displayUser?.totalXp]);
+  }, [isGuestMode, getDailyXpData, displayUser?.totalXp, displayUser?.level]);
 
   const monthlyXpData = React.useMemo(() => {
     if (isGuestMode) {
@@ -94,7 +96,7 @@ const XPProgressChart = () => {
         period: `Week ${i + 1}`
       }));
     }
-  }, [getWeeklyXpData]);
+  }, [getWeeklyXpData, isGuestMode]);
 
   const chartConfig = {
     xp: {
@@ -241,7 +243,7 @@ const XPProgressChart = () => {
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/20 shadow-2xl">
+    <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/20 shadow-2xl transition-all duration-300 ease-in-out">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
@@ -346,6 +348,6 @@ const XPProgressChart = () => {
       {/* View More Stats Button */}
     </div>
   );
-};
+});
 
 export default XPProgressChart;

@@ -11,7 +11,7 @@ import { useDailyGold } from '@/hooks/useDailyGoldWrapper';
 import { useDailyXp } from '@/hooks/useDailyXpWrapper';
 import { calculateGoldThisWeek, calculateGoldThisMonth, calculateQuestsCompletedThisWeek, calculateQuestsCompletedThisMonth, calculateXpThisWeek, calculateXpThisMonth } from '@/utils/timezone';
 
-const StatsSection = () => {
+const StatsSection = React.memo(() => {
   const [period, setPeriod] = useState<'week' | 'month'>('week');
   const { user: character } = useUser();
   const { isGuestMode, guestUser } = useGuest();
@@ -22,52 +22,53 @@ const StatsSection = () => {
 
   const user = isGuestMode ? guestUser : character;
 
-  // Debug logging for data accuracy
-  React.useEffect(() => {
-    console.log('📊 StatsSection Debug - Raw Data:', {
-      period,
-      dailyXpData,
-      dailyGoldData,
-      quests: quests.filter(q => q.status === 'Completed' && q.completed_at),
-      isGuestMode
-    });
-  }, [period, dailyXpData, dailyGoldData, quests, isGuestMode]);
+  // Memoize data formatting to prevent unnecessary recalculations
+  const goldHistoryFormatted = React.useMemo(() => 
+    dailyGoldData.map(day => ({
+      date: day.fullDate || day.date,
+      gold_earned: day.gold
+    })), 
+    [dailyGoldData]
+  );
 
-  // Convert data formats for calculations
-  const goldHistoryFormatted = dailyGoldData.map(day => ({
-    date: day.fullDate || day.date,
-    gold_earned: day.gold
-  }));
+  const xpHistoryFormatted = React.useMemo(() => 
+    dailyXpData.map(day => ({
+      date: day.fullDate || day.date,
+      xp_earned: day.xp
+    })),
+    [dailyXpData]
+  );
 
-  const xpHistoryFormatted = dailyXpData.map(day => ({
-    date: day.fullDate || day.date,
-    xp_earned: day.xp
-  }));
+  // Memoize calculated stats to prevent unnecessary recalculations
+  const calculatedStats = React.useMemo(() => {
+    const goldEarnedThisPeriod = period === 'week' 
+      ? calculateGoldThisWeek(goldHistoryFormatted) 
+      : calculateGoldThisMonth(goldHistoryFormatted);
 
-  // Calculate stats based on period
-  const goldEarnedThisPeriod = period === 'week' 
-    ? calculateGoldThisWeek(goldHistoryFormatted) 
-    : calculateGoldThisMonth(goldHistoryFormatted);
+    const questsCompletedThisPeriod = period === 'week' 
+      ? calculateQuestsCompletedThisWeek(quests) 
+      : calculateQuestsCompletedThisMonth(quests);
 
-  const questsCompletedThisPeriod = period === 'week' 
-    ? calculateQuestsCompletedThisWeek(quests) 
-    : calculateQuestsCompletedThisMonth(quests);
+    const xpEarnedThisPeriod = period === 'week' 
+      ? calculateXpThisWeek(xpHistoryFormatted) 
+      : calculateXpThisMonth(xpHistoryFormatted);
 
-  const xpEarnedThisPeriod = period === 'week' 
-    ? calculateXpThisWeek(xpHistoryFormatted) 
-    : calculateXpThisMonth(xpHistoryFormatted);
+    return {
+      goldEarnedThisPeriod,
+      questsCompletedThisPeriod,
+      xpEarnedThisPeriod
+    };
+  }, [period, goldHistoryFormatted, xpHistoryFormatted, quests]);
 
-  // Debug logging for calculated values
+  const { goldEarnedThisPeriod, questsCompletedThisPeriod, xpEarnedThisPeriod } = calculatedStats;
+
+  // Debug logging for calculated values (throttled)
   React.useEffect(() => {
     console.log('📊 StatsSection Debug - Calculated Values:', {
       period,
-      goldEarnedThisPeriod,
-      questsCompletedThisPeriod,
-      xpEarnedThisPeriod,
-      goldHistoryFormatted,
-      xpHistoryFormatted
+      ...calculatedStats
     });
-  }, [period, goldEarnedThisPeriod, questsCompletedThisPeriod, xpEarnedThisPeriod]);
+  }, [period, calculatedStats]);
 
   // Calculate XP required to reach next level (using level * 100 as base XP per level)
   const currentLevel = user?.level || 1;
@@ -80,7 +81,7 @@ const StatsSection = () => {
   const periodLabel = period === 'week' ? 'Weekly' : 'Monthly';
 
   return (
-    <Card className="bg-slate-900 border border-slate-700/50">
+    <Card className="bg-slate-900 border border-slate-700/50 transition-all duration-300 ease-in-out">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-bold text-blue-400 flex items-center gap-2">
@@ -111,13 +112,13 @@ const StatsSection = () => {
         {/* Four metric cards in a row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* XP Earned */}
-          <div className="bg-gradient-to-r from-blue-600/20 to-indigo-600/20 rounded-lg p-4 border border-blue-500/30">
+          <div className="bg-gradient-to-r from-blue-600/20 to-indigo-600/20 rounded-lg p-4 border border-blue-500/30 transition-all duration-300 ease-in-out">
             <div className="text-center">
               <div className="p-2 bg-blue-500/20 rounded-full mx-auto w-fit mb-3">
                 <Zap className="w-5 h-5 text-blue-400" />
               </div>
               <div className="text-blue-400 text-sm font-medium mb-1">XP Earned</div>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-white transition-all duration-300 ease-in-out">
                 {xpEarnedThisPeriod}
               </div>
               <div className="text-xs text-slate-400">
@@ -127,13 +128,13 @@ const StatsSection = () => {
           </div>
 
           {/* Gold Earned */}
-          <div className="bg-gradient-to-r from-yellow-600/20 to-amber-600/20 rounded-lg p-4 border border-yellow-500/30">
+          <div className="bg-gradient-to-r from-yellow-600/20 to-amber-600/20 rounded-lg p-4 border border-yellow-500/30 transition-all duration-300 ease-in-out">
             <div className="text-center">
               <div className="p-2 bg-yellow-500/20 rounded-full mx-auto w-fit mb-3">
                 <Coins className="w-5 h-5 text-yellow-400" />
               </div>
               <div className="text-yellow-400 text-sm font-medium mb-1">Gold Earned</div>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-white transition-all duration-300 ease-in-out">
                 {goldEarnedThisPeriod}
               </div>
               <div className="text-xs text-slate-400">
@@ -143,13 +144,13 @@ const StatsSection = () => {
           </div>
 
           {/* Quests Completed */}
-          <div className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 rounded-lg p-4 border border-green-500/30">
+          <div className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 rounded-lg p-4 border border-green-500/30 transition-all duration-300 ease-in-out">
             <div className="text-center">
               <div className="p-2 bg-green-500/20 rounded-full mx-auto w-fit mb-3">
                 <CheckCircle2 className="w-5 h-5 text-green-400" />
               </div>
               <div className="text-green-400 text-sm font-medium mb-1">Quests Completed</div>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-white transition-all duration-300 ease-in-out">
                 {questsCompletedThisPeriod}
               </div>
               <div className="text-xs text-slate-400">
@@ -159,7 +160,7 @@ const StatsSection = () => {
           </div>
 
           {/* Level Progress */}
-          <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-lg p-4 border border-purple-500/30">
+          <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-lg p-4 border border-purple-500/30 transition-all duration-300 ease-in-out">
             <div className="text-center">
               <div className="p-2 bg-purple-500/20 rounded-full mx-auto w-fit mb-3">
                 <div className="w-5 h-5 rounded-full border-2 border-purple-400 flex items-center justify-center">
@@ -167,7 +168,7 @@ const StatsSection = () => {
                 </div>
               </div>
               <div className="text-purple-400 text-sm font-medium mb-1">Level Progress</div>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-white transition-all duration-300 ease-in-out">
                 {`${levelProgressThisPeriod}%`}
               </div>
               <div className="text-xs text-slate-400">
@@ -186,6 +187,6 @@ const StatsSection = () => {
       </CardContent>
     </Card>
   );
-};
+});
 
 export default StatsSection;
