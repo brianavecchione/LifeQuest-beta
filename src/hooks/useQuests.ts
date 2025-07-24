@@ -495,28 +495,11 @@ export const useQuests = () => {
         - Quest completed_at: ${transformedQuest.completed_at}
         - Database trigger awards XP: ${transformedQuest.xp_reward}`);
 
-      // Batch all UI updates using React's concurrent features to prevent flicker
+      // Use React's concurrent features to batch updates and reduce flicker
       startTransition(() => {
-        const batchedRefresh = async () => {
-          try {
-            // The database trigger handles ALL XP/Gold rewards automatically
-            // We just need to refresh the profile to sync the UI with the database
-            if (refetchUserProfile) {
-              console.log('🔄 Refreshing user profile to sync with database...');
-              await refetchUserProfile();
-            }
-
-            // Also refresh daily XP data to update charts
-            if (refetchDailyXp) {
-              console.log('📊 Refreshing daily XP data for charts...');
-              await refetchDailyXp();
-            }
-          } catch (error) {
-            console.error('Error during batched refresh:', error);
-          }
-        };
-
-        batchedRefresh();
+        // Only refresh if we're not already getting real-time updates
+        // The database trigger handles rewards, real-time subscriptions sync UI
+        console.log('✅ Quest completed, real-time subscriptions will handle UI updates');
       });
 
       // Trigger badge progress update after quest completion

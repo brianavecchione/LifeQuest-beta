@@ -184,8 +184,48 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
         (payload) => {
           console.log('Profile updated:', payload);
-          // When profile updates from database, reload to sync local state
-          loadUserProfile();
+          // Incrementally update profile data without full reload
+          const newData = payload.new as any;
+          if (newData) {
+            setUser(prev => {
+              // Calculate level and XP progress using progressive formula if XP changed
+              if (newData.xp_balance !== undefined) {
+                const totalXp = newData.xp_balance;
+                const baseXP = 100;
+                
+                let currentLevel = 1;
+                while (true) {
+                  const xpForLevel = baseXP * (currentLevel * (currentLevel + 1)) / 2;
+                  if (totalXp < xpForLevel) break;
+                  currentLevel++;
+                }
+                
+                const currentLevelXpThreshold = currentLevel > 1 ? baseXP * ((currentLevel - 1) * currentLevel) / 2 : 0;
+                const nextLevelXpThreshold = baseXP * (currentLevel * (currentLevel + 1)) / 2;
+                const xpInCurrentLevel = totalXp - currentLevelXpThreshold;
+                const xpRequiredForNextLevel = nextLevelXpThreshold - currentLevelXpThreshold;
+                const progressPercentage = (xpInCurrentLevel / xpRequiredForNextLevel) * 100;
+                
+                return {
+                  ...prev,
+                  level: currentLevel,
+                  xp: Math.max(0, progressPercentage),
+                  totalXp: totalXp,
+                  name: newData.display_name || prev.name,
+                  avatar: newData.avatar_url || prev.avatar,
+                  avatarFrame: newData.avatar_frame || prev.avatarFrame,
+                };
+              }
+              
+              // Just update other fields without XP recalculation
+              return {
+                ...prev,
+                name: newData.display_name || prev.name,
+                avatar: newData.avatar_url || prev.avatar,
+                avatarFrame: newData.avatar_frame || prev.avatarFrame,
+              };
+            });
+          }
         }
       )
       .on(
@@ -198,8 +238,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
         (payload) => {
           console.log('User balance updated:', payload);
-          // When user balance updates, reload to sync local state
-          loadUserProfile();
+          // Incrementally update balance without full reload
+          const newData = payload.new as any;
+          if (newData?.current_gold_balance !== undefined) {
+            setUser(prev => ({
+              ...prev,
+              gold: newData.current_gold_balance
+            }));
+          }
         }
       )
       .subscribe();
