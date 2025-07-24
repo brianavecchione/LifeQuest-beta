@@ -179,6 +179,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!authUser) return;
     
     // Set up real-time subscription to profile AND user_balances changes
+    console.log('🔗 Setting up real-time subscriptions for user:', authUser.id);
+    
     const channel = supabase
       .channel('user-data-changes')
       .on(
@@ -187,10 +189,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           event: 'UPDATE',
           schema: 'public',
           table: 'profiles',
-          filter: `user_id=eq.${authUser?.id}`
+          filter: `user_id=eq.${authUser.id}`
         },
         (payload) => {
-          console.log('Profile updated:', payload);
+          console.log('🔄 Profile updated via real-time:', payload);
           // Incrementally update profile data without full reload to prevent flickering
           const newData = payload.new as any;
           if (newData) {
@@ -247,10 +249,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           event: '*',
           schema: 'public',
           table: 'user_balances',
-          filter: `user_id=eq.${authUser?.id}`
+          filter: `user_id=eq.${authUser.id}`
         },
         (payload) => {
-          console.log('User balance updated:', payload);
+          console.log('💰 User balance updated via real-time:', payload);
           // Incrementally update balance without full reload to prevent flickering
           const newData = payload.new as any;
           if (newData?.current_gold_balance !== undefined) {
@@ -267,9 +269,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('📡 Real-time subscription status:', status);
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Successfully subscribed to real-time updates');
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('❌ Real-time subscription error');
+        }
+      });
 
     return () => {
+      console.log('🧹 Cleaning up real-time subscription');
       supabase.removeChannel(channel);
     };
   }, [authUser]);
