@@ -335,7 +335,10 @@ const XPProgressChart = React.memo(() => {
                   stroke="#10b981"
                   strokeWidth={2}
                   fill="url(#xpGradient)"
-                  isAnimationActive={false}
+                  isAnimationActive={true}
+                  animationDuration={1200}
+                  animationEasing="ease-out"
+                  animationBegin={200}
                 />
               </AreaChart>
             </ChartContainer>
