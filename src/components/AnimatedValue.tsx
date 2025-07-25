@@ -48,7 +48,7 @@ const AnimatedValue: React.FC<AnimatedValueProps> = ({
 
   return (
     <span 
-      className={`${className} ${isAnimating ? 'animate-pulse' : ''} transition-all duration-300`}
+      className={`${className} transition-all duration-300`}
     >
       {format(displayValue)}
     </span>
