@@ -9,7 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Star, Trophy, Flag, Crown, CalendarIcon, Edit } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Star, Trophy, Flag, Crown, CalendarIcon, Edit, Repeat } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast'; 
 import { Quest } from '@/hooks/useQuests';
 import { format } from 'date-fns';
@@ -41,6 +42,9 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
     tags: '',
     due_date: null as Date | null,
     pomodoro_enabled: false,
+    recurrence_type: 'none' as 'none' | 'daily' | 'weekly' | 'monthly',
+    weekly_days: [] as number[],
+    monthly_day: 1,
   });
 
   // Helper function to calculate rewards based on difficulty and priority
@@ -61,6 +65,9 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
   // Initialize form data when quest changes
   useEffect(() => {
     if (quest) {
+      const recurrenceType = (quest as any).recurrence_type || 'none';
+      const recurrenceConfig = (quest as any).recurrence_config || {};
+      
       setFormData({
         quest_name: quest.quest_name,
         description: quest.description || '',
@@ -70,6 +77,9 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
         tags: quest.tags ? quest.tags.join(', ') : '',
         due_date: quest.due_date ? new Date(quest.due_date) : null,
         pomodoro_enabled: quest.pomodoro_enabled || false,
+        recurrence_type: recurrenceType,
+        weekly_days: recurrenceConfig.days_of_week || [],
+        monthly_day: recurrenceConfig.day_of_month || 1,
       });
     }
   }, [quest]);
@@ -117,6 +127,14 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
       ? format(new Date(), 'yyyy-MM-dd')
       : formData.due_date ? format(formData.due_date, 'yyyy-MM-dd') : null;
 
+    // Build recurrence config
+    let recurrenceConfig = null;
+    if (formData.recurrence_type === 'weekly' && formData.weekly_days.length > 0) {
+      recurrenceConfig = { days_of_week: formData.weekly_days };
+    } else if (formData.recurrence_type === 'monthly') {
+      recurrenceConfig = { day_of_month: formData.monthly_day };
+    }
+
     try {
       const { error } = await supabase
         .from('quests')
@@ -131,6 +149,8 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
           tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(Boolean) : null,
           due_date: finalDueDate,
           pomodoro_enabled: formData.pomodoro_enabled,
+          recurrence_type: formData.recurrence_type,
+          recurrence_config: recurrenceConfig,
         })
         .eq('id', quest.id)
         .eq('user_id', user.id);
@@ -343,6 +363,101 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
                 </p>
               </div>
             )}
+          </div>
+
+          {/* Recurrence Options */}
+          <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+            <div className="space-y-4">
+              <div>
+                <Label className="text-slate-300 font-medium text-sm flex items-center gap-2">
+                  <Repeat className="w-4 h-4" />
+                  Repeat
+                </Label>
+                <p className="text-slate-400 text-xs mt-1">
+                  This quest will reappear automatically on selected days and reward XP/gold each time it's completed.
+                </p>
+              </div>
+              
+              <Select 
+                value={formData.recurrence_type} 
+                onValueChange={(value: 'none' | 'daily' | 'weekly' | 'monthly') => {
+                  setFormData(prev => ({ 
+                    ...prev, 
+                    recurrence_type: value,
+                    weekly_days: value === 'weekly' ? prev.weekly_days : [],
+                    monthly_day: value === 'monthly' ? prev.monthly_day : 1
+                  }));
+                }}
+              >
+                <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-800 border-slate-700 text-white">
+                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="daily">Daily</SelectItem>
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {/* Weekly Days Selection */}
+              {formData.recurrence_type === 'weekly' && (
+                <div>
+                  <Label className="text-slate-300 font-medium text-sm mb-2 block">
+                    Days of Week
+                  </Label>
+                  <div className="grid grid-cols-7 gap-2">
+                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => (
+                      <div key={day} className="flex flex-col items-center">
+                        <Checkbox
+                          id={`edit-day-${index}`}
+                          checked={formData.weekly_days.includes(index + 1)}
+                          onCheckedChange={(checked) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              weekly_days: checked 
+                                ? [...prev.weekly_days, index + 1].sort()
+                                : prev.weekly_days.filter(d => d !== index + 1)
+                            }));
+                          }}
+                          className="border-slate-600"
+                        />
+                        <label htmlFor={`edit-day-${index}`} className="text-xs text-slate-400 mt-1 cursor-pointer">
+                          {day}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Monthly Day Selection */}
+              {formData.recurrence_type === 'monthly' && (
+                <div>
+                  <Label htmlFor="edit-monthly-day" className="text-slate-300 font-medium text-sm">
+                    Day of Month
+                  </Label>
+                  <Input
+                    id="edit-monthly-day"
+                    type="number"
+                    min="1"
+                    max="31"
+                    value={formData.monthly_day}
+                    onChange={(e) => setFormData(prev => ({ 
+                      ...prev, 
+                      monthly_day: Math.max(1, Math.min(31, parseInt(e.target.value) || 1))
+                    }))}
+                    className="bg-slate-700 border-slate-600 text-white mt-1 w-20"
+                  />
+                  <p className="text-slate-400 text-xs mt-1">
+                    Quest will repeat on the {formData.monthly_day}
+                    {formData.monthly_day === 1 ? 'st' : 
+                     formData.monthly_day === 2 ? 'nd' : 
+                     formData.monthly_day === 3 ? 'rd' : 'th'} of each month
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Pomodoro Timer Option */}

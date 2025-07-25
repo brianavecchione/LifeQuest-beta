@@ -37,3 +37,6 @@ verify_jwt = false
 
 [functions.delete-account]
 verify_jwt = true
+
+[functions.recurring-quest-generator]
+verify_jwt = false

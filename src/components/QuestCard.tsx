@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, Trophy, Flag, Crown, CheckCircle2, Coins, MoreVertical, Edit, Trash2, Play, X, Calendar, Clock, AlertCircle, Tag, Target } from 'lucide-react';
+import { Star, Trophy, Flag, Crown, CheckCircle2, Coins, MoreVertical, Edit, Trash2, Play, X, Calendar, Clock, AlertCircle, Tag, Target, Repeat } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -79,6 +79,36 @@ const QuestCard: React.FC<QuestCardProps> = ({
     }
   };
 
+  const getRecurrenceText = (quest: Quest): string | null => {
+    const recurrenceType = (quest as any).recurrence_type;
+    const recurrenceConfig = (quest as any).recurrence_config;
+    
+    if (!recurrenceType || recurrenceType === 'none') return null;
+    
+    switch (recurrenceType) {
+      case 'daily':
+        return 'Repeats Daily';
+      case 'weekly':
+        if (recurrenceConfig?.days_of_week?.length) {
+          const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+          const days = recurrenceConfig.days_of_week
+            .map((day: number) => dayNames[day - 1])
+            .join(', ');
+          return `Repeats Weekly on ${days}`;
+        }
+        return 'Repeats Weekly';
+      case 'monthly':
+        if (recurrenceConfig?.day_of_month) {
+          const day = recurrenceConfig.day_of_month;
+          const suffix = day === 1 ? 'st' : day === 2 ? 'nd' : day === 3 ? 'rd' : 'th';
+          return `Repeats Monthly on ${day}${suffix}`;
+        }
+        return 'Repeats Monthly';
+      default:
+        return null;
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -107,6 +137,13 @@ const QuestCard: React.FC<QuestCardProps> = ({
                   <h4 className={`font-medium ${quest.status === 'Completed' ? 'line-through text-slate-400' : 'text-white'}`}>
                     {quest.quest_name}
                   </h4>
+                  {/* Recurrence indicator - shown right below quest name */}
+                  {getRecurrenceText(quest) && (
+                    <p className="text-xs text-blue-400 flex items-center gap-1 mt-1">
+                      <Repeat className="w-3 h-3" />
+                      {getRecurrenceText(quest)}
+                    </p>
+                  )}
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant="outline" className="text-amber-400 border-amber-400/50">
                       {quest.xp_reward} XP
@@ -214,8 +251,18 @@ const QuestCard: React.FC<QuestCardProps> = ({
               </div>
             )}
 
-            {/* Recurring Status */}
-            {quest.quest_type === 'Daily' && (
+            {/* Recurrence Status */}
+            {getRecurrenceText(quest) && (
+              <div className="flex items-center gap-2">
+                <Repeat className="w-4 h-4 text-slate-400" />
+                <span className="text-sm text-slate-300">Recurrence:</span>
+                <Badge variant="outline" className="text-blue-400 border-blue-400/50 text-xs">
+                  {getRecurrenceText(quest)}
+                </Badge>
+              </div>
+            )}
+            {/* Legacy Daily Recurring Status */}
+            {quest.quest_type === 'Daily' && !getRecurrenceText(quest) && (
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-slate-400" />
                 <span className="text-sm text-slate-300">Recurring:</span>

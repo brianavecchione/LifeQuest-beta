@@ -653,6 +653,8 @@ export type Database = {
           priority: Database["public"]["Enums"]["quest_priority"]
           quest_name: string
           quest_type: Database["public"]["Enums"]["quest_type"]
+          recurrence_config: Json | null
+          recurrence_type: string | null
           status: string
           tags: string[] | null
           updated_at: string
@@ -672,6 +674,8 @@ export type Database = {
           priority?: Database["public"]["Enums"]["quest_priority"]
           quest_name: string
           quest_type?: Database["public"]["Enums"]["quest_type"]
+          recurrence_config?: Json | null
+          recurrence_type?: string | null
           status?: string
           tags?: string[] | null
           updated_at?: string
@@ -691,6 +695,8 @@ export type Database = {
           priority?: Database["public"]["Enums"]["quest_priority"]
           quest_name?: string
           quest_type?: Database["public"]["Enums"]["quest_type"]
+          recurrence_config?: Json | null
+          recurrence_type?: string | null
           status?: string
           tags?: string[] | null
           updated_at?: string
