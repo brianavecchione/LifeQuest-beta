@@ -491,7 +491,7 @@ const Auth = () => {
                   </p>
                   <Button
                     variant="outline"
-                    className="w-full border-blue-400/60 bg-gradient-to-r from-blue-600/30 to-cyan-600/30 text-white hover:from-blue-600/40 hover:to-cyan-600/40 hover:text-white hover:border-blue-300 transition-all duration-300 shadow-lg hover:shadow-blue-500/25"
+                    className="w-full border-blue-400 bg-gradient-to-r from-blue-700 to-cyan-700 text-white hover:from-blue-600 hover:to-cyan-600 hover:text-white hover:border-blue-300 transition-all duration-300 shadow-lg hover:shadow-blue-500/25"
                     onClick={handleGuestPreview}
                   >
                     Preview as Guest
