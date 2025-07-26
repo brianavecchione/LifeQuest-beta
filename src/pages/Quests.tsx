@@ -109,7 +109,7 @@ const Quests = () => {
 
       {/* Quest Categories */}
       <div className="mb-8 lg:mb-12">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center text-white mb-6 lg:mb-8 px-6 py-4 bg-slate-900 rounded-xl border border-slate-700">Quest Categories</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-center text-white mb-6 lg:mb-8 px-6 py-4 bg-slate-900/80 backdrop-blur-sm rounded-xl border border-slate-700/50 shadow-xl">Quest Categories</h2>
         <QuestCategories 
           onAddToFocus={handleAddToFocus} 
           searchQuery={searchQuery}
