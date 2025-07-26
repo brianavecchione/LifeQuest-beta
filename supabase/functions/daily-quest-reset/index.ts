@@ -25,12 +25,14 @@ serve(async (req) => {
     
     // Find only recurring daily habits that need to be reset (not one-time daily tasks)
     // Only reset completed recurring habits to avoid resetting one-time completed tasks
+    // CRITICAL: Add extra safety conditions to prevent affecting non-Daily quests
     const { data: dailyQuests, error: fetchError } = await supabase
       .from('quests')
-      .select('user_id, id, quest_name')
-      .eq('quest_type', 'Daily')
-      .eq('status', 'Completed')
-      .eq('is_recurring', true)
+      .select('user_id, id, quest_name, quest_type, is_recurring, recurrence_type')
+      .eq('quest_type', 'Daily')  // MUST be Daily quest type
+      .eq('status', 'Completed')  // MUST be completed
+      .eq('is_recurring', true)   // MUST be marked as recurring
+      .in('recurrence_type', ['daily']) // MUST have daily recurrence type
 
     if (fetchError) {
       console.error('Error fetching daily quests:', fetchError)
@@ -38,6 +40,16 @@ serve(async (req) => {
     }
 
     console.log(`Found ${dailyQuests?.length || 0} completed recurring daily habits to reset`)
+    
+    // Enhanced logging - log which quests are being reset
+    if (dailyQuests && dailyQuests.length > 0) {
+      console.log('Quests to be reset:', dailyQuests.map(q => ({
+        name: q.quest_name,
+        type: q.quest_type,
+        recurring: q.is_recurring,
+        recurrence_type: q.recurrence_type
+      })))
+    }
 
     let totalResetCount = 0
     const userResetCounts = new Map<string, number>()
@@ -50,6 +62,7 @@ serve(async (req) => {
       })
 
       // Reset only completed recurring daily habits to 'Not started'
+      // CRITICAL: Apply same safety conditions to UPDATE to prevent affecting non-Daily quests
       const { data: updatedQuests, error: updateError } = await supabase
         .from('quests')
         .update({
@@ -58,10 +71,11 @@ serve(async (req) => {
           completed_at: null,
           updated_at: resetTimestamp
         })
-        .eq('quest_type', 'Daily')
-        .eq('status', 'Completed')
-        .eq('is_recurring', true)
-        .select('user_id')
+        .eq('quest_type', 'Daily')     // MUST be Daily quest type
+        .eq('status', 'Completed')     // MUST be completed 
+        .eq('is_recurring', true)      // MUST be marked as recurring
+        .in('recurrence_type', ['daily']) // MUST have daily recurrence type
+        .select('user_id, quest_name, quest_type, recurrence_type')
 
       if (updateError) {
         console.error('Error updating daily quests:', updateError)
