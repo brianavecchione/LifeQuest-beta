@@ -374,6 +374,8 @@ export const useQuests = () => {
   const createQuest = async (questData: Omit<Quest, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'completed_at'>) => {
     if (!user) return null;
 
+    console.log('🚀 createQuest called with:', questData);
+
     // Create optimistic quest object for immediate UI update
     const optimisticQuest: Quest = {
       id: `temp-${Date.now()}`, // Temporary ID
@@ -384,10 +386,17 @@ export const useQuests = () => {
       ...questData,
     };
 
+    console.log('➕ Adding optimistic quest to state:', optimisticQuest);
+
     // Add quest immediately to local state for instant feedback
-    setQuests(prev => [optimisticQuest, ...prev]);
+    setQuests(prev => {
+      const newQuests = [optimisticQuest, ...prev];
+      console.log('📊 Updated quests state:', newQuests.length, 'quests');
+      return newQuests;
+    });
 
     try {
+      console.log('💾 Inserting quest to database...');
       const { data, error } = await supabase
         .from('quests')
         .insert({
@@ -399,14 +408,19 @@ export const useQuests = () => {
 
       if (error) throw error;
 
+      console.log('✅ Quest created in database:', data);
+
       const transformedQuest = transformDbQuest(data);
+      console.log('🔄 Transformed quest:', transformedQuest);
       
       // Replace the optimistic quest with the real one from the database
-      setQuests(prev => 
-        prev.map(quest => 
+      setQuests(prev => {
+        const updatedQuests = prev.map(quest => 
           quest.id === optimisticQuest.id ? transformedQuest : quest
-        )
-      );
+        );
+        console.log('🔄 Replaced optimistic quest with real quest, total quests:', updatedQuests.length);
+        return updatedQuests;
+      });
       
       toast({
         title: 'Quest Created! 🎯',
@@ -415,10 +429,14 @@ export const useQuests = () => {
 
       return transformedQuest;
     } catch (error) {
-      console.error('Error creating quest:', error);
+      console.error('❌ Error creating quest:', error);
       
       // Remove the optimistic quest on error
-      setQuests(prev => prev.filter(quest => quest.id !== optimisticQuest.id));
+      setQuests(prev => {
+        const filteredQuests = prev.filter(quest => quest.id !== optimisticQuest.id);
+        console.log('🗑️ Removed optimistic quest on error, remaining quests:', filteredQuests.length);
+        return filteredQuests;
+      });
       
       toast({
         title: 'Error',
@@ -694,29 +712,38 @@ export const useQuests = () => {
           filter: `user_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('Real-time quest change:', payload);
+          console.log('🔄 Real-time quest change:', payload.eventType, payload);
           
           if (payload.eventType === 'INSERT') {
             const newQuest = transformDbQuest(payload.new as DbQuest);
+            console.log('📥 Real-time INSERT - new quest:', newQuest);
             setQuests(prev => {
               // Check if this is replacing an optimistic quest (temp ID)
               const hasOptimisticQuest = prev.some(q => q.id.startsWith('temp-') && q.quest_name === newQuest.quest_name);
+              console.log('🔍 Checking for optimistic quest to replace:', hasOptimisticQuest);
               
               if (hasOptimisticQuest) {
                 // Replace the optimistic quest with the real one
-                return prev.map(quest => 
+                const updatedQuests = prev.map(quest => 
                   quest.id.startsWith('temp-') && quest.quest_name === newQuest.quest_name 
                     ? newQuest 
                     : quest
                 );
+                console.log('🔄 Replaced optimistic quest with real-time quest');
+                return updatedQuests;
               } else {
                 // Prevent duplicates - check if quest already exists
-                if (prev.some(q => q.id === newQuest.id)) return prev;
+                if (prev.some(q => q.id === newQuest.id)) {
+                  console.log('🚫 Quest already exists, skipping real-time insert');
+                  return prev;
+                }
+                console.log('➕ Adding new quest from real-time');
                 return [newQuest, ...prev];
               }
             });
           } else if (payload.eventType === 'UPDATE') {
             const updatedQuest = transformDbQuest(payload.new as DbQuest);
+            console.log('📝 Real-time UPDATE - updated quest:', updatedQuest);
             setQuests(prev => 
               prev.map(quest => 
                 quest.id === updatedQuest.id ? updatedQuest : quest
@@ -724,6 +751,7 @@ export const useQuests = () => {
             );
           } else if (payload.eventType === 'DELETE') {
             const deletedId = payload.old.id;
+            console.log('🗑️ Real-time DELETE - removing quest:', deletedId);
             setQuests(prev => prev.filter(quest => quest.id !== deletedId));
           }
         }

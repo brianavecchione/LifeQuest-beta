@@ -48,7 +48,13 @@ const QuestCategories: React.FC<QuestCategoriesProps> = ({
   const [editingQuest, setEditingQuest] = useState<Quest | null>(null);
   const [deletingQuest, setDeletingQuest] = useState<Quest | null>(null);
 
-  console.log('QuestCategories - quests:', quests, 'loading:', loading);
+  console.log('🔍 QuestCategories - quests:', quests.length, 'loading:', loading);
+  console.log('🔍 QuestCategories - quest types breakdown:', {
+    Daily: quests.filter(q => q.quest_type === 'Daily').length,
+    Main: quests.filter(q => q.quest_type === 'Main').length,
+    Side: quests.filter(q => q.quest_type === 'Side').length,
+    Legendary: quests.filter(q => q.quest_type === 'Legendary').length
+  });
 
   // Helper function to calculate base gold - moved to top to avoid hoisting issues
   const calculateBaseGold = (xp: number) => {
