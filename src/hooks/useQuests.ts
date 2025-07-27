@@ -383,7 +383,18 @@ export const useQuests = () => {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       completed_at: undefined,
-      ...questData,
+      quest_name: questData.quest_name,
+      description: questData.description === undefined || (questData.description as any)?._type === 'undefined' ? undefined : questData.description,
+      quest_type: questData.quest_type,
+      priority: questData.priority,
+      difficulty: questData.difficulty,
+      xp_reward: questData.xp_reward,
+      gold_reward: questData.gold_reward,
+      tags: questData.tags === undefined || (questData.tags as any)?._type === 'undefined' ? undefined : questData.tags,
+      status: questData.status,
+      due_date: questData.due_date === undefined || (questData.due_date as any)?._type === 'undefined' ? undefined : questData.due_date,
+      pomodoro_enabled: questData.pomodoro_enabled,
+      is_recurring: questData.is_recurring || false,
     };
 
     console.log('➕ Adding optimistic quest to state:', optimisticQuest);
