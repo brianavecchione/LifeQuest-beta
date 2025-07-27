@@ -699,9 +699,21 @@ export const useQuests = () => {
           if (payload.eventType === 'INSERT') {
             const newQuest = transformDbQuest(payload.new as DbQuest);
             setQuests(prev => {
-              // Prevent duplicates - check if quest already exists
-              if (prev.some(q => q.id === newQuest.id)) return prev;
-              return [newQuest, ...prev];
+              // Check if this is replacing an optimistic quest (temp ID)
+              const hasOptimisticQuest = prev.some(q => q.id.startsWith('temp-') && q.quest_name === newQuest.quest_name);
+              
+              if (hasOptimisticQuest) {
+                // Replace the optimistic quest with the real one
+                return prev.map(quest => 
+                  quest.id.startsWith('temp-') && quest.quest_name === newQuest.quest_name 
+                    ? newQuest 
+                    : quest
+                );
+              } else {
+                // Prevent duplicates - check if quest already exists
+                if (prev.some(q => q.id === newQuest.id)) return prev;
+                return [newQuest, ...prev];
+              }
             });
           } else if (payload.eventType === 'UPDATE') {
             const updatedQuest = transformDbQuest(payload.new as DbQuest);
