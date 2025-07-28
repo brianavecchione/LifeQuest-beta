@@ -54,18 +54,18 @@ export const useStreaks = () => {
         ...(archivedQuests.data || []).map(q => q.completed_at)
       ].filter(timestamp => timestamp !== null);
 
-      console.log('📊 Found completed timestamps:', {
+      console.log('📊 STREAK ISSUE DEBUG - Found completed timestamps:', {
         currentCount: currentQuests.data?.length || 0,
         archivedCount: archivedQuests.data?.length || 0,
         totalTimestamps: allCompletedTimestamps.length,
-        sampleTimestamps: allCompletedTimestamps.slice(0, 5)
+        allTimestamps: allCompletedTimestamps
       });
 
       // Calculate streaks with proper timezone handling
       const streakData = calculateLocalStreaks(allCompletedTimestamps);
       
-      console.log('🎯 Calculated streak data:', streakData);
-      console.log('🎯 Current streak should be:', streakData.currentStreak);
+      console.log('🎯 STREAK ISSUE DEBUG - Calculated streak data:', streakData);
+      console.log('🎯 Current streak should be:', streakData.currentStreak, '(user reported: 2 days incorrect)');
       console.log('🎯 Longest streak should be:', streakData.longestStreak);
       console.log('🎯 Total completed quests:', allCompletedTimestamps.length);
 
