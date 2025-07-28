@@ -139,6 +139,11 @@ export const useStreaks = () => {
 
   useEffect(() => {
     fetchStreaks();
+    // Force streak calculation on mount for debugging
+    console.log('🔥 STREAK DEBUG - useStreaks hook mounted, forcing calculation...');
+    setTimeout(() => {
+      calculateStreaksFromQuests();
+    }, 1000);
   }, [user]);
 
   // Set up real-time subscription for quest completions to update streaks
