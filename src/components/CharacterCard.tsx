@@ -14,6 +14,15 @@ const CharacterCard = React.memo(() => {
   const { user: character, isLoading } = useUser();
   const { isGuestMode, guestUser } = useGuest();
   const { getBestStreak, loading: streaksLoading } = useStreaks();
+  
+  // Add debugging for streak issue
+  React.useEffect(() => {
+    console.log('🚨 STREAK DEBUG - CharacterCard mounted');
+    console.log('🚨 STREAK DEBUG - getBestStreak:', getBestStreak);
+    console.log('🚨 STREAK DEBUG - streaksLoading:', streaksLoading);
+    const currentStreak = getBestStreak();
+    console.log('🚨 STREAK DEBUG - Current streak data:', currentStreak);
+  }, [getBestStreak, streaksLoading]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
   // Memoize user data to prevent unnecessary re-renders
