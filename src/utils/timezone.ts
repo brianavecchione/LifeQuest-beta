@@ -187,15 +187,23 @@ export const calculateLocalStreaks = (completedTimestamps: string[]) => {
     
     if (localDates.includes(checkDateStr)) {
       currentStreak++;
+      console.log(`🔥 STREAK DEBUG - ✅ Found completion on ${checkDateStr}, streak now: ${currentStreak}`);
       streakBroken = false;
     } else {
-      // If this is today (i === 0), don't break the streak yet
+      console.log(`🔥 STREAK DEBUG - ❌ No completion on ${checkDateStr}`);
+      // If this is today (i === 0), don't break the streak yet - give grace for today
       if (i === 0) {
-        console.log('🔥 STREAK DEBUG - No completion today, but continuing to check previous days');
+        console.log('🔥 STREAK DEBUG - No completion today, but continuing to check previous days (grace period)');
         continue;
       }
-      // If we've already found some completions and now hit a gap, break
-      if (currentStreak > 0 || streakBroken) {
+      // If we haven't found any completions yet and hit day 1, continue checking
+      if (currentStreak === 0 && i === 1) {
+        console.log('🔥 STREAK DEBUG - No completion yesterday either, but continuing to look for recent activity');
+        continue;
+      }
+      // If we've found completions and now hit a gap, or if we've gone too far back, break
+      if (currentStreak > 0 || i > 30) { // Don't check more than 30 days back
+        console.log(`🔥 STREAK DEBUG - Breaking streak search. Current streak: ${currentStreak}, days checked: ${i}`);
         break;
       }
       streakBroken = true;
