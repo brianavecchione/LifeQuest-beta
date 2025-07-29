@@ -31,7 +31,7 @@ export const useStreaks = () => {
       console.log('🔥 Calculating streaks with timezone:', tzInfo);
       
       // Get all completed quests (current + archived) with completion dates
-      const [currentQuests, archivedQuests] = await Promise.all([
+      const [currentQuests, archivedQuests, xpHistory] = await Promise.all([
         supabase
           .from('quests')
           .select('completed_at')
@@ -41,11 +41,20 @@ export const useStreaks = () => {
         supabase
           .from('archived_quests')
           .select('completed_at')
+          .eq('user_id', user.id),
+        supabase
+          .from('daily_xp_history')
+          .select('date, xp_earned')
           .eq('user_id', user.id)
+          .order('date', { ascending: false })
       ]);
 
       if (currentQuests.error || archivedQuests.error) {
         throw currentQuests.error || archivedQuests.error;
+      }
+
+      if (xpHistory.error) {
+        console.error('Error fetching XP history:', xpHistory.error);
       }
 
       // Combine all completion timestamps (UTC)
@@ -58,11 +67,12 @@ export const useStreaks = () => {
         currentCount: currentQuests.data?.length || 0,
         archivedCount: archivedQuests.data?.length || 0,
         totalTimestamps: allCompletedTimestamps.length,
+        xpHistoryCount: xpHistory.data?.length || 0,
         allTimestamps: allCompletedTimestamps
       });
 
-      // Calculate streaks with proper timezone handling
-      const streakData = calculateLocalStreaks(allCompletedTimestamps);
+      // Calculate streaks with proper timezone handling and XP history fallback
+      const streakData = calculateLocalStreaks(allCompletedTimestamps, xpHistory.data || []);
       
       console.log('🎯 STREAK ISSUE DEBUG - Calculated streak data:', streakData);
       console.log('🎯 Current streak should be:', streakData.currentStreak, '(user reported: 2 days incorrect)');

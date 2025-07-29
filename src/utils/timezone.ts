@@ -152,13 +152,14 @@ export const generateDailyXpData = (xpHistory: Array<{ date: string; xp_earned: 
 };
 
 /**
- * Calculate streaks with proper timezone handling
+ * Calculate streaks with proper timezone handling, using XP history as fallback
  */
-export const calculateLocalStreaks = (completedTimestamps: string[]) => {
+export const calculateLocalStreaks = (completedTimestamps: string[], xpHistory?: Array<{ date: string; xp_earned: number }>) => {
   console.log('🔥 STREAK DEBUG - Input timestamps:', completedTimestamps);
+  console.log('🔥 STREAK DEBUG - XP History fallback:', xpHistory);
   
   // Convert all UTC timestamps to local dates
-  const localDates = completedTimestamps
+  let localDates = completedTimestamps
     .map(timestamp => {
       const localDate = getLocalDateFromUTC(timestamp);
       console.log(`🔥 STREAK DEBUG - ${timestamp} -> ${localDate}`);
@@ -167,7 +168,20 @@ export const calculateLocalStreaks = (completedTimestamps: string[]) => {
     .filter((date, index, array) => array.indexOf(date) === index) // Remove duplicates
     .sort((a, b) => new Date(b).getTime() - new Date(a).getTime()); // Sort descending
 
-  console.log('🔥 STREAK DEBUG - Unique local dates (sorted):', localDates);
+  // If we have XP history, add any dates with XP earned that aren't already in our completion dates
+  if (xpHistory) {
+    const xpDates = xpHistory
+      .filter(entry => entry.xp_earned > 0)
+      .map(entry => entry.date)
+      .filter(date => !localDates.includes(date));
+    
+    localDates = [...localDates, ...xpDates]
+      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+    
+    console.log('🔥 STREAK DEBUG - Added XP dates:', xpDates);
+  }
+
+  console.log('🔥 STREAK DEBUG - Final unique local dates (sorted):', localDates);
 
   const todayLocal = getLocalToday();
   console.log('🔥 STREAK DEBUG - Today local:', todayLocal);
