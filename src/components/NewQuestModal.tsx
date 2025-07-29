@@ -10,7 +10,8 @@ import { Switch } from '@/components/ui/switch';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Star, Trophy, Flag, Crown, CalendarIcon, Repeat } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Star, Trophy, Flag, Crown, CalendarIcon, Repeat, ChevronDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast'; 
 import { Quest, useQuests } from '@/hooks/useQuests';
 import { format } from 'date-fns';
@@ -33,6 +34,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
 }) => {
   const { toast } = useToast();
   const { createQuest } = useQuests();
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [formData, setFormData] = useState({
     quest_name: '',
     description: '',
@@ -165,27 +167,28 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-800 border-slate-700 max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="text-amber-400 text-xl flex items-center gap-2">
-            <Trophy className="w-6 h-6" />
-            Create New Quest
-          </DialogTitle>
-          <DialogDescription className="text-slate-300">
-            Add a new quest to your adventure log. Choose your quest type and set the XP reward!
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="bg-slate-800 border-slate-700 max-w-2xl max-h-[90vh] overflow-y-auto sm:max-h-none">
+        <div className="max-h-[calc(90vh-8rem)] overflow-y-auto sm:max-h-none sm:overflow-visible">
+          <DialogHeader>
+            <DialogTitle className="text-amber-400 text-xl flex items-center gap-2">
+              <Trophy className="w-6 h-6" />
+              Create New Quest
+            </DialogTitle>
+            <DialogDescription className="text-slate-300">
+              Add a new quest to your adventure log. Choose your quest type and set the XP reward!
+            </DialogDescription>
+          </DialogHeader>
 
-        {isAtLimit && (
-          <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4 mb-4">
-            <p className="text-yellow-400 text-sm">
-              ⚠️ You have {currentQuestCount} active non-daily quests. Consider completing some before adding more, 
-              or this quest will be added to your quest categories for selection later.
-            </p>
-          </div>
-        )}
+          {isAtLimit && (
+            <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4 mb-4">
+              <p className="text-yellow-400 text-sm">
+                ⚠️ You have {currentQuestCount} active non-daily quests. Consider completing some before adding more, 
+                or this quest will be added to your quest categories for selection later.
+              </p>
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           {/* Quest Name */}
           <div>
             <Label htmlFor="quest-name" className="text-slate-300 font-medium">
@@ -201,7 +204,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
             />
           </div>
 
-          {/* Quest Description */}
+          {/* Quest Description - Compact on mobile */}
           <div>
             <Label htmlFor="quest-description" className="text-slate-300 font-medium">
               Description (Optional)
@@ -211,7 +214,7 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               placeholder="Add more details about this quest..."
-              className="bg-slate-700 border-slate-600 text-white mt-1 min-h-[80px]"
+              className="bg-slate-700 border-slate-600 text-white mt-1 min-h-[60px] sm:min-h-[80px]"
               maxLength={300}
             />
           </div>
@@ -300,72 +303,86 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Tags */}
-            <div>
-              <Label htmlFor="quest-tags" className="text-slate-300 font-medium">
-                Tags (Optional)
-              </Label>
-              <Input
-                id="quest-tags"
-                value={formData.tags}
-                onChange={(e) => setFormData(prev => ({ ...prev, tags: e.target.value }))}
-                placeholder="e.g., work, health, learning"
-                className="bg-slate-700 border-slate-600 text-white mt-1"
-              />
-              <p className="text-xs text-slate-400 mt-1">
-                Separate tags with commas
-              </p>
-            </div>
+          {/* Advanced Options - Collapsible on mobile */}
+          <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen}>
+            <CollapsibleTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full flex items-center justify-between p-3 bg-slate-700/30 hover:bg-slate-700/50 border border-slate-600/50 rounded-lg text-slate-300"
+              >
+                <span className="text-sm font-medium">Advanced Options</span>
+                <ChevronDown className={cn("w-4 h-4 transition-transform", isAdvancedOpen && "rotate-180")} />
+              </Button>
+            </CollapsibleTrigger>
+            
+            <CollapsibleContent className="space-y-4 mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Tags */}
+                <div>
+                  <Label htmlFor="quest-tags" className="text-slate-300 font-medium">
+                    Tags (Optional)
+                  </Label>
+                  <Input
+                    id="quest-tags"
+                    value={formData.tags}
+                    onChange={(e) => setFormData(prev => ({ ...prev, tags: e.target.value }))}
+                    placeholder="e.g., work, health, learning"
+                    className="bg-slate-700 border-slate-600 text-white mt-1"
+                  />
+                  <p className="text-xs text-slate-400 mt-1">
+                    Separate tags with commas
+                  </p>
+                </div>
 
-            {/* Due Date - Hidden for Daily quests (auto-assigned) */}
-            {formData.quest_type !== 'Daily' && (
-              <div>
-                <Label className="text-slate-300 font-medium mb-2 block">
-                  Due Date (Optional)
-                </Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal bg-slate-700 border-slate-600 text-white hover:bg-slate-600",
-                        !formData.due_date && "text-slate-400"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {formData.due_date ? format(formData.due_date, "PPP") : <span>Pick a due date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-slate-800 border-slate-700" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={formData.due_date || undefined}
-                      onSelect={(date) => setFormData(prev => ({ ...prev, due_date: date || null }))}
-                      disabled={(date) => {
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        return date < today;
-                      }}
-                      initialFocus
-                      className="pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-                <p className="text-xs text-slate-400 mt-1">
-                  Optional deadline for quest completion
-                </p>
+                {/* Due Date - Hidden for Daily quests (auto-assigned) */}
+                {formData.quest_type !== 'Daily' && (
+                  <div>
+                    <Label className="text-slate-300 font-medium mb-2 block">
+                      Due Date (Optional)
+                    </Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal bg-slate-700 border-slate-600 text-white hover:bg-slate-600",
+                            !formData.due_date && "text-slate-400"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {formData.due_date ? format(formData.due_date, "PPP") : <span>Pick a due date</span>}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-slate-800 border-slate-700" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={formData.due_date || undefined}
+                          onSelect={(date) => setFormData(prev => ({ ...prev, due_date: date || null }))}
+                          disabled={(date) => {
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            return date < today;
+                          }}
+                          initialFocus
+                          className="pointer-events-auto"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <p className="text-xs text-slate-400 mt-1">
+                      Optional deadline for quest completion
+                    </p>
+                  </div>
+                )}
+                {formData.quest_type === 'Daily' && (
+                  <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-3">
+                    <p className="text-yellow-400 text-sm font-medium">📅 Daily Quest Auto-Schedule</p>
+                    <p className="text-yellow-300/80 text-xs mt-1">
+                      Due date automatically set to today and will reset daily
+                    </p>
+                  </div>
+                )}
               </div>
-            )}
-            {formData.quest_type === 'Daily' && (
-              <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-3">
-                <p className="text-yellow-400 text-sm font-medium">📅 Daily Quest Auto-Schedule</p>
-                <p className="text-yellow-300/80 text-xs mt-1">
-                  Due date automatically set to today and will reset daily
-                </p>
-              </div>
-            )}
-          </div>
 
           {/* Recurrence Options */}
           <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
@@ -502,57 +519,60 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
                 className="ml-3"
               />
             </div>
-          </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
 
-          {/* Quest Preview */}
-          {formData.quest_name && (
-            <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
-              <h4 className="text-sm font-medium text-slate-300 mb-2">Quest Preview:</h4>
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg border ${getTypeColor(formData.quest_type)} bg-slate-800/50`}>
-                  {getTypeIcon(formData.quest_type)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h5 className="text-white font-medium truncate">{formData.quest_name}</h5>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Badge variant="outline" className="text-amber-400 border-amber-400/50 text-xs">
-                      {currentRewards.xp} XP
+        {/* Quest Preview */}
+        {formData.quest_name && (
+          <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+            <h4 className="text-sm font-medium text-slate-300 mb-2">Quest Preview:</h4>
+            <div className="flex items-center gap-3">
+              <div className={`p-2 rounded-lg border ${getTypeColor(formData.quest_type)} bg-slate-800/50`}>
+                {getTypeIcon(formData.quest_type)}
+              </div>
+              <div className="flex-1 min-w-0">
+                <h5 className="text-white font-medium truncate">{formData.quest_name}</h5>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge variant="outline" className="text-amber-400 border-amber-400/50 text-xs">
+                    {currentRewards.xp} XP
+                  </Badge>
+                  <Badge variant="outline" className="text-yellow-500 border-yellow-500/50 text-xs">
+                    {currentRewards.gold} Gold
+                  </Badge>
+                  {formData.quest_type !== 'Daily' && (
+                    <Badge className={`${formData.priority === 'High' ? 'bg-red-600' : formData.priority === 'Medium' ? 'bg-yellow-600' : 'bg-green-600'} text-white text-xs`}>
+                      {formData.priority}
                     </Badge>
-                    <Badge variant="outline" className="text-yellow-500 border-yellow-500/50 text-xs">
-                      {currentRewards.gold} Gold
-                    </Badge>
-                    {formData.quest_type !== 'Daily' && (
-                      <Badge className={`${formData.priority === 'High' ? 'bg-red-600' : formData.priority === 'Medium' ? 'bg-yellow-600' : 'bg-green-600'} text-white text-xs`}>
-                        {formData.priority}
-                      </Badge>
-                    )}
-                    <Badge variant="outline" className={`${getTypeColor(formData.quest_type)} border-current text-xs`}>
-                      {formData.quest_type}
-                    </Badge>
-                  </div>
+                  )}
+                  <Badge variant="outline" className={`${getTypeColor(formData.quest_type)} border-current text-xs`}>
+                    {formData.quest_type}
+                  </Badge>
                 </div>
               </div>
             </div>
-          )}
-
-          {/* Buttons */}
-          <div className="flex gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              className="flex-1 bg-amber-600 hover:bg-amber-700 text-white"
-            >
-              Create Quest
-            </Button>
           </div>
-        </form>
+        )}
+
+        {/* Buttons */}
+        <div className="flex gap-3 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700"
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            className="flex-1 bg-amber-600 hover:bg-amber-700 text-white"
+          >
+            Create Quest
+          </Button>
+        </div>
+      </form>
+        </div>
       </DialogContent>
     </Dialog>
   );
