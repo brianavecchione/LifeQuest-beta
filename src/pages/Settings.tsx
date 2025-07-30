@@ -1,8 +1,8 @@
-
 import React from 'react';
+import { exportQuestData, getExportStats } from '@/utils/exportData';
 import AISidekick from '@/components/AISidekick';
 import AvatarUpload from '@/components/AvatarUpload';
-import { User, Bell, Zap, Shield, Accessibility, Save, AlertTriangle, Trash2 } from 'lucide-react';
+import { User, Bell, Zap, Shield, Accessibility, Save, AlertTriangle, Trash2, Download, Database } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -26,12 +26,19 @@ import {
 const Settings = () => {
   const { user, updateUser } = useUser();
   const { toast } = useToast();
-  const { deleteAccount } = useAuth();
+  const { deleteAccount, user: authUser } = useAuth();
   const navigate = useNavigate();
   const { backgroundImage } = useBackground();
   const [characterName, setCharacterName] = React.useState(user.name);
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
+  const [isExporting, setIsExporting] = React.useState(false);
+  const [exportStats, setExportStats] = React.useState({
+    totalQuests: 0,
+    completedQuests: 0,
+    activeQuests: 0,
+    archivedQuests: 0,
+  });
 
   const handleNameChange = (value: string) => {
     setCharacterName(value);
@@ -69,6 +76,51 @@ const Settings = () => {
       document.documentElement.classList.add('reduce-animations');
     }
   }, [user.reduceAnimations]);
+
+  // Load export stats on mount
+  React.useEffect(() => {
+    const loadExportStats = async () => {
+      if (authUser?.id) {
+        try {
+          const stats = await getExportStats(authUser.id);
+          setExportStats(stats);
+        } catch (error) {
+          console.error('Error loading export stats:', error);
+        }
+      }
+    };
+    loadExportStats();
+  }, [authUser?.id]);
+
+  const handleExportData = async () => {
+    if (!authUser?.id) {
+      toast({
+        title: "Export failed",
+        description: "Unable to identify user for data export.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsExporting(true);
+      await exportQuestData(authUser.id);
+      
+      toast({
+        title: "Data exported successfully! 📊",
+        description: "Your quest history has been downloaded as a CSV file.",
+      });
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      toast({
+        title: "Export failed",
+        description: "There was an error exporting your data. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const handleDeleteAccount = async () => {
     try {
@@ -177,6 +229,77 @@ const Settings = () => {
           </div>
         </div>
 
+        {/* Data Management */}
+        <div className="mb-12">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-cyan-600/30 shadow-2xl">
+            <div className="flex items-center gap-2 mb-6">
+              <Database className="w-6 h-6 text-cyan-400" />
+              <h3 className="text-xl font-bold text-cyan-400">Data Management</h3>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="bg-cyan-900/20 rounded-lg p-4 border border-cyan-700/50">
+                <h4 className="text-white font-medium mb-2 flex items-center gap-2">
+                  <Download className="w-5 h-5 text-cyan-400" />
+                  Export Quest History
+                </h4>
+                <p className="text-cyan-200 text-sm mb-4">
+                  Download your complete quest history including all completed quests, daily habits, 
+                  XP earned, completion dates, and metadata as a CSV file for analysis or backup.
+                </p>
+                
+                {/* Export Stats */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div className="bg-slate-800/50 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-cyan-400">{exportStats.totalQuests}</div>
+                    <div className="text-xs text-slate-400">Total Quests</div>
+                  </div>
+                  <div className="bg-slate-800/50 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-green-400">{exportStats.completedQuests}</div>
+                    <div className="text-xs text-slate-400">Completed</div>
+                  </div>
+                  <div className="bg-slate-800/50 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-blue-400">{exportStats.activeQuests}</div>
+                    <div className="text-xs text-slate-400">Active</div>
+                  </div>
+                  <div className="bg-slate-800/50 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-purple-400">{exportStats.archivedQuests}</div>
+                    <div className="text-xs text-slate-400">Archived</div>
+                  </div>
+                </div>
+
+                <div className="text-xs text-cyan-300 mb-4">
+                  <strong>Export includes:</strong>
+                  <ul className="mt-1 ml-4 space-y-1">
+                    <li>• Quest names and descriptions</li>
+                    <li>• Quest types (Main, Side, Daily, Legendary)</li>
+                    <li>• Priority levels and difficulty ratings</li>
+                    <li>• XP and Gold rewards earned</li>
+                    <li>• Completion dates and creation dates</li>
+                    <li>• Tags and due dates</li>
+                    <li>• Both active and archived quest data</li>
+                  </ul>
+                </div>
+                
+                <Button 
+                  onClick={handleExportData}
+                  disabled={isExporting || exportStats.totalQuests === 0}
+                  className="bg-cyan-600 hover:bg-cyan-700 text-white"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  {isExporting ? 'Exporting...' : 'Export Data to CSV'}
+                </Button>
+                
+                {exportStats.totalQuests === 0 && (
+                  <p className="text-xs text-slate-500 mt-2">
+                    No quest data available to export. Complete some quests first!
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Notification Settings */}
         <div className="mb-12">
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-purple-600/30 shadow-2xl">
@@ -255,7 +378,6 @@ const Settings = () => {
             </div>
           </div>
         </div>
-
 
         {/* Danger Zone - Account Deletion */}
         <div className="mb-12">
