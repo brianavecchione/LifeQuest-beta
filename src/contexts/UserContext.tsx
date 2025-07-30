@@ -196,49 +196,52 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Incrementally update profile data without full reload to prevent flickering
           const newData = payload.new as any;
           if (newData) {
-            setUser(prev => {
-              // Calculate level and XP progress using progressive formula if XP changed
-              if (newData.xp_balance !== undefined && newData.xp_balance !== prev.totalXp) {
-                console.log(`🎯 XP updated: ${prev.totalXp} → ${newData.xp_balance}`);
-                const totalXp = newData.xp_balance;
-                const baseXP = 100;
-                
-                let currentLevel = 1;
-                while (true) {
-                  const xpForLevel = baseXP * (currentLevel * (currentLevel + 1)) / 2;
-                  if (totalXp < xpForLevel) break;
-                  currentLevel++;
+            // Use startTransition to prevent UI flickering during updates
+            React.startTransition(() => {
+              setUser(prev => {
+                // Calculate level and XP progress using progressive formula if XP changed
+                if (newData.xp_balance !== undefined && newData.xp_balance !== prev.totalXp) {
+                  console.log(`🎯 XP updated: ${prev.totalXp} → ${newData.xp_balance}`);
+                  const totalXp = newData.xp_balance;
+                  const baseXP = 100;
+                  
+                  let currentLevel = 1;
+                  while (true) {
+                    const xpForLevel = baseXP * (currentLevel * (currentLevel + 1)) / 2;
+                    if (totalXp < xpForLevel) break;
+                    currentLevel++;
+                  }
+                  
+                  const currentLevelXpThreshold = currentLevel > 1 ? baseXP * ((currentLevel - 1) * currentLevel) / 2 : 0;
+                  const nextLevelXpThreshold = baseXP * (currentLevel * (currentLevel + 1)) / 2;
+                  const xpInCurrentLevel = totalXp - currentLevelXpThreshold;
+                  const xpRequiredForNextLevel = nextLevelXpThreshold - currentLevelXpThreshold;
+                  const progressPercentage = (xpInCurrentLevel / xpRequiredForNextLevel) * 100;
+                  
+                  // Check for level up
+                  if (currentLevel > prev.level) {
+                    setTimeout(() => triggerLevelUpCelebration(currentLevel), 100);
+                  }
+                  
+                  return {
+                    ...prev,
+                    level: currentLevel,
+                    xp: Math.max(0, progressPercentage),
+                    totalXp: totalXp,
+                    name: newData.display_name || prev.name,
+                    avatar: newData.avatar_url || prev.avatar,
+                    avatarFrame: newData.avatar_frame || prev.avatarFrame,
+                  };
                 }
                 
-                const currentLevelXpThreshold = currentLevel > 1 ? baseXP * ((currentLevel - 1) * currentLevel) / 2 : 0;
-                const nextLevelXpThreshold = baseXP * (currentLevel * (currentLevel + 1)) / 2;
-                const xpInCurrentLevel = totalXp - currentLevelXpThreshold;
-                const xpRequiredForNextLevel = nextLevelXpThreshold - currentLevelXpThreshold;
-                const progressPercentage = (xpInCurrentLevel / xpRequiredForNextLevel) * 100;
-                
-                // Check for level up
-                if (currentLevel > prev.level) {
-                  setTimeout(() => triggerLevelUpCelebration(currentLevel), 100);
-                }
-                
+                // Just update other fields without XP recalculation
                 return {
                   ...prev,
-                  level: currentLevel,
-                  xp: Math.max(0, progressPercentage),
-                  totalXp: totalXp,
                   name: newData.display_name || prev.name,
                   avatar: newData.avatar_url || prev.avatar,
                   avatarFrame: newData.avatar_frame || prev.avatarFrame,
                 };
-              }
-              
-              // Just update other fields without XP recalculation
-              return {
-                ...prev,
-                name: newData.display_name || prev.name,
-                avatar: newData.avatar_url || prev.avatar,
-                avatarFrame: newData.avatar_frame || prev.avatarFrame,
-              };
+              });
             });
           }
         }
@@ -256,15 +259,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Incrementally update balance without full reload to prevent flickering
           const newData = payload.new as any;
           if (newData?.current_gold_balance !== undefined) {
-            setUser(prev => {
-              if (newData.current_gold_balance !== prev.gold) {
-                console.log(`💰 Gold updated: ${prev.gold} → ${newData.current_gold_balance}`);
-                return {
-                  ...prev,
-                  gold: newData.current_gold_balance
-                };
-              }
-              return prev;
+            React.startTransition(() => {
+              setUser(prev => {
+                if (newData.current_gold_balance !== prev.gold) {
+                  console.log(`💰 Gold updated: ${prev.gold} → ${newData.current_gold_balance}`);
+                  return {
+                    ...prev,
+                    gold: newData.current_gold_balance
+                  };
+                }
+                return prev;
+              });
             });
           }
         }
