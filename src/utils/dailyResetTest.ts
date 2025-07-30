@@ -62,15 +62,23 @@ export const createResetTestCases = (today: string, yesterday: string): QuestRes
 ];
 
 export const shouldQuestReset = (
-  quest: Pick<QuestResetTestCase, 'status' | 'due_date'>,
+  quest: Pick<QuestResetTestCase, 'status' | 'due_date'> & { completed_at?: string },
   today: string
 ): boolean => {
-  // New comprehensive reset logic:
-  // 1. Completed quests with due_date before today
-  // 2. Completed quests with NULL due_date (legacy)
+  // Fixed reset logic to prevent resetting habits completed today:
+  // 1. Completed quests with due_date before today (but not completed today)
+  // 2. Completed quests with NULL due_date that weren't completed today (legacy)
   // 3. In Progress quests with due_date before today
   
   if (quest.status === 'Completed') {
+    // Don't reset if completed today (check completion date)
+    if (quest.completed_at) {
+      const completedLocalDate = quest.completed_at.split('T')[0]; // Extract date part
+      if (completedLocalDate === today) {
+        return false; // Don't reset habits completed today
+      }
+    }
+    
     // Reset if due_date is null (legacy) or before today
     return quest.due_date === null || quest.due_date < today;
   }

@@ -244,9 +244,10 @@ export const useQuests = () => {
       const dailyHabitsToReset = allDailyHabits?.filter(habit => {
         const needsReset = shouldQuestReset({
           status: habit.status as 'Not started' | 'In Progress' | 'Completed',
-          due_date: habit.due_date
+          due_date: habit.due_date,
+          completed_at: habit.completed_at
         }, todayLocal);
-        console.log(`📋 Daily habit "${habit.quest_name}": due_date=${habit.due_date}, status=${habit.status}, is_recurring=${habit.is_recurring}, needsReset=${needsReset}`);
+        console.log(`📋 Daily habit "${habit.quest_name}": due_date=${habit.due_date}, status=${habit.status}, completed_at=${habit.completed_at}, is_recurring=${habit.is_recurring}, needsReset=${needsReset}`);
         return needsReset;
       }) || [];
 
