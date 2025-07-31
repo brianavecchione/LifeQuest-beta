@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, Trophy, Flag, Crown, CheckCircle2, Coins, MoreVertical, Edit, Trash2, Play, X, Calendar, Clock, AlertCircle, Tag, Target, Repeat } from 'lucide-react';
+import { Star, Trophy, Flag, Crown, CheckCircle2, Coins, MoreVertical, Edit, Trash2, Play, X, Calendar, Clock, AlertCircle, Tag, Target, Repeat, AlertTriangle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -79,6 +79,23 @@ const QuestCard: React.FC<QuestCardProps> = ({
     }
   };
 
+  const getDueDateStatus = (quest: Quest): { isDueToday: boolean; isOverdue: boolean } => {
+    if (!quest.due_date || quest.status === 'Completed') {
+      return { isDueToday: false, isOverdue: false };
+    }
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const dueDate = new Date(quest.due_date);
+    dueDate.setHours(0, 0, 0, 0);
+    
+    const isDueToday = dueDate.getTime() === today.getTime();
+    const isOverdue = dueDate.getTime() < today.getTime();
+    
+    return { isDueToday, isOverdue };
+  };
+
   const getRecurrenceText = (quest: Quest): string | null => {
     const recurrenceType = (quest as any).recurrence_type;
     const recurrenceConfig = (quest as any).recurrence_config;
@@ -109,6 +126,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
     }
   };
 
+  const { isDueToday, isOverdue } = getDueDateStatus(quest);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -134,9 +153,22 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 </div>
                 
                 <div className="flex-1">
-                  <h4 className={`font-medium ${quest.status === 'Completed' ? 'line-through text-slate-400' : 'text-white'}`}>
-                    {quest.quest_name}
-                  </h4>
+                  <div className="flex items-center gap-2">
+                    <h4 className={`font-medium ${quest.status === 'Completed' ? 'line-through text-slate-400' : 'text-white'}`}>
+                      {quest.quest_name}
+                    </h4>
+                    {/* Due date indicators */}
+                    {isOverdue && (
+                      <div title="Overdue">
+                        <AlertTriangle className="w-4 h-4 text-red-400 animate-pulse" />
+                      </div>
+                    )}
+                    {isDueToday && !isOverdue && (
+                      <div title="Due today">
+                        <Clock className="w-4 h-4 text-orange-400 animate-pulse" />
+                      </div>
+                    )}
+                  </div>
                   {/* Recurrence indicator - shown right below quest name */}
                   {getRecurrenceText(quest) && (
                     <p className="text-xs text-blue-400 flex items-center gap-1 mt-1">
