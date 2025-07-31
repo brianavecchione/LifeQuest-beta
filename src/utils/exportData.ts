@@ -9,27 +9,25 @@ interface ExportQuestData {
   difficulty: string;
   xp_reward: number;
   gold_reward: number;
-  status: string;
   tags?: string;
   due_date?: string;
   created_at: string;
   completed_at?: string;
   date_completed?: string;
-  is_recurring: boolean;
-  source: 'Active' | 'Archived';
 }
 
 export const exportQuestData = async (userId: string): Promise<void> => {
   try {
-    // Fetch active/current quests
+    // Fetch completed active quests only
     const { data: activeQuests, error: activeError } = await supabase
       .from('quests')
       .select('*')
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .eq('status', 'Completed');
 
     if (activeError) throw activeError;
 
-    // Fetch archived quests
+    // Fetch archived quests (all archived quests are completed)
     const { data: archivedQuests, error: archivedError } = await supabase
       .from('archived_quests')
       .select('*')
@@ -40,7 +38,7 @@ export const exportQuestData = async (userId: string): Promise<void> => {
     // Combine and format data
     const allQuestData: ExportQuestData[] = [];
 
-    // Process active quests
+    // Process completed active quests
     if (activeQuests) {
       activeQuests.forEach(quest => {
         allQuestData.push({
@@ -51,14 +49,11 @@ export const exportQuestData = async (userId: string): Promise<void> => {
           difficulty: quest.difficulty,
           xp_reward: quest.xp_reward,
           gold_reward: quest.gold_reward,
-          status: quest.status,
           tags: quest.tags ? quest.tags.join('; ') : '',
           due_date: quest.due_date || '',
           created_at: new Date(quest.created_at).toLocaleDateString(),
           completed_at: quest.completed_at ? new Date(quest.completed_at).toLocaleDateString() : '',
-          date_completed: quest.completed_at ? new Date(quest.completed_at).toLocaleDateString() : '',
-          is_recurring: quest.is_recurring || false,
-          source: 'Active'
+          date_completed: quest.completed_at ? new Date(quest.completed_at).toLocaleDateString() : ''
         });
       });
     }
@@ -74,14 +69,11 @@ export const exportQuestData = async (userId: string): Promise<void> => {
           difficulty: 'Moderate', // Archived quests might not have difficulty
           xp_reward: quest.xp_reward,
           gold_reward: quest.gold_reward,
-          status: 'Completed',
           tags: quest.tags ? quest.tags.join('; ') : '',
           due_date: '',
           created_at: new Date(quest.completed_date).toLocaleDateString(),
           completed_at: new Date(quest.completed_at).toLocaleDateString(),
-          date_completed: new Date(quest.completed_date).toLocaleDateString(),
-          is_recurring: false,
-          source: 'Archived'
+          date_completed: new Date(quest.completed_date).toLocaleDateString()
         });
       });
     }
@@ -114,13 +106,10 @@ const generateCSV = (data: ExportQuestData[]): string => {
     'Difficulty',
     'XP Reward',
     'Gold Reward',
-    'Status',
     'Tags',
     'Due Date',
     'Date Created',
-    'Date Completed',
-    'Is Recurring',
-    'Source'
+    'Date Completed'
   ];
 
   const csvRows = [headers.join(',')];
@@ -134,13 +123,10 @@ const generateCSV = (data: ExportQuestData[]): string => {
       quest.difficulty,
       quest.xp_reward.toString(),
       quest.gold_reward.toString(),
-      quest.status,
       `"${(quest.tags || '').toString().replace(/"/g, '""')}"`,
       quest.due_date || '',
       quest.created_at,
-      quest.completed_at || '',
-      quest.is_recurring.toString(),
-      quest.source
+      quest.completed_at || ''
     ];
     csvRows.push(row.join(','));
   });
