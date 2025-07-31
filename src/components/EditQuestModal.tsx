@@ -136,6 +136,8 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
     }
 
     try {
+      console.log('🔄 Updating quest:', quest.id, 'with due_date:', finalDueDate);
+      
       const { error } = await supabase
         .from('quests')
         .update({
@@ -151,11 +153,17 @@ const EditQuestModal: React.FC<EditQuestModalProps> = ({
           pomodoro_enabled: formData.pomodoro_enabled,
           recurrence_type: formData.recurrence_type,
           recurrence_config: recurrenceConfig,
+          updated_at: new Date().toISOString() // Force update timestamp
         })
         .eq('id', quest.id)
         .eq('user_id', user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Quest update error:', error);
+        throw error;
+      }
+      
+      console.log('✅ Quest updated successfully');
 
       toast({
         title: 'Quest Updated! ✏️',
