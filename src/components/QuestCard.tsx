@@ -80,7 +80,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   };
 
   const getDueDateStatus = (quest: Quest): { isDueToday: boolean; isOverdue: boolean } => {
-    if (!quest.due_date || quest.status === 'Completed') {
+    if (!quest.due_date || quest.status === 'Completed' || quest.quest_type === 'Daily') {
       return { isDueToday: false, isOverdue: false };
     }
     
