@@ -198,8 +198,7 @@ const Help = () => {
                   Can I export my data?
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-slate-300">
-                  Not yet—but we're working on adding a data export feature!<br/><br/>
-                  For now, rest assured that your quests, progress, and rewards are safely stored in our secure database and backed up regularly.
+                  Yes. Under the Settings page, go to Data Management, where you'll see the option to export your quest history as a CSV file.
                 </AccordionContent>
               </AccordionItem>
               
