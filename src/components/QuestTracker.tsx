@@ -19,12 +19,11 @@ import { useQuests } from '@/hooks/useQuestsWrapper';
 import { Quest } from '@/hooks/useQuests';
 import { useTodaysFocus } from '@/hooks/useTodaysFocus';
 import { usePomodoroTimer } from '@/hooks/usePomodoroTimer';
-import { useUser } from '@/contexts/UserContext';
+import { supabase } from '@/integrations/supabase/client';
 
 const QuestTracker = () => {
   const { toast } = useToast();
   const { quests, updateQuestStatus, deleteQuest, refetchQuests } = useQuests();
-  const { addXP, addGold } = useUser();
   
   // Custom hooks
   const { todaysFocus, handleDailySetup, handleRemoveFromFocus } = useTodaysFocus(quests);
@@ -98,19 +97,60 @@ const QuestTracker = () => {
         const bonusXP = 25;
         const bonusGold = 10;
         
-        addXP(bonusXP);
-        addGold(bonusGold);
+        // Update database directly for the bonus
+        const awardFocusBonus = async () => {
+          try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+            
+            // Update user stats in database using the existing function
+            const { error: functionError } = await supabase.rpc('update_user_stats', {
+              p_user_id: user.id,
+              xp_gained: bonusXP,
+              gold_gained: bonusGold
+            });
+            
+            if (functionError) {
+              console.error('❌ Error awarding focus bonus:', functionError);
+              return;
+            }
+            
+            // Update daily XP history
+            const { error: xpHistoryError } = await supabase.rpc('update_daily_xp_history', {
+              p_user_id: user.id,
+              xp_gained: bonusXP
+            });
+            
+            if (xpHistoryError) {
+              console.error('❌ Error updating XP history:', xpHistoryError);
+            }
+            
+            // Update daily gold history
+            const { error: goldHistoryError } = await supabase.rpc('update_daily_gold_history', {
+              p_user_id: user.id,
+              gold_gained: bonusGold
+            });
+            
+            if (goldHistoryError) {
+              console.error('❌ Error updating gold history:', goldHistoryError);
+            }
+            
+            localStorage.setItem(bonusAwardedKey, 'true');
+            setFocusCompletionBonusAwarded(true);
+            
+            toast({
+              title: "🎉 Daily Focus Complete!",
+              description: `Excellent work! You've earned a bonus of +${bonusXP} XP and +${bonusGold} Gold for completing your Daily Focus!`,
+              duration: 5000,
+            });
+            
+            console.log('🎉 Daily Focus completion bonus awarded:', { bonusXP, bonusGold });
+          } catch (error) {
+            console.error('❌ Unexpected error awarding focus bonus:', error);
+          }
+        };
         
-        localStorage.setItem(bonusAwardedKey, 'true');
-        setFocusCompletionBonusAwarded(true);
-        
-        toast({
-          title: "🎉 Daily Focus Complete!",
-          description: `Excellent work! You've earned a bonus of +${bonusXP} XP and +${bonusGold} Gold for completing your Daily Focus!`,
-          duration: 5000,
-        });
-        
-        console.log('🎉 Daily Focus completion bonus awarded:', { bonusXP, bonusGold });
+        awardFocusBonus();
       }
       
       setShowAddMoreQuests(allCompleted || belowMinimum);
@@ -125,7 +165,7 @@ const QuestTracker = () => {
     } else {
       setShowAddMoreQuests(false);
     }
-  }, [quests, todaysFocus, focusCompletionBonusAwarded, addXP, addGold, toast]);
+  }, [quests, todaysFocus, focusCompletionBonusAwarded, toast]);
 
   const handleSetupComplete = (selectedQuestIds: string[]) => {
     handleDailySetup(selectedQuestIds);
