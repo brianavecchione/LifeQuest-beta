@@ -19,10 +19,12 @@ import { useQuests } from '@/hooks/useQuestsWrapper';
 import { Quest } from '@/hooks/useQuests';
 import { useTodaysFocus } from '@/hooks/useTodaysFocus';
 import { usePomodoroTimer } from '@/hooks/usePomodoroTimer';
+import { useUser } from '@/contexts/UserContext';
 
 const QuestTracker = () => {
   const { toast } = useToast();
   const { quests, updateQuestStatus, deleteQuest, refetchQuests } = useQuests();
+  const { addXP, addGold } = useUser();
   
   // Custom hooks
   const { todaysFocus, handleDailySetup, handleRemoveFromFocus } = useTodaysFocus(quests);
@@ -59,12 +61,22 @@ const QuestTracker = () => {
   const [editingQuest, setEditingQuest] = useState<Quest | null>(null);
   const [deletingQuest, setDeletingQuest] = useState<Quest | null>(null);
   const [showAddMoreQuests, setShowAddMoreQuests] = useState(false);
+  const [focusCompletionBonusAwarded, setFocusCompletionBonusAwarded] = useState(false);
+
+  // Check Daily Focus completion bonus eligibility
+  useEffect(() => {
+    const today = new Date().toDateString();
+    const bonusAwardedKey = `lifequest-focus-bonus-${today}`;
+    const bonusAlreadyAwarded = localStorage.getItem(bonusAwardedKey) === 'true';
+    setFocusCompletionBonusAwarded(bonusAlreadyAwarded);
+  }, []);
 
   // Check if all focused quests are completed OR if active quests drop below minimum
   useEffect(() => {
     const today = new Date().toDateString();
     const noMoreQuestsToday = localStorage.getItem('lifequest-no-more-quests-today');
     const userDeclinedToday = noMoreQuestsToday === today;
+    const bonusAwardedKey = `lifequest-focus-bonus-${today}`;
 
     if (todaysFocus.length > 0) {
       const focusedQuests = quests.filter(q => todaysFocus.includes(q.id));
@@ -77,8 +89,29 @@ const QuestTracker = () => {
         activeQuests: activeQuests.length,
         allCompleted,
         belowMinimum,
-        userDeclinedToday
+        userDeclinedToday,
+        focusCompletionBonusAwarded
       });
+      
+      // Award Daily Focus completion bonus if all quests completed and minimum requirement met
+      if (allCompleted && focusedQuests.length >= 3 && !focusCompletionBonusAwarded) {
+        const bonusXP = 25;
+        const bonusGold = 10;
+        
+        addXP(bonusXP);
+        addGold(bonusGold);
+        
+        localStorage.setItem(bonusAwardedKey, 'true');
+        setFocusCompletionBonusAwarded(true);
+        
+        toast({
+          title: "🎉 Daily Focus Complete!",
+          description: `Excellent work! You've earned a bonus of +${bonusXP} XP and +${bonusGold} Gold for completing your Daily Focus!`,
+          duration: 5000,
+        });
+        
+        console.log('🎉 Daily Focus completion bonus awarded:', { bonusXP, bonusGold });
+      }
       
       setShowAddMoreQuests(allCompleted || belowMinimum);
       
@@ -92,7 +125,7 @@ const QuestTracker = () => {
     } else {
       setShowAddMoreQuests(false);
     }
-  }, [quests, todaysFocus]);
+  }, [quests, todaysFocus, focusCompletionBonusAwarded, addXP, addGold, toast]);
 
   const handleSetupComplete = (selectedQuestIds: string[]) => {
     handleDailySetup(selectedQuestIds);
