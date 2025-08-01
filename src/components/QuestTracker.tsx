@@ -97,63 +97,47 @@ const QuestTracker = () => {
         const bonusXP = 25;
         const bonusGold = 10;
         
-        console.log('🎯 Daily Focus completion detected! Awarding bonus...', {
-          focusedQuests: focusedQuests.length,
-          allCompleted,
-          bonusAlreadyAwarded: focusCompletionBonusAwarded
-        });
+        console.log('🎯 FOCUS BONUS: Awarding Daily Focus completion bonus');
         
         // Update database directly for the bonus
         const awardFocusBonus = async () => {
           try {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-              console.error('❌ No authenticated user found');
-              return;
-            }
-            
-            console.log('🔧 Calling update_user_stats with:', { user_id: user.id, xp_gained: bonusXP, gold_gained: bonusGold });
+            if (!user) return;
             
             // Update user stats in database using the existing function
-            const { data: statsData, error: functionError } = await supabase.rpc('update_user_stats', {
+            const { error: functionError } = await supabase.rpc('update_user_stats', {
               p_user_id: user.id,
               xp_gained: bonusXP,
               gold_gained: bonusGold
             });
             
             if (functionError) {
-              console.error('❌ Error awarding focus bonus:', functionError);
+              console.error('❌ FOCUS BONUS ERROR:', functionError);
               return;
             }
             
-            console.log('✅ update_user_stats completed:', statsData);
-            
             // Update daily XP history
-            const { data: xpData, error: xpHistoryError } = await supabase.rpc('update_daily_xp_history', {
+            await supabase.rpc('update_daily_xp_history', {
               p_user_id: user.id,
               xp_gained: bonusXP
             });
             
-            if (xpHistoryError) {
-              console.error('❌ Error updating XP history:', xpHistoryError);
-            } else {
-              console.log('✅ update_daily_xp_history completed:', xpData);
-            }
-            
             // Update daily gold history
-            const { data: goldData, error: goldHistoryError } = await supabase.rpc('update_daily_gold_history', {
+            await supabase.rpc('update_daily_gold_history', {
               p_user_id: user.id,
               gold_gained: bonusGold
             });
             
-            if (goldHistoryError) {
-              console.error('❌ Error updating gold history:', goldHistoryError);
-            } else {
-              console.log('✅ update_daily_gold_history completed:', goldData);
-            }
-            
             localStorage.setItem(bonusAwardedKey, 'true');
             setFocusCompletionBonusAwarded(true);
+            
+            console.log('✅ FOCUS BONUS: Successfully awarded +25 XP and +10 Gold');
+            
+            // Force profile refresh to update frontend immediately
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
             
             toast({
               title: "🎉 Daily Focus Complete!",
@@ -161,9 +145,8 @@ const QuestTracker = () => {
               duration: 5000,
             });
             
-            console.log('🎉 Daily Focus completion bonus awarded successfully!', { bonusXP, bonusGold });
           } catch (error) {
-            console.error('❌ Unexpected error awarding focus bonus:', error);
+            console.error('❌ FOCUS BONUS UNEXPECTED ERROR:', error);
           }
         };
         
