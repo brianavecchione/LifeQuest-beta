@@ -97,14 +97,25 @@ const QuestTracker = () => {
         const bonusXP = 25;
         const bonusGold = 10;
         
+        console.log('🎯 Daily Focus completion detected! Awarding bonus...', {
+          focusedQuests: focusedQuests.length,
+          allCompleted,
+          bonusAlreadyAwarded: focusCompletionBonusAwarded
+        });
+        
         // Update database directly for the bonus
         const awardFocusBonus = async () => {
           try {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
+            if (!user) {
+              console.error('❌ No authenticated user found');
+              return;
+            }
+            
+            console.log('🔧 Calling update_user_stats with:', { user_id: user.id, xp_gained: bonusXP, gold_gained: bonusGold });
             
             // Update user stats in database using the existing function
-            const { error: functionError } = await supabase.rpc('update_user_stats', {
+            const { data: statsData, error: functionError } = await supabase.rpc('update_user_stats', {
               p_user_id: user.id,
               xp_gained: bonusXP,
               gold_gained: bonusGold
@@ -115,24 +126,30 @@ const QuestTracker = () => {
               return;
             }
             
+            console.log('✅ update_user_stats completed:', statsData);
+            
             // Update daily XP history
-            const { error: xpHistoryError } = await supabase.rpc('update_daily_xp_history', {
+            const { data: xpData, error: xpHistoryError } = await supabase.rpc('update_daily_xp_history', {
               p_user_id: user.id,
               xp_gained: bonusXP
             });
             
             if (xpHistoryError) {
               console.error('❌ Error updating XP history:', xpHistoryError);
+            } else {
+              console.log('✅ update_daily_xp_history completed:', xpData);
             }
             
             // Update daily gold history
-            const { error: goldHistoryError } = await supabase.rpc('update_daily_gold_history', {
+            const { data: goldData, error: goldHistoryError } = await supabase.rpc('update_daily_gold_history', {
               p_user_id: user.id,
               gold_gained: bonusGold
             });
             
             if (goldHistoryError) {
               console.error('❌ Error updating gold history:', goldHistoryError);
+            } else {
+              console.log('✅ update_daily_gold_history completed:', goldData);
             }
             
             localStorage.setItem(bonusAwardedKey, 'true');
@@ -144,7 +161,7 @@ const QuestTracker = () => {
               duration: 5000,
             });
             
-            console.log('🎉 Daily Focus completion bonus awarded:', { bonusXP, bonusGold });
+            console.log('🎉 Daily Focus completion bonus awarded successfully!', { bonusXP, bonusGold });
           } catch (error) {
             console.error('❌ Unexpected error awarding focus bonus:', error);
           }
