@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import QuickDailySetup from './QuickDailySetup';
@@ -19,11 +18,13 @@ import { useQuests } from '@/hooks/useQuestsWrapper';
 import { Quest } from '@/hooks/useQuests';
 import { useTodaysFocus } from '@/hooks/useTodaysFocus';
 import { usePomodoroTimer } from '@/hooks/usePomodoroTimer';
+import { useUser } from '@/contexts/UserContext';
 import { supabase } from '@/integrations/supabase/client';
 
 const QuestTracker = () => {
   const { toast } = useToast();
   const { quests, updateQuestStatus, deleteQuest, refetchQuests } = useQuests();
+  const { forceGoldRefresh } = useUser();
   
   // Custom hooks
   const { todaysFocus, handleDailySetup, handleRemoveFromFocus } = useTodaysFocus(quests);
@@ -61,6 +62,24 @@ const QuestTracker = () => {
   const [deletingQuest, setDeletingQuest] = useState<Quest | null>(null);
   const [showAddMoreQuests, setShowAddMoreQuests] = useState(false);
   const [focusCompletionBonusAwarded, setFocusCompletionBonusAwarded] = useState(false);
+
+  // Enhanced quest status change handler with immediate gold refresh
+  const handleQuestStatusChange = async (questId: string, newStatus: string) => {
+    console.log(`🎯 Quest status changing: ${questId} → ${newStatus}`);
+    
+    // Update quest status
+    await updateQuestStatus(questId, newStatus);
+    
+    // Force refresh gold balance immediately after any quest completion
+    if (newStatus === 'Completed') {
+      console.log('💰 Quest completed - forcing gold balance refresh...');
+      
+      // Small delay to ensure database has been updated by the trigger
+      setTimeout(async () => {
+        await forceGoldRefresh();
+      }, 500);
+    }
+  };
 
   // Check Daily Focus completion bonus eligibility
   useEffect(() => {
@@ -134,10 +153,10 @@ const QuestTracker = () => {
             
             console.log('✅ FOCUS BONUS: Successfully awarded +25 XP and +10 Gold');
             
-            // Force profile refresh to update frontend immediately
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
+            // Force immediate gold refresh instead of page reload
+            setTimeout(async () => {
+              await forceGoldRefresh();
+            }, 500);
             
             toast({
               title: "🎉 Daily Focus Complete!",
@@ -165,7 +184,7 @@ const QuestTracker = () => {
     } else {
       setShowAddMoreQuests(false);
     }
-  }, [quests, todaysFocus, focusCompletionBonusAwarded, toast]);
+  }, [quests, todaysFocus, focusCompletionBonusAwarded, toast, forceGoldRefresh]);
 
   const handleSetupComplete = (selectedQuestIds: string[]) => {
     handleDailySetup(selectedQuestIds);
@@ -259,7 +278,7 @@ const QuestTracker = () => {
           quests={quests}
           showAddMoreQuests={showAddMoreQuests}
           onSetupModalOpen={() => setIsSetupModalOpen(true)}
-          onStatusChange={updateQuestStatus}
+          onStatusChange={handleQuestStatusChange}
           onRemoveFromFocus={handleRemoveFromFocusWithToast}
           onEditQuest={handleEditQuest}
           onDeleteQuest={setDeletingQuest}
@@ -269,7 +288,7 @@ const QuestTracker = () => {
 
         <DailyHabits
           quests={quests}
-          onStatusChange={updateQuestStatus}
+          onStatusChange={handleQuestStatusChange}
           onEditQuest={handleEditQuest}
           onDeleteQuest={setDeletingQuest}
         />

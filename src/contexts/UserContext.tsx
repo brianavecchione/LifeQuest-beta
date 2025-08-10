@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -34,6 +35,7 @@ interface UserContextType {
   refetchUserProfile: () => Promise<void>;
   refetchDailyXp: () => Promise<void>;
   forceProfileRefresh: () => Promise<void>;
+  forceGoldRefresh: () => Promise<void>;
 }
 
 const emptyUser: UserData = {
@@ -163,6 +165,41 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name: authUser.user_metadata?.display_name || 'Adventurer'
       });
       setIsLoading(false);
+    }
+  };
+
+  // Force refresh gold balance from database
+  const forceGoldRefresh = async () => {
+    if (!authUser) return;
+    
+    try {
+      console.log('🔄 Force refreshing gold balance...');
+      
+      // Fetch fresh data from user_balances table
+      const { data: userBalance, error } = await supabase
+        .from('user_balances')
+        .select('current_gold_balance')
+        .eq('user_id', authUser.id)
+        .single();
+
+      if (error) {
+        console.error('❌ Error fetching fresh gold balance:', error);
+        return;
+      }
+
+      if (userBalance) {
+        console.log(`💰 Fresh gold balance fetched: ${userBalance.current_gold_balance}`);
+        
+        // Update user state immediately with fresh gold balance
+        setUser(prev => ({
+          ...prev,
+          gold: userBalance.current_gold_balance
+        }));
+        
+        console.log('✅ Gold balance updated in UserContext');
+      }
+    } catch (error) {
+      console.error('❌ Unexpected error refreshing gold balance:', error);
     }
   };
 
@@ -480,6 +517,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     refetchUserProfile: loadUserProfile,
     refetchDailyXp,
     forceProfileRefresh,
+    forceGoldRefresh,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
