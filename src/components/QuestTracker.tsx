@@ -64,7 +64,7 @@ const QuestTracker = () => {
   const [focusCompletionBonusAwarded, setFocusCompletionBonusAwarded] = useState(false);
 
   // Enhanced quest status change handler with immediate gold refresh
-  const handleQuestStatusChange = async (questId: string, newStatus: string) => {
+  const handleQuestStatusChange = async (questId: string, newStatus: 'In Progress' | 'Completed' | 'Not started') => {
     console.log(`🎯 Quest status changing: ${questId} → ${newStatus}`);
     
     // Update quest status

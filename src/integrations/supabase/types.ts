@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -938,7 +938,7 @@ export type Database = {
         Returns: number
       }
       calculate_level_progress: {
-        Args: { total_xp: number; current_level: number }
+        Args: { current_level: number; total_xp: number }
         Returns: number
       }
       calculate_xp_for_level: {
@@ -958,7 +958,7 @@ export type Database = {
         Returns: number
       }
       increment_streak: {
-        Args: { p_user_id: string; p_streak_name: string }
+        Args: { p_streak_name: string; p_user_id: string }
         Returns: undefined
       }
       is_likely_recurring_habit: {
@@ -966,7 +966,7 @@ export type Database = {
         Returns: boolean
       }
       log_user_creation_error: {
-        Args: { p_user_id: string; p_error_message: string }
+        Args: { p_error_message: string; p_user_id: string }
         Returns: undefined
       }
       mark_badge_notifications_read: {
@@ -1010,7 +1010,7 @@ export type Database = {
         Returns: undefined
       }
       update_daily_gold_history: {
-        Args: { p_user_id: string; gold_gained: number }
+        Args: { gold_gained: number; p_user_id: string }
         Returns: undefined
       }
       update_daily_xp_history: {
@@ -1022,7 +1022,7 @@ export type Database = {
         Returns: undefined
       }
       update_user_stats: {
-        Args: { p_user_id: string; xp_gained: number; gold_gained: number }
+        Args: { gold_gained: number; p_user_id: string; xp_gained: number }
         Returns: undefined
       }
     }
