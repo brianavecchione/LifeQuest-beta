@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Quest } from '@/hooks/useQuests';
 import { format } from 'date-fns';
+import { LinkifiedText } from '@/utils/linkify';
 
 interface QuestCardProps {
   quest: Quest;
@@ -257,7 +258,9 @@ const QuestCard: React.FC<QuestCardProps> = ({
           {quest.description && (
             <div>
               <h5 className="text-sm font-medium text-slate-300 mb-2">Description</h5>
-              <p className="text-sm text-slate-400 leading-relaxed">{quest.description}</p>
+              <LinkifiedText className="text-sm text-slate-400 leading-relaxed">
+                {quest.description}
+              </LinkifiedText>
             </div>
           )}
 

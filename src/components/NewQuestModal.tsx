@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Quest, useQuests } from '@/hooks/useQuests';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { LinkifiedText } from '@/utils/linkify';
 
 interface NewQuestModalProps {
   isOpen: boolean;
@@ -213,10 +214,19 @@ const NewQuestModal: React.FC<NewQuestModalProps> = ({
               id="quest-description"
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Add more details about this quest..."
+              placeholder="Add more details about this quest... URLs will automatically become clickable links!"
               className="bg-slate-700 border-slate-600 text-white mt-1 min-h-[60px] sm:min-h-[80px]"
               maxLength={300}
             />
+            {/* Preview area for linkified text */}
+            {formData.description && (
+              <div className="mt-2 p-3 bg-slate-800/50 border border-slate-600/50 rounded text-sm">
+                <p className="text-slate-400 text-xs mb-1">Preview:</p>
+                <LinkifiedText className="text-slate-300 leading-relaxed">
+                  {formData.description}
+                </LinkifiedText>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
