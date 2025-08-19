@@ -168,7 +168,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Force refresh gold balance from database
+  // Force refresh gold balance from database - also triggers useUserBalance refresh
   const forceGoldRefresh = async () => {
     if (!authUser) return;
     
@@ -197,6 +197,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }));
         
         console.log('✅ Gold balance updated in UserContext');
+        
+        // Also trigger useUserBalance hook refresh by updating the user_balances table's updated_at
+        // This ensures any components using useUserBalance will also see the updated balance
+        await supabase
+          .from('user_balances')
+          .update({ updated_at: new Date().toISOString() })
+          .eq('user_id', authUser.id);
+        
+        console.log('✅ Triggered useUserBalance hook refresh via real-time subscription');
       }
     } catch (error) {
       console.error('❌ Unexpected error refreshing gold balance:', error);
