@@ -6,14 +6,17 @@ import PageContentWrapper from '@/components/PageContentWrapper';
 import { Coins } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { useGuest } from '@/contexts/GuestContext';
+import { useUserBalance } from '@/hooks/useUserBalanceWrapper';
 
 const Inventory = () => {
   const [activeTab, setActiveTab] = useState("gold-shop");
   const { user } = useUser();
   const { isGuestMode, guestUser } = useGuest();
+  const { balance } = useUserBalance();
   
   // Use guest data if in guest mode, otherwise use real user data
   const activeUser = isGuestMode ? guestUser : user;
+  const goldBalance = isGuestMode ? guestUser.gold : (balance?.current_gold_balance || 0);
 
   return (
     <PageContentWrapper>
@@ -38,7 +41,7 @@ const Inventory = () => {
         <div className="bg-slate-900/80 backdrop-blur-sm rounded-lg p-4 border border-slate-700/50 shadow-xl">
           <div className="flex items-center gap-3">
             <Coins className="w-6 h-6 text-yellow-400" />
-            <div className="text-2xl font-bold text-yellow-400">{activeUser.gold.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-yellow-400">{goldBalance.toLocaleString()}</div>
             <div className="text-lg text-slate-300">Gold</div>
           </div>
         </div>

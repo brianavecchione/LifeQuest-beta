@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/contexts/UserContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGuest } from '@/contexts/GuestContext';
+import { useUserBalance } from '@/hooks/useUserBalanceWrapper';
 import { useNavigate } from 'react-router-dom';
 import LandingNavbar from './LandingNavbar';
 
@@ -19,8 +20,13 @@ const Navigation = () => {
   const { user: userContext, isLoading } = useUser();
   const { user, loading } = useAuth();
   const { signOut } = useAuth();
-  const { isGuestMode, disableGuestMode } = useGuest();
+  const { isGuestMode, disableGuestMode, guestUser } = useGuest();
+  const { balance } = useUserBalance();
   const profileDropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Use guest data if in guest mode, otherwise use real user data
+  const activeUser = isGuestMode ? guestUser : userContext;
+  const goldBalance = isGuestMode ? guestUser.gold : (balance?.current_gold_balance || 0);
   
   // Add logged-in class to body for proper padding
   useEffect(() => {
@@ -38,15 +44,15 @@ const Navigation = () => {
   
   // Debug log for XP recalculation
   React.useEffect(() => {
-    if (!isLoading && userContext) {
+    if (!isLoading && activeUser) {
       console.log('📊 Navigation - Current user stats:', {
-        level: userContext.level,
-        xp: userContext.xp,
-        totalXp: userContext.totalXp,
-        gold: userContext.gold
+        level: activeUser.level,
+        xp: activeUser.xp,
+        totalXp: activeUser.totalXp,
+        gold: goldBalance
       });
     }
-  }, [userContext, isLoading]);
+  }, [activeUser, isLoading, goldBalance]);
 
   // Handle click outside to close profile dropdown
   useEffect(() => {
@@ -141,7 +147,7 @@ const Navigation = () => {
                 <>
                   <div className="flex items-center gap-2 bg-slate-700/50 px-2 py-1 rounded-lg border border-amber-500/30">
                     <Coins className="w-4 h-4 text-yellow-400" />
-                    <span className="text-yellow-400 font-bold text-sm">{userContext.gold.toLocaleString()}</span>
+                    <span className="text-yellow-400 font-bold text-sm">{goldBalance.toLocaleString()}</span>
                   </div>
                   <div className="flex items-center gap-2 bg-slate-700/50 px-2 py-1 rounded-lg border border-blue-500/30">
                     <Crown className="w-4 h-4 text-blue-400" />
@@ -379,7 +385,7 @@ const Navigation = () => {
                   <>
                     <div className="flex items-center gap-2">
                       <Coins className="w-4 h-4 text-yellow-400" />
-                      <span className="text-yellow-400 font-bold text-sm">{userContext.gold.toLocaleString()}</span>
+                      <span className="text-yellow-400 font-bold text-sm">{goldBalance.toLocaleString()}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Crown className="w-4 h-4 text-blue-400" />

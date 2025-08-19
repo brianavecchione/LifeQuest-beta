@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,24 +5,24 @@ import { useDailyXp } from '@/hooks/useDailyXpWrapper';
 import { useToast } from '@/hooks/use-toast';
 import confetti from 'canvas-confetti';
 
-interface UserData {
+export interface UserData {
   name: string;
   level: number;
   xp: number;
   xpToNext: number;
   totalXp: number;
-  gold: number;
   pomodoroCount: number;
-  dailyXp: Record<string, number>; // Track XP by date (YYYY-MM-DD format)
-  reduceAnimations: boolean; // Accessibility setting to reduce animations
-  avatar: string; // Avatar image URL or identifier
-  avatarFrame: string; // Avatar frame style identifier
+  dailyXp: Record<string, number>;
+  reduceAnimations: boolean;
+  characterName?: string;
+  avatarUrl?: string;
+  avatarFrame?: string;
 }
 
-interface UserContextType {
+export interface UserContextType {
   user: UserData;
   isLoading: boolean;
-  updateUser: (updates: Partial<UserData>) => void;
+  updateUser: (userData: Partial<UserData>) => Promise<void>;
   addXP: (amount: number) => void;
   subtractXP: (amount: number) => void;
   addGold: (amount: number) => void;
@@ -44,12 +43,12 @@ const emptyUser: UserData = {
   xp: 0,
   xpToNext: 100,
   totalXp: 0,
-  gold: 0,
   pomodoroCount: 0,
   dailyXp: {},
   reduceAnimations: false,
-  avatar: '',
-  avatarFrame: 'none',
+  characterName: 'Adventurer',
+  avatarUrl: undefined,
+  avatarFrame: 'none'
 };
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -64,9 +63,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Load user profile data from Supabase
   const loadUserProfile = async () => {
     if (!authUser) {
-      // Clear user data and localStorage when logged out
       setUser(emptyUser);
-      localStorage.removeItem('lifequest-user');
       setIsLoading(false);
       return;
     }
@@ -74,86 +71,58 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setIsLoading(true);
       
-      // Fetch user profile from Supabase
-      const { data: profile, error } = await supabase
+      // Fetch user profile data - no longer includes gold_balance
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
+        .select('user_level, xp_balance, display_name, avatar_url, avatar_frame')
+        .eq('user_id', authUser.id)
+        .single();
+
+      // Fetch user settings
+      const { data: settings, error: settingsError } = await supabase
+        .from('user_settings')
         .select('*')
         .eq('user_id', authUser.id)
         .single();
 
-      // Also fetch user balance data (for gold)
-      const { data: userBalance, error: balanceError } = await supabase
-        .from('user_balances')
-        .select('*')
-        .eq('user_id', authUser.id)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching user profile:', error);
+      if (profileError && profileError.code !== 'PGRST116') {
+        console.error('Error fetching user profile:', profileError);
       }
 
-      if (balanceError && balanceError.code !== 'PGRST116') {
-        console.error('Error fetching user balance:', balanceError);
+      if (settingsError && settingsError.code !== 'PGRST116') {
+        console.error('Error fetching user settings:', settingsError);
       }
 
-      // Load local settings from localStorage
-      const localSettings = localStorage.getItem('lifequest-user-settings');
-      const settings = localSettings ? JSON.parse(localSettings) : {};
+      // Get pomodoro count from localStorage
+      const localData = localStorage.getItem('lifequest-user-settings');
+      const localSettings = localData ? JSON.parse(localData) : {};
+      const pomodoroCount = localSettings.pomodoroCount || 0;
 
       if (profile) {
-        // Calculate level and XP progress using progressive formula
-        const totalXp = profile.xp_balance;
+        // Calculate level progress
+        const currentLevelThreshold = profile.user_level === 1 ? 0 : 100 * ((profile.user_level - 1) * profile.user_level) / 2;
+        const nextLevelThreshold = 100 * (profile.user_level * (profile.user_level + 1)) / 2;
         
-        // Progressive XP formula: cumulative XP to reach level n = baseXP * (n * (n + 1)) / 2
-        const baseXP = 100;
+        const xpForCurrentLevel = profile.xp_balance - currentLevelThreshold;
+        const xpNeededForNextLevel = nextLevelThreshold - currentLevelThreshold;
         
-        // Calculate current level based on total XP
-        let currentLevel = 1;
-        while (true) {
-          const xpForLevel = baseXP * (currentLevel * (currentLevel + 1)) / 2;
-          if (totalXp < xpForLevel) break;
-          currentLevel++;
-        }
-        
-        // Calculate XP progress within current level
-        const currentLevelXpThreshold = currentLevel > 1 ? baseXP * ((currentLevel - 1) * currentLevel) / 2 : 0;
-        const nextLevelXpThreshold = baseXP * (currentLevel * (currentLevel + 1)) / 2;
-        const xpInCurrentLevel = totalXp - currentLevelXpThreshold;
-        const xpRequiredForNextLevel = nextLevelXpThreshold - currentLevelXpThreshold;
-        const progressPercentage = (xpInCurrentLevel / xpRequiredForNextLevel) * 100;
-        
-        // Map Supabase profile to UserData format
-        const userData: UserData = {
-          name: profile.display_name || 'Adventurer',
-          level: currentLevel,
-          xp: Math.max(0, progressPercentage), // Progress percentage toward next level
-          xpToNext: 100, // Always 100% for display purposes
-          totalXp: totalXp, // Use database as source of truth
-          gold: userBalance?.current_gold_balance || profile?.gold_balance || 0, // Use user_balances as primary source
-          pomodoroCount: settings.pomodoroCount || 0,
-          dailyXp: {}, // No longer used, keep for compatibility
-          reduceAnimations: settings.reduceAnimations || false,
-          avatar: profile.avatar_url || (profile.display_name ? profile.display_name.charAt(0).toUpperCase() : 'A'),
-          avatarFrame: profile.avatar_frame || 'none',
-        };
-        
-        // Update state with database values as source of truth
-        setUser(prev => ({
-          ...userData,
-          // Only preserve local-only settings, use database for XP/gold
-          pomodoroCount: prev.pomodoroCount || userData.pomodoroCount,
-          reduceAnimations: prev.reduceAnimations || userData.reduceAnimations,
-          // Keep empty dailyXp since we're using database now
-          dailyXp: {},
-        }));
-      } else {
-        // Use default user data if no profile found
         setUser({
           ...emptyUser,
-          name: authUser.user_metadata?.display_name || 'Adventurer',
-          pomodoroCount: settings.pomodoroCount || 0,
-          dailyXp: {},
-          reduceAnimations: settings.reduceAnimations || false,
+          name: profile.display_name || settings?.character_name || 'Adventurer',
+          characterName: settings?.character_name || profile.display_name || 'Adventurer',
+          level: profile.user_level,
+          xp: xpForCurrentLevel,
+          xpToNext: xpNeededForNextLevel,
+          totalXp: profile.xp_balance,
+          pomodoroCount,
+          reduceAnimations: settings?.reduce_animations_enabled || false,
+          avatarUrl: settings?.avatar_image_url || profile.avatar_url,
+          avatarFrame: profile.avatar_frame || 'none'
+        });
+      } else {
+        setUser({
+          ...emptyUser,
+          name: authUser.user_metadata?.display_name || 'Adventurer'
         });
       }
       
@@ -168,48 +137,22 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Force refresh gold balance from database - also triggers useUserBalance refresh
+  // Placeholder functions for gold - now handled by useUserBalance hook
   const forceGoldRefresh = async () => {
-    if (!authUser) return;
-    
-    try {
-      console.log('🔄 Force refreshing gold balance...');
-      
-      // Fetch fresh data from user_balances table
-      const { data: userBalance, error } = await supabase
-        .from('user_balances')
-        .select('current_gold_balance')
-        .eq('user_id', authUser.id)
-        .single();
+    console.log('🔄 Gold refresh called - now handled by useUserBalance hook');
+  };
 
-      if (error) {
-        console.error('❌ Error fetching fresh gold balance:', error);
-        return;
-      }
+  const addGold = async (amount: number) => {
+    console.log(`🎁 Adding bonus Gold: ${amount} - now handled by useUserBalance hook`);
+  };
 
-      if (userBalance) {
-        console.log(`💰 Fresh gold balance fetched: ${userBalance.current_gold_balance}`);
-        
-        // Update user state immediately with fresh gold balance
-        setUser(prev => ({
-          ...prev,
-          gold: userBalance.current_gold_balance
-        }));
-        
-        console.log('✅ Gold balance updated in UserContext');
-        
-        // Also trigger useUserBalance hook refresh by updating the user_balances table's updated_at
-        // This ensures any components using useUserBalance will also see the updated balance
-        await supabase
-          .from('user_balances')
-          .update({ updated_at: new Date().toISOString() })
-          .eq('user_id', authUser.id);
-        
-        console.log('✅ Triggered useUserBalance hook refresh via real-time subscription');
-      }
-    } catch (error) {
-      console.error('❌ Unexpected error refreshing gold balance:', error);
-    }
+  const subtractGold = (amount: number) => {
+    console.log(`💸 Subtract Gold: ${amount} - now handled by useUserBalance hook`);
+  };
+
+  const spendGold = (amount: number): boolean => {
+    console.log(`💰 Spend Gold: ${amount} - now handled by useUserBalance hook`);
+    return false;
   };
 
   // Load user profile data from Supabase when auth user changes
@@ -219,12 +162,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
-    console.log('🔄 Loading user profile data after stat correction...');
+    console.log('🔄 Loading user profile data...');
     loadUserProfile();
 
     if (!authUser) return;
     
-    // Set up real-time subscription to profile AND user_balances changes
+    // Set up real-time subscription to profile changes
     console.log('🔗 Setting up real-time subscriptions for user:', authUser.id);
     
     const channel = supabase
@@ -239,30 +182,26 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
         (payload) => {
           console.log('🔄 Profile updated via real-time:', payload);
-          // Incrementally update profile data without full reload to prevent flickering
           const newData = payload.new as any;
           if (newData) {
-            // Use startTransition to prevent UI flickering during updates
             React.startTransition(() => {
               setUser(prev => {
-                // Calculate level and XP progress using progressive formula if XP changed
                 if (newData.xp_balance !== undefined && newData.xp_balance !== prev.totalXp) {
                   console.log(`🎯 XP updated: ${prev.totalXp} → ${newData.xp_balance}`);
-                  const totalXp = newData.xp_balance;
-                  const baseXP = 100;
                   
+                  // Calculate new level and progress
+                  const totalXp = newData.xp_balance;
                   let currentLevel = 1;
                   while (true) {
-                    const xpForLevel = baseXP * (currentLevel * (currentLevel + 1)) / 2;
+                    const xpForLevel = 100 * (currentLevel * (currentLevel + 1)) / 2;
                     if (totalXp < xpForLevel) break;
                     currentLevel++;
                   }
                   
-                  const currentLevelXpThreshold = currentLevel > 1 ? baseXP * ((currentLevel - 1) * currentLevel) / 2 : 0;
-                  const nextLevelXpThreshold = baseXP * (currentLevel * (currentLevel + 1)) / 2;
-                  const xpInCurrentLevel = totalXp - currentLevelXpThreshold;
-                  const xpRequiredForNextLevel = nextLevelXpThreshold - currentLevelXpThreshold;
-                  const progressPercentage = (xpInCurrentLevel / xpRequiredForNextLevel) * 100;
+                  const currentLevelThreshold = currentLevel === 1 ? 0 : 100 * ((currentLevel - 1) * currentLevel) / 2;
+                  const nextLevelThreshold = 100 * (currentLevel * (currentLevel + 1)) / 2;
+                  const xpForCurrentLevel = totalXp - currentLevelThreshold;
+                  const xpNeededForNextLevel = nextLevelThreshold - currentLevelThreshold;
                   
                   // Check for level up
                   if (currentLevel > prev.level) {
@@ -272,19 +211,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                   return {
                     ...prev,
                     level: currentLevel,
-                    xp: Math.max(0, progressPercentage),
+                    xp: xpForCurrentLevel,
+                    xpToNext: xpNeededForNextLevel,
                     totalXp: totalXp,
                     name: newData.display_name || prev.name,
-                    avatar: newData.avatar_url || prev.avatar,
+                    avatarUrl: newData.avatar_url || prev.avatarUrl,
                     avatarFrame: newData.avatar_frame || prev.avatarFrame,
                   };
                 }
                 
-                // Just update other fields without XP recalculation
                 return {
                   ...prev,
                   name: newData.display_name || prev.name,
-                  avatar: newData.avatar_url || prev.avatar,
+                  avatarUrl: newData.avatar_url || prev.avatarUrl,
                   avatarFrame: newData.avatar_frame || prev.avatarFrame,
                 };
               });
@@ -292,41 +231,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         }
       )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'user_balances',
-          filter: `user_id=eq.${authUser.id}`
-        },
-        (payload) => {
-          console.log('💰 User balance updated via real-time:', payload);
-          // Incrementally update balance without full reload to prevent flickering
-          const newData = payload.new as any;
-          if (newData?.current_gold_balance !== undefined) {
-            React.startTransition(() => {
-              setUser(prev => {
-                if (newData.current_gold_balance !== prev.gold) {
-                  console.log(`💰 Gold updated: ${prev.gold} → ${newData.current_gold_balance}`);
-                  return {
-                    ...prev,
-                    gold: newData.current_gold_balance
-                  };
-                }
-                return prev;
-              });
-            });
-          }
-        }
-      )
       .subscribe((status) => {
         console.log('📡 Real-time subscription status:', status);
-        if (status === 'SUBSCRIBED') {
-          console.log('✅ Successfully subscribed to real-time updates');
-        } else if (status === 'CHANNEL_ERROR') {
-          console.error('❌ Real-time subscription error');
-        }
       });
 
     return () => {
@@ -335,39 +241,33 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [authUser]);
 
-  // Save to localStorage whenever user data changes (but only local settings)
-  useEffect(() => {
-    if (!isLoading && authUser) {
-      const localSettings = {
-        pomodoroCount: user.pomodoroCount,
-        reduceAnimations: user.reduceAnimations,
-      };
-      localStorage.setItem('lifequest-user-settings', JSON.stringify(localSettings));
-    }
-  }, [user.pomodoroCount, user.reduceAnimations, isLoading, authUser]);
-
   const updateUser = async (updates: Partial<UserData>) => {
     setUser(prev => ({ ...prev, ...updates }));
     
-    // If avatar is being updated and user is authenticated, save to database
-    if (updates.avatar && authUser) {
+    if (authUser && (updates.name || updates.avatarUrl || updates.avatarFrame)) {
       try {
-        const { error } = await supabase
-          .from('profiles')
-          .update({ avatar_url: updates.avatar })
-          .eq('user_id', authUser.id);
-          
-        if (error) {
-          console.error('Error updating avatar in database:', error);
+        const profileUpdates: any = {};
+        if (updates.name) profileUpdates.display_name = updates.name;
+        if (updates.avatarUrl) profileUpdates.avatar_url = updates.avatarUrl;
+        if (updates.avatarFrame) profileUpdates.avatar_frame = updates.avatarFrame;
+        
+        if (Object.keys(profileUpdates).length > 0) {
+          const { error } = await supabase
+            .from('profiles')
+            .update(profileUpdates)
+            .eq('user_id', authUser.id);
+            
+          if (error) {
+            console.error('Error updating profile in database:', error);
+          }
         }
       } catch (error) {
-        console.error('Error updating avatar:', error);
+        console.error('Error updating profile:', error);
       }
     }
   };
 
   const triggerLevelUpCelebration = (newLevel: number) => {
-    // Confetti animation
     confetti({
       particleCount: 100,
       spread: 70,
@@ -375,7 +275,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       colors: ['#fbbf24', '#f59e0b', '#d97706', '#92400e']
     });
 
-    // Toast notification
     toast({
       title: "🎉 Level Up!",
       description: `Congratulations! You've reached Level ${newLevel}!`,
@@ -383,12 +282,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  // ONLY for bonus rewards (like Pomodoro bonuses) - LOCAL STATE ONLY
-  // Database trigger handles ALL regular quest rewards
   const addXP = async (amount: number) => {
-    console.log(`🎁 Adding bonus XP: ${amount} (LOCAL STATE ONLY - not calling database)`);
+    console.log(`🎁 Adding bonus XP: ${amount} (LOCAL STATE ONLY)`);
     
-    // Update ONLY local state for immediate UI feedback
     setUser(prev => {
       const newTotalXp = prev.totalXp + amount;
       let newXp = prev.xp + amount;
@@ -396,16 +292,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       let newXpToNext = prev.xpToNext;
       const originalLevel = prev.level;
 
-      // Level up logic
       while (newXp >= newXpToNext) {
         newXp -= newXpToNext;
         newLevel++;
-        newXpToNext = newLevel * 100; // Simple formula: each level needs level * 100 XP
+        const currentLevelThreshold = 100 * ((newLevel - 1) * newLevel) / 2;
+        const nextLevelThreshold = 100 * (newLevel * (newLevel + 1)) / 2;
+        newXpToNext = nextLevelThreshold - currentLevelThreshold;
       }
 
-      // Trigger celebration if level increased
       if (newLevel > originalLevel) {
-        // Delay celebration to allow state update
         setTimeout(() => triggerLevelUpCelebration(newLevel), 100);
       }
 
@@ -415,40 +310,25 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         level: newLevel,
         xpToNext: newXpToNext,
         totalXp: newTotalXp,
-        dailyXp: {}, // Keep empty since we use database
+        dailyXp: {},
       };
     });
-
-    // NO DATABASE CALLS - the database trigger handles quest rewards
-    // This function should only be used for immediate UI feedback for bonus rewards
-    // The database sync will happen through profile refresh
-  };
-
-  const addGold = async (amount: number) => {
-    console.log(`🎁 Adding bonus Gold: ${amount} (LOCAL STATE ONLY - not calling database)`);
-    
-    // Update ONLY local state immediately
-    setUser(prev => ({ ...prev, gold: prev.gold + amount }));
-    
-    // NO DATABASE CALLS - the database trigger handles quest rewards
-    // This function should only be used for immediate UI feedback for bonus rewards
-    // The database sync will happen through profile refresh
   };
 
   const subtractXP = async (amount: number) => {
-    console.log(`📉 Subtracting XP: ${amount} (LOCAL STATE ONLY - not calling database)`);
+    console.log(`📉 Subtracting XP: ${amount} (LOCAL STATE ONLY)`);
     
-    // Update ONLY local state immediately
     setUser(prev => {
       const newTotalXp = Math.max(0, prev.totalXp - amount);
       let newXp = Math.max(0, prev.xp - amount);
       let newLevel = prev.level;
       let newXpToNext = prev.xpToNext;
 
-      // Level down logic if necessary
       while (newXp < 0 && newLevel > 1) {
         newLevel--;
-        newXpToNext = newLevel * 100;
+        const currentLevelThreshold = newLevel === 1 ? 0 : 100 * ((newLevel - 1) * newLevel) / 2;
+        const nextLevelThreshold = 100 * (newLevel * (newLevel + 1)) / 2;
+        newXpToNext = nextLevelThreshold - currentLevelThreshold;
         newXp += newXpToNext;
       }
 
@@ -458,25 +338,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         level: newLevel,
         xpToNext: newXpToNext,
         totalXp: newTotalXp,
-        dailyXp: {}, // Keep empty since we use database
+        dailyXp: {},
       };
     });
-
-    // NO DATABASE CALLS - the database trigger handles quest rewards
-    // This function should only be used for immediate UI feedback
-    // The database sync will happen through profile refresh
-  };
-
-  const subtractGold = (amount: number) => {
-    setUser(prev => ({ ...prev, gold: Math.max(0, prev.gold - amount) }));
-  };
-
-  const spendGold = (amount: number): boolean => {
-    if (user.gold >= amount) {
-      setUser(prev => ({ ...prev, gold: prev.gold - amount }));
-      return true;
-    }
-    return false;
   };
 
   const incrementPomodoro = () => {
@@ -484,16 +348,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const getDailyXpData = () => {
-    // Convert dailyXpData array to the format expected by the chart
-    const dailyXpObject: Record<string, number> = {};
-    
-    if (dailyXpData && dailyXpData.length > 0) {
-      dailyXpData.forEach(entry => {
-        dailyXpObject[entry.fullDate || entry.date] = entry.xp;
-      });
-    }
-    
-    return dailyXpData; // Return the original array format for the chart
+    return dailyXpData;
   };
 
   const getWeeklyXpData = () => {
@@ -501,13 +356,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const forceProfileRefresh = async () => {
-    console.log('🔄 Force refreshing user profile data after stat correction...');
-    
-    // Clear any cached values
+    console.log('🔄 Force refreshing user profile data...');
     setUser(emptyUser);
     setIsLoading(true);
-    
-    // Force reload from database
     await loadUserProfile();
   };
 

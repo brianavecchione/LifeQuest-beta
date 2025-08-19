@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useUser } from '@/contexts/UserContext';
 import { useGuest } from '@/contexts/GuestContext';
+import { useUserBalance } from '@/hooks/useUserBalanceWrapper';
 import { useStreaks } from '@/hooks/useStreaksWrapper';
 import EditProfileModal from '@/components/EditProfileModal';
 import AnimatedValue from '@/components/AnimatedValue';
@@ -13,6 +14,7 @@ import AnimatedValue from '@/components/AnimatedValue';
 const CharacterCard = React.memo(() => {
   const { user: character, isLoading } = useUser();
   const { isGuestMode, guestUser } = useGuest();
+  const { balance } = useUserBalance();
   const { getBestStreak, loading: streaksLoading } = useStreaks();
   
   // Add debugging for streak issue
@@ -30,6 +32,9 @@ const CharacterCard = React.memo(() => {
     isGuestMode ? guestUser : character, 
     [isGuestMode, guestUser, character]
   );
+  
+  // Get gold balance from useUserBalance hook
+  const goldBalance = isGuestMode ? guestUser.gold : (balance?.current_gold_balance || 0);
   
   const xpProgress = React.useMemo(() => 
     activeUser?.xp || 0, 
@@ -136,7 +141,10 @@ const CharacterCard = React.memo(() => {
       <div className="flex flex-col items-center mb-4"> {/* Reduced margin from mb-6 to mb-4 */}
         {/* Avatar with Level Badge */}
         <div className="relative mb-3"> {/* Reduced margin from mb-4 to mb-3 */}
-          {renderAvatarWithFrame(displayUser?.avatar || 'A', displayUser?.avatarFrame)}
+          {renderAvatarWithFrame(
+            (isGuestMode ? displayUser?.avatar : displayUser?.avatarUrl) || displayUser?.name?.charAt(0) || 'A', 
+            displayUser?.avatarFrame
+          )}
           <div className="absolute -bottom-2 -right-2 bg-amber-400 text-slate-900 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border-2 border-slate-800"> {/* Reduced badge size from w-12 h-12 to w-10 h-10, text from text-xl to text-lg */}
             {displayUser?.level || 1}
           </div>
@@ -193,7 +201,7 @@ const CharacterCard = React.memo(() => {
             <span className="text-yellow-400 text-sm font-medium">Gold</span>
           </div>
           <div className="text-lg font-bold text-white">
-            <AnimatedValue value={displayUser?.gold || 0} />
+            <AnimatedValue value={goldBalance} />
           </div>
         </div>
 

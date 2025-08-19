@@ -600,7 +600,6 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           display_name: string | null
-          gold_balance: number
           id: string
           level_progress: number
           party_rank: string | null
@@ -614,7 +613,6 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
-          gold_balance?: number
           id?: string
           level_progress?: number
           party_rank?: string | null
@@ -628,7 +626,6 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
-          gold_balance?: number
           id?: string
           level_progress?: number
           party_rank?: string | null
