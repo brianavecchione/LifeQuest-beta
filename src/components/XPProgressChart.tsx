@@ -193,21 +193,23 @@ const XPProgressChart = React.memo(() => {
     });
   }, [rawCurrentData, chartPeriod, animatedXpValues]);
   
-  // Check if user has any XP data at all, not just current period
+  // Check if user has ever earned XP by looking at their total XP
   const hasXpData = React.useMemo(() => {
     if (isGuestMode) return true; // Guest mode always has mock data
     
-    // Check historical XP data to see if user has ever earned XP
-    const hasHistoricalXp = xpHistoryData.some(item => item.xp > 0);
+    // If user has total XP > 0, they have earned XP before, so show chart
+    const userTotalXp = displayUser?.totalXp || 0;
+    const hasEverEarnedXp = userTotalXp > 0;
     
     console.log('📊 XP Data Check:', {
-      hasHistoricalXp,
-      xpHistoryData: xpHistoryData.slice(0, 3), // Log first few items
+      userTotalXp,
+      hasEverEarnedXp,
+      displayUserTotalXp: displayUser?.totalXp,
       currentDataHasXp: currentData.some(item => item.xp > 0)
     });
     
-    return hasHistoricalXp;
-  }, [isGuestMode, xpHistoryData, currentData]);
+    return hasEverEarnedXp;
+  }, [isGuestMode, displayUser?.totalXp, currentData]);
 
   // Calculate summary stats with fallback messaging
   const goldEarnedThisWeek = React.useMemo(() => {
