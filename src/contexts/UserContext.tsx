@@ -34,7 +34,6 @@ export interface UserContextType {
   refetchUserProfile: () => Promise<void>;
   refetchDailyXp: () => Promise<void>;
   forceProfileRefresh: () => Promise<void>;
-  forceGoldRefresh: () => Promise<void>;
 }
 
 const emptyUser: UserData = {
@@ -138,10 +137,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Placeholder functions for gold - now handled by useUserBalance hook
-  const forceGoldRefresh = async () => {
-    console.log('🔄 Gold refresh called - now handled by useUserBalance hook');
-  };
-
   const addGold = async (amount: number) => {
     console.log(`🎁 Adding bonus Gold: ${amount} - now handled by useUserBalance hook`);
   };
@@ -377,7 +372,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     refetchUserProfile: loadUserProfile,
     refetchDailyXp,
     forceProfileRefresh,
-    forceGoldRefresh,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

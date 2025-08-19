@@ -19,12 +19,13 @@ import { Quest } from '@/hooks/useQuests';
 import { useTodaysFocus } from '@/hooks/useTodaysFocus';
 import { usePomodoroTimer } from '@/hooks/usePomodoroTimer';
 import { useUser } from '@/contexts/UserContext';
+import { useUserBalance } from '@/hooks/useUserBalanceWrapper';
 import { supabase } from '@/integrations/supabase/client';
 
 const QuestTracker = () => {
   const { toast } = useToast();
   const { quests, updateQuestStatus, deleteQuest, refetchQuests } = useQuests();
-  const { forceGoldRefresh } = useUser();
+  const { refetch: refetchGoldBalance } = useUserBalance();
   
   // Custom hooks
   const { todaysFocus, handleDailySetup, handleRemoveFromFocus } = useTodaysFocus(quests);
@@ -76,7 +77,7 @@ const QuestTracker = () => {
       
       // Small delay to ensure database has been updated by the trigger
       setTimeout(async () => {
-        await forceGoldRefresh();
+        await refetchGoldBalance();
       }, 500);
     }
   };
@@ -155,7 +156,7 @@ const QuestTracker = () => {
             
             // Force immediate gold refresh instead of page reload
             setTimeout(async () => {
-              await forceGoldRefresh();
+              await refetchGoldBalance();
             }, 500);
             
             toast({
@@ -184,7 +185,7 @@ const QuestTracker = () => {
     } else {
       setShowAddMoreQuests(false);
     }
-  }, [quests, todaysFocus, focusCompletionBonusAwarded, toast, forceGoldRefresh]);
+  }, [quests, todaysFocus, focusCompletionBonusAwarded, toast, refetchGoldBalance]);
 
   const handleSetupComplete = (selectedQuestIds: string[]) => {
     handleDailySetup(selectedQuestIds);
