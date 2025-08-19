@@ -151,7 +151,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
       }
 
       // Update local state
-      updateUser({ avatar: publicUrl });
+      updateUser({ avatarUrl: publicUrl });
       setPreviewImage(null);
       
       toast({
@@ -181,7 +181,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
     const baseClasses = `${size} rounded-full object-cover`;
     const frameClasses = frameClass !== 'avatar-frame-none' ? frameClass : '';
     
-    if (avatarData.startsWith('data:') || avatarData.startsWith('http')) {
+    if (avatarData && (avatarData.startsWith('data:') || avatarData.startsWith('http'))) {
       return (
         <img 
           src={avatarData} 
@@ -287,7 +287,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
                   <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-800"></div>
                 </div>
               ) : (
-                renderAvatar(user.avatar, selectedFrame !== 'none' ? availableFrames.find(f => f.name === selectedFrame)?.css_class || '' : '')
+                renderAvatar(user.avatarUrl || user.name?.charAt(0) || 'A', selectedFrame !== 'none' ? availableFrames.find(f => f.name === selectedFrame)?.css_class || '' : '')
               )}
               
               <div className="space-y-2">
@@ -364,7 +364,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
                         {/* Preview of frame with current avatar */}
                         <div className="flex justify-center mb-2">
                           {renderAvatar(
-                            previewImage || user.avatar, 
+                            previewImage || user.avatarUrl || user.name?.charAt(0) || 'A', 
                             frame.css_class, 
                             "w-12 h-12"
                           )}

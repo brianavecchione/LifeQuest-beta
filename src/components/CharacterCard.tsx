@@ -46,6 +46,17 @@ const CharacterCard = React.memo(() => {
     [isGuestMode, getBestStreak]
   );
 
+  // Helper function to get avatar data based on user type
+  const getAvatarData = (user: any, isGuest: boolean): string => {
+    if (isGuest) {
+      // Guest user has 'avatar' property
+      return (user as any)?.avatar || user?.name?.charAt(0) || 'A';
+    } else {
+      // Regular user has 'avatarUrl' property
+      return (user as any)?.avatarUrl || user?.name?.charAt(0) || 'A';
+    }
+  };
+
   // Helper function to render avatar with frame (increased size further)
   const renderAvatarWithFrame = (avatarData: string, frameClass?: string) => {
     const baseClasses = "w-28 h-28 rounded-full object-cover shadow-lg border-4 border-amber-400/50"; // Reduced by ~12% from w-32 h-32
@@ -142,7 +153,7 @@ const CharacterCard = React.memo(() => {
         {/* Avatar with Level Badge */}
         <div className="relative mb-3"> {/* Reduced margin from mb-4 to mb-3 */}
           {renderAvatarWithFrame(
-            (isGuestMode ? displayUser?.avatar : displayUser?.avatarUrl) || displayUser?.name?.charAt(0) || 'A', 
+            getAvatarData(displayUser, isGuestMode), 
             displayUser?.avatarFrame
           )}
           <div className="absolute -bottom-2 -right-2 bg-amber-400 text-slate-900 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border-2 border-slate-800"> {/* Reduced badge size from w-12 h-12 to w-10 h-10, text from text-xl to text-lg */}

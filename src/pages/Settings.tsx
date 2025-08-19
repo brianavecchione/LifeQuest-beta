@@ -45,8 +45,8 @@ const Settings = () => {
     setHasUnsavedChanges(value !== user.name);
   };
 
-  const handleAvatarChange = (avatar: string) => {
-    updateUser({ avatar });
+  const handleAvatarChange = (avatarUrl: string) => {
+    updateUser({ avatarUrl });
     // Avatar changes are saved immediately, don't mark as unsaved
   };
 
@@ -220,7 +220,7 @@ const Settings = () => {
               <div>
                 <label className="block text-slate-300 mb-2">Avatar</label>
                 <AvatarUpload 
-                  currentAvatar={user.avatar}
+                  currentAvatar={user.avatarUrl}
                   onAvatarChange={handleAvatarChange}
                   userName={user.name}
                 />
