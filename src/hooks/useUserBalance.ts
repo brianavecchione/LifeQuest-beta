@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -11,7 +11,7 @@ export interface UserBalance {
   inventory_capacity: number;
 }
 
-export const useUserBalance = () => {
+const useUserBalanceState = () => {
   const { user } = useAuth();
   const [balance, setBalance] = useState<UserBalance | null>(null);
   const [loading, setLoading] = useState(true);
@@ -130,4 +130,17 @@ export const useUserBalance = () => {
     spendGold,
     refetch: fetchBalance
   };
+};
+type UserBalanceContextValue = ReturnType<typeof useUserBalanceState>;
+const UserBalanceContext = createContext<UserBalanceContextValue | null>(null);
+
+export const UserBalanceProvider = ({ children }: { children: React.ReactNode }) => {
+  const value = useUserBalanceState();
+  return React.createElement(UserBalanceContext.Provider, { value }, children);
+};
+
+export const useUserBalance = () => {
+  const ctx = useContext(UserBalanceContext);
+  if (!ctx) throw new Error('useUserBalance must be used within UserBalanceProvider');
+  return ctx;
 };

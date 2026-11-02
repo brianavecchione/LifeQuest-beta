@@ -3,6 +3,7 @@ import { useState, useEffect, startTransition } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useUserBalance } from '@/hooks/useUserBalance';
 import { Database } from '@/integrations/supabase/types';
 import { useUser } from '@/contexts/UserContext';
 import { testMedicationCase, testResetLogic, shouldQuestReset } from '@/utils/dailyResetTest';
@@ -57,6 +58,8 @@ const useQuestsState = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { user: currentUser, updateUser, refetchUserProfile, refetchDailyXp } = useUser();
+  const { refetch: refetchBalance } = useUserBalance();
+  const refreshRewards = () => { refetchBalance(); refetchUserProfile?.(); };
 
   // Archive completed quests from previous days
   const archiveOldQuests = async () => {
@@ -525,6 +528,9 @@ const useQuestsState = () => {
       console.log(`✅ Quest status updated in database:
         - Quest completed_at: ${transformedQuest.completed_at}
         - Database trigger awards XP: ${transformedQuest.xp_reward}`);
+
+      // Refresh gold and XP right away (database triggers already applied rewards)
+      refreshRewards();
 
       // Use React's concurrent features to batch updates and reduce flicker
       startTransition(() => {
