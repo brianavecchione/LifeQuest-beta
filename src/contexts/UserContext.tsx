@@ -60,6 +60,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { toast } = useToast();
 
   // Load user profile data from Supabase
+  const hasLoadedRef = React.useRef(false);
   const loadUserProfile = async () => {
     if (!authUser) {
       setUser(emptyUser);
@@ -68,7 +69,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
-      setIsLoading(true);
+      if (!hasLoadedRef.current) setIsLoading(true);
       
       // Fetch user profile data - no longer includes gold_balance
       const { data: profile, error: profileError } = await supabase
