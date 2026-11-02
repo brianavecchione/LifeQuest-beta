@@ -714,7 +714,7 @@ export const useQuests = () => {
     if (!user) return;
 
     const channel = supabase
-      .channel('quest-changes')
+      .channel(`quest-changes-${Math.random().toString(36).slice(2)}`)
       .on(
         'postgres_changes',
         {

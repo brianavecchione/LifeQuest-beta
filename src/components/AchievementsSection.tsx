@@ -110,7 +110,7 @@ const AchievementsSection = () => {
     if (!authUser || isGuestMode) return;
 
     const channel = supabase
-      .channel('achievements-changes')
+      .channel(`achievements-changes-${Math.random().toString(36).slice(2)}`)
       .on(
         'postgres_changes',
         {

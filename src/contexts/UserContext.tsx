@@ -166,7 +166,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     console.log('🔗 Setting up real-time subscriptions for user:', authUser.id);
     
     const channel = supabase
-      .channel('user-data-changes')
+      .channel(`user-data-changes-${Math.random().toString(36).slice(2)}`)
       .on(
         'postgres_changes',
         {

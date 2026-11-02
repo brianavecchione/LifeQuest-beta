@@ -161,7 +161,7 @@ export const useStreaks = () => {
     if (!user) return;
 
     const questChannel = supabase
-      .channel('quest-completions')
+      .channel(`quest-completions-${Math.random().toString(36).slice(2)}`)
       .on(
         'postgres_changes',
         {
@@ -179,7 +179,7 @@ export const useStreaks = () => {
       .subscribe();
 
     const streakChannel = supabase
-      .channel('streaks-changes')
+      .channel(`streaks-changes-${Math.random().toString(36).slice(2)}`)
       .on(
         'postgres_changes',
         {
