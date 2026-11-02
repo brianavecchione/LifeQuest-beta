@@ -9,7 +9,7 @@ const QuestTimer = () => {
   const [initialTime] = useState(25 * 60);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setTimeout>;
     if (isRunning && time > 0) {
       interval = setInterval(() => {
         setTime(time => time - 1);
