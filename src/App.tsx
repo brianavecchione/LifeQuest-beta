@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { UserProvider } from "./contexts/UserContext";
 import { QuestProvider } from "./contexts/QuestContext";
 import { QuestsDataProvider } from "./hooks/useQuests";
+import { UserBalanceProvider } from "./hooks/useUserBalance";
 import { GuestProvider } from "./contexts/GuestContext";
 import { BackgroundProvider } from "./contexts/BackgroundContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -88,6 +89,7 @@ const App = () => (
     <AuthProvider>
       <GuestProvider>
         <UserProvider>
+          <UserBalanceProvider>
           <QuestProvider>
           <QuestsDataProvider>
             <BackgroundProvider>
@@ -101,6 +103,7 @@ const App = () => (
             </BackgroundProvider>
           </QuestsDataProvider>
           </QuestProvider>
+          </UserBalanceProvider>
         </UserProvider>
       </GuestProvider>
     </AuthProvider>
