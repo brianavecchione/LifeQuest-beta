@@ -340,7 +340,7 @@ export const useQuests = () => {
       setLoading(true);
       
       // Run reset logic tests in development
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         testResetLogic();
         testMedicationCase();
       }

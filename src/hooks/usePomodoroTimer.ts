@@ -143,7 +143,7 @@ export const usePomodoroTimer = (updateQuestStatus: (id: string, status: string)
 
   // Timer countdown effects
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setTimeout>;
     
     if (activeTimer?.isRunning && activeTimer.timeRemaining > 0) {
       interval = setInterval(() => {
@@ -162,7 +162,7 @@ export const usePomodoroTimer = (updateQuestStatus: (id: string, status: string)
   }, [activeTimer?.isRunning]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setTimeout>;
     
     if (activeBreakTimer?.isRunning && activeBreakTimer.timeRemaining > 0) {
       interval = setInterval(() => {
