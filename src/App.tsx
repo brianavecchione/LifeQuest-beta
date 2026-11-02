@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { UserProvider } from "./contexts/UserContext";
 import { QuestProvider } from "./contexts/QuestContext";
+import { QuestsDataProvider } from "./hooks/useQuests";
 import { GuestProvider } from "./contexts/GuestContext";
 import { BackgroundProvider } from "./contexts/BackgroundContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -88,6 +89,7 @@ const App = () => (
       <GuestProvider>
         <UserProvider>
           <QuestProvider>
+          <QuestsDataProvider>
             <BackgroundProvider>
               <TooltipProvider>
                 <Toaster />
@@ -97,6 +99,7 @@ const App = () => (
                 </BrowserRouter>
               </TooltipProvider>
             </BackgroundProvider>
+          </QuestsDataProvider>
           </QuestProvider>
         </UserProvider>
       </GuestProvider>
