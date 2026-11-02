@@ -1,3 +1,4 @@
+import React, { createContext, useContext } from 'react';
 import { useState, useEffect, startTransition } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -50,7 +51,7 @@ const transformDbQuest = (dbQuest: DbQuest): Quest => ({
   is_recurring: dbQuest.is_recurring || false,
 });
 
-export const useQuests = () => {
+const useQuestsState = () => {
   const [quests, setQuests] = useState<Quest[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
@@ -786,4 +787,17 @@ export const useQuests = () => {
     getTotalCompletedQuests,
     refetchQuests: fetchQuests,
   };
+};
+type QuestsContextValue = ReturnType<typeof useQuestsState>;
+const QuestsDataContext = createContext<QuestsContextValue | null>(null);
+
+export const QuestsDataProvider = ({ children }: { children: React.ReactNode }) => {
+  const value = useQuestsState();
+  return React.createElement(QuestsDataContext.Provider, { value }, children);
+};
+
+export const useQuests = () => {
+  const ctx = useContext(QuestsDataContext);
+  if (!ctx) throw new Error('useQuests must be used within QuestsDataProvider');
+  return ctx;
 };
