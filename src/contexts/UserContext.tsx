@@ -126,7 +126,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
       }
       
-      setIsLoading(false);
+      setIsLoading(false); hasLoadedRef.current = true;
     } catch (error) {
       console.error('Error loading user profile:', error);
       setUser({
